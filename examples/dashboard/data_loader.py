@@ -231,8 +231,12 @@ class DriftResultsLoader:
         perf_df = self.get_performance_metrics()
         feature_df = self.get_feature_drift_timeline()
         
+        # Count years (they are at top level of JSON, not under "yearly_results")
+        yearly_data = self.raw_data.get("yearly_results", self.raw_data)
+        total_years = len([k for k in yearly_data.keys() if k.isdigit()])
+        
         return {
-            "total_years": len(self.raw_data.get("yearly_results", {})),
+            "total_years": total_years,
             "detectors_count": all_detectors_df["detector"].nunique(),
             "total_drift_events": all_detectors_df["drift_detected"].sum(),
             "avg_accuracy": perf_df["accuracy"].mean() if not perf_df.empty else 0.0,
