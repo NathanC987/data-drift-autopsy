@@ -83,7 +83,7 @@ def main():
     
     pipelines = {
         "KS Test": DriftPipeline(
-            detector=KSTest(threshold=0.05, correction="bonferroni"),
+            detector=KSTest(threshold=0.05, correction="bonferroni"),  # p-value threshold (95% confidence)
             localizer="univariate",
             rca="shap",  # Use SHAP analyzer from registry
             model=lr_model,  # Pass model for RCA
@@ -91,19 +91,19 @@ def main():
             enable_rca=True,  # Enable RCA for KS Test
         ),
         "PSI": DriftPipeline(
-            detector=PSI(threshold=0.2, n_bins=10),
+            detector=PSI(threshold=0.2, n_bins=10),  # Industry standard: >0.2 indicates significant drift
             localizer="univariate",
             enable_localization=True,
             enable_rca=False,
         ),
         "MMD": DriftPipeline(
-            detector=MMD(threshold=0.1, kernel="rbf", n_permutations=20, max_samples=3000),
+            detector=MMD(threshold=0.1, kernel="rbf", n_permutations=20, max_samples=3000),  # Reasonable default for normalized features
             localizer="univariate",
             enable_localization=True,
             enable_rca=False,
         ),
         "CBPE": DriftPipeline(
-            detector=CBPE(threshold=0.05, n_bins=10),
+            detector=CBPE(threshold=0.05, n_bins=10),  # Allow 5% performance degradation
             localizer="univariate",
             enable_localization=True,
             enable_rca=False,

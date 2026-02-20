@@ -28,41 +28,56 @@ def create_drift_timeline(df: pd.DataFrame, title: Optional[str] = None) -> go.F
     Returns:
         Plotly Figure
     """
-    fig = px.line(
-        df,
-        x="year",
-        y="score",
-        color="detector" if "detector" in df.columns else None,
-        markers=True,
-        title=title or "Drift Score Over Time",
-        labels={"score": "Drift Score", "year": "Year"},
-        template="plotly_white",
-    )
+    fig = go.Figure()
     
-    # Add drift detection markers for each detector
-    if "drift_detected" in df.columns:
-        drift_points = df[df["drift_detected"]]
-        if not drift_points.empty:
-            # Add markers for each detector separately
-            for detector in drift_points["detector"].unique():
-                detector_drift = drift_points[drift_points["detector"] == detector]
+    # Get unique detectors
+    detectors = df["detector"].unique() if "detector" in df.columns else [None]
+    
+    # Add line traces for each detector
+    for detector in detectors:
+        if detector is None:
+            detector_df = df
+            name = "Score"
+        else:
+            detector_df = df[df["detector"] == detector]
+            name = detector
+        
+        # Add main line trace
+        fig.add_trace(
+            go.Scatter(
+                x=detector_df["year"],
+                y=detector_df["score"],
+                mode="lines+markers",
+                name=name,
+                hovertemplate=f"{name}<br>Year: %{{x}}<br>Score: %{{y:.6f}}<extra></extra>",
+            )
+        )
+        
+        # Add drift detection markers if column exists
+        if "drift_detected" in detector_df.columns:
+            drift_points = detector_df[detector_df["drift_detected"]]
+            if not drift_points.empty:
+                # Use legendgroup to group drift markers together
                 fig.add_trace(
                     go.Scatter(
-                        x=detector_drift["year"],
-                        y=detector_drift["score"],
+                        x=drift_points["year"],
+                        y=drift_points["score"],
                         mode="markers",
                         marker=dict(size=12, symbol="x", color="red"),
-                        name=f"{detector} Drift",
-                        showlegend=False,
-                        hovertemplate=f"{detector}<br>Year: %{{x}}<br>Score: %{{y}}<br>Drift Detected<extra></extra>",
+                        name="Drift Detected",
+                        legendgroup="drift",
+                        showlegend=(detector == detectors[0]),  # Only show legend for first detector
+                        hovertemplate=f"{name}<br>Year: %{{x}}<br>Score: %{{y:.6f}}<br><b>Drift Detected</b><extra></extra>",
                     )
                 )
     
     fig.update_layout(
+        title=title or "Drift Score Over Time",
         xaxis_title="Year",
         yaxis_title="Drift Score",
         hovermode="x unified",
         height=400,
+        template="plotly_white",
     )
     
     return fig
