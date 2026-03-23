@@ -10,14 +10,14 @@
           "severity": "critical",
           "score": 0.0077111968767265004,
           "threshold": 0.005,
-          "p_value": 3.1870352326706037e-05,
+          "p_value": 3.187035232670619e-05,
           "statistic": 0.0077111968767265004,
           "metadata": {
             "n_features_tested": 10,
             "feature_results": {
               "AGEP": {
                 "statistic": 0.006084374827428518,
-                "p_value": 0.00205969793781466
+                "p_value": 0.0020596979378146936
               },
               "COW": {
                 "statistic": 0.0016274037336393432,
@@ -25,15 +25,15 @@
               },
               "SCHL": {
                 "statistic": 0.006036906032936384,
-                "p_value": 0.002292026634395311
+                "p_value": 0.002292026634395335
               },
               "MAR": {
                 "statistic": 0.0077111968767265004,
-                "p_value": 3.1870352326706037e-05
+                "p_value": 3.187035232670619e-05
               },
               "OCCP": {
                 "statistic": 0.005161745049804878,
-                "p_value": 0.014153164341928877
+                "p_value": 0.014153164341928618
               },
               "POBP": {
                 "statistic": 0.0036949253715541364,
@@ -41,7 +41,7 @@
               },
               "RELP": {
                 "statistic": 0.006832419643328813,
-                "p_value": 0.0003422588669946828
+                "p_value": 0.00034225886699468456
               },
               "WKHP": {
                 "statistic": 0.004325022675021384,
@@ -53,7 +53,7 @@
               },
               "RAC1P": {
                 "statistic": 0.005093475305625983,
-                "p_value": 0.016118889881247447
+                "p_value": 0.016118889881247496
               }
             },
             "correction": "bonferroni",
@@ -85,42 +85,42 @@
               "feature_name": "MAR",
               "drift_detected": true,
               "score": 0.0077111968767265004,
-              "p_value": 3.1870352326706037e-05,
+              "p_value": 3.187035232670619e-05,
               "severity": "critical"
             },
             {
               "feature_name": "RELP",
               "drift_detected": true,
               "score": 0.006832419643328813,
-              "p_value": 0.0003422588669946828,
+              "p_value": 0.00034225886699468456,
               "severity": "high"
             },
             {
               "feature_name": "AGEP",
               "drift_detected": true,
               "score": 0.006084374827428518,
-              "p_value": 0.00205969793781466,
+              "p_value": 0.0020596979378146936,
               "severity": "medium"
             },
             {
               "feature_name": "SCHL",
               "drift_detected": true,
               "score": 0.006036906032936384,
-              "p_value": 0.002292026634395311,
+              "p_value": 0.002292026634395335,
               "severity": "medium"
             },
             {
               "feature_name": "OCCP",
               "drift_detected": false,
               "score": 0.005161745049804878,
-              "p_value": 0.014153164341928877,
+              "p_value": 0.014153164341928618,
               "severity": "none"
             },
             {
               "feature_name": "RAC1P",
               "drift_detected": false,
               "score": 0.005093475305625983,
-              "p_value": 0.016118889881247447,
+              "p_value": 0.016118889881247496,
               "severity": "none"
             },
             {
@@ -169,123 +169,124 @@
             "top_importance_changes": [
               [
                 "AGEP",
-                -0.0013327380952380743
+                -0.004525317460317457
               ],
               [
                 "SCHL",
-                -8.099206349206317e-05
+                0.0025350793650793647
               ],
               [
                 "MAR",
-                -4.8134920634920285e-05
+                -6.571428571428494e-05
               ],
               [
                 "RELP",
-                -4.674603174603065e-05
+                -4.246031746031712e-05
               ],
               [
                 "OCCP",
-                -0.03661936507936481
+                0.01951634920634915
               ],
               [
                 "POBP",
-                -0.005052976190476177
+                0.0025747222222222196
               ],
               [
                 "WKHP",
-                -0.0011206746031746065
-              ],
-              [
-                "RAC1P",
-                6.468253968254087e-06
-              ],
-              [
-                "SEX",
-                -5.2380952380951605e-06
+                -0.0012398015873015897
               ],
               [
                 "COW",
-                -1.8253968253950335e-06
+                -2.511904761904773e-05
+              ],
+              [
+                "SEX",
+                -7.579365079365098e-06
+              ],
+              [
+                "RAC1P",
+                6.269841269841371e-06
               ]
             ]
           },
           "feature_importances": {
-            "AGEP": -0.0013327380952380743,
-            "COW": -1.8253968253950335e-06,
-            "SCHL": -8.099206349206317e-05,
-            "MAR": -4.8134920634920285e-05,
-            "OCCP": -0.03661936507936481,
-            "POBP": -0.005052976190476177,
-            "RELP": -4.674603174603065e-05,
-            "WKHP": -0.0011206746031746065,
-            "SEX": -5.2380952380951605e-06,
-            "RAC1P": 6.468253968254087e-06
+            "AGEP": -0.004525317460317457,
+            "COW": -2.511904761904773e-05,
+            "SCHL": 0.0025350793650793647,
+            "MAR": -6.571428571428494e-05,
+            "OCCP": 0.01951634920634915,
+            "POBP": 0.0025747222222222196,
+            "RELP": -4.246031746031712e-05,
+            "WKHP": -0.0012398015873015897,
+            "SEX": -7.579365079365098e-06,
+            "RAC1P": 6.269841269841371e-06
           },
           "distribution_changes": {
             "AGEP": {
-              "ref_importance": 0.0030453174603174483,
-              "test_importance": 0.001712579365079374,
-              "change": -0.0013327380952380743,
-              "relative_change": -0.4376351788741361
+              "ref_importance": 0.009710158730158734,
+              "test_importance": 0.005184841269841277,
+              "change": -0.004525317460317457,
+              "relative_change": -0.46603948910313353
             },
             "COW": {
-              "ref_importance": 2.380952380952599e-05,
-              "test_importance": 2.1984126984130955e-05,
-              "change": -1.8253968253950335e-06,
-              "relative_change": -0.07666634466793679
+              "ref_importance": 7.198412698412776e-05,
+              "test_importance": 4.6865079365080025e-05,
+              "change": -2.511904761904773e-05,
+              "relative_change": -0.3489521061966309
             },
             "SCHL": {
-              "ref_importance": 0.0007335714285714307,
-              "test_importance": 0.0006525793650793675,
-              "change": -8.099206349206317e-05,
-              "relative_change": -0.11040786117992946
+              "ref_importance": 0.0010757936507936514,
+              "test_importance": 0.003610873015873016,
+              "change": 0.0025350793650793647,
+              "relative_change": 2.356473406923164
             },
             "MAR": {
-              "ref_importance": 0.00010634920634920738,
-              "test_importance": 5.82142857142871e-05,
-              "change": -4.8134920634920285e-05,
-              "relative_change": -0.4526115147085681
+              "ref_importance": 0.00022190476190476146,
+              "test_importance": 0.00015619047619047652,
+              "change": -6.571428571428494e-05,
+              "relative_change": -0.2961372056034023
             },
             "OCCP": {
-              "ref_importance": 0.16757309523809485,
-              "test_importance": 0.13095373015873005,
-              "change": -0.03661936507936481,
-              "relative_change": -0.2185277117754596
+              "ref_importance": 0.07179444444444422,
+              "test_importance": 0.09131079365079336,
+              "change": 0.01951634920634915,
+              "relative_change": 0.2718364816412444
             },
             "POBP": {
-              "ref_importance": 0.014805873015873003,
-              "test_importance": 0.009752896825396826,
-              "change": -0.005052976190476177,
-              "relative_change": -0.34128187854446823
+              "ref_importance": 0.010838650793650791,
+              "test_importance": 0.01341337301587301,
+              "change": 0.0025747222222222196,
+              "relative_change": 0.2375500648083863
             },
             "RELP": {
-              "ref_importance": 0.0001787301587301589,
-              "test_importance": 0.00013198412698412824,
-              "change": -4.674603174603065e-05,
-              "relative_change": -0.26154514673761137
+              "ref_importance": 0.00040230158730158663,
+              "test_importance": 0.0003598412698412695,
+              "change": -4.246031746031712e-05,
+              "relative_change": -0.10554347346916947
             },
             "WKHP": {
-              "ref_importance": 0.0031095238095238116,
-              "test_importance": 0.001988849206349205,
-              "change": -0.0011206746031746065,
-              "relative_change": -0.36040070306011096
+              "ref_importance": 0.0039965079365079405,
+              "test_importance": 0.0027567063492063507,
+              "change": -0.0012398015873015897,
+              "relative_change": -0.3102212171165558
             },
             "SEX": {
-              "ref_importance": 2.3095238095239547e-05,
-              "test_importance": 1.7857142857144387e-05,
-              "change": -5.2380952380951605e-06,
-              "relative_change": -0.2268031416771009
+              "ref_importance": 5.61111111111111e-05,
+              "test_importance": 4.8531746031746e-05,
+              "change": -7.579365079365098e-06,
+              "relative_change": -0.13507755276136318
             },
             "RAC1P": {
-              "ref_importance": 3.6428571428571274e-05,
-              "test_importance": 4.289682539682536e-05,
-              "change": 6.468253968254087e-06,
-              "relative_change": 0.17755942543600392
+              "ref_importance": 4.333333333333322e-05,
+              "test_importance": 4.960317460317459e-05,
+              "change": 6.269841269841371e-06,
+              "relative_change": 0.14468831079254557
             }
           },
           "recommendations": [
-            "Features with decreased model reliance: AGEP, SCHL, MAR",
-            "Features both drifted and importance-shifted: MAR, AGEP, RELP, SCHL - likely root causes"
+            "Features with increased model reliance: SCHL",
+            "Features with decreased model reliance: AGEP, MAR, RELP",
+            "Features both drifted and importance-shifted: AGEP, MAR, RELP, SCHL - likely root causes"
           ],
           "metadata": {
             "n_features_analyzed": 10,
@@ -298,7 +299,7 @@
             ]
           }
         },
-        "execution_time_seconds": 4.411475419998169,
+        "execution_time_seconds": 16.03152108192444,
         "metadata": {
           "detector": "ks_test",
           "localizer": "univariate",
@@ -389,42 +390,42 @@
               "feature_name": "MAR",
               "drift_detected": true,
               "score": 0.0077111968767265004,
-              "p_value": 3.1870352326706037e-05,
+              "p_value": 3.187035232670619e-05,
               "severity": "critical"
             },
             {
               "feature_name": "RELP",
               "drift_detected": true,
               "score": 0.006832419643328813,
-              "p_value": 0.0003422588669946828,
+              "p_value": 0.00034225886699468456,
               "severity": "high"
             },
             {
               "feature_name": "AGEP",
               "drift_detected": true,
               "score": 0.006084374827428518,
-              "p_value": 0.00205969793781466,
+              "p_value": 0.0020596979378146936,
               "severity": "medium"
             },
             {
               "feature_name": "SCHL",
               "drift_detected": true,
               "score": 0.006036906032936384,
-              "p_value": 0.002292026634395311,
+              "p_value": 0.002292026634395335,
               "severity": "medium"
             },
             {
               "feature_name": "OCCP",
               "drift_detected": false,
               "score": 0.005161745049804878,
-              "p_value": 0.014153164341928877,
+              "p_value": 0.014153164341928618,
               "severity": "none"
             },
             {
               "feature_name": "RAC1P",
               "drift_detected": false,
               "score": 0.005093475305625983,
-              "p_value": 0.016118889881247447,
+              "p_value": 0.016118889881247496,
               "severity": "none"
             },
             {
@@ -465,7 +466,7 @@
           }
         },
         "rca": null,
-        "execution_time_seconds": 0.5754106044769287,
+        "execution_time_seconds": 1.2852799892425537,
         "metadata": {
           "detector": "psi",
           "localizer": "univariate",
@@ -519,42 +520,42 @@
               "feature_name": "MAR",
               "drift_detected": true,
               "score": 0.0077111968767265004,
-              "p_value": 3.1870352326706037e-05,
+              "p_value": 3.187035232670619e-05,
               "severity": "critical"
             },
             {
               "feature_name": "RELP",
               "drift_detected": true,
               "score": 0.006832419643328813,
-              "p_value": 0.0003422588669946828,
+              "p_value": 0.00034225886699468456,
               "severity": "high"
             },
             {
               "feature_name": "AGEP",
               "drift_detected": true,
               "score": 0.006084374827428518,
-              "p_value": 0.00205969793781466,
+              "p_value": 0.0020596979378146936,
               "severity": "medium"
             },
             {
               "feature_name": "SCHL",
               "drift_detected": true,
               "score": 0.006036906032936384,
-              "p_value": 0.002292026634395311,
+              "p_value": 0.002292026634395335,
               "severity": "medium"
             },
             {
               "feature_name": "OCCP",
               "drift_detected": false,
               "score": 0.005161745049804878,
-              "p_value": 0.014153164341928877,
+              "p_value": 0.014153164341928618,
               "severity": "none"
             },
             {
               "feature_name": "RAC1P",
               "drift_detected": false,
               "score": 0.005093475305625983,
-              "p_value": 0.016118889881247447,
+              "p_value": 0.016118889881247496,
               "severity": "none"
             },
             {
@@ -595,7 +596,7 @@
           }
         },
         "rca": null,
-        "execution_time_seconds": 4.742727994918823,
+        "execution_time_seconds": 12.22706913948059,
         "metadata": {
           "detector": "mmd",
           "localizer": "univariate",
@@ -649,42 +650,42 @@
               "feature_name": "MAR",
               "drift_detected": true,
               "score": 0.0077111968767265004,
-              "p_value": 3.1870352326706037e-05,
+              "p_value": 3.187035232670619e-05,
               "severity": "critical"
             },
             {
               "feature_name": "RELP",
               "drift_detected": true,
               "score": 0.006832419643328813,
-              "p_value": 0.0003422588669946828,
+              "p_value": 0.00034225886699468456,
               "severity": "high"
             },
             {
               "feature_name": "AGEP",
               "drift_detected": true,
               "score": 0.006084374827428518,
-              "p_value": 0.00205969793781466,
+              "p_value": 0.0020596979378146936,
               "severity": "medium"
             },
             {
               "feature_name": "SCHL",
               "drift_detected": true,
               "score": 0.006036906032936384,
-              "p_value": 0.002292026634395311,
+              "p_value": 0.002292026634395335,
               "severity": "medium"
             },
             {
               "feature_name": "OCCP",
               "drift_detected": false,
               "score": 0.005161745049804878,
-              "p_value": 0.014153164341928877,
+              "p_value": 0.014153164341928618,
               "severity": "none"
             },
             {
               "feature_name": "RAC1P",
               "drift_detected": false,
               "score": 0.005093475305625983,
-              "p_value": 0.016118889881247447,
+              "p_value": 0.016118889881247496,
               "severity": "none"
             },
             {
@@ -725,7 +726,7 @@
           }
         },
         "rca": null,
-        "execution_time_seconds": 0.4476277828216553,
+        "execution_time_seconds": 1.053194284439087,
         "metadata": {
           "detector": "cbpe",
           "localizer": "univariate",
@@ -748,14 +749,14 @@
           "severity": "critical",
           "score": 0.015997074266787092,
           "threshold": 0.005,
-          "p_value": 3.243313427491555e-21,
+          "p_value": 3.243313427491609e-21,
           "statistic": 0.015997074266787092,
           "metadata": {
             "n_features_tested": 10,
             "feature_results": {
               "AGEP": {
                 "statistic": 0.008736414389240776,
-                "p_value": 1.2572743205594896e-06
+                "p_value": 1.2572743205594858e-06
               },
               "COW": {
                 "statistic": 0.003058670243535455,
@@ -763,27 +764,27 @@
               },
               "SCHL": {
                 "statistic": 0.013986551381426682,
-                "p_value": 2.5592539646691076e-16
+                "p_value": 2.559253964669108e-16
               },
               "MAR": {
                 "statistic": 0.01101460436876378,
-                "p_value": 2.7801887997459047e-10
+                "p_value": 2.7801887997458846e-10
               },
               "OCCP": {
                 "statistic": 0.010788333703159014,
-                "p_value": 6.995833545330279e-10
+                "p_value": 6.995833545330286e-10
               },
               "POBP": {
                 "statistic": 0.007681587308025817,
-                "p_value": 3.208669647728213e-05
+                "p_value": 3.208669647728144e-05
               },
               "RELP": {
                 "statistic": 0.01059028370827042,
-                "p_value": 1.5445234573328563e-09
+                "p_value": 1.5445234573328583e-09
               },
               "WKHP": {
                 "statistic": 0.011114333418701217,
-                "p_value": 1.8399059748149639e-10
+                "p_value": 1.8399059748150155e-10
               },
               "SEX": {
                 "statistic": 0.0016912089814975495,
@@ -791,7 +792,7 @@
               },
               "RAC1P": {
                 "statistic": 0.015997074266787092,
-                "p_value": 3.243313427491555e-21
+                "p_value": 3.243313427491609e-21
               }
             },
             "correction": "bonferroni",
@@ -827,56 +828,56 @@
               "feature_name": "RAC1P",
               "drift_detected": true,
               "score": 0.015997074266787092,
-              "p_value": 3.243313427491555e-21,
+              "p_value": 3.243313427491609e-21,
               "severity": "critical"
             },
             {
               "feature_name": "SCHL",
               "drift_detected": true,
               "score": 0.013986551381426682,
-              "p_value": 2.5592539646691076e-16,
+              "p_value": 2.559253964669108e-16,
               "severity": "critical"
             },
             {
               "feature_name": "WKHP",
               "drift_detected": true,
               "score": 0.011114333418701217,
-              "p_value": 1.8399059748149639e-10,
+              "p_value": 1.8399059748150155e-10,
               "severity": "critical"
             },
             {
               "feature_name": "MAR",
               "drift_detected": true,
               "score": 0.01101460436876378,
-              "p_value": 2.7801887997459047e-10,
+              "p_value": 2.7801887997458846e-10,
               "severity": "critical"
             },
             {
               "feature_name": "OCCP",
               "drift_detected": true,
               "score": 0.010788333703159014,
-              "p_value": 6.995833545330279e-10,
+              "p_value": 6.995833545330286e-10,
               "severity": "critical"
             },
             {
               "feature_name": "RELP",
               "drift_detected": true,
               "score": 0.01059028370827042,
-              "p_value": 1.5445234573328563e-09,
+              "p_value": 1.5445234573328583e-09,
               "severity": "critical"
             },
             {
               "feature_name": "AGEP",
               "drift_detected": true,
               "score": 0.008736414389240776,
-              "p_value": 1.2572743205594896e-06,
+              "p_value": 1.2572743205594858e-06,
               "severity": "critical"
             },
             {
               "feature_name": "POBP",
               "drift_detected": true,
               "score": 0.007681587308025817,
-              "p_value": 3.208669647728213e-05,
+              "p_value": 3.208669647728144e-05,
               "severity": "critical"
             },
             {
@@ -911,124 +912,123 @@
             "top_importance_changes": [
               [
                 "OCCP",
-                -0.022849484126983913
-              ],
-              [
-                "POBP",
-                0.002834206349206339
+                -0.015808888888888817
               ],
               [
                 "WKHP",
-                0.0010529365079365073
-              ],
-              [
-                "SCHL",
-                0.0006876190476190439
+                -0.004112222222222184
               ],
               [
                 "AGEP",
-                0.0004240873015872917
+                -0.004029007936507919
               ],
               [
-                "RELP",
-                0.0003908730158730167
+                "POBP",
+                -0.003094761904761897
+              ],
+              [
+                "SCHL",
+                -0.0008887301587301587
               ],
               [
                 "MAR",
-                5.805555555555685e-05
+                -7.523809523809328e-05
               ],
               [
                 "RAC1P",
-                1.8293650793650946e-05
+                -2.6547619047619117e-05
+              ],
+              [
+                "RELP",
+                -9.80158730158777e-06
               ],
               [
                 "SEX",
-                9.880952380952212e-06
+                -2.9761904761904796e-05
               ],
               [
                 "COW",
-                6.5476190476180985e-06
+                -2.527777777777729e-05
               ]
             ]
           },
           "feature_importances": {
-            "AGEP": 0.0004240873015872917,
-            "COW": 6.5476190476180985e-06,
-            "SCHL": 0.0006876190476190439,
-            "MAR": 5.805555555555685e-05,
-            "OCCP": -0.022849484126983913,
-            "POBP": 0.002834206349206339,
-            "RELP": 0.0003908730158730167,
-            "WKHP": 0.0010529365079365073,
-            "SEX": 9.880952380952212e-06,
-            "RAC1P": 1.8293650793650946e-05
+            "AGEP": -0.004029007936507919,
+            "COW": -2.527777777777729e-05,
+            "SCHL": -0.0008887301587301587,
+            "MAR": -7.523809523809328e-05,
+            "OCCP": -0.015808888888888817,
+            "POBP": -0.003094761904761897,
+            "RELP": -9.80158730158777e-06,
+            "WKHP": -0.004112222222222184,
+            "SEX": -2.9761904761904796e-05,
+            "RAC1P": -2.6547619047619117e-05
           },
           "distribution_changes": {
             "AGEP": {
-              "ref_importance": 0.0014151587301587357,
-              "test_importance": 0.0018392460317460274,
-              "change": 0.0004240873015872917,
-              "relative_change": 0.2996747026195799
+              "ref_importance": 0.008528412698412688,
+              "test_importance": 0.004499404761904769,
+              "change": -0.004029007936507919,
+              "relative_change": -0.4724217778550541
             },
             "COW": {
-              "ref_importance": 1.1746031746032942e-05,
-              "test_importance": 1.829365079365104e-05,
-              "change": 6.5476190476180985e-06,
-              "relative_change": 0.5574276867641508
+              "ref_importance": 7.023809523809787e-05,
+              "test_importance": 4.496031746032058e-05,
+              "change": -2.527777777777729e-05,
+              "relative_change": -0.3598864932689271
             },
             "SCHL": {
-              "ref_importance": 0.00032325396825396915,
-              "test_importance": 0.001010873015873013,
-              "change": 0.0006876190476190439,
-              "relative_change": 2.127178325498463
+              "ref_importance": 0.0019483333333333303,
+              "test_importance": 0.0010596031746031717,
+              "change": -0.0008887301587301587,
+              "relative_change": -0.4561489032242616
             },
             "MAR": {
-              "ref_importance": 8.396825396825302e-05,
-              "test_importance": 0.00014202380952380988,
-              "change": 5.805555555555685e-05,
-              "relative_change": 0.6913980423804265
+              "ref_importance": 0.0002306349206349205,
+              "test_importance": 0.00015539682539682722,
+              "change": -7.523809523809328e-05,
+              "relative_change": -0.32622146901614757
             },
             "OCCP": {
-              "ref_importance": 0.08660325396825361,
-              "test_importance": 0.0637537698412697,
-              "change": -0.022849484126983913,
-              "relative_change": -0.2638409419232194
+              "ref_importance": 0.09863571428571402,
+              "test_importance": 0.0828268253968252,
+              "change": -0.015808888888888817,
+              "relative_change": -0.1602755045405593
             },
             "POBP": {
-              "ref_importance": 0.0052848412698412684,
-              "test_importance": 0.008119047619047607,
-              "change": 0.002834206349206339,
-              "relative_change": 0.5362897674431929
+              "ref_importance": 0.013032222222222228,
+              "test_importance": 0.009937460317460331,
+              "change": -0.003094761904761897,
+              "relative_change": -0.237470005363919
             },
             "RELP": {
-              "ref_importance": 0.00016682539682539663,
-              "test_importance": 0.0005576984126984133,
-              "change": 0.0003908730158730167,
-              "relative_change": 2.3430052558579417
+              "ref_importance": 0.00030793650793651086,
+              "test_importance": 0.0002981349206349231,
+              "change": -9.80158730158777e-06,
+              "relative_change": -0.03182988657070816
             },
             "WKHP": {
-              "ref_importance": 0.001503412698412699,
-              "test_importance": 0.0025563492063492062,
-              "change": 0.0010529365079365073,
-              "relative_change": 0.7003642040617162
+              "ref_importance": 0.012264841269841233,
+              "test_importance": 0.00815261904761905,
+              "change": -0.004112222222222184,
+              "relative_change": -0.33528539817351233
             },
             "SEX": {
-              "ref_importance": 2.301587301587319e-05,
-              "test_importance": 3.28968253968254e-05,
-              "change": 9.880952380952212e-06,
-              "relative_change": 0.4293084795562506
+              "ref_importance": 7.674603174603172e-05,
+              "test_importance": 4.6984126984126925e-05,
+              "change": -2.9761904761904796e-05,
+              "relative_change": -0.38779680597313865
             },
             "RAC1P": {
-              "ref_importance": 2.944444444444442e-05,
-              "test_importance": 4.773809523809537e-05,
-              "change": 1.8293650793650946e-05,
-              "relative_change": 0.6212916904918385
+              "ref_importance": 6.952380952380955e-05,
+              "test_importance": 4.297619047619043e-05,
+              "change": -2.6547619047619117e-05,
+              "relative_change": -0.3818487658339678
             }
           },
           "recommendations": [
-            "Features with increased model reliance: POBP, WKHP, SCHL",
-            "Features with decreased model reliance: OCCP",
-            "Features both drifted and importance-shifted: WKHP, SCHL, POBP, OCCP, AGEP - likely root causes"
+            "Features with decreased model reliance: OCCP, WKHP, AGEP",
+            "Features both drifted and importance-shifted: OCCP, WKHP, AGEP, POBP, SCHL - likely root causes"
           ],
           "metadata": {
             "n_features_analyzed": 10,
@@ -1045,7 +1045,7 @@
             ]
           }
         },
-        "execution_time_seconds": 1.6085662841796875,
+        "execution_time_seconds": 4.2910377979278564,
         "metadata": {
           "detector": "ks_test",
           "localizer": "univariate",
@@ -1140,56 +1140,56 @@
               "feature_name": "RAC1P",
               "drift_detected": true,
               "score": 0.015997074266787092,
-              "p_value": 3.243313427491555e-21,
+              "p_value": 3.243313427491609e-21,
               "severity": "critical"
             },
             {
               "feature_name": "SCHL",
               "drift_detected": true,
               "score": 0.013986551381426682,
-              "p_value": 2.5592539646691076e-16,
+              "p_value": 2.559253964669108e-16,
               "severity": "critical"
             },
             {
               "feature_name": "WKHP",
               "drift_detected": true,
               "score": 0.011114333418701217,
-              "p_value": 1.8399059748149639e-10,
+              "p_value": 1.8399059748150155e-10,
               "severity": "critical"
             },
             {
               "feature_name": "MAR",
               "drift_detected": true,
               "score": 0.01101460436876378,
-              "p_value": 2.7801887997459047e-10,
+              "p_value": 2.7801887997458846e-10,
               "severity": "critical"
             },
             {
               "feature_name": "OCCP",
               "drift_detected": true,
               "score": 0.010788333703159014,
-              "p_value": 6.995833545330279e-10,
+              "p_value": 6.995833545330286e-10,
               "severity": "critical"
             },
             {
               "feature_name": "RELP",
               "drift_detected": true,
               "score": 0.01059028370827042,
-              "p_value": 1.5445234573328563e-09,
+              "p_value": 1.5445234573328583e-09,
               "severity": "critical"
             },
             {
               "feature_name": "AGEP",
               "drift_detected": true,
               "score": 0.008736414389240776,
-              "p_value": 1.2572743205594896e-06,
+              "p_value": 1.2572743205594858e-06,
               "severity": "critical"
             },
             {
               "feature_name": "POBP",
               "drift_detected": true,
               "score": 0.007681587308025817,
-              "p_value": 3.208669647728213e-05,
+              "p_value": 3.208669647728144e-05,
               "severity": "critical"
             },
             {
@@ -1216,7 +1216,7 @@
           }
         },
         "rca": null,
-        "execution_time_seconds": 0.6512851715087891,
+        "execution_time_seconds": 2.220299243927002,
         "metadata": {
           "detector": "psi",
           "localizer": "univariate",
@@ -1233,7 +1233,7 @@
           "severity": "none",
           "score": 0.00988792786319272,
           "threshold": 0.1,
-          "p_value": 0.23809523809523808,
+          "p_value": 0.19047619047619047,
           "statistic": 0.00988792786319272,
           "metadata": {
             "kernel": "rbf",
@@ -1274,56 +1274,56 @@
               "feature_name": "RAC1P",
               "drift_detected": true,
               "score": 0.015997074266787092,
-              "p_value": 3.243313427491555e-21,
+              "p_value": 3.243313427491609e-21,
               "severity": "critical"
             },
             {
               "feature_name": "SCHL",
               "drift_detected": true,
               "score": 0.013986551381426682,
-              "p_value": 2.5592539646691076e-16,
+              "p_value": 2.559253964669108e-16,
               "severity": "critical"
             },
             {
               "feature_name": "WKHP",
               "drift_detected": true,
               "score": 0.011114333418701217,
-              "p_value": 1.8399059748149639e-10,
+              "p_value": 1.8399059748150155e-10,
               "severity": "critical"
             },
             {
               "feature_name": "MAR",
               "drift_detected": true,
               "score": 0.01101460436876378,
-              "p_value": 2.7801887997459047e-10,
+              "p_value": 2.7801887997458846e-10,
               "severity": "critical"
             },
             {
               "feature_name": "OCCP",
               "drift_detected": true,
               "score": 0.010788333703159014,
-              "p_value": 6.995833545330279e-10,
+              "p_value": 6.995833545330286e-10,
               "severity": "critical"
             },
             {
               "feature_name": "RELP",
               "drift_detected": true,
               "score": 0.01059028370827042,
-              "p_value": 1.5445234573328563e-09,
+              "p_value": 1.5445234573328583e-09,
               "severity": "critical"
             },
             {
               "feature_name": "AGEP",
               "drift_detected": true,
               "score": 0.008736414389240776,
-              "p_value": 1.2572743205594896e-06,
+              "p_value": 1.2572743205594858e-06,
               "severity": "critical"
             },
             {
               "feature_name": "POBP",
               "drift_detected": true,
               "score": 0.007681587308025817,
-              "p_value": 3.208669647728213e-05,
+              "p_value": 3.208669647728144e-05,
               "severity": "critical"
             },
             {
@@ -1350,7 +1350,7 @@
           }
         },
         "rca": null,
-        "execution_time_seconds": 4.988791465759277,
+        "execution_time_seconds": 17.258472204208374,
         "metadata": {
           "detector": "mmd",
           "localizer": "univariate",
@@ -1374,8 +1374,8 @@
             "n_bins": 10,
             "n_valid_bins": 5,
             "ref_mean_confidence": 0.739645864706618,
-            "test_mean_confidence": 0.7908527349800647,
-            "confidence_shift": 0.051206870273446725,
+            "test_mean_confidence": 0.7908527349800646,
+            "confidence_shift": 0.051206870273446614,
             "interpretation": "Confidence distribution has shifted, suggesting performance change"
           }
         },
@@ -1408,56 +1408,56 @@
               "feature_name": "RAC1P",
               "drift_detected": true,
               "score": 0.015997074266787092,
-              "p_value": 3.243313427491555e-21,
+              "p_value": 3.243313427491609e-21,
               "severity": "critical"
             },
             {
               "feature_name": "SCHL",
               "drift_detected": true,
               "score": 0.013986551381426682,
-              "p_value": 2.5592539646691076e-16,
+              "p_value": 2.559253964669108e-16,
               "severity": "critical"
             },
             {
               "feature_name": "WKHP",
               "drift_detected": true,
               "score": 0.011114333418701217,
-              "p_value": 1.8399059748149639e-10,
+              "p_value": 1.8399059748150155e-10,
               "severity": "critical"
             },
             {
               "feature_name": "MAR",
               "drift_detected": true,
               "score": 0.01101460436876378,
-              "p_value": 2.7801887997459047e-10,
+              "p_value": 2.7801887997458846e-10,
               "severity": "critical"
             },
             {
               "feature_name": "OCCP",
               "drift_detected": true,
               "score": 0.010788333703159014,
-              "p_value": 6.995833545330279e-10,
+              "p_value": 6.995833545330286e-10,
               "severity": "critical"
             },
             {
               "feature_name": "RELP",
               "drift_detected": true,
               "score": 0.01059028370827042,
-              "p_value": 1.5445234573328563e-09,
+              "p_value": 1.5445234573328583e-09,
               "severity": "critical"
             },
             {
               "feature_name": "AGEP",
               "drift_detected": true,
               "score": 0.008736414389240776,
-              "p_value": 1.2572743205594896e-06,
+              "p_value": 1.2572743205594858e-06,
               "severity": "critical"
             },
             {
               "feature_name": "POBP",
               "drift_detected": true,
               "score": 0.007681587308025817,
-              "p_value": 3.208669647728213e-05,
+              "p_value": 3.208669647728144e-05,
               "severity": "critical"
             },
             {
@@ -1484,7 +1484,7 @@
           }
         },
         "rca": null,
-        "execution_time_seconds": 0.5238420963287354,
+        "execution_time_seconds": 1.6380627155303955,
         "metadata": {
           "detector": "cbpe",
           "localizer": "univariate",
@@ -1507,14 +1507,14 @@
           "severity": "critical",
           "score": 0.02296391353497429,
           "threshold": 0.005,
-          "p_value": 1.4397223039090878e-43,
+          "p_value": 1.4397223039090828e-43,
           "statistic": 0.02296391353497429,
           "metadata": {
             "n_features_tested": 10,
             "feature_results": {
               "AGEP": {
                 "statistic": 0.011101631631287523,
-                "p_value": 1.6492171818352533e-10
+                "p_value": 1.649217181835216e-10
               },
               "COW": {
                 "statistic": 0.0034840647463495467,
@@ -1522,27 +1522,27 @@
               },
               "SCHL": {
                 "statistic": 0.022166717012313875,
-                "p_value": 1.264158311835073e-40
+                "p_value": 1.2641583118350766e-40
               },
               "MAR": {
                 "statistic": 0.014259665221350248,
-                "p_value": 4.626024346173097e-17
+                "p_value": 4.626024346173127e-17
               },
               "OCCP": {
                 "statistic": 0.01683542702474028,
-                "p_value": 1.2969770463130717e-23
+                "p_value": 1.2969770463130742e-23
               },
               "POBP": {
                 "statistic": 0.015107746937204625,
-                "p_value": 4.2434347253838763e-19
+                "p_value": 4.243434725383903e-19
               },
               "RELP": {
                 "statistic": 0.013323453000038232,
-                "p_value": 5.994658884880994e-15
+                "p_value": 5.994658884880905e-15
               },
               "WKHP": {
                 "statistic": 0.01501745108099456,
-                "p_value": 7.0835121315368785e-19
+                "p_value": 7.083512131536864e-19
               },
               "SEX": {
                 "statistic": 0.0019190569616703845,
@@ -1550,7 +1550,7 @@
               },
               "RAC1P": {
                 "statistic": 0.02296391353497429,
-                "p_value": 1.4397223039090878e-43
+                "p_value": 1.4397223039090828e-43
               }
             },
             "correction": "bonferroni",
@@ -1586,56 +1586,56 @@
               "feature_name": "RAC1P",
               "drift_detected": true,
               "score": 0.02296391353497429,
-              "p_value": 1.4397223039090878e-43,
+              "p_value": 1.4397223039090828e-43,
               "severity": "critical"
             },
             {
               "feature_name": "SCHL",
               "drift_detected": true,
               "score": 0.022166717012313875,
-              "p_value": 1.264158311835073e-40,
+              "p_value": 1.2641583118350766e-40,
               "severity": "critical"
             },
             {
               "feature_name": "OCCP",
               "drift_detected": true,
               "score": 0.01683542702474028,
-              "p_value": 1.2969770463130717e-23,
+              "p_value": 1.2969770463130742e-23,
               "severity": "critical"
             },
             {
               "feature_name": "POBP",
               "drift_detected": true,
               "score": 0.015107746937204625,
-              "p_value": 4.2434347253838763e-19,
+              "p_value": 4.243434725383903e-19,
               "severity": "critical"
             },
             {
               "feature_name": "WKHP",
               "drift_detected": true,
               "score": 0.01501745108099456,
-              "p_value": 7.0835121315368785e-19,
+              "p_value": 7.083512131536864e-19,
               "severity": "critical"
             },
             {
               "feature_name": "MAR",
               "drift_detected": true,
               "score": 0.014259665221350248,
-              "p_value": 4.626024346173097e-17,
+              "p_value": 4.626024346173127e-17,
               "severity": "critical"
             },
             {
               "feature_name": "RELP",
               "drift_detected": true,
               "score": 0.013323453000038232,
-              "p_value": 5.994658884880994e-15,
+              "p_value": 5.994658884880905e-15,
               "severity": "critical"
             },
             {
               "feature_name": "AGEP",
               "drift_detected": true,
               "score": 0.011101631631287523,
-              "p_value": 1.6492171818352533e-10,
+              "p_value": 1.649217181835216e-10,
               "severity": "critical"
             },
             {
@@ -1670,124 +1670,123 @@
             "top_importance_changes": [
               [
                 "OCCP",
-                0.01874587301587298
-              ],
-              [
-                "POBP",
-                0.002948849206349205
-              ],
-              [
-                "AGEP",
-                0.0017506349206349156
-              ],
-              [
-                "SCHL",
-                0.0007946825396825332
+                0.04873273809523798
               ],
               [
                 "WKHP",
-                0.0006984523809523812
+                0.0029558730158730047
+              ],
+              [
+                "POBP",
+                0.0007919047619047385
+              ],
+              [
+                "AGEP",
+                0.00033678571428571655
+              ],
+              [
+                "SCHL",
+                0.00024246031746031824
               ],
               [
                 "RELP",
-                0.0004935317460317455
+                9.666666666666688e-05
               ],
               [
                 "MAR",
-                6.170634920635049e-05
+                7.015873015872863e-05
               ],
               [
                 "RAC1P",
-                -9.682539682539509e-06
-              ],
-              [
-                "SEX",
-                1.714285714285715e-05
+                1.071428571428576e-05
               ],
               [
                 "COW",
-                1.000000000000002e-05
+                2.9801587301585814e-05
+              ],
+              [
+                "SEX",
+                -4.642857142857119e-06
               ]
             ]
           },
           "feature_importances": {
-            "AGEP": 0.0017506349206349156,
-            "COW": 1.000000000000002e-05,
-            "SCHL": 0.0007946825396825332,
-            "MAR": 6.170634920635049e-05,
-            "OCCP": 0.01874587301587298,
-            "POBP": 0.002948849206349205,
-            "RELP": 0.0004935317460317455,
-            "WKHP": 0.0006984523809523812,
-            "SEX": 1.714285714285715e-05,
-            "RAC1P": -9.682539682539509e-06
+            "AGEP": 0.00033678571428571655,
+            "COW": 2.9801587301585814e-05,
+            "SCHL": 0.00024246031746031824,
+            "MAR": 7.015873015872863e-05,
+            "OCCP": 0.04873273809523798,
+            "POBP": 0.0007919047619047385,
+            "RELP": 9.666666666666688e-05,
+            "WKHP": 0.0029558730158730047,
+            "SEX": -4.642857142857119e-06,
+            "RAC1P": 1.071428571428576e-05
           },
           "distribution_changes": {
             "AGEP": {
-              "ref_importance": 0.002272063492063504,
-              "test_importance": 0.00402269841269842,
-              "change": 0.0017506349206349156,
-              "relative_change": 0.7705043673733518
+              "ref_importance": 0.006230317460317466,
+              "test_importance": 0.006567103174603183,
+              "change": 0.00033678571428571655,
+              "relative_change": 0.05405594675154177
             },
             "COW": {
-              "ref_importance": 2.6507936507936713e-05,
-              "test_importance": 3.650793650793673e-05,
-              "change": 1.000000000000002e-05,
-              "relative_change": 0.377244085845662
+              "ref_importance": 2.6746031746033354e-05,
+              "test_importance": 5.654761904761917e-05,
+              "change": 2.9801587301585814e-05,
+              "relative_change": 1.1142391574439772
             },
             "SCHL": {
-              "ref_importance": 0.00116952380952381,
-              "test_importance": 0.001964206349206343,
-              "change": 0.0007946825396825332,
-              "relative_change": 0.6794923414657684
+              "ref_importance": 0.0007060317460317447,
+              "test_importance": 0.000948492063492063,
+              "change": 0.00024246031746031824,
+              "relative_change": 0.343412721144333
             },
             "MAR": {
-              "ref_importance": 0.00013642857142857174,
-              "test_importance": 0.00019813492063492223,
-              "change": 6.170634920635049e-05,
-              "relative_change": 0.45229751605883894
+              "ref_importance": 5.3809523809523716e-05,
+              "test_importance": 0.00012396825396825234,
+              "change": 7.015873015872863e-05,
+              "relative_change": 1.3038323852082256
             },
             "OCCP": {
-              "ref_importance": 0.06630523809523785,
-              "test_importance": 0.08505111111111083,
-              "change": 0.01874587301587298,
-              "relative_change": 0.28272084568454714
+              "ref_importance": 0.020973253968253922,
+              "test_importance": 0.0697059920634919,
+              "change": 0.04873273809523798,
+              "relative_change": 2.323565906208235
             },
             "POBP": {
-              "ref_importance": 0.017112777777777772,
-              "test_importance": 0.020061626984126977,
-              "change": 0.002948849206349205,
-              "relative_change": 0.17231855794601922
+              "ref_importance": 0.014030396825396849,
+              "test_importance": 0.014822301587301587,
+              "change": 0.0007919047619047385,
+              "relative_change": 0.05644207830437695
             },
             "RELP": {
-              "ref_importance": 0.0001383333333333333,
-              "test_importance": 0.0006318650793650788,
-              "change": 0.0004935317460317455,
-              "relative_change": 3.567696789846264
+              "ref_importance": 0.0001396031746031746,
+              "test_importance": 0.0002362698412698415,
+              "change": 9.666666666666688e-05,
+              "relative_change": 0.6924383897257712
             },
             "WKHP": {
-              "ref_importance": 0.003484285714285716,
-              "test_importance": 0.004182738095238097,
-              "change": 0.0006984523809523812,
-              "relative_change": 0.20045783215851512
+              "ref_importance": 0.0025384126984126978,
+              "test_importance": 0.005494285714285702,
+              "change": 0.0029558730158730047,
+              "relative_change": 1.1644571827408647
             },
             "SEX": {
-              "ref_importance": 2.920634920634917e-05,
-              "test_importance": 4.634920634920632e-05,
-              "change": 1.714285714285715e-05,
-              "relative_change": 0.5869545120579216
+              "ref_importance": 5.841269841269837e-05,
+              "test_importance": 5.376984126984125e-05,
+              "change": -4.642857142857119e-06,
+              "relative_change": -0.07948355957977538
             },
             "RAC1P": {
-              "ref_importance": 6.396825396825387e-05,
-              "test_importance": 5.4285714285714356e-05,
-              "change": -9.682539682539509e-06,
-              "relative_change": -0.15136452764353994
+              "ref_importance": 3.6507936507936576e-05,
+              "test_importance": 4.7222222222222336e-05,
+              "change": 1.071428571428576e-05,
+              "relative_change": 0.29347745699653155
             }
           },
           "recommendations": [
-            "Features with increased model reliance: OCCP, POBP, AGEP",
-            "Features with decreased model reliance: RAC1P",
-            "Features both drifted and importance-shifted: WKHP, SCHL, POBP, OCCP, AGEP - likely root causes"
+            "Features with increased model reliance: OCCP, WKHP, POBP",
+            "Features both drifted and importance-shifted: OCCP, WKHP, AGEP, POBP, SCHL - likely root causes"
           ],
           "metadata": {
             "n_features_analyzed": 10,
@@ -1804,7 +1803,7 @@
             ]
           }
         },
-        "execution_time_seconds": 1.7583768367767334,
+        "execution_time_seconds": 3.630399465560913,
         "metadata": {
           "detector": "ks_test",
           "localizer": "univariate",
@@ -1899,56 +1898,56 @@
               "feature_name": "RAC1P",
               "drift_detected": true,
               "score": 0.02296391353497429,
-              "p_value": 1.4397223039090878e-43,
+              "p_value": 1.4397223039090828e-43,
               "severity": "critical"
             },
             {
               "feature_name": "SCHL",
               "drift_detected": true,
               "score": 0.022166717012313875,
-              "p_value": 1.264158311835073e-40,
+              "p_value": 1.2641583118350766e-40,
               "severity": "critical"
             },
             {
               "feature_name": "OCCP",
               "drift_detected": true,
               "score": 0.01683542702474028,
-              "p_value": 1.2969770463130717e-23,
+              "p_value": 1.2969770463130742e-23,
               "severity": "critical"
             },
             {
               "feature_name": "POBP",
               "drift_detected": true,
               "score": 0.015107746937204625,
-              "p_value": 4.2434347253838763e-19,
+              "p_value": 4.243434725383903e-19,
               "severity": "critical"
             },
             {
               "feature_name": "WKHP",
               "drift_detected": true,
               "score": 0.01501745108099456,
-              "p_value": 7.0835121315368785e-19,
+              "p_value": 7.083512131536864e-19,
               "severity": "critical"
             },
             {
               "feature_name": "MAR",
               "drift_detected": true,
               "score": 0.014259665221350248,
-              "p_value": 4.626024346173097e-17,
+              "p_value": 4.626024346173127e-17,
               "severity": "critical"
             },
             {
               "feature_name": "RELP",
               "drift_detected": true,
               "score": 0.013323453000038232,
-              "p_value": 5.994658884880994e-15,
+              "p_value": 5.994658884880905e-15,
               "severity": "critical"
             },
             {
               "feature_name": "AGEP",
               "drift_detected": true,
               "score": 0.011101631631287523,
-              "p_value": 1.6492171818352533e-10,
+              "p_value": 1.649217181835216e-10,
               "severity": "critical"
             },
             {
@@ -1975,7 +1974,7 @@
           }
         },
         "rca": null,
-        "execution_time_seconds": 0.6385674476623535,
+        "execution_time_seconds": 1.4542629718780518,
         "metadata": {
           "detector": "psi",
           "localizer": "univariate",
@@ -2033,56 +2032,56 @@
               "feature_name": "RAC1P",
               "drift_detected": true,
               "score": 0.02296391353497429,
-              "p_value": 1.4397223039090878e-43,
+              "p_value": 1.4397223039090828e-43,
               "severity": "critical"
             },
             {
               "feature_name": "SCHL",
               "drift_detected": true,
               "score": 0.022166717012313875,
-              "p_value": 1.264158311835073e-40,
+              "p_value": 1.2641583118350766e-40,
               "severity": "critical"
             },
             {
               "feature_name": "OCCP",
               "drift_detected": true,
               "score": 0.01683542702474028,
-              "p_value": 1.2969770463130717e-23,
+              "p_value": 1.2969770463130742e-23,
               "severity": "critical"
             },
             {
               "feature_name": "POBP",
               "drift_detected": true,
               "score": 0.015107746937204625,
-              "p_value": 4.2434347253838763e-19,
+              "p_value": 4.243434725383903e-19,
               "severity": "critical"
             },
             {
               "feature_name": "WKHP",
               "drift_detected": true,
               "score": 0.01501745108099456,
-              "p_value": 7.0835121315368785e-19,
+              "p_value": 7.083512131536864e-19,
               "severity": "critical"
             },
             {
               "feature_name": "MAR",
               "drift_detected": true,
               "score": 0.014259665221350248,
-              "p_value": 4.626024346173097e-17,
+              "p_value": 4.626024346173127e-17,
               "severity": "critical"
             },
             {
               "feature_name": "RELP",
               "drift_detected": true,
               "score": 0.013323453000038232,
-              "p_value": 5.994658884880994e-15,
+              "p_value": 5.994658884880905e-15,
               "severity": "critical"
             },
             {
               "feature_name": "AGEP",
               "drift_detected": true,
               "score": 0.011101631631287523,
-              "p_value": 1.6492171818352533e-10,
+              "p_value": 1.649217181835216e-10,
               "severity": "critical"
             },
             {
@@ -2109,7 +2108,7 @@
           }
         },
         "rca": null,
-        "execution_time_seconds": 4.92184591293335,
+        "execution_time_seconds": 12.211468696594238,
         "metadata": {
           "detector": "mmd",
           "localizer": "univariate",
@@ -2167,56 +2166,56 @@
               "feature_name": "RAC1P",
               "drift_detected": true,
               "score": 0.02296391353497429,
-              "p_value": 1.4397223039090878e-43,
+              "p_value": 1.4397223039090828e-43,
               "severity": "critical"
             },
             {
               "feature_name": "SCHL",
               "drift_detected": true,
               "score": 0.022166717012313875,
-              "p_value": 1.264158311835073e-40,
+              "p_value": 1.2641583118350766e-40,
               "severity": "critical"
             },
             {
               "feature_name": "OCCP",
               "drift_detected": true,
               "score": 0.01683542702474028,
-              "p_value": 1.2969770463130717e-23,
+              "p_value": 1.2969770463130742e-23,
               "severity": "critical"
             },
             {
               "feature_name": "POBP",
               "drift_detected": true,
               "score": 0.015107746937204625,
-              "p_value": 4.2434347253838763e-19,
+              "p_value": 4.243434725383903e-19,
               "severity": "critical"
             },
             {
               "feature_name": "WKHP",
               "drift_detected": true,
               "score": 0.01501745108099456,
-              "p_value": 7.0835121315368785e-19,
+              "p_value": 7.083512131536864e-19,
               "severity": "critical"
             },
             {
               "feature_name": "MAR",
               "drift_detected": true,
               "score": 0.014259665221350248,
-              "p_value": 4.626024346173097e-17,
+              "p_value": 4.626024346173127e-17,
               "severity": "critical"
             },
             {
               "feature_name": "RELP",
               "drift_detected": true,
               "score": 0.013323453000038232,
-              "p_value": 5.994658884880994e-15,
+              "p_value": 5.994658884880905e-15,
               "severity": "critical"
             },
             {
               "feature_name": "AGEP",
               "drift_detected": true,
               "score": 0.011101631631287523,
-              "p_value": 1.6492171818352533e-10,
+              "p_value": 1.649217181835216e-10,
               "severity": "critical"
             },
             {
@@ -2243,7 +2242,7 @@
           }
         },
         "rca": null,
-        "execution_time_seconds": 0.49851393699645996,
+        "execution_time_seconds": 1.1459460258483887,
         "metadata": {
           "detector": "cbpe",
           "localizer": "univariate",
@@ -2266,14 +2265,14 @@
           "severity": "critical",
           "score": 0.03689103488704987,
           "threshold": 0.005,
-          "p_value": 1.5140768173949474e-112,
+          "p_value": 1.5140768173949658e-112,
           "statistic": 0.03689103488704987,
           "metadata": {
             "n_features_tested": 10,
             "feature_results": {
               "AGEP": {
                 "statistic": 0.016518203835161116,
-                "p_value": 6.685972339784102e-23
+                "p_value": 6.685972339784095e-23
               },
               "COW": {
                 "statistic": 0.004223691732706758,
@@ -2281,27 +2280,27 @@
               },
               "SCHL": {
                 "statistic": 0.028760871072186944,
-                "p_value": 1.4452610614134264e-68
+                "p_value": 1.4452610614134237e-68
               },
               "MAR": {
                 "statistic": 0.01930009582265435,
-                "p_value": 4.144301806408453e-31
+                "p_value": 4.1443018064084075e-31
               },
               "OCCP": {
                 "statistic": 0.03689103488704987,
-                "p_value": 1.5140768173949474e-112
+                "p_value": 1.5140768173949658e-112
               },
               "POBP": {
                 "statistic": 0.02084784279131774,
-                "p_value": 3.153926056831634e-36
+                "p_value": 3.153926056831564e-36
               },
               "RELP": {
                 "statistic": 0.0179265718846926,
-                "p_value": 6.749588065812528e-27
+                "p_value": 6.74958806581266e-27
               },
               "WKHP": {
                 "statistic": 0.016693997794411997,
-                "p_value": 2.2092484991033443e-23
+                "p_value": 2.2092484991033884e-23
               },
               "SEX": {
                 "statistic": 0.0054053463325270945,
@@ -2309,7 +2308,7 @@
               },
               "RAC1P": {
                 "statistic": 0.02089937282642751,
-                "p_value": 2.09722289073885e-36
+                "p_value": 2.0972228907388484e-36
               }
             },
             "correction": "bonferroni",
@@ -2345,56 +2344,56 @@
               "feature_name": "OCCP",
               "drift_detected": true,
               "score": 0.03689103488704987,
-              "p_value": 1.5140768173949474e-112,
+              "p_value": 1.5140768173949658e-112,
               "severity": "critical"
             },
             {
               "feature_name": "SCHL",
               "drift_detected": true,
               "score": 0.028760871072186944,
-              "p_value": 1.4452610614134264e-68,
+              "p_value": 1.4452610614134237e-68,
               "severity": "critical"
             },
             {
               "feature_name": "RAC1P",
               "drift_detected": true,
               "score": 0.02089937282642751,
-              "p_value": 2.09722289073885e-36,
+              "p_value": 2.0972228907388484e-36,
               "severity": "critical"
             },
             {
               "feature_name": "POBP",
               "drift_detected": true,
               "score": 0.02084784279131774,
-              "p_value": 3.153926056831634e-36,
+              "p_value": 3.153926056831564e-36,
               "severity": "critical"
             },
             {
               "feature_name": "MAR",
               "drift_detected": true,
               "score": 0.01930009582265435,
-              "p_value": 4.144301806408453e-31,
+              "p_value": 4.1443018064084075e-31,
               "severity": "critical"
             },
             {
               "feature_name": "RELP",
               "drift_detected": true,
               "score": 0.0179265718846926,
-              "p_value": 6.749588065812528e-27,
+              "p_value": 6.74958806581266e-27,
               "severity": "critical"
             },
             {
               "feature_name": "WKHP",
               "drift_detected": true,
               "score": 0.016693997794411997,
-              "p_value": 2.2092484991033443e-23,
+              "p_value": 2.2092484991033884e-23,
               "severity": "critical"
             },
             {
               "feature_name": "AGEP",
               "drift_detected": true,
               "score": 0.016518203835161116,
-              "p_value": 6.685972339784102e-23,
+              "p_value": 6.685972339784095e-23,
               "severity": "critical"
             },
             {
@@ -2429,124 +2428,124 @@
             "top_importance_changes": [
               [
                 "OCCP",
-                0.06163492063492041
-              ],
-              [
-                "POBP",
-                0.010271309523809507
+                0.008585039682539583
               ],
               [
                 "WKHP",
-                0.005569880952380943
+                0.0013814285714285656
               ],
               [
-                "AGEP",
-                0.0014149206349206474
-              ],
-              [
-                "MAR",
-                -0.0005495634920634928
-              ],
-              [
-                "RELP",
-                0.0004156746031746028
-              ],
-              [
-                "RAC1P",
-                -1.1190476190476299e-05
+                "POBP",
+                0.001064880952380944
               ],
               [
                 "SCHL",
-                5.595238095236401e-06
+                0.0009678571428571423
+              ],
+              [
+                "AGEP",
+                0.0006009523809523964
+              ],
+              [
+                "RAC1P",
+                -5.3571428571428786e-05
+              ],
+              [
+                "RELP",
+                5.1785714285714065e-05
+              ],
+              [
+                "MAR",
+                -3.4444444444443174e-05
               ],
               [
                 "COW",
-                2.976190476190365e-05
+                2.309523809523969e-05
               ],
               [
                 "SEX",
-                -7.341269841269727e-06
+                -6.785714285714096e-06
               ]
             ]
           },
           "feature_importances": {
-            "AGEP": 0.0014149206349206474,
-            "COW": 2.976190476190365e-05,
-            "SCHL": 5.595238095236401e-06,
-            "MAR": -0.0005495634920634928,
-            "OCCP": 0.06163492063492041,
-            "POBP": 0.010271309523809507,
-            "RELP": 0.0004156746031746028,
-            "WKHP": 0.005569880952380943,
-            "SEX": -7.341269841269727e-06,
-            "RAC1P": -1.1190476190476299e-05
+            "AGEP": 0.0006009523809523964,
+            "COW": 2.309523809523969e-05,
+            "SCHL": 0.0009678571428571423,
+            "MAR": -3.4444444444443174e-05,
+            "OCCP": 0.008585039682539583,
+            "POBP": 0.001064880952380944,
+            "RELP": 5.1785714285714065e-05,
+            "WKHP": 0.0013814285714285656,
+            "SEX": -6.785714285714096e-06,
+            "RAC1P": -5.3571428571428786e-05
           },
           "distribution_changes": {
             "AGEP": {
-              "ref_importance": 0.006821031746031761,
-              "test_importance": 0.008235952380952408,
-              "change": 0.0014149206349206474,
-              "relative_change": 0.20743498445089348
+              "ref_importance": 0.0042799206349206625,
+              "test_importance": 0.004880873015873059,
+              "change": 0.0006009523809523964,
+              "relative_change": 0.14041203521577286
             },
             "COW": {
-              "ref_importance": 5.4682539682540996e-05,
-              "test_importance": 8.444444444444465e-05,
-              "change": 2.976190476190365e-05,
-              "relative_change": 0.5442660583813402
+              "ref_importance": 2.3730158730159274e-05,
+              "test_importance": 4.682539682539896e-05,
+              "change": 2.309523809523969e-05,
+              "relative_change": 0.9732400458781124
             },
             "SCHL": {
-              "ref_importance": 0.0024589682539682546,
-              "test_importance": 0.002464563492063491,
-              "change": 5.595238095236401e-06,
-              "relative_change": 0.002275441278537347
+              "ref_importance": 0.00099690476190476,
+              "test_importance": 0.0019647619047619023,
+              "change": 0.0009678571428571423,
+              "relative_change": 0.9708620951129509
             },
             "MAR": {
-              "ref_importance": 0.0014092063492063486,
-              "test_importance": 0.0008596428571428558,
-              "change": -0.0005495634920634928,
-              "relative_change": -0.38998082386934974
+              "ref_importance": 0.0007610317460317451,
+              "test_importance": 0.0007265873015873019,
+              "change": -3.4444444444443174e-05,
+              "relative_change": -0.04526018802504407
             },
             "OCCP": {
-              "ref_importance": 0.01860428571428565,
-              "test_importance": 0.08023920634920606,
-              "change": 0.06163492063492041,
-              "relative_change": 3.312942041967173
+              "ref_importance": 0.05837539682539648,
+              "test_importance": 0.06696043650793607,
+              "change": 0.008585039682539583,
+              "relative_change": 0.14706606095563218
             },
             "POBP": {
-              "ref_importance": 0.005927857142857146,
-              "test_importance": 0.016199166666666653,
-              "change": 0.010271309523809507,
-              "relative_change": 1.7327187722319164
+              "ref_importance": 0.0079357142857143,
+              "test_importance": 0.009000595238095243,
+              "change": 0.001064880952380944,
+              "relative_change": 0.13418841715093974
             },
             "RELP": {
-              "ref_importance": 0.0006176984126984132,
-              "test_importance": 0.001033373015873016,
-              "change": 0.0004156746031746028,
-              "relative_change": 0.6729409163682946
+              "ref_importance": 0.0010515873015873017,
+              "test_importance": 0.0011033730158730157,
+              "change": 5.1785714285714065e-05,
+              "relative_change": 0.04924527833592049
             },
             "WKHP": {
-              "ref_importance": 0.005334206349206353,
-              "test_importance": 0.010904087301587297,
-              "change": 0.005569880952380943,
-              "relative_change": 1.04418173638736
+              "ref_importance": 0.005365793650793653,
+              "test_importance": 0.006747222222222219,
+              "change": 0.0013814285714285656,
+              "relative_change": 0.25745092629105226
             },
             "SEX": {
-              "ref_importance": 7.595238095238092e-05,
-              "test_importance": 6.86111111111112e-05,
-              "change": -7.341269841269727e-06,
-              "relative_change": -0.09665609008706907
+              "ref_importance": 9.468253968253976e-05,
+              "test_importance": 8.789682539682566e-05,
+              "change": -6.785714285714096e-06,
+              "relative_change": -0.07166798801201396
             },
             "RAC1P": {
-              "ref_importance": 7.269841269841273e-05,
-              "test_importance": 6.150793650793643e-05,
-              "change": -1.1190476190476299e-05,
-              "relative_change": -0.15392991926670638
+              "ref_importance": 0.00016817460317460327,
+              "test_importance": 0.00011460317460317449,
+              "change": -5.3571428571428786e-05,
+              "relative_change": -0.31854629477662616
             }
           },
           "recommendations": [
-            "Features with increased model reliance: OCCP, POBP, WKHP",
-            "Features with decreased model reliance: MAR, RAC1P",
-            "Features both drifted and importance-shifted: WKHP, POBP, MAR, OCCP, AGEP - likely root causes"
+            "Features with increased model reliance: OCCP, WKHP, POBP",
+            "Features with decreased model reliance: RAC1P, MAR",
+            "Features both drifted and importance-shifted: OCCP, WKHP, AGEP, POBP, SCHL - likely root causes"
           ],
           "metadata": {
             "n_features_analyzed": 10,
@@ -2563,7 +2562,7 @@
             ]
           }
         },
-        "execution_time_seconds": 1.6592609882354736,
+        "execution_time_seconds": 4.130194664001465,
         "metadata": {
           "detector": "ks_test",
           "localizer": "univariate",
@@ -2658,56 +2657,56 @@
               "feature_name": "OCCP",
               "drift_detected": true,
               "score": 0.03689103488704987,
-              "p_value": 1.5140768173949474e-112,
+              "p_value": 1.5140768173949658e-112,
               "severity": "critical"
             },
             {
               "feature_name": "SCHL",
               "drift_detected": true,
               "score": 0.028760871072186944,
-              "p_value": 1.4452610614134264e-68,
+              "p_value": 1.4452610614134237e-68,
               "severity": "critical"
             },
             {
               "feature_name": "RAC1P",
               "drift_detected": true,
               "score": 0.02089937282642751,
-              "p_value": 2.09722289073885e-36,
+              "p_value": 2.0972228907388484e-36,
               "severity": "critical"
             },
             {
               "feature_name": "POBP",
               "drift_detected": true,
               "score": 0.02084784279131774,
-              "p_value": 3.153926056831634e-36,
+              "p_value": 3.153926056831564e-36,
               "severity": "critical"
             },
             {
               "feature_name": "MAR",
               "drift_detected": true,
               "score": 0.01930009582265435,
-              "p_value": 4.144301806408453e-31,
+              "p_value": 4.1443018064084075e-31,
               "severity": "critical"
             },
             {
               "feature_name": "RELP",
               "drift_detected": true,
               "score": 0.0179265718846926,
-              "p_value": 6.749588065812528e-27,
+              "p_value": 6.74958806581266e-27,
               "severity": "critical"
             },
             {
               "feature_name": "WKHP",
               "drift_detected": true,
               "score": 0.016693997794411997,
-              "p_value": 2.2092484991033443e-23,
+              "p_value": 2.2092484991033884e-23,
               "severity": "critical"
             },
             {
               "feature_name": "AGEP",
               "drift_detected": true,
               "score": 0.016518203835161116,
-              "p_value": 6.685972339784102e-23,
+              "p_value": 6.685972339784095e-23,
               "severity": "critical"
             },
             {
@@ -2734,7 +2733,7 @@
           }
         },
         "rca": null,
-        "execution_time_seconds": 0.6516938209533691,
+        "execution_time_seconds": 1.6257579326629639,
         "metadata": {
           "detector": "psi",
           "localizer": "univariate",
@@ -2751,7 +2750,7 @@
           "severity": "none",
           "score": 0.027606548832468433,
           "threshold": 0.1,
-          "p_value": 0.14285714285714285,
+          "p_value": 0.09523809523809523,
           "statistic": 0.027606548832468433,
           "metadata": {
             "kernel": "rbf",
@@ -2792,56 +2791,56 @@
               "feature_name": "OCCP",
               "drift_detected": true,
               "score": 0.03689103488704987,
-              "p_value": 1.5140768173949474e-112,
+              "p_value": 1.5140768173949658e-112,
               "severity": "critical"
             },
             {
               "feature_name": "SCHL",
               "drift_detected": true,
               "score": 0.028760871072186944,
-              "p_value": 1.4452610614134264e-68,
+              "p_value": 1.4452610614134237e-68,
               "severity": "critical"
             },
             {
               "feature_name": "RAC1P",
               "drift_detected": true,
               "score": 0.02089937282642751,
-              "p_value": 2.09722289073885e-36,
+              "p_value": 2.0972228907388484e-36,
               "severity": "critical"
             },
             {
               "feature_name": "POBP",
               "drift_detected": true,
               "score": 0.02084784279131774,
-              "p_value": 3.153926056831634e-36,
+              "p_value": 3.153926056831564e-36,
               "severity": "critical"
             },
             {
               "feature_name": "MAR",
               "drift_detected": true,
               "score": 0.01930009582265435,
-              "p_value": 4.144301806408453e-31,
+              "p_value": 4.1443018064084075e-31,
               "severity": "critical"
             },
             {
               "feature_name": "RELP",
               "drift_detected": true,
               "score": 0.0179265718846926,
-              "p_value": 6.749588065812528e-27,
+              "p_value": 6.74958806581266e-27,
               "severity": "critical"
             },
             {
               "feature_name": "WKHP",
               "drift_detected": true,
               "score": 0.016693997794411997,
-              "p_value": 2.2092484991033443e-23,
+              "p_value": 2.2092484991033884e-23,
               "severity": "critical"
             },
             {
               "feature_name": "AGEP",
               "drift_detected": true,
               "score": 0.016518203835161116,
-              "p_value": 6.685972339784102e-23,
+              "p_value": 6.685972339784095e-23,
               "severity": "critical"
             },
             {
@@ -2868,7 +2867,7 @@
           }
         },
         "rca": null,
-        "execution_time_seconds": 4.818681478500366,
+        "execution_time_seconds": 12.111634254455566,
         "metadata": {
           "detector": "mmd",
           "localizer": "univariate",
@@ -2926,56 +2925,56 @@
               "feature_name": "OCCP",
               "drift_detected": true,
               "score": 0.03689103488704987,
-              "p_value": 1.5140768173949474e-112,
+              "p_value": 1.5140768173949658e-112,
               "severity": "critical"
             },
             {
               "feature_name": "SCHL",
               "drift_detected": true,
               "score": 0.028760871072186944,
-              "p_value": 1.4452610614134264e-68,
+              "p_value": 1.4452610614134237e-68,
               "severity": "critical"
             },
             {
               "feature_name": "RAC1P",
               "drift_detected": true,
               "score": 0.02089937282642751,
-              "p_value": 2.09722289073885e-36,
+              "p_value": 2.0972228907388484e-36,
               "severity": "critical"
             },
             {
               "feature_name": "POBP",
               "drift_detected": true,
               "score": 0.02084784279131774,
-              "p_value": 3.153926056831634e-36,
+              "p_value": 3.153926056831564e-36,
               "severity": "critical"
             },
             {
               "feature_name": "MAR",
               "drift_detected": true,
               "score": 0.01930009582265435,
-              "p_value": 4.144301806408453e-31,
+              "p_value": 4.1443018064084075e-31,
               "severity": "critical"
             },
             {
               "feature_name": "RELP",
               "drift_detected": true,
               "score": 0.0179265718846926,
-              "p_value": 6.749588065812528e-27,
+              "p_value": 6.74958806581266e-27,
               "severity": "critical"
             },
             {
               "feature_name": "WKHP",
               "drift_detected": true,
               "score": 0.016693997794411997,
-              "p_value": 2.2092484991033443e-23,
+              "p_value": 2.2092484991033884e-23,
               "severity": "critical"
             },
             {
               "feature_name": "AGEP",
               "drift_detected": true,
               "score": 0.016518203835161116,
-              "p_value": 6.685972339784102e-23,
+              "p_value": 6.685972339784095e-23,
               "severity": "critical"
             },
             {
@@ -3002,7 +3001,7 @@
           }
         },
         "rca": null,
-        "execution_time_seconds": 0.5274052619934082,
+        "execution_time_seconds": 1.2527916431427002,
         "metadata": {
           "detector": "cbpe",
           "localizer": "univariate",
