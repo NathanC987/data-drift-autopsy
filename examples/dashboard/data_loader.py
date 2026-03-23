@@ -363,3 +363,86 @@ class DriftResultsLoader:
             return pd.DataFrame(columns=["year", "feature", "ref_importance", "test_importance", "change", "abs_change"])
         
         return pd.DataFrame(importance_data)
+
+    def get_slice_analysis_results(self) -> pd.DataFrame:
+        """
+        Get flattened slice analysis results from pipeline metadata.
+
+        Returns:
+            DataFrame with columns:
+                analysis_key, analysis_type, detector, slice_key, slice_key_label,
+                reference_slice, test_slice, reference_slice_label, test_slice_label,
+                drift_detected, severity, score,
+                reference_samples, test_samples
+        """
+        if self.raw_data is None:
+            self.load()
+
+        rows = []
+        yearly_data = self.raw_data.get("yearly_results", self.raw_data)
+
+        for analysis_key, analysis_payload in yearly_data.items():
+            # Skip non-dict payloads
+            if not isinstance(analysis_payload, dict):
+                continue
+
+            analysis_type = analysis_payload.get("analysis_type", "temporal")
+            pipelines = analysis_payload.get("pipelines", {})
+            slice_value_labels = analysis_payload.get("slice_value_labels", {})
+
+            for pipeline_name, pipeline_data in pipelines.items():
+                metadata = pipeline_data.get("metadata", {})
+                slice_analysis = metadata.get("slice_analysis", {})
+                if not slice_analysis.get("enabled"):
+                    continue
+
+                detector_name = pipeline_data.get("detection", {}).get("detector_name", pipeline_name)
+                slices = slice_analysis.get("slices", {})
+
+                for slice_key, slice_payload in slices.items():
+                    slice_result = slice_payload.get("result", {})
+                    detection = slice_result.get("detection", {})
+                    reference_slice = slice_payload.get("reference_slice_value")
+                    test_slice = slice_payload.get("test_slice_value")
+                    reference_slice_label = slice_value_labels.get(str(reference_slice), str(reference_slice))
+                    test_slice_label = slice_value_labels.get(str(test_slice), str(test_slice))
+                    slice_key_label = f"{reference_slice_label}->{test_slice_label}"
+
+                    rows.append({
+                        "analysis_key": analysis_key,
+                        "analysis_type": analysis_type,
+                        "detector": detector_name.replace("_", " ").title(),
+                        "slice_key": slice_key,
+                        "slice_key_label": slice_key_label,
+                        "reference_slice": reference_slice,
+                        "test_slice": test_slice,
+                        "reference_slice_label": reference_slice_label,
+                        "test_slice_label": test_slice_label,
+                        "drift_detected": detection.get("drift_detected", False),
+                        "severity": detection.get("severity", "none"),
+                        "score": detection.get("score", 0.0),
+                        "reference_samples": slice_payload.get("reference_samples", 0),
+                        "test_samples": slice_payload.get("test_samples", 0),
+                    })
+
+        if not rows:
+            return pd.DataFrame(
+                columns=[
+                    "analysis_key",
+                    "analysis_type",
+                    "detector",
+                    "slice_key",
+                    "slice_key_label",
+                    "reference_slice",
+                    "test_slice",
+                    "reference_slice_label",
+                    "test_slice_label",
+                    "drift_detected",
+                    "severity",
+                    "score",
+                    "reference_samples",
+                    "test_samples",
+                ]
+            )
+
+        return pd.DataFrame(rows)

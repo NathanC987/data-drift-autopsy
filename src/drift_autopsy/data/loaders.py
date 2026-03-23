@@ -183,6 +183,8 @@ class FolktablesLoader:
         df = features.copy()
         df['target'] = label
         df['group'] = group
+        # Keep original ACS state code for true geographic slicing.
+        df['state'] = acs_data['ST'].reset_index(drop=True)
         
         logger.info(f"Loaded {len(df)} samples with {len(features.columns)} features")
         
@@ -190,5 +192,5 @@ class FolktablesLoader:
             df,
             target_col='target',
             feature_cols=list(features.columns),
-            metadata_cols=['group'],
+            metadata_cols=['group', 'state'],
         )

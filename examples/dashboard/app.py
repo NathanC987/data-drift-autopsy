@@ -150,6 +150,10 @@ def main():
     
     feature_df = loader.get_feature_drift_timeline()
     feature_df = feature_df[feature_df["year"].isin(selected_years)]
+
+    slice_df = loader.get_slice_analysis_results()
+    if not slice_df.empty:
+        slice_df = slice_df[slice_df["detector"].isin(detector_name_map.keys())]
     
     # Main visualizations
     st.header("📊 Drift Analysis")
@@ -244,6 +248,41 @@ def main():
     else:
         st.info("No drift detection data available")
     
+    st.markdown("---")
+
+    # Slice-level analysis (geographic/sub-slice)
+    st.header("🧩 Slice-Level Drift Analysis")
+    if not slice_df.empty:
+        col1, col2 = st.columns([2, 1])
+        slice_label_col = "slice_key_label" if "slice_key_label" in slice_df.columns else "slice_key"
+
+        with col1:
+            fig = viz.create_slice_drift_heatmap(slice_df, title="Slice Drift Score by Detector")
+            st.plotly_chart(fig, use_container_width=True)
+
+        with col2:
+            st.subheader("Slice Summary")
+            st.metric("Slices Evaluated", slice_df[slice_label_col].nunique())
+            st.metric("Slice Drift Events", int(slice_df["drift_detected"].sum()))
+            st.metric("Avg Slice Score", f"{slice_df['score'].mean():.4f}")
+
+        st.subheader("Slice-Level Details")
+        st.dataframe(
+            slice_df[[
+                "analysis_key",
+                "detector",
+                slice_label_col,
+                "drift_detected",
+                "severity",
+                "score",
+                "reference_samples",
+                "test_samples",
+            ]],
+            use_container_width=True,
+        )
+    else:
+        st.info("No slice analysis data available. Run a pipeline with slice_config enabled.")
+
     st.markdown("---")
     
     # Root Cause Analysis

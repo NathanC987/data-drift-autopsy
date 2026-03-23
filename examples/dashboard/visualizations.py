@@ -490,3 +490,47 @@ def create_feature_importance_heatmap(df: pd.DataFrame) -> go.Figure:
     )
     
     return fig
+
+
+def create_slice_drift_heatmap(df: pd.DataFrame, title: Optional[str] = None) -> go.Figure:
+    """
+    Create heatmap of slice-level drift scores by detector.
+
+    Args:
+        df: DataFrame with columns: detector, score, and either slice_key_label or slice_key
+        title: Optional custom title
+
+    Returns:
+        Plotly Figure
+    """
+    if df.empty:
+        return go.Figure()
+
+    slice_axis_col = "slice_key_label" if "slice_key_label" in df.columns else "slice_key"
+    pivot_df = df.pivot_table(
+        index=slice_axis_col,
+        columns="detector",
+        values="score",
+        aggfunc="mean",
+    )
+
+    fig = go.Figure(
+        data=go.Heatmap(
+            z=pivot_df.values,
+            x=pivot_df.columns,
+            y=pivot_df.index,
+            colorscale="YlOrRd",
+            colorbar=dict(title="Drift Score"),
+            hoverongaps=False,
+        )
+    )
+
+    fig.update_layout(
+        title=title or "Slice-Level Drift Scores",
+        xaxis_title="Detector",
+        yaxis_title="Slice",
+        height=max(350, len(pivot_df) * 28),
+        template="plotly_white",
+    )
+
+    return fig

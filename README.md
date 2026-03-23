@@ -82,6 +82,14 @@ mypy src/drift_autopsy
 - `data/`: Data loading and preprocessing
 - `config/`: Configuration management
 
+## Documentation Blueprint
+
+For developer-facing project blueprint documentation, see:
+
+- `docs/README.md`
+- `docs/01-end-goal/` (enterprise target state)
+- `docs/02-current-implementation/` (current as-built state and rationale)
+
 ## License
 
 MIT

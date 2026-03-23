@@ -34,6 +34,32 @@ class RCAConfig(BaseModel):
     params: Dict[str, Any] = Field(default_factory=dict, description="Analyzer parameters")
 
 
+class SliceConfig(BaseModel):
+    """Configuration for generic slice-based analysis."""
+
+    enabled: bool = Field(default=False, description="Enable slice-based drift analysis")
+    column: Optional[str] = Field(None, description="Metadata column name used for slicing")
+    reference_slice_value: Optional[str] = Field(
+        None,
+        description="Optional fixed reference slice value (for cross-slice comparisons)",
+    )
+    min_samples_per_slice: int = Field(
+        default=30,
+        ge=1,
+        description="Minimum required rows in both reference and test slice datasets",
+    )
+
+
+class FeatureGroupConfig(BaseModel):
+    """Placeholder configuration for future feature-group drift analysis."""
+
+    enabled: bool = Field(default=False, description="Enable feature-group analysis")
+    groups: Dict[str, List[str]] = Field(
+        default_factory=dict,
+        description="Mapping from group name to feature list",
+    )
+
+
 class DataConfig(BaseModel):
     """Configuration for data loading."""
     
@@ -52,6 +78,11 @@ class PipelineConfig(BaseModel):
     detector: DetectorConfig = Field(..., description="Detector configuration")
     localizer: Optional[LocalizerConfig] = Field(None, description="Localizer configuration")
     rca: Optional[RCAConfig] = Field(None, description="RCA configuration")
+    slice_analysis: Optional[SliceConfig] = Field(None, description="Optional slice analysis configuration")
+    feature_groups: Optional[FeatureGroupConfig] = Field(
+        None,
+        description="Optional feature-group analysis placeholders",
+    )
     data: Optional[DataConfig] = Field(None, description="Data configuration")
     enable_localization: bool = Field(default=True, description="Enable drift localization")
     enable_rca: bool = Field(default=False, description="Enable root cause analysis")
