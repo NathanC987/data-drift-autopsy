@@ -215,3 +215,15 @@ For issues or questions:
 1. Check `outputs/` for error logs
 2. Review the SHAP analyzer code: `src/drift_autopsy/rca/shap_analyzer.py`
 3. Check dashboard data loading: `examples/dashboard/data_loader.py`
+
+## 📚 Blueprint Docs
+
+For complete developer blueprint references (end-goal + current implementation), see:
+
+- `docs/README.md`
+- `docs/01-end-goal/`
+- `docs/02-current-implementation/`
+
+When code changes, update the current-implementation docs using:
+
+- `docs/02-current-implementation/UPDATE_PROTOCOL.md`
