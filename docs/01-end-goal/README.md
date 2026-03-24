@@ -26,7 +26,7 @@ For current code reality, use `../02-current-implementation/`.
 - `PRODUCT_VISION.md`: Mission, users, product boundaries
 - `TARGET_ARCHITECTURE.md`: Long-term architecture (SDK + self-hosted + optional SaaS control plane)
 - `ENTERPRISE_REQUIREMENTS.md`: Security, compliance, reliability, auditability, and scale
-- `ROADMAP.md`: Intentionally blank until milestone plan is finalized
+- `ROADMAP.md`: Approved phased plan (Phase 1 completed baseline, Phase 2 image embedding expansion)
 - `THRESHOLD_CALIBRATION_STRATEGY.md`: Future adaptive thresholding strategy across methods
 
 ## Stability Rule

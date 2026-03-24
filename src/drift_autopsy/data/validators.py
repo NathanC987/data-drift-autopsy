@@ -138,3 +138,124 @@ class DataValidator:
                 )
         
         logger.info("Dataset compatibility check passed")
+
+    @staticmethod
+    def validate_embedding_contract(
+        df: pd.DataFrame,
+        name: str = "embedding_dataset",
+        embedding_prefix: str = "feature_",
+        proba_prefix: str = "pred_proba_",
+        require_timestamp: bool = True,
+        require_sample_id: bool = True,
+        allow_missing_y_true: bool = True,
+        expected_embedding_dim: Optional[int] = None,
+        expected_class_count: Optional[int] = None,
+    ) -> None:
+        """
+        Validate standardized image-derived tabular contract.
+
+        Required by default:
+          - embedding columns: feature_*
+          - probability columns: pred_proba_*
+          - y_pred
+          - timestamp
+          - sample_id
+        """
+        if df.empty:
+            raise ValueError(f"{name} is empty")
+
+        required_cols = ["y_pred"]
+        if require_timestamp:
+            required_cols.append("timestamp")
+        if require_sample_id:
+            required_cols.append("sample_id")
+
+        missing_required = [col for col in required_cols if col not in df.columns]
+        if missing_required:
+            raise ValueError(f"{name} missing required columns: {missing_required}")
+
+        embedding_cols = [col for col in df.columns if col.startswith(embedding_prefix)]
+        if not embedding_cols:
+            raise ValueError(
+                f"{name} has no embedding columns with prefix '{embedding_prefix}'"
+            )
+
+        proba_cols = [col for col in df.columns if col.startswith(proba_prefix)]
+        if not proba_cols:
+            raise ValueError(
+                f"{name} has no probability columns with prefix '{proba_prefix}'"
+            )
+
+        if expected_embedding_dim is not None and len(embedding_cols) != expected_embedding_dim:
+            raise ValueError(
+                f"{name} embedding dim mismatch: expected {expected_embedding_dim}, "
+                f"found {len(embedding_cols)}"
+            )
+
+        if expected_class_count is not None and len(proba_cols) != expected_class_count:
+            raise ValueError(
+                f"{name} probability class count mismatch: expected {expected_class_count}, "
+                f"found {len(proba_cols)}"
+            )
+
+        # Ensure numeric embedding/probability values.
+        if df[embedding_cols].isnull().any().any():
+            raise ValueError(f"{name} contains missing values in embedding columns")
+        if df[proba_cols].isnull().any().any():
+            raise ValueError(f"{name} contains missing values in probability columns")
+
+        if not np.isfinite(df[embedding_cols].to_numpy()).all():
+            raise ValueError(f"{name} contains non-finite values in embeddings")
+        if not np.isfinite(df[proba_cols].to_numpy()).all():
+            raise ValueError(f"{name} contains non-finite values in probabilities")
+
+        proba_values = df[proba_cols].to_numpy(dtype=float)
+        if ((proba_values < 0.0) | (proba_values > 1.0)).any():
+            raise ValueError(f"{name} probability values must be within [0, 1]")
+
+        row_sums = proba_values.sum(axis=1)
+        if not np.allclose(row_sums, 1.0, rtol=1e-3, atol=1e-3):
+            raise ValueError(f"{name} probability rows must sum to 1")
+
+        if not allow_missing_y_true and "y_true" not in df.columns:
+            raise ValueError(f"{name} requires y_true but column is missing")
+
+        if "y_true" in df.columns and not allow_missing_y_true:
+            if df["y_true"].isnull().any():
+                raise ValueError(f"{name} contains missing y_true values")
+
+        logger.info(
+            "%s embedding contract valid: n_rows=%s embedding_dim=%s n_classes=%s",
+            name,
+            len(df),
+            len(embedding_cols),
+            len(proba_cols),
+        )
+
+    @staticmethod
+    def validate_embedding_compatibility(
+        reference_df: pd.DataFrame,
+        test_df: pd.DataFrame,
+        embedding_prefix: str = "feature_",
+        proba_prefix: str = "pred_proba_",
+    ) -> None:
+        """Validate reference/test embedding datasets share the same contract shape."""
+        ref_embedding_cols = sorted(
+            [col for col in reference_df.columns if col.startswith(embedding_prefix)]
+        )
+        test_embedding_cols = sorted(
+            [col for col in test_df.columns if col.startswith(embedding_prefix)]
+        )
+        if ref_embedding_cols != test_embedding_cols:
+            raise ValueError("Reference/test embedding columns do not match")
+
+        ref_proba_cols = sorted(
+            [col for col in reference_df.columns if col.startswith(proba_prefix)]
+        )
+        test_proba_cols = sorted(
+            [col for col in test_df.columns if col.startswith(proba_prefix)]
+        )
+        if ref_proba_cols != test_proba_cols:
+            raise ValueError("Reference/test probability columns do not match")
+
+        logger.info("Embedding compatibility check passed")

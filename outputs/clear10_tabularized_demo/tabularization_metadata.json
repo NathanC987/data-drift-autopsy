@@ -1,0 +1,41 @@
+{
+  "dataset": "clear10",
+  "root_path": "data/clear10",
+  "reference_bucket": 1,
+  "analysis_buckets": [
+    2
+  ],
+  "class_names": [
+    "BACKGROUND",
+    "baseball",
+    "bus",
+    "camera",
+    "cosplay",
+    "dress",
+    "hockey",
+    "laptop",
+    "racing",
+    "soccer",
+    "sweater"
+  ],
+  "extractor": {
+    "extractor": "resnet::resnet18",
+    "embedding_dim": 512,
+    "model_name": "resnet18",
+    "weights": "IMAGENET1K_V1",
+    "device": "cuda",
+    "batch_size": 16,
+    "image_size": 224,
+    "torch_version": "2.11.0+cu130"
+  },
+  "bootstrap_predictions_from_y_true": false,
+  "baseline_model_name": "logistic_regression",
+  "baseline_metrics": {
+    "train_samples": 38.0,
+    "test_samples": 17.0,
+    "accuracy": 0.8823529411764706,
+    "precision_macro": 0.9242424242424242,
+    "recall_macro": 0.9090909090909091,
+    "f1_macro": 0.890909090909091
+  }
+}

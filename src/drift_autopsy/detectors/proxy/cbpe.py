@@ -40,11 +40,13 @@ class CBPE(BaseDriftDetector):
         threshold: float = 0.05,
         n_bins: int = 10,
         min_bin_count: int = 5,
+        smoothing_epsilon: float = 1e-6,
     ):
         super().__init__(name="cbpe")
         self.threshold = threshold
         self.n_bins = n_bins
         self.min_bin_count = min_bin_count
+        self.smoothing_epsilon = smoothing_epsilon
         self._reference_bins = None
         self._bin_edges = None
     
@@ -148,8 +150,12 @@ class CBPE(BaseDriftDetector):
                 metadata={"message": "Insufficient data in bins"}
             )
         
+        # Add small smoothing so bins with zero reference count have non-zero expectation.
+        # This avoids inf statistics in chi-square while preserving strong shift signals.
+        smoothed_ref_counts = ref_counts.astype(float) + self.smoothing_epsilon
+
         # Normalize to get expected proportions
-        ref_proportions = ref_counts / ref_counts.sum()
+        ref_proportions = smoothed_ref_counts / smoothed_ref_counts.sum()
         expected_counts = ref_proportions * test_counts.sum()
         
         # Chi-square test
@@ -210,6 +216,7 @@ class CBPE(BaseDriftDetector):
                 "chi2_statistic": chi2_stat,
                 "n_bins": self.n_bins,
                 "n_valid_bins": len(ref_counts),
+                "smoothing_epsilon": float(self.smoothing_epsilon),
                 "ref_mean_confidence": float(ref_mean_conf),
                 "test_mean_confidence": float(test_mean_conf),
                 "confidence_shift": float(confidence_shift),

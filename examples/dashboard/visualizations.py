@@ -534,3 +534,170 @@ def create_slice_drift_heatmap(df: pd.DataFrame, title: Optional[str] = None) ->
     )
 
     return fig
+
+
+def create_proxy_metric_step_chart(
+    df: pd.DataFrame,
+    metric_name: str,
+    lower_threshold: float,
+    upper_threshold: float,
+) -> go.Figure:
+    """
+    Create stepped chart for estimated vs actual proxy metric with alert markers.
+
+    Args:
+        df: DataFrame with columns: bucket, estimated, actual
+        metric_name: Metric label for title
+        lower_threshold: Lower alert threshold
+        upper_threshold: Upper alert threshold
+
+    Returns:
+        Plotly Figure
+    """
+    fig = go.Figure()
+
+    if df.empty:
+        fig.update_layout(
+            title=f"{metric_name.title()} (No Data)",
+            template="plotly_white",
+            height=320,
+        )
+        return fig
+
+    plot_df = df.sort_values("bucket")
+
+    fig.add_trace(
+        go.Scatter(
+            x=plot_df["bucket"],
+            y=plot_df["estimated"],
+            mode="lines+markers",
+            line=dict(shape="hv", width=2, color="#1f77b4"),
+            marker=dict(size=8),
+            name="Estimated",
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=plot_df["bucket"],
+            y=plot_df["actual"],
+            mode="lines+markers",
+            line=dict(shape="hv", width=2, color="#2ca02c"),
+            marker=dict(size=8),
+            name="Actual",
+        )
+    )
+
+    est_alerts = plot_df[
+        (plot_df["estimated"] < lower_threshold) | (plot_df["estimated"] > upper_threshold)
+    ]
+    if not est_alerts.empty:
+        fig.add_trace(
+            go.Scatter(
+                x=est_alerts["bucket"],
+                y=est_alerts["estimated"],
+                mode="markers",
+                marker=dict(color="red", size=10, symbol="x"),
+                name="Estimated Alerts",
+            )
+        )
+
+    actual_alerts = plot_df[
+        (plot_df["actual"] < lower_threshold) | (plot_df["actual"] > upper_threshold)
+    ]
+    if not actual_alerts.empty:
+        fig.add_trace(
+            go.Scatter(
+                x=actual_alerts["bucket"],
+                y=actual_alerts["actual"],
+                mode="markers",
+                marker=dict(color="red", size=10, symbol="diamond"),
+                name="Actual Alerts",
+            )
+        )
+
+    fig.add_hline(y=lower_threshold, line_color="red", line_dash="dot")
+    fig.add_hline(y=upper_threshold, line_color="red", line_dash="dot")
+
+    fig.update_layout(
+        title=f"{metric_name.title()} (Estimated vs Actual)",
+        xaxis_title="Bucket",
+        yaxis_title=metric_name.title(),
+        template="plotly_white",
+        height=320,
+        hovermode="x unified",
+    )
+    fig.update_xaxes(dtick=1)
+
+    return fig
+
+
+def create_detector_step_chart(
+    df: pd.DataFrame,
+    detector_name: str,
+    threshold: Optional[float] = None,
+    alert_direction: str = "above",
+) -> go.Figure:
+    """
+    Create stepped detector score trend chart with optional threshold overlay.
+
+    Args:
+        df: DataFrame with columns: bucket, score
+        detector_name: Detector label
+        threshold: Optional threshold value for alerting
+        alert_direction: Alert rule direction, "above" or "below"
+
+    Returns:
+        Plotly Figure
+    """
+    fig = go.Figure()
+
+    if df.empty:
+        fig.update_layout(
+            title=f"{detector_name} (No Data)",
+            template="plotly_white",
+            height=320,
+        )
+        return fig
+
+    plot_df = df.sort_values("bucket")
+
+    fig.add_trace(
+        go.Scatter(
+            x=plot_df["bucket"],
+            y=plot_df["score"],
+            mode="lines+markers",
+            line=dict(shape="hv", width=2, color="#ff7f0e"),
+            marker=dict(size=8),
+            name=detector_name,
+        )
+    )
+
+    if threshold is not None:
+        fig.add_hline(y=threshold, line_color="red", line_dash="dot")
+        if alert_direction == "below":
+            alerts = plot_df[plot_df["score"] <= threshold]
+        else:
+            alerts = plot_df[plot_df["score"] >= threshold]
+        if not alerts.empty:
+            fig.add_trace(
+                go.Scatter(
+                    x=alerts["bucket"],
+                    y=alerts["score"],
+                    mode="markers",
+                    marker=dict(color="red", size=10, symbol="x"),
+                    name="Alerts",
+                )
+            )
+
+    fig.update_layout(
+        title=f"{detector_name} Trend",
+        xaxis_title="Bucket",
+        yaxis_title="Score",
+        template="plotly_white",
+        height=320,
+        hovermode="x unified",
+    )
+    fig.update_xaxes(dtick=1)
+
+    return fig

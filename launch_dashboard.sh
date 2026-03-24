@@ -16,4 +16,8 @@ echo "Press Ctrl+C to stop the dashboard"
 echo "======================================================================"
 echo ""
 
-streamlit run examples/dashboard/app.py --server.port $PORT
+if [ -x "venv/bin/python" ]; then
+	venv/bin/python -m streamlit run examples/dashboard/app.py --server.port "$PORT"
+else
+	streamlit run examples/dashboard/app.py --server.port "$PORT"
+fi

@@ -123,3 +123,72 @@ When dashboard-related code changes:
 
 - Update only impacted section(s) in this file.
 - If JSON contract changes, update contracts first, then chart behavior notes.
+
+## 10. Mode Switch Contract (Implemented)
+
+Dashboard now supports top-tab mode switching:
+
+- Folktables Demo tab
+- CLEAR-10 Demo tab
+
+Behavior:
+
+- Tabs are rendered at the top of the main dashboard area.
+- Folktables and CLEAR-10 file paths are configured independently in the sidebar.
+- Missing file for one mode does not block the other mode.
+
+## 11. CLEAR-10 Ingestion Contract (Current Flexible Parser)
+
+The CLEAR-10 parser in the dashboard currently supports a flexible JSON shape and normalizes into chart-ready tables.
+
+Supported baseline sources:
+
+- Top-level `baseline_performance` object.
+- `metadata.baseline_performance` fallback.
+
+Supported proxy sources:
+
+- Preferred: top-level `proxy_metrics` list with `bucket`, `metric`, `estimated`, `actual`.
+- Fallback: `bucket_results.<bucket>.proxy_performance.estimated` and `.actual` metric maps.
+
+Supported drift sources:
+
+- Preferred: top-level `drift_results` list with `bucket`, `detector`, `score`, optional `threshold`.
+- Fallback: `bucket_results.<bucket>.detectors.<name>` map with `score` and optional `threshold`.
+
+Supported localization summary source:
+
+- `bucket_results.<bucket>.localization.drifted_features`.
+
+Supported RCA summary source:
+
+- `bucket_results.<bucket>.rca.top_changes` and `.recommendations`.
+
+## 12. CLEAR-10 Visualization Contract (Implemented)
+
+Section order on CLEAR-10 tab:
+
+1. Baseline model performance
+2. Proxy performance estimation
+3. Drift detection
+4. Localization
+5. RCA
+
+Proxy visualization behavior:
+
+- One stepped-line chart per metric (for available metrics, prioritizing accuracy/precision/recall/F1).
+- Two stepped lines: estimated and actual.
+- Per-metric editable lower and upper thresholds.
+- Red dotted threshold lines.
+- Red alert markers for estimated and actual points outside threshold bounds.
+- Threshold edits update chart overlays and alert markers live.
+
+Drift visualization behavior:
+
+- One stepped trend chart per detector.
+- Editable threshold control per detector.
+- Red dotted threshold line.
+- Red alert markers for threshold violations.
+- Detector-specific alert direction:
+  - KS-like detectors: alert when score is below threshold.
+  - Other detectors: alert when score is above threshold.

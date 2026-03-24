@@ -10,6 +10,7 @@ from drift_autopsy.core.result import (
     DriftSeverity,
 )
 from drift_autopsy.core.detector import DriftDetector, BaseDriftDetector
+from drift_autopsy.core.extractor import FeatureExtractor, BaseFeatureExtractor
 from drift_autopsy.core.localizer import DriftLocalizer, BaseDriftLocalizer
 from drift_autopsy.core.rca import RootCauseAnalyzer, BaseRootCauseAnalyzer
 
@@ -23,6 +24,8 @@ __all__ = [
     "DriftSeverity",
     "DriftDetector",
     "BaseDriftDetector",
+    "FeatureExtractor",
+    "BaseFeatureExtractor",
     "DriftLocalizer",
     "BaseDriftLocalizer",
     "RootCauseAnalyzer",
