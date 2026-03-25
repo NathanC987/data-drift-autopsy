@@ -13,6 +13,7 @@ from drift_autopsy.data.proxy_metrics import MulticlassProxyEstimator
 def _bucket_frame(y_true, y_pred, proba):
     rows = []
     for idx, (yt, yp, prob) in enumerate(zip(y_true, y_pred, proba)):
+        class_name = f"class_{int(yt)}"
         rows.append(
             {
                 "feature_0": float(idx),
@@ -21,6 +22,9 @@ def _bucket_frame(y_true, y_pred, proba):
                 "timestamp": f"2020-01-01 00:00:{idx:02d}",
                 "y_true": int(yt),
                 "y_pred": int(yp),
+                "class_name": class_name,
+                "source": "camera_a" if idx % 2 == 0 else "camera_b",
+                "device": "edge_1" if idx % 3 == 0 else "edge_2",
                 "pred_proba_0": float(prob[0]),
                 "pred_proba_1": float(prob[1]),
             }
@@ -127,11 +131,49 @@ def test_build_clear10_full_report_contract():
     assert "proxy_metrics" in report
     assert "drift_results" in report
     assert len(report["drift_results"]) >= 4
+    assert all(row["detector"].lower() != "cbpe" for row in report["drift_results"])
 
     bucket_two_result = report["bucket_results"]["2"]
     assert "detectors" in bucket_two_result
     assert "localization" in bucket_two_result
     assert "rca" in bucket_two_result
+    assert "class_slice_summary" in bucket_two_result["localization"]
+    assert "metadata_slice_summary" in bucket_two_result["localization"]
+    assert "slice_columns_evaluated" in bucket_two_result["localization"]
+    assert "embedding_shift_attribution" in bucket_two_result["rca"]
+    assert "output_correlation" in bucket_two_result["rca"]
+    assert "class_gap_summary" in bucket_two_result["rca"]
+    assert "slice_correlation" in bucket_two_result["rca"]
+    assert "recommendations" in bucket_two_result["rca"]
 
     # Ensure report payload is valid strict JSON (no NaN/Infinity).
     json.dumps(report, allow_nan=False)
+
+
+def test_build_clear10_proxy_report_supports_previous_chunk_reference_map():
+    reference = _bucket_frame(
+        y_true=[0, 0, 1, 1],
+        y_pred=[0, 0, 1, 1],
+        proba=[[0.95, 0.05], [0.90, 0.10], [0.10, 0.90], [0.08, 0.92]],
+    )
+    bucket_two = _bucket_frame(
+        y_true=[0, 1, 1, 0],
+        y_pred=[0, 1, 0, 0],
+        proba=[[0.80, 0.20], [0.25, 0.75], [0.60, 0.40], [0.70, 0.30]],
+    )
+    bucket_three = _bucket_frame(
+        y_true=[0, 1, 1, 0],
+        y_pred=[1, 1, 1, 0],
+        proba=[[0.45, 0.55], [0.30, 0.70], [0.20, 0.80], [0.55, 0.45]],
+    )
+
+    report = build_clear10_proxy_report(
+        bucket_frames={"1": reference, "2": bucket_two, "3": bucket_three},
+        baseline_metrics={"accuracy": 0.9, "f1_macro": 0.9},
+        reference_bucket=1,
+        reference_by_bucket={"2": "1", "3": "2"},
+    )
+
+    bucket_rows = {int(row["bucket"]) for row in report["proxy_metrics"]}
+    assert bucket_rows == {2, 3}
+    assert "3" in report["bucket_results"]

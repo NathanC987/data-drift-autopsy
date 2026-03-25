@@ -122,7 +122,7 @@ class ImageDataConfig(BaseModel):
         description="Optional duration (e.g. '1M', '7D') for temporal chunking",
     )
     reference_mode: str = Field(
-        default="fixed_reference",
+        default="previous_chunk",
         description="Reference mode: fixed_reference or previous_chunk",
     )
     artifacts_dir: Optional[str] = Field(

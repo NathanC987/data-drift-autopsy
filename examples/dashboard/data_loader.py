@@ -5,6 +5,8 @@ import math
 from pathlib import Path
 from typing import Dict, List, Optional
 import pandas as pd
+import numpy as np
+from sklearn.decomposition import PCA
 
 
 class DriftResultsLoader:
@@ -19,6 +21,7 @@ class DriftResultsLoader:
         """
         self.results_path = Path(results_path)
         self.raw_data: Optional[Dict] = None
+        self._clear10_pca_projection_cache: Optional[pd.DataFrame] = None
         
     def load(self) -> Dict:
         """
@@ -666,7 +669,8 @@ class DriftResultsLoader:
         Get CLEAR-10 localization summaries by bucket.
 
         Expected normalized output columns:
-            bucket, top_features, n_drifted_features
+            bucket, top_features, n_drifted_features,
+            n_class_slices_drifted, n_metadata_slices_drifted
         """
         if self.raw_data is None:
             self.load()
@@ -681,17 +685,32 @@ class DriftResultsLoader:
 
                 localization = payload.get("localization", {})
                 drifted = localization.get("drifted_features", [])
+                class_slice_summary = localization.get("class_slice_summary", [])
+                metadata_slice_summary = localization.get("metadata_slice_summary", [])
+
+                n_class_slices_drifted = sum(1 for row in class_slice_summary if row.get("drift_detected"))
+                n_metadata_slices_drifted = sum(1 for row in metadata_slice_summary if row.get("drift_detected"))
 
                 rows.append(
                     {
                         "bucket": int(bucket_key),
                         "top_features": ", ".join(drifted[:5]) if drifted else "-",
                         "n_drifted_features": len(drifted),
+                        "n_class_slices_drifted": int(n_class_slices_drifted),
+                        "n_metadata_slices_drifted": int(n_metadata_slices_drifted),
                     }
                 )
 
         if not rows:
-            return pd.DataFrame(columns=["bucket", "top_features", "n_drifted_features"])
+            return pd.DataFrame(
+                columns=[
+                    "bucket",
+                    "top_features",
+                    "n_drifted_features",
+                    "n_class_slices_drifted",
+                    "n_metadata_slices_drifted",
+                ]
+            )
 
         return pd.DataFrame(rows).sort_values("bucket")
 
@@ -700,7 +719,8 @@ class DriftResultsLoader:
         Get CLEAR-10 RCA summaries by bucket.
 
         Expected normalized output columns:
-            bucket, top_changes, n_recommendations
+            bucket, top_changes, n_recommendations,
+            largest_gap_metric, largest_gap_value
         """
         if self.raw_data is None:
             self.load()
@@ -716,16 +736,123 @@ class DriftResultsLoader:
                 rca = payload.get("rca", {})
                 top_changes = rca.get("top_changes", [])
                 recommendations = rca.get("recommendations", [])
+                output_corr = rca.get("output_correlation", {})
+                largest_gap_metric = output_corr.get("largest_gap_metric")
+                largest_gap_value = self._safe_float(output_corr.get("largest_gap_value"), default=float("nan"))
+
+                class_gap_summary = rca.get("class_gap_summary", [])
+                top_class = class_gap_summary[0].get("class_key") if class_gap_summary else "-"
 
                 rows.append(
                     {
                         "bucket": int(bucket_key),
                         "top_changes": ", ".join(top_changes[:5]) if top_changes else "-",
                         "n_recommendations": len(recommendations),
+                        "largest_gap_metric": str(largest_gap_metric) if largest_gap_metric else "-",
+                        "largest_gap_value": largest_gap_value,
+                        "top_class_gap": str(top_class),
                     }
                 )
 
         if not rows:
-            return pd.DataFrame(columns=["bucket", "top_changes", "n_recommendations"])
+            return pd.DataFrame(
+                columns=[
+                    "bucket",
+                    "top_changes",
+                    "n_recommendations",
+                    "largest_gap_metric",
+                    "largest_gap_value",
+                    "top_class_gap",
+                ]
+            )
 
         return pd.DataFrame(rows).sort_values("bucket")
+
+    def get_clear10_pca_3d_projection(self, max_points_per_bucket: int = 350) -> pd.DataFrame:
+        """
+        Build a 3D PCA projection from CLEAR-10 tabularized bucket parquet files.
+
+        Returns:
+            DataFrame with columns: bucket, pc1, pc2, pc3
+        """
+        if self._clear10_pca_projection_cache is not None:
+            return self._clear10_pca_projection_cache.copy()
+
+        artifacts_dir = self.results_path.parent / "clear10_tabularized_demo"
+        if not artifacts_dir.exists():
+            return pd.DataFrame(columns=["bucket", "pc1", "pc2", "pc3"])
+
+        bucket_files = sorted(
+            artifacts_dir.glob("bucket_*.parquet"),
+            key=lambda p: int(p.stem.split("_")[-1]),
+        )
+        if not bucket_files:
+            return pd.DataFrame(columns=["bucket", "pc1", "pc2", "pc3"])
+
+        sampled_frames = []
+        for bucket_file in bucket_files:
+            try:
+                bucket_id = int(bucket_file.stem.split("_")[-1])
+            except ValueError:
+                continue
+
+            try:
+                bucket_df = pd.read_parquet(bucket_file)
+            except Exception:
+                continue
+
+            if bucket_df.empty:
+                continue
+
+            if len(bucket_df) > max_points_per_bucket:
+                bucket_df = bucket_df.sample(n=max_points_per_bucket, random_state=42)
+
+            bucket_df = bucket_df.copy()
+            bucket_df["bucket"] = bucket_id
+            sampled_frames.append(bucket_df)
+
+        if not sampled_frames:
+            return pd.DataFrame(columns=["bucket", "pc1", "pc2", "pc3"])
+
+        combined = pd.concat(sampled_frames, ignore_index=True)
+
+        embedding_cols = [
+            col for col in combined.columns if isinstance(col, str) and col.startswith("embedding_")
+        ]
+        if not embedding_cols:
+            numeric_cols = combined.select_dtypes(include=[np.number]).columns.tolist()
+            excluded = {
+                "bucket",
+                "y_true",
+                "y_pred",
+                "confidence",
+                "confidence_score",
+                "class_id",
+                "predicted_class",
+                "true_class",
+            }
+            embedding_cols = [col for col in numeric_cols if col not in excluded]
+
+        if len(embedding_cols) < 3:
+            return pd.DataFrame(columns=["bucket", "pc1", "pc2", "pc3"])
+
+        X = combined[embedding_cols].fillna(0.0).to_numpy(dtype=float)
+        X_mean = X.mean(axis=0)
+        X_std = X.std(axis=0)
+        X_std[X_std == 0] = 1.0
+        X_norm = (X - X_mean) / X_std
+
+        pca = PCA(n_components=3, random_state=42)
+        projected = pca.fit_transform(X_norm)
+
+        projection_df = pd.DataFrame(
+            {
+                "bucket": combined["bucket"].astype(str),
+                "pc1": projected[:, 0],
+                "pc2": projected[:, 1],
+                "pc3": projected[:, 2],
+            }
+        )
+
+        self._clear10_pca_projection_cache = projection_df
+        return projection_df.copy()

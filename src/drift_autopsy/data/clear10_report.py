@@ -19,10 +19,21 @@ def _json_safe_float(value: float) -> float | None:
     return result if math.isfinite(result) else None
 
 
+def _resolve_reference_key(
+    bucket_key: str,
+    fallback_reference_key: str,
+    reference_by_bucket: Dict[str, str] | None,
+) -> str:
+    if reference_by_bucket is None:
+        return fallback_reference_key
+    return str(reference_by_bucket.get(bucket_key, fallback_reference_key))
+
+
 def build_clear10_proxy_report(
     bucket_frames: Dict[str, pd.DataFrame],
     baseline_metrics: Dict[str, float] | None,
     reference_bucket: int,
+    reference_by_bucket: Dict[str, str] | None = None,
 ) -> Dict[str, Any]:
     """Build dashboard-ready proxy-vs-actual report for CLEAR-10 buckets."""
     ref_key = str(reference_bucket)
@@ -30,7 +41,6 @@ def build_clear10_proxy_report(
         raise ValueError(f"Reference bucket {reference_bucket} not found in bucket_frames")
 
     estimator = MulticlassProxyEstimator(n_bins=10)
-    estimator.fit(bucket_frames[ref_key])
 
     proxy_metrics = []
     proxy_metrics_classwise = []
@@ -53,6 +63,12 @@ def build_clear10_proxy_report(
         bucket_num = int(bucket_key)
         if bucket_num == reference_bucket:
             continue
+
+        runtime_ref_key = _resolve_reference_key(bucket_key, ref_key, reference_by_bucket)
+        if runtime_ref_key not in bucket_frames:
+            raise ValueError(f"Reference bucket {runtime_ref_key} not found for analysis bucket {bucket_key}")
+
+        estimator.fit(bucket_frames[runtime_ref_key])
 
         metrics = estimator.estimate(frame)
         for metric_name in ("accuracy", "precision", "recall", "f1"):
@@ -134,36 +150,118 @@ def _frame_to_dataset(frame: pd.DataFrame) -> Dataset:
     )
 
 
+def _build_slice_summary_rows(slice_payloads: Dict[str, Any], column_name: str) -> list[Dict[str, Any]]:
+    """Convert pipeline slice payloads into compact, dashboard-friendly summary rows."""
+    rows: list[Dict[str, Any]] = []
+
+    for _, payload in slice_payloads.items():
+        result_payload = payload.get("result", {})
+        detection = result_payload.get("detection", {})
+        localization = result_payload.get("localization") or {}
+        drifted_features = localization.get("drifted_features") or []
+
+        rows.append(
+            {
+                "column": column_name,
+                "reference_slice": str(payload.get("reference_slice_value")),
+                "test_slice": str(payload.get("test_slice_value")),
+                "drift_detected": bool(detection.get("drift_detected", False)),
+                "severity": detection.get("severity", "none"),
+                "score": _json_safe_float(detection.get("score", 0.0)),
+                "reference_samples": int(payload.get("reference_samples", 0)),
+                "test_samples": int(payload.get("test_samples", 0)),
+                "n_drifted_features": len(drifted_features),
+                "top_features": list(drifted_features[:5]),
+            }
+        )
+
+    return rows
+
+
+def _run_slice_localization(
+    reference_ds: Dataset,
+    test_ds: Dataset,
+    detector_threshold: float,
+    localizer_threshold: float,
+) -> tuple[list[Dict[str, Any]], list[Dict[str, Any]]]:
+    """Run slice localization for class and metadata columns with built-in low-sample safeguards."""
+    from drift_autopsy.core.pipeline import DriftPipeline
+    from drift_autopsy.detectors import KSTest
+    from drift_autopsy.localizers import UnivariateLocalizer
+
+    if reference_ds.metadata is None or test_ds.metadata is None:
+        return [], []
+
+    candidate_columns = [
+        col for col in ["class_name", "source", "device"] if col in reference_ds.metadata.columns and col in test_ds.metadata.columns
+    ]
+    if not candidate_columns:
+        return [], []
+
+    class_rows: list[Dict[str, Any]] = []
+    metadata_rows: list[Dict[str, Any]] = []
+
+    for column_name in candidate_columns:
+        slice_pipeline = DriftPipeline(
+            detector=KSTest(threshold=detector_threshold),
+            localizer=UnivariateLocalizer(threshold=localizer_threshold),
+            enable_localization=True,
+            enable_rca=False,
+            validate_data=False,
+        )
+        slice_result = slice_pipeline.run(
+            reference_ds,
+            test_ds,
+            slice_config={
+                "enabled": True,
+                "column": column_name,
+                "min_samples_per_slice": 30,
+            },
+        )
+        slice_payloads = (
+            slice_result.metadata.get("slice_analysis", {}).get("slices", {})
+            if slice_result.metadata
+            else {}
+        )
+        slice_rows = _build_slice_summary_rows(slice_payloads, column_name=column_name)
+
+        if column_name == "class_name":
+            class_rows.extend(slice_rows)
+        else:
+            metadata_rows.extend(slice_rows)
+
+    return class_rows, metadata_rows
+
+
 def build_clear10_full_report(
     bucket_frames: Dict[str, pd.DataFrame],
     baseline_metrics: Dict[str, float] | None,
     reference_bucket: int,
+    reference_by_bucket: Dict[str, str] | None = None,
 ) -> Dict[str, Any]:
     """Build full CLEAR-10 dashboard-ready report with proxy, drift, localization, and RCA."""
     # Import analysis components lazily to avoid package initialization cycles.
     from drift_autopsy.core.pipeline import DriftPipeline
-    from drift_autopsy.detectors import KSTest, PSI, MMD, CBPE, PCAReconstructionError, FIDDistance
+    from drift_autopsy.detectors import KSTest, PSI, MMD, PCAReconstructionError, FIDDistance
     from drift_autopsy.localizers import UnivariateLocalizer
 
     report = build_clear10_proxy_report(
         bucket_frames=bucket_frames,
         baseline_metrics=baseline_metrics,
         reference_bucket=reference_bucket,
+        reference_by_bucket=reference_by_bucket,
     )
 
     ref_key = str(reference_bucket)
     if ref_key not in bucket_frames:
         raise ValueError(f"Reference bucket {reference_bucket} not found in bucket_frames")
 
-    reference_ds = _frame_to_dataset(bucket_frames[ref_key])
-
     detector_specs = [
         ("Ks Test", KSTest(threshold=0.05)),
-        ("Psi", PSI(threshold=0.2, n_bins=10)),
-        ("Mmd", MMD(threshold=0.1, kernel="rbf", n_permutations=20, max_samples=3000)),
-        ("Pca Reconstruction", PCAReconstructionError(threshold=0.15, explained_variance_ratio=0.95)),
-        ("Fid Distance", FIDDistance(threshold=50.0, covariance_eps=1e-6)),
-        ("Cbpe", CBPE(threshold=0.05, n_bins=10)),
+        ("Psi", PSI(threshold=0.025, n_bins=10)),
+        ("Mmd", MMD(threshold=0.02, kernel="rbf", n_permutations=20, max_samples=3000)),
+        ("Pca Reconstruction", PCAReconstructionError(threshold=0.28, explained_variance_ratio=0.95)),
+        ("Fid Distance", FIDDistance(threshold=14.0, covariance_eps=1e-6)),
     ]
 
     drift_results = []
@@ -174,10 +272,18 @@ def build_clear10_full_report(
         if bucket_num == reference_bucket:
             continue
 
+        runtime_ref_key = _resolve_reference_key(bucket_key, ref_key, reference_by_bucket)
+        if runtime_ref_key not in bucket_frames:
+            raise ValueError(f"Reference bucket {runtime_ref_key} not found for analysis bucket {bucket_key}")
+
+        reference_ds = _frame_to_dataset(bucket_frames[runtime_ref_key])
+
         test_ds = _frame_to_dataset(frame)
 
         per_detector = {}
         localization_payload = None
+        class_slice_summary: list[Dict[str, Any]] = []
+        metadata_slice_summary: list[Dict[str, Any]] = []
 
         for detector_display_name, detector_instance in detector_specs:
             pipeline = DriftPipeline(
@@ -213,6 +319,12 @@ def build_clear10_full_report(
                     "drifted_features": list(result.localization.drifted_features),
                     "drift_scores": dict(result.localization.drift_scores),
                 }
+                class_slice_summary, metadata_slice_summary = _run_slice_localization(
+                    reference_ds=reference_ds,
+                    test_ds=test_ds,
+                    detector_threshold=0.05,
+                    localizer_threshold=0.05,
+                )
 
         if bucket_key not in bucket_results:
             bucket_results[bucket_key] = {}
@@ -221,6 +333,12 @@ def build_clear10_full_report(
 
         if localization_payload is None:
             localization_payload = {"drifted_features": [], "drift_scores": {}}
+
+        localization_payload["class_slice_summary"] = class_slice_summary
+        localization_payload["metadata_slice_summary"] = metadata_slice_summary
+        localization_payload["slice_columns_evaluated"] = sorted(
+            list({row["column"] for row in class_slice_summary + metadata_slice_summary})
+        )
 
         bucket_results[bucket_key]["localization"] = localization_payload
 
@@ -231,12 +349,102 @@ def build_clear10_full_report(
         )
         top_change_names = [name for name, _ in top_changes[:5]]
 
+        embedding_shift_attribution = [
+            {"feature": name, "score": _json_safe_float(score)}
+            for name, score in top_changes[:10]
+        ]
+
+        proxy_payload = bucket_results[bucket_key].get("proxy_performance", {})
+        proxy_quality_gap = proxy_payload.get("proxy_quality_gap", {}) or {}
+        class_wise_gap = proxy_payload.get("class_wise_proxy_quality_gap", {}) or {}
+
+        largest_gap_metric = None
+        largest_gap_value = None
+        if proxy_quality_gap:
+            largest_gap_metric, largest_gap_value = max(
+                proxy_quality_gap.items(),
+                key=lambda item: abs(float(item[1])),
+            )
+
+        class_gap_summary = []
+        for class_key, gap_metrics in class_wise_gap.items():
+            if not gap_metrics:
+                continue
+            mean_abs_gap = float(sum(abs(float(v)) for v in gap_metrics.values()) / len(gap_metrics))
+            class_gap_summary.append(
+                {
+                    "class_key": str(class_key),
+                    "mean_abs_gap": _json_safe_float(mean_abs_gap),
+                    "gap_metrics": {
+                        metric: _json_safe_float(float(value))
+                        for metric, value in gap_metrics.items()
+                    },
+                }
+            )
+        class_gap_summary = sorted(
+            class_gap_summary,
+            key=lambda row: abs(float(row["mean_abs_gap"] or 0.0)),
+            reverse=True,
+        )
+
+        drifted_class_slices = [
+            row
+            for row in localization_payload.get("class_slice_summary", [])
+            if row.get("drift_detected")
+        ]
+        drifted_metadata_slices = [
+            row
+            for row in localization_payload.get("metadata_slice_summary", [])
+            if row.get("drift_detected")
+        ]
+
+        recommendations = []
+        if top_change_names:
+            recommendations.append(
+                f"Audit embedding dimensions with strongest shift: {', '.join(top_change_names[:3])}."
+            )
+        if largest_gap_metric is not None and largest_gap_value is not None:
+            recommendations.append(
+                f"Prioritize '{largest_gap_metric}' calibration drift (proxy gap={float(largest_gap_value):.4f}) for this bucket."
+            )
+        if class_gap_summary:
+            recommendations.append(
+                f"Investigate class-level degradation around '{class_gap_summary[0]['class_key']}' first."
+            )
+        if drifted_class_slices:
+            first_slice = drifted_class_slices[0]
+            recommendations.append(
+                "Inspect drifted class slice "
+                f"{first_slice.get('reference_slice')}->{first_slice.get('test_slice')} "
+                "for targeted data refresh."
+            )
+        if drifted_metadata_slices:
+            first_meta = drifted_metadata_slices[0]
+            recommendations.append(
+                "Inspect metadata slice "
+                f"[{first_meta.get('column')}] {first_meta.get('reference_slice')}->{first_meta.get('test_slice')} "
+                "for ingestion/collection shifts."
+            )
+
         bucket_results[bucket_key]["rca"] = {
             "top_changes": top_change_names,
-            "recommendations": [
-                f"Inspect feature shift for '{name}' and evaluate retraining trigger."
-                for name in top_change_names[:3]
-            ],
+            "embedding_shift_attribution": embedding_shift_attribution,
+            "output_correlation": {
+                "proxy_quality_gap": {
+                    metric: _json_safe_float(float(value))
+                    for metric, value in proxy_quality_gap.items()
+                },
+                "largest_gap_metric": largest_gap_metric,
+                "largest_gap_value": _json_safe_float(float(largest_gap_value))
+                if largest_gap_value is not None
+                else None,
+            },
+            "class_gap_summary": class_gap_summary[:5],
+            "slice_correlation": {
+                "drifted_class_slices": drifted_class_slices[:10],
+                "drifted_metadata_slices": drifted_metadata_slices[:10],
+            },
+            "recommendations": recommendations,
         }
 
     report["drift_results"] = drift_results

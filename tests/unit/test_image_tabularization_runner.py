@@ -89,6 +89,46 @@ def _create_minimal_clear10_tree(root: Path):
     (root / "labeled_metadata" / "2" / "BACKGROUND.json").write_text(json.dumps(metadata_two))
 
 
+def _create_multirow_analysis_clear10_tree(root: Path):
+    (root / "labeled_images" / "1" / "BACKGROUND").mkdir(parents=True, exist_ok=True)
+    (root / "labeled_images" / "2" / "BACKGROUND").mkdir(parents=True, exist_ok=True)
+    (root / "labeled_metadata" / "1").mkdir(parents=True, exist_ok=True)
+    (root / "labeled_metadata" / "2").mkdir(parents=True, exist_ok=True)
+
+    (root / "class_names.txt").write_text("BACKGROUND\n")
+
+    index = {
+        "1": {"BACKGROUND": "labeled_metadata/1/BACKGROUND.json"},
+        "2": {"BACKGROUND": "labeled_metadata/2/BACKGROUND.json"},
+    }
+    (root / "labeled_metadata.json").write_text(json.dumps(index))
+
+    ref_record = {
+        "ref_0": {
+            "DATE_TAKEN": "2020-01-01 00:00:00.0",
+            "DEVICE": "cam-ref",
+            "USER_TAGS": "tag-ref",
+            "LON": "1.0",
+            "LAT": "2.0",
+        }
+    }
+    analysis_records = {}
+    for idx in range(5):
+        sample_id = f"analysis_{idx}"
+        analysis_records[sample_id] = {
+            "DATE_TAKEN": f"2020-02-01 00:00:0{idx}.0",
+            "DEVICE": "cam-analysis",
+            "USER_TAGS": "tag-analysis",
+            "LON": "3.0",
+            "LAT": "4.0",
+        }
+        (root / "labeled_images" / "2" / "BACKGROUND" / f"{sample_id}.jpg").touch()
+
+    (root / "labeled_images" / "1" / "BACKGROUND" / "ref_0.jpg").touch()
+    (root / "labeled_metadata" / "1" / "BACKGROUND.json").write_text(json.dumps(ref_record))
+    (root / "labeled_metadata" / "2" / "BACKGROUND.json").write_text(json.dumps(analysis_records))
+
+
 def _create_two_class_clear10_tree(root: Path):
     for bucket in ("1", "2"):
         for class_name in ("CLASS_A", "CLASS_B"):
@@ -188,6 +228,8 @@ def test_image_tabularization_runner_persists_artifacts(tmp_path):
 
     assert (out_dir / "bucket_1.parquet").exists()
     assert (out_dir / "bucket_2.parquet").exists()
+    assert (out_dir / "reference_dataset.parquet").exists()
+    assert (out_dir / "analysis_dataset.parquet").exists()
     assert (out_dir / "tabularization_metadata.json").exists()
 
 
@@ -225,3 +267,43 @@ def test_image_tabularization_runner_trains_baseline_when_bootstrap_disabled(tmp
 
     out_dir = runner.persist_artifacts(frames, output_dir=tmp_path / "artifacts_with_model")
     assert (out_dir / "baseline_model.pkl").exists()
+
+
+def test_quantity_chunking_builds_multiple_analysis_chunks_and_previous_reference_map(tmp_path):
+    _create_multirow_analysis_clear10_tree(tmp_path)
+
+    extractor_name = f"dummy_extractor_{uuid.uuid4().hex}"
+    ExtractorRegistry.register(extractor_name)(_DummyExtractor)
+
+    image_cfg = ImageDataConfig(
+        root_path=str(tmp_path),
+        extractor_name=extractor_name,
+        extractor_params={"embedding_dim": 3},
+        reference_bucket=1,
+        analysis_buckets=[2],
+        bootstrap_predictions_from_y_true=True,
+        chunking_strategy="quantity",
+        chunk_size_records=2,
+        reference_mode="previous_chunk",
+        expected_embedding_dim=3,
+    )
+
+    runner = ImageTabularizationRunner(image_cfg)
+    frames = runner.build_reference_and_analysis()
+
+    assert set(frames.keys()) == {"1", "2", "3", "4"}
+    assert runner.analysis_reference_map == {
+        "2": "1",
+        "3": "2",
+        "4": "3",
+    }
+    assert len(frames["2"]) == 2
+    assert len(frames["3"]) == 2
+    assert len(frames["4"]) == 1
+
+    out_dir = runner.persist_artifacts(frames, output_dir=tmp_path / "quantity_artifacts")
+    assert (out_dir / "analysis_dataset.parquet").exists()
+
+    analysis_df = pd.read_parquet(out_dir / "analysis_dataset.parquet")
+    assert "analysis_chunk_key" in analysis_df.columns
+    assert len(analysis_df) == 5

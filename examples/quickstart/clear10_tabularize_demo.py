@@ -24,17 +24,19 @@ def build_demo_config() -> PipelineConfig:
                 "weights": "IMAGENET1K_V1",
                 "batch_size": 16,
             },
-            # Keep this small for a quick first run.
-            "max_samples_per_class": 5,
             "artifacts_dir": "outputs/clear10_tabularized_demo",
             "chunking_strategy": "fixed_bucket",
-            "reference_mode": "fixed_reference",
+            "reference_mode": "previous_chunk",
             "allow_missing_analysis_y_true": True,
             "bootstrap_predictions_from_y_true": False,
-            "monitored_model_name": "logistic_regression",
+            "monitored_model_name": "resnet_classifier",
             "monitored_model_params": {
-                "max_iter": 1000,
-                "random_state": 42,
+                "model_name": "resnet18",
+                "weights": "IMAGENET1K_V1",
+                "batch_size": 16,
+                "epochs": 1,
+                "learning_rate": 1e-3,
+                "freeze_backbone": True,
             },
             "baseline_model_name": "logistic_regression",
             "baseline_model_params": {
@@ -71,6 +73,7 @@ def main() -> None:
         bucket_frames=bucket_frames,
         baseline_metrics=runner.baseline_metrics,
         reference_bucket=config.image_data.reference_bucket,
+        reference_by_bucket=runner.analysis_reference_map,
     )
     report_path = save_clear10_proxy_report(report, "outputs/clear10_drift_results.json")
     print(f"Saved CLEAR-10 dashboard report to: {report_path.resolve()}")

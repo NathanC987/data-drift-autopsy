@@ -571,7 +571,7 @@ def create_proxy_metric_step_chart(
             x=plot_df["bucket"],
             y=plot_df["estimated"],
             mode="lines+markers",
-            line=dict(shape="hv", width=2, color="#1f77b4"),
+            line=dict(shape="hvh", width=2, color="#1f77b4"),
             marker=dict(size=8),
             name="Estimated",
         )
@@ -582,7 +582,7 @@ def create_proxy_metric_step_chart(
             x=plot_df["bucket"],
             y=plot_df["actual"],
             mode="lines+markers",
-            line=dict(shape="hv", width=2, color="#2ca02c"),
+            line=dict(shape="hvh", width=2, color="#2ca02c"),
             marker=dict(size=8),
             name="Actual",
         )
@@ -667,7 +667,7 @@ def create_detector_step_chart(
             x=plot_df["bucket"],
             y=plot_df["score"],
             mode="lines+markers",
-            line=dict(shape="hv", width=2, color="#ff7f0e"),
+            line=dict(shape="hvh", width=2, color="#ff7f0e"),
             marker=dict(size=8),
             name=detector_name,
         )
@@ -700,4 +700,47 @@ def create_detector_step_chart(
     )
     fig.update_xaxes(dtick=1)
 
+    return fig
+
+
+def create_pca_bucket_3d_scatter(df: pd.DataFrame) -> go.Figure:
+    """Create 3D scatter plot for PCA projection colored by bucket."""
+    if df.empty:
+        fig = go.Figure()
+        fig.update_layout(
+            title="PCA 3D Projection (No Data)",
+            template="plotly_white",
+            height=420,
+        )
+        return fig
+
+    plot_df = df.copy()
+    plot_df["bucket"] = plot_df["bucket"].astype(str)
+
+    fig = px.scatter_3d(
+        plot_df,
+        x="pc1",
+        y="pc2",
+        z="pc3",
+        color="bucket",
+        title="PCA 3D Projection (PC1, PC2, PC3)",
+        labels={
+            "pc1": "PC1",
+            "pc2": "PC2",
+            "pc3": "PC3",
+            "bucket": "Bucket",
+        },
+        template="plotly_white",
+    )
+
+    fig.update_traces(marker=dict(size=4, opacity=0.75))
+    fig.update_layout(
+        height=420,
+        legend_title="Bucket",
+        scene=dict(
+            xaxis_title="PC1",
+            yaxis_title="PC2",
+            zaxis_title="PC3",
+        ),
+    )
     return fig

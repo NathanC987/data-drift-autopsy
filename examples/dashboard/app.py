@@ -307,14 +307,23 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
     baseline = loader.get_clear10_baseline_performance()
 
     if baseline:
-        metric_keys = ["accuracy", "precision", "recall", "f1"]
+        metric_aliases = {
+            "accuracy": ["accuracy"],
+            "precision": ["precision", "precision_macro"],
+            "recall": ["recall", "recall_macro"],
+            "f1": ["f1", "f1_macro"],
+        }
         cols = st.columns(4)
-        for idx, key in enumerate(metric_keys):
-            value = baseline.get(key)
+        for idx, metric_name in enumerate(["accuracy", "precision", "recall", "f1"]):
+            value = None
+            for alias in metric_aliases[metric_name]:
+                if alias in baseline and baseline.get(alias) is not None:
+                    value = baseline.get(alias)
+                    break
             if value is not None:
-                cols[idx].metric(key.title(), f"{float(value):.3f}")
+                cols[idx].metric(metric_name.title(), f"{float(value):.3f}")
             else:
-                cols[idx].metric(key.title(), "N/A")
+                cols[idx].metric(metric_name.title(), "N/A")
     else:
         st.info("No baseline performance block found.")
 
@@ -330,17 +339,62 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
         if not available_metrics:
             available_metrics = sorted(proxy_df["metric"].unique().tolist())
 
-        for metric_name in available_metrics:
+        metric_layout = [
+            ["accuracy", "precision"],
+            ["recall", "f1"],
+        ]
+        rendered_metrics = set()
+
+        for row_metrics in metric_layout:
+            left_col, right_col = st.columns(2)
+            row_cols = [left_col, right_col]
+            for col_idx, metric_name in enumerate(row_metrics):
+                if metric_name not in available_metrics:
+                    continue
+                rendered_metrics.add(metric_name)
+                metric_df = proxy_df[proxy_df["metric"] == metric_name]
+
+                with row_cols[col_idx]:
+                    st.subheader(metric_name.title())
+                    t_col1, t_col2 = st.columns(2)
+                    with t_col1:
+                        lower_threshold = st.number_input(
+                            f"{metric_name.title()} Lower Threshold",
+                            min_value=0.0,
+                            max_value=1.0,
+                            value=0.83,
+                            step=0.01,
+                            key=f"clear10_proxy_lower_{metric_name}",
+                        )
+                    with t_col2:
+                        upper_threshold = st.number_input(
+                            f"{metric_name.title()} Upper Threshold",
+                            min_value=0.0,
+                            max_value=1.0,
+                            value=0.87,
+                            step=0.01,
+                            key=f"clear10_proxy_upper_{metric_name}",
+                        )
+
+                    fig = viz.create_proxy_metric_step_chart(
+                        metric_df,
+                        metric_name=metric_name,
+                        lower_threshold=lower_threshold,
+                        upper_threshold=upper_threshold,
+                    )
+                    st.plotly_chart(fig, width="stretch")
+
+        remaining_metrics = [m for m in available_metrics if m not in rendered_metrics]
+        for metric_name in remaining_metrics:
             st.subheader(metric_name.title())
             metric_df = proxy_df[proxy_df["metric"] == metric_name]
-
             col1, col2 = st.columns(2)
             with col1:
                 lower_threshold = st.number_input(
                     f"{metric_name.title()} Lower Threshold",
                     min_value=0.0,
                     max_value=1.0,
-                    value=0.70,
+                    value=0.83,
                     step=0.01,
                     key=f"clear10_proxy_lower_{metric_name}",
                 )
@@ -349,7 +403,7 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
                     f"{metric_name.title()} Upper Threshold",
                     min_value=0.0,
                     max_value=1.0,
-                    value=1.00,
+                    value=0.87,
                     step=0.01,
                     key=f"clear10_proxy_upper_{metric_name}",
                 )
@@ -369,38 +423,34 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
             if not class_metrics:
                 class_metrics = sorted(classwise_df["metric"].unique().tolist())
 
-            selected_metric = st.selectbox(
-                "Class-wise Metric",
-                options=class_metrics,
-                index=0,
-                key="clear10_classwise_metric",
-            )
+            controls_col, graph_col = st.columns([1, 2])
 
-            class_options = (
-                classwise_df[["class_id", "class_name"]]
-                .drop_duplicates()
-                .sort_values("class_id")
-            )
-            class_labels = [
-                f"{int(row.class_id)} - {row.class_name}"
-                for row in class_options.itertuples(index=False)
-            ]
+            with controls_col:
+                selected_metric = st.selectbox(
+                    "Class-wise Metric",
+                    options=class_metrics,
+                    index=0,
+                    key="clear10_classwise_metric",
+                )
 
-            selected_class_label = st.selectbox(
-                "Class",
-                options=class_labels,
-                index=0,
-                key="clear10_classwise_class",
-            )
-            selected_class_id = int(selected_class_label.split(" - ", maxsplit=1)[0])
+                class_options = (
+                    classwise_df[["class_id", "class_name"]]
+                    .drop_duplicates()
+                    .sort_values("class_id")
+                )
+                class_labels = [
+                    f"{int(row.class_id)} - {row.class_name}"
+                    for row in class_options.itertuples(index=False)
+                ]
 
-            selected_df = classwise_df[
-                (classwise_df["metric"] == selected_metric)
-                & (classwise_df["class_id"] == selected_class_id)
-            ]
+                selected_class_label = st.selectbox(
+                    "Class",
+                    options=class_labels,
+                    index=0,
+                    key="clear10_classwise_class",
+                )
+                selected_class_id = int(selected_class_label.split(" - ", maxsplit=1)[0])
 
-            c1, c2 = st.columns(2)
-            with c1:
                 class_lower_threshold = st.number_input(
                     "Class-wise Lower Threshold",
                     min_value=0.0,
@@ -409,7 +459,6 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
                     step=0.01,
                     key="clear10_classwise_proxy_lower",
                 )
-            with c2:
                 class_upper_threshold = st.number_input(
                     "Class-wise Upper Threshold",
                     min_value=0.0,
@@ -419,6 +468,11 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
                     key="clear10_classwise_proxy_upper",
                 )
 
+            selected_df = classwise_df[
+                (classwise_df["metric"] == selected_metric)
+                & (classwise_df["class_id"] == selected_class_id)
+            ]
+
             class_name = class_options[class_options["class_id"] == selected_class_id]["class_name"].iloc[0]
             fig = viz.create_proxy_metric_step_chart(
                 selected_df,
@@ -426,12 +480,15 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
                 lower_threshold=class_lower_threshold,
                 upper_threshold=class_upper_threshold,
             )
-            st.plotly_chart(fig, width="stretch")
+
+            with graph_col:
+                st.plotly_chart(fig, width="stretch")
 
     st.markdown("---")
 
     st.header("3. Drift Detection")
     drift_df = loader.get_clear10_drift_timeline()
+    pca_projection_df = loader.get_clear10_pca_3d_projection()
     if drift_df.empty:
         st.info("No drift timeline data available.")
     else:
@@ -440,10 +497,102 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
             "Ks Test": 0.05,
             "Psi": 0.2,
             "Mmd": 0.1,
-            "Cbpe": 0.05,
+            "Pca Reconstruction": 0.1,
+            "Fid Distance": 0.1,
         }
 
-        for detector_name in detectors:
+        ordered_detector_rows = [
+            ["Pca Reconstruction"],
+            ["Fid Distance", "Mmd"],
+            ["Ks Test", "Psi"],
+        ]
+
+        rendered_detectors = set()
+
+        for detector_row in ordered_detector_rows:
+            if len(detector_row) == 1:
+                detector_name = detector_row[0]
+                if detector_name not in detectors:
+                    continue
+                rendered_detectors.add(detector_name)
+                detector_df = drift_df[drift_df["detector"] == detector_name]
+                default_threshold = standard_thresholds.get(detector_name, 0.1)
+                if detector_df["threshold"].notna().any():
+                    default_threshold = float(detector_df["threshold"].dropna().iloc[0])
+
+                threshold = st.number_input(
+                    f"{detector_name} Threshold",
+                    min_value=0.0,
+                    value=float(default_threshold),
+                    step=0.01,
+                    key=f"clear10_drift_threshold_{detector_name}",
+                )
+
+                alert_direction = "below" if "ks" in detector_name.lower() else "above"
+                semantics = "lower-than-threshold triggers alert" if alert_direction == "below" else "higher-than-threshold triggers alert"
+                if detector_name == "Pca Reconstruction" and not pca_projection_df.empty:
+                    left_col, right_col = st.columns(2)
+                    with left_col:
+                        st.subheader(detector_name)
+                        st.caption(f"Alert semantics: {semantics}")
+                        fig = viz.create_detector_step_chart(
+                            detector_df,
+                            detector_name=detector_name,
+                            threshold=threshold,
+                            alert_direction=alert_direction,
+                        )
+                        st.plotly_chart(fig, width="stretch")
+
+                    with right_col:
+                        st.subheader("PCA 3D Bucket Projection")
+                        pca_fig = viz.create_pca_bucket_3d_scatter(pca_projection_df)
+                        st.plotly_chart(pca_fig, width="stretch")
+                else:
+                    st.subheader(detector_name)
+                    st.caption(f"Alert semantics: {semantics}")
+                    fig = viz.create_detector_step_chart(
+                        detector_df,
+                        detector_name=detector_name,
+                        threshold=threshold,
+                        alert_direction=alert_direction,
+                    )
+                    st.plotly_chart(fig, width="stretch")
+            else:
+                left_col, right_col = st.columns(2)
+                for col_idx, detector_name in enumerate(detector_row):
+                    if detector_name not in detectors:
+                        continue
+                    rendered_detectors.add(detector_name)
+                    current_col = left_col if col_idx == 0 else right_col
+                    with current_col:
+                        st.subheader(detector_name)
+                        detector_df = drift_df[drift_df["detector"] == detector_name]
+                        default_threshold = standard_thresholds.get(detector_name, 0.1)
+                        if detector_df["threshold"].notna().any():
+                            default_threshold = float(detector_df["threshold"].dropna().iloc[0])
+
+                        threshold = st.number_input(
+                            f"{detector_name} Threshold",
+                            min_value=0.0,
+                            value=float(default_threshold),
+                            step=0.01,
+                            key=f"clear10_drift_threshold_{detector_name}",
+                        )
+
+                        alert_direction = "below" if "ks" in detector_name.lower() else "above"
+                        semantics = "lower-than-threshold triggers alert" if alert_direction == "below" else "higher-than-threshold triggers alert"
+                        st.caption(f"Alert semantics: {semantics}")
+
+                        fig = viz.create_detector_step_chart(
+                            detector_df,
+                            detector_name=detector_name,
+                            threshold=threshold,
+                            alert_direction=alert_direction,
+                        )
+                        st.plotly_chart(fig, width="stretch")
+
+        remaining_detectors = [d for d in detectors if d not in rendered_detectors]
+        for detector_name in remaining_detectors:
             st.subheader(detector_name)
             detector_df = drift_df[drift_df["detector"] == detector_name]
             default_threshold = standard_thresholds.get(detector_name, 0.1)
@@ -493,7 +642,6 @@ def main():
     """Main dashboard application."""
     st.title("Data Drift Autopsy Dashboard")
     st.markdown("Interactive visualization of drift detection and drift autopsy results")
-    st.markdown("---")
 
     # Sidebar - mode data configuration and filters
     with st.sidebar:

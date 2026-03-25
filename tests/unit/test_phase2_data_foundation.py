@@ -5,6 +5,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from drift_autopsy.config.schema import ImageDataConfig
 from drift_autopsy.data import Clear10Loader, DataValidator
 
 
@@ -110,3 +111,30 @@ def test_validate_embedding_contract_allows_missing_y_true() -> None:
         expected_embedding_dim=2,
         expected_class_count=2,
     )
+
+
+def test_image_config_accepts_chunking_and_monitored_model_fields() -> None:
+    cfg = ImageDataConfig(
+        root_path="data/clear10",
+        analysis_buckets=[2, 3],
+        chunking_strategy="quantity",
+        chunk_size_records=3300,
+        reference_mode="previous_chunk",
+        allow_missing_analysis_y_true=True,
+        monitored_model_name="resnet_classifier",
+        monitored_model_params={"model_name": "resnet18", "epochs": 1},
+    )
+
+    assert cfg.chunking_strategy == "quantity"
+    assert cfg.chunk_size_records == 3300
+    assert cfg.reference_mode == "previous_chunk"
+    assert cfg.monitored_model_name == "resnet_classifier"
+
+
+def test_image_config_rejects_invalid_chunking_strategy() -> None:
+    with pytest.raises(ValueError, match="chunking_strategy"):
+        ImageDataConfig(
+            root_path="data/clear10",
+            analysis_buckets=[2],
+            chunking_strategy="invalid_strategy",
+        )

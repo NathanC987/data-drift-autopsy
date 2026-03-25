@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+import pytest
 
-from drift_autopsy.data.image_baseline import EmbeddingBaselineClassifier
+from drift_autopsy.data.image_baseline import EmbeddingBaselineClassifier, create_monitored_model
 
 
 def _make_frame(n_rows: int = 12) -> pd.DataFrame:
@@ -54,3 +55,29 @@ def test_baseline_classifier_save_and_load(tmp_path):
     loaded = EmbeddingBaselineClassifier.load(str(model_path))
     out = loaded.attach_predictions(frame, class_count=2)
     assert "y_pred" in out.columns
+
+
+def test_create_monitored_model_logistic_regression():
+    model = create_monitored_model("logistic_regression", {"max_iter": 100})
+    assert isinstance(model, EmbeddingBaselineClassifier)
+
+
+def test_create_monitored_model_invalid_name_raises():
+    with pytest.raises(ValueError, match="Unsupported monitored model"):
+        create_monitored_model("unknown_model", {})
+
+
+def test_create_monitored_model_resnet_classifier_if_available():
+    try:
+        model = create_monitored_model(
+            "resnet_classifier",
+            {
+                "model_name": "resnet18",
+                "weights": None,
+                "epochs": 1,
+            },
+        )
+    except ImportError:
+        pytest.skip("torch/torchvision/Pillow not available")
+
+    assert getattr(model, "model_name", None) == "resnet18"
