@@ -145,6 +145,9 @@ def test_build_clear10_full_report_contract():
     assert "class_gap_summary" in bucket_two_result["rca"]
     assert "slice_correlation" in bucket_two_result["rca"]
     assert "recommendations" in bucket_two_result["rca"]
+    assert "visual_rca" in bucket_two_result["rca"]
+    assert bucket_two_result["rca"]["visual_rca"]["enabled"] is False
+    assert bucket_two_result["rca"]["visual_rca"]["status"] == "skipped"
 
     # Ensure report payload is valid strict JSON (no NaN/Infinity).
     json.dumps(report, allow_nan=False)

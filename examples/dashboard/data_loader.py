@@ -768,6 +768,94 @@ class DriftResultsLoader:
 
         return pd.DataFrame(rows).sort_values("bucket")
 
+    def get_clear10_visual_rca(self) -> pd.DataFrame:
+        """Get CLEAR-10 visual RCA (Grad-CAM) artifact rows by bucket."""
+        if self.raw_data is None:
+            self.load()
+
+        rows = []
+        bucket_results = self.raw_data.get("bucket_results", {})
+
+        if isinstance(bucket_results, dict):
+            for bucket_key, payload in bucket_results.items():
+                if not str(bucket_key).isdigit() or int(bucket_key) < 2:
+                    continue
+
+                visual_rca = (
+                    payload.get("rca", {})
+                    .get("visual_rca", {})
+                )
+                if not isinstance(visual_rca, dict):
+                    continue
+
+                bucket = int(bucket_key)
+                enabled = bool(visual_rca.get("enabled", False))
+                status = str(visual_rca.get("status", "unknown"))
+                reason = visual_rca.get("reason")
+                bucket_severity = str(visual_rca.get("bucket_severity", "none"))
+
+                samples = visual_rca.get("samples", [])
+                if not samples:
+                    rows.append(
+                        {
+                            "bucket": bucket,
+                            "bucket_severity": bucket_severity,
+                            "enabled": enabled,
+                            "status": status,
+                            "reason": reason,
+                            "sample_id": "-",
+                            "class_name": "-",
+                            "drift_score": float("nan"),
+                            "input_image_path": None,
+                            "image_path": None,
+                            "gradcam_path": None,
+                            "rank": float("nan"),
+                        }
+                    )
+                    continue
+
+                for sample in samples:
+                    input_image_path = sample.get("input_image_path")
+                    gradcam_path = sample.get("gradcam_path")
+                    image_path = sample.get("image_path")
+                    rows.append(
+                        {
+                            "bucket": bucket,
+                            "bucket_severity": bucket_severity,
+                            "enabled": enabled,
+                            "status": status,
+                            "reason": reason,
+                            "sample_id": str(sample.get("sample_id", "-")),
+                            "class_name": str(sample.get("class_name", "-")),
+                            "drift_score": self._safe_float(sample.get("drift_score"), default=float("nan")),
+                            "input_image_path": str(input_image_path) if input_image_path else None,
+                            "image_path": str(image_path) if image_path else None,
+                            "gradcam_path": str(gradcam_path) if gradcam_path else None,
+                            "rank": self._safe_float(sample.get("rank"), default=float("nan")),
+                        }
+                    )
+
+        if not rows:
+            return pd.DataFrame(
+                columns=[
+                    "bucket",
+                    "bucket_severity",
+                    "enabled",
+                    "status",
+                    "reason",
+                    "sample_id",
+                    "class_name",
+                    "drift_score",
+                    "input_image_path",
+                    "image_path",
+                    "gradcam_path",
+                    "rank",
+                ]
+            )
+
+        out = pd.DataFrame(rows)
+        return out.sort_values(["bucket", "rank"], na_position="last")
+
     def get_clear10_pca_3d_projection(self, max_points_per_bucket: int = 350) -> pd.DataFrame:
         """
         Build a 3D PCA projection from CLEAR-10 tabularized bucket parquet files.

@@ -74,6 +74,7 @@ def main() -> None:
         baseline_metrics=runner.baseline_metrics,
         reference_bucket=config.image_data.reference_bucket,
         reference_by_bucket=runner.analysis_reference_map,
+        artifacts_dir=out_dir,
     )
     report_path = save_clear10_proxy_report(report, "outputs/clear10_drift_results.json")
     print(f"Saved CLEAR-10 dashboard report to: {report_path.resolve()}")

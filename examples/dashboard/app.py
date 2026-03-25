@@ -632,10 +632,91 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
 
     st.header("5. RCA")
     rca_df = loader.get_clear10_rca_summary()
+    visual_rca_df = loader.get_clear10_visual_rca()
     if rca_df.empty:
         st.info("No RCA summary data available.")
     else:
         st.dataframe(rca_df, width="stretch")
+
+    st.subheader("Visual RCA (Grad-CAM)")
+    if visual_rca_df.empty:
+        st.info("No visual RCA artifacts available.")
+    else:
+        enabled_df = visual_rca_df[visual_rca_df["enabled"] == True].copy()
+        if enabled_df.empty:
+            status_cols = ["bucket", "bucket_severity", "status", "reason"]
+            st.dataframe(
+                visual_rca_df[status_cols].drop_duplicates().sort_values("bucket"),
+                width="stretch",
+            )
+        else:
+            for bucket in sorted(enabled_df["bucket"].dropna().unique().tolist()):
+                bucket_rows = enabled_df[enabled_df["bucket"] == bucket].sort_values("rank")
+                if bucket_rows.empty:
+                    continue
+                severity = str(bucket_rows["bucket_severity"].iloc[0])
+                st.markdown(f"**Bucket {int(bucket)} | Severity: {severity}**")
+
+                sample_rows = []
+                for _, row in bucket_rows.iterrows():
+                    input_image_path = row.get("input_image_path")
+                    gradcam_path = row.get("gradcam_path")
+                    if not input_image_path and not gradcam_path:
+                        continue
+
+                    try:
+                        score_value = float(row.get("drift_score", float("nan")))
+                    except (TypeError, ValueError):
+                        score_value = float("nan")
+
+                    sample_rows.append(
+                        {
+                            "input_image_path": input_image_path,
+                            "gradcam_path": gradcam_path,
+                            "caption": (
+                                f"sample={row.get('sample_id', '-')}, "
+                                f"class={row.get('class_name', '-')}, "
+                                f"score={score_value:.3f}"
+                            ),
+                        }
+                    )
+
+                for idx in range(0, len(sample_rows), 2):
+                    pair = sample_rows[idx : idx + 2]
+                    col_a_input, col_a_cam, col_b_input, col_b_cam = st.columns(4)
+
+                    first = pair[0]
+                    with col_a_input:
+                        if first["input_image_path"] and Path(first["input_image_path"]).exists():
+                            st.image(
+                                first["input_image_path"],
+                                caption=f"Input image | {first['caption']}",
+                                use_container_width=True,
+                            )
+                    with col_a_cam:
+                        if first["gradcam_path"] and Path(first["gradcam_path"]).exists():
+                            st.image(
+                                first["gradcam_path"],
+                                caption=f"Grad-CAM overlay | {first['caption']}",
+                                use_container_width=True,
+                            )
+
+                    if len(pair) > 1:
+                        second = pair[1]
+                        with col_b_input:
+                            if second["input_image_path"] and Path(second["input_image_path"]).exists():
+                                st.image(
+                                    second["input_image_path"],
+                                    caption=f"Input image | {second['caption']}",
+                                    use_container_width=True,
+                                )
+                        with col_b_cam:
+                            if second["gradcam_path"] and Path(second["gradcam_path"]).exists():
+                                st.image(
+                                    second["gradcam_path"],
+                                    caption=f"Grad-CAM overlay | {second['caption']}",
+                                    use_container_width=True,
+                                )
 
 
 def main():

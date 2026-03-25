@@ -84,9 +84,9 @@
   "baseline_metrics": {
     "train_samples": 2308.0,
     "test_samples": 990.0,
-    "accuracy": 0.8414141414141414,
-    "precision_macro": 0.8545103403634813,
-    "recall_macro": 0.8414141414141415,
-    "f1_macro": 0.8411495006777133
+    "accuracy": 0.8575757575757575,
+    "precision_macro": 0.8693265596854712,
+    "recall_macro": 0.8575757575757575,
+    "f1_macro": 0.8577619049983594
   }
 }

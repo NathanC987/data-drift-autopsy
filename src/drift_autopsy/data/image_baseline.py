@@ -444,7 +444,16 @@ class ResNetMonitoredClassifier:
                 "ResNetMonitoredClassifier requires torch, torchvision, and Pillow."
             ) from _TORCH_IMPORT_ERROR
 
-        payload = torch.load(path, map_location="cpu")
+        # This checkpoint is produced by this codebase and contains a Python dict
+        # payload (not just tensors). With PyTorch >=2.6, torch.load defaults to
+        # weights_only=True, which blocks this payload shape unless explicitly
+        # disabled for trusted local artifacts.
+        try:
+            payload = torch.load(path, map_location="cpu", weights_only=False)
+        except TypeError:
+            # Backward compatibility for older torch versions that do not expose
+            # the weights_only argument.
+            payload = torch.load(path, map_location="cpu")
         instance = cls(
             model_name=payload["model_name"],
             model_params=payload["model_params"],
