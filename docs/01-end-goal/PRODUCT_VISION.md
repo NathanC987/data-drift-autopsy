@@ -51,6 +51,18 @@ Note:
 
 The system should not only detect events. It should support end-to-end diagnostics and remediation decisions.
 
+## Modality Strategy
+
+The product is intended to evolve as a multimodal diagnostics system.
+
+Planned modality progression:
+
+1. Tabular baseline (implemented)
+2. Image classification via embedding-first pipeline (approved next)
+3. Additional modalities over time (for example text, time-series) through the same modular contracts
+
+For image data, the approved direction is to transform images into embedding-plus-prediction tabular contracts, then reuse the same pipeline stages for proxy estimation, drift detection, localization, RCA, and remediation reporting.
+
 ## Core Product Outcomes
 
 1. Fast and trustworthy detection

@@ -16,10 +16,18 @@ from drift_autopsy.core.result import (
 )
 
 # Registries
-from drift_autopsy.registry import DetectorRegistry, LocalizerRegistry, RCARegistry
+from drift_autopsy.registry import DetectorRegistry, ExtractorRegistry, LocalizerRegistry, RCARegistry
 
 # Import detectors to trigger registration
-from drift_autopsy.detectors import KSTest, PSI, MMD, DomainClassifier, CBPE
+from drift_autopsy.detectors import (
+    KSTest,
+    PSI,
+    MMD,
+    PCAReconstructionError,
+    FIDDistance,
+    DomainClassifier,
+    CBPE,
+)
 
 # Import localizers
 from drift_autopsy.localizers import UnivariateLocalizer
@@ -28,7 +36,15 @@ from drift_autopsy.localizers import UnivariateLocalizer
 from drift_autopsy.rca import SHAPAnalyzer
 
 # Data utilities
-from drift_autopsy.data import DataLoader, FolktablesLoader
+from drift_autopsy.data import (
+    DataLoader,
+    FolktablesLoader,
+    EmbeddingBaselineClassifier,
+    create_monitored_model,
+    ImageTabularizationRunner,
+    MulticlassProxyEstimator,
+    build_image_tabularized_buckets,
+)
 
 __all__ = [
     "DriftPipeline",
@@ -39,15 +55,23 @@ __all__ = [
     "PipelineResult",
     "DriftSeverity",
     "DetectorRegistry",
+    "ExtractorRegistry",
     "LocalizerRegistry",
     "RCARegistry",
     "KSTest",
     "PSI",
     "MMD",
+    "PCAReconstructionError",
+    "FIDDistance",
     "DomainClassifier",
     "CBPE",
     "UnivariateLocalizer",
     "SHAPAnalyzer",
     "DataLoader",
     "FolktablesLoader",
+    "EmbeddingBaselineClassifier",
+    "create_monitored_model",
+    "ImageTabularizationRunner",
+    "MulticlassProxyEstimator",
+    "build_image_tabularized_buckets",
 ]

@@ -1,9 +1,12 @@
 """Data loader for drift analysis results."""
 
 import json
+import math
 from pathlib import Path
 from typing import Dict, List, Optional
 import pandas as pd
+import numpy as np
+from sklearn.decomposition import PCA
 
 
 class DriftResultsLoader:
@@ -18,6 +21,7 @@ class DriftResultsLoader:
         """
         self.results_path = Path(results_path)
         self.raw_data: Optional[Dict] = None
+        self._clear10_pca_projection_cache: Optional[pd.DataFrame] = None
         
     def load(self) -> Dict:
         """
@@ -29,6 +33,16 @@ class DriftResultsLoader:
         with open(self.results_path, 'r') as f:
             self.raw_data = json.load(f)
         return self.raw_data
+
+    @staticmethod
+    def _safe_float(value, default: float = 0.0) -> float:
+        """Convert values to finite floats, falling back to default when invalid."""
+        try:
+            numeric = float(value)
+        except (TypeError, ValueError):
+            return float(default)
+
+        return numeric if math.isfinite(numeric) else float(default)
     
     def get_detector_timeline(self, detector_name: str) -> pd.DataFrame:
         """
@@ -446,3 +460,487 @@ class DriftResultsLoader:
             )
 
         return pd.DataFrame(rows)
+
+    def get_clear10_baseline_performance(self) -> Dict:
+        """
+        Get baseline model performance for CLEAR-10 (bucket-1 test split).
+
+        Returns:
+            Dictionary with baseline metrics if available.
+        """
+        if self.raw_data is None:
+            self.load()
+
+        baseline = self.raw_data.get("baseline_performance", {})
+        if isinstance(baseline, dict) and baseline:
+            return baseline
+
+        metadata = self.raw_data.get("metadata", {})
+        baseline = metadata.get("baseline_performance", {})
+        if isinstance(baseline, dict):
+            return baseline
+
+        return {}
+
+    def get_clear10_proxy_metrics(self) -> pd.DataFrame:
+        """
+        Get CLEAR-10 proxy-vs-actual metrics by bucket.
+
+        Expected normalized output columns:
+            bucket, metric, estimated, actual
+        """
+        if self.raw_data is None:
+            self.load()
+
+        rows = []
+
+        # Preferred contract: top-level proxy_metrics list
+        proxy_metrics = self.raw_data.get("proxy_metrics", [])
+        if isinstance(proxy_metrics, list):
+            for entry in proxy_metrics:
+                bucket = entry.get("bucket")
+                metric = str(entry.get("metric", "")).lower()
+                if bucket is None or not metric:
+                    continue
+                rows.append(
+                    {
+                        "bucket": int(bucket),
+                        "metric": metric,
+                        "estimated": self._safe_float(entry.get("estimated")),
+                        "actual": self._safe_float(entry.get("actual")),
+                    }
+                )
+
+        # Fallback contract: per-bucket records with nested estimated/actual maps
+        if not rows:
+            bucket_results = self.raw_data.get("bucket_results", {})
+            if isinstance(bucket_results, dict):
+                for bucket_key, payload in bucket_results.items():
+                    if not str(bucket_key).isdigit() or int(bucket_key) < 2:
+                        continue
+                    proxy = payload.get("proxy_performance", {})
+                    estimated = proxy.get("estimated", {})
+                    actual = proxy.get("actual", {})
+                    metric_keys = set(estimated.keys()) | set(actual.keys())
+                    for metric in metric_keys:
+                        rows.append(
+                            {
+                                "bucket": int(bucket_key),
+                                "metric": str(metric).lower(),
+                                "estimated": self._safe_float(estimated.get(metric)),
+                                "actual": self._safe_float(actual.get(metric)),
+                            }
+                        )
+
+        if not rows:
+            return pd.DataFrame(columns=["bucket", "metric", "estimated", "actual"])
+
+        return pd.DataFrame(rows).sort_values(["metric", "bucket"])
+
+    def get_clear10_proxy_metrics_classwise(self) -> pd.DataFrame:
+        """
+        Get CLEAR-10 class-wise proxy metric trends by bucket.
+
+        Expected normalized output columns:
+            bucket, class_id, class_name, metric, estimated, actual, gap
+        """
+        if self.raw_data is None:
+            self.load()
+
+        rows = []
+
+        # Preferred contract: top-level class-wise rows.
+        classwise = self.raw_data.get("proxy_metrics_classwise", [])
+        if isinstance(classwise, list):
+            for entry in classwise:
+                bucket = entry.get("bucket")
+                class_id = entry.get("class_id")
+                metric = entry.get("metric")
+                if bucket is None or class_id is None or not metric:
+                    continue
+                rows.append(
+                    {
+                        "bucket": int(bucket),
+                        "class_id": int(class_id),
+                        "class_name": str(entry.get("class_name", f"class_{class_id}")),
+                        "metric": str(metric).lower(),
+                        "estimated": self._safe_float(entry.get("estimated")),
+                        "actual": self._safe_float(entry.get("actual")),
+                        "gap": self._safe_float(entry.get("gap")),
+                    }
+                )
+
+        # Fallback: nested class-wise maps from per-bucket payloads.
+        if not rows:
+            bucket_results = self.raw_data.get("bucket_results", {})
+            if isinstance(bucket_results, dict):
+                for bucket_key, payload in bucket_results.items():
+                    if not str(bucket_key).isdigit() or int(bucket_key) < 2:
+                        continue
+                    proxy = payload.get("proxy_performance", {})
+                    estimated_map = proxy.get("class_wise_estimated", {})
+                    actual_map = proxy.get("class_wise_actual", {})
+                    gap_map = proxy.get("class_wise_proxy_quality_gap", {})
+
+                    for class_key, est_values in estimated_map.items():
+                        try:
+                            class_id = int(str(class_key).split("_")[-1])
+                        except ValueError:
+                            continue
+
+                        actual_values = actual_map.get(class_key, {})
+                        class_gaps = gap_map.get(class_key, {})
+                        for metric_name in ("precision", "recall", "f1"):
+                            rows.append(
+                                {
+                                    "bucket": int(bucket_key),
+                                    "class_id": class_id,
+                                    "class_name": str(class_key),
+                                    "metric": metric_name,
+                                    "estimated": self._safe_float(est_values.get(metric_name)),
+                                    "actual": self._safe_float(actual_values.get(metric_name)),
+                                    "gap": self._safe_float(class_gaps.get(metric_name)),
+                                }
+                            )
+
+        if not rows:
+            return pd.DataFrame(
+                columns=["bucket", "class_id", "class_name", "metric", "estimated", "actual", "gap"]
+            )
+
+        return pd.DataFrame(rows).sort_values(["class_id", "metric", "bucket"])
+
+    def get_clear10_drift_timeline(self) -> pd.DataFrame:
+        """
+        Get CLEAR-10 detector trends by bucket.
+
+        Expected normalized output columns:
+            bucket, detector, score, threshold
+        """
+        if self.raw_data is None:
+            self.load()
+
+        rows = []
+
+        # Preferred contract: top-level drift_results list
+        drift_results = self.raw_data.get("drift_results", [])
+        if isinstance(drift_results, list):
+            for entry in drift_results:
+                bucket = entry.get("bucket")
+                detector = entry.get("detector")
+                if bucket is None or detector is None:
+                    continue
+                rows.append(
+                    {
+                        "bucket": int(bucket),
+                        "detector": str(detector),
+                        "score": self._safe_float(entry.get("score")),
+                        "threshold": entry.get("threshold"),
+                    }
+                )
+
+        # Fallback: per-bucket detector map
+        if not rows:
+            bucket_results = self.raw_data.get("bucket_results", {})
+            if isinstance(bucket_results, dict):
+                for bucket_key, payload in bucket_results.items():
+                    if not str(bucket_key).isdigit() or int(bucket_key) < 2:
+                        continue
+                    detectors = payload.get("detectors", {})
+                    if not isinstance(detectors, dict):
+                        continue
+                    for detector_name, detector_payload in detectors.items():
+                        rows.append(
+                            {
+                                "bucket": int(bucket_key),
+                                "detector": str(detector_name).replace("_", " ").title(),
+                                "score": self._safe_float(detector_payload.get("score")),
+                                "threshold": detector_payload.get("threshold"),
+                            }
+                        )
+
+        if not rows:
+            return pd.DataFrame(columns=["bucket", "detector", "score", "threshold"])
+
+        return pd.DataFrame(rows).sort_values(["detector", "bucket"])
+
+    def get_clear10_localization_summary(self) -> pd.DataFrame:
+        """
+        Get CLEAR-10 localization summaries by bucket.
+
+        Expected normalized output columns:
+            bucket, top_features, n_drifted_features,
+            n_class_slices_drifted, n_metadata_slices_drifted
+        """
+        if self.raw_data is None:
+            self.load()
+
+        rows = []
+
+        bucket_results = self.raw_data.get("bucket_results", {})
+        if isinstance(bucket_results, dict):
+            for bucket_key, payload in bucket_results.items():
+                if not str(bucket_key).isdigit() or int(bucket_key) < 2:
+                    continue
+
+                localization = payload.get("localization", {})
+                drifted = localization.get("drifted_features", [])
+                class_slice_summary = localization.get("class_slice_summary", [])
+                metadata_slice_summary = localization.get("metadata_slice_summary", [])
+
+                n_class_slices_drifted = sum(1 for row in class_slice_summary if row.get("drift_detected"))
+                n_metadata_slices_drifted = sum(1 for row in metadata_slice_summary if row.get("drift_detected"))
+
+                rows.append(
+                    {
+                        "bucket": int(bucket_key),
+                        "top_features": ", ".join(drifted[:5]) if drifted else "-",
+                        "n_drifted_features": len(drifted),
+                        "n_class_slices_drifted": int(n_class_slices_drifted),
+                        "n_metadata_slices_drifted": int(n_metadata_slices_drifted),
+                    }
+                )
+
+        if not rows:
+            return pd.DataFrame(
+                columns=[
+                    "bucket",
+                    "top_features",
+                    "n_drifted_features",
+                    "n_class_slices_drifted",
+                    "n_metadata_slices_drifted",
+                ]
+            )
+
+        return pd.DataFrame(rows).sort_values("bucket")
+
+    def get_clear10_rca_summary(self) -> pd.DataFrame:
+        """
+        Get CLEAR-10 RCA summaries by bucket.
+
+        Expected normalized output columns:
+            bucket, top_changes, n_recommendations,
+            largest_gap_metric, largest_gap_value
+        """
+        if self.raw_data is None:
+            self.load()
+
+        rows = []
+        bucket_results = self.raw_data.get("bucket_results", {})
+
+        if isinstance(bucket_results, dict):
+            for bucket_key, payload in bucket_results.items():
+                if not str(bucket_key).isdigit() or int(bucket_key) < 2:
+                    continue
+
+                rca = payload.get("rca", {})
+                top_changes = rca.get("top_changes", [])
+                recommendations = rca.get("recommendations", [])
+                output_corr = rca.get("output_correlation", {})
+                largest_gap_metric = output_corr.get("largest_gap_metric")
+                largest_gap_value = self._safe_float(output_corr.get("largest_gap_value"), default=float("nan"))
+
+                class_gap_summary = rca.get("class_gap_summary", [])
+                top_class = class_gap_summary[0].get("class_key") if class_gap_summary else "-"
+
+                rows.append(
+                    {
+                        "bucket": int(bucket_key),
+                        "top_changes": ", ".join(top_changes[:5]) if top_changes else "-",
+                        "n_recommendations": len(recommendations),
+                        "largest_gap_metric": str(largest_gap_metric) if largest_gap_metric else "-",
+                        "largest_gap_value": largest_gap_value,
+                        "top_class_gap": str(top_class),
+                    }
+                )
+
+        if not rows:
+            return pd.DataFrame(
+                columns=[
+                    "bucket",
+                    "top_changes",
+                    "n_recommendations",
+                    "largest_gap_metric",
+                    "largest_gap_value",
+                    "top_class_gap",
+                ]
+            )
+
+        return pd.DataFrame(rows).sort_values("bucket")
+
+    def get_clear10_visual_rca(self) -> pd.DataFrame:
+        """Get CLEAR-10 visual RCA (Grad-CAM) artifact rows by bucket."""
+        if self.raw_data is None:
+            self.load()
+
+        rows = []
+        bucket_results = self.raw_data.get("bucket_results", {})
+
+        if isinstance(bucket_results, dict):
+            for bucket_key, payload in bucket_results.items():
+                if not str(bucket_key).isdigit() or int(bucket_key) < 2:
+                    continue
+
+                visual_rca = (
+                    payload.get("rca", {})
+                    .get("visual_rca", {})
+                )
+                if not isinstance(visual_rca, dict):
+                    continue
+
+                bucket = int(bucket_key)
+                enabled = bool(visual_rca.get("enabled", False))
+                status = str(visual_rca.get("status", "unknown"))
+                reason = visual_rca.get("reason")
+                bucket_severity = str(visual_rca.get("bucket_severity", "none"))
+
+                samples = visual_rca.get("samples", [])
+                if not samples:
+                    rows.append(
+                        {
+                            "bucket": bucket,
+                            "bucket_severity": bucket_severity,
+                            "enabled": enabled,
+                            "status": status,
+                            "reason": reason,
+                            "sample_id": "-",
+                            "class_name": "-",
+                            "drift_score": float("nan"),
+                            "input_image_path": None,
+                            "image_path": None,
+                            "gradcam_path": None,
+                            "rank": float("nan"),
+                        }
+                    )
+                    continue
+
+                for sample in samples:
+                    input_image_path = sample.get("input_image_path")
+                    gradcam_path = sample.get("gradcam_path")
+                    image_path = sample.get("image_path")
+                    rows.append(
+                        {
+                            "bucket": bucket,
+                            "bucket_severity": bucket_severity,
+                            "enabled": enabled,
+                            "status": status,
+                            "reason": reason,
+                            "sample_id": str(sample.get("sample_id", "-")),
+                            "class_name": str(sample.get("class_name", "-")),
+                            "drift_score": self._safe_float(sample.get("drift_score"), default=float("nan")),
+                            "input_image_path": str(input_image_path) if input_image_path else None,
+                            "image_path": str(image_path) if image_path else None,
+                            "gradcam_path": str(gradcam_path) if gradcam_path else None,
+                            "rank": self._safe_float(sample.get("rank"), default=float("nan")),
+                        }
+                    )
+
+        if not rows:
+            return pd.DataFrame(
+                columns=[
+                    "bucket",
+                    "bucket_severity",
+                    "enabled",
+                    "status",
+                    "reason",
+                    "sample_id",
+                    "class_name",
+                    "drift_score",
+                    "input_image_path",
+                    "image_path",
+                    "gradcam_path",
+                    "rank",
+                ]
+            )
+
+        out = pd.DataFrame(rows)
+        return out.sort_values(["bucket", "rank"], na_position="last")
+
+    def get_clear10_pca_3d_projection(self, max_points_per_bucket: int = 350) -> pd.DataFrame:
+        """
+        Build a 3D PCA projection from CLEAR-10 tabularized bucket parquet files.
+
+        Returns:
+            DataFrame with columns: bucket, pc1, pc2, pc3
+        """
+        if self._clear10_pca_projection_cache is not None:
+            return self._clear10_pca_projection_cache.copy()
+
+        artifacts_dir = self.results_path.parent / "clear10_tabularized_demo"
+        if not artifacts_dir.exists():
+            return pd.DataFrame(columns=["bucket", "pc1", "pc2", "pc3"])
+
+        bucket_files = sorted(
+            artifacts_dir.glob("bucket_*.parquet"),
+            key=lambda p: int(p.stem.split("_")[-1]),
+        )
+        if not bucket_files:
+            return pd.DataFrame(columns=["bucket", "pc1", "pc2", "pc3"])
+
+        sampled_frames = []
+        for bucket_file in bucket_files:
+            try:
+                bucket_id = int(bucket_file.stem.split("_")[-1])
+            except ValueError:
+                continue
+
+            try:
+                bucket_df = pd.read_parquet(bucket_file)
+            except Exception:
+                continue
+
+            if bucket_df.empty:
+                continue
+
+            if len(bucket_df) > max_points_per_bucket:
+                bucket_df = bucket_df.sample(n=max_points_per_bucket, random_state=42)
+
+            bucket_df = bucket_df.copy()
+            bucket_df["bucket"] = bucket_id
+            sampled_frames.append(bucket_df)
+
+        if not sampled_frames:
+            return pd.DataFrame(columns=["bucket", "pc1", "pc2", "pc3"])
+
+        combined = pd.concat(sampled_frames, ignore_index=True)
+
+        embedding_cols = [
+            col for col in combined.columns if isinstance(col, str) and col.startswith("embedding_")
+        ]
+        if not embedding_cols:
+            numeric_cols = combined.select_dtypes(include=[np.number]).columns.tolist()
+            excluded = {
+                "bucket",
+                "y_true",
+                "y_pred",
+                "confidence",
+                "confidence_score",
+                "class_id",
+                "predicted_class",
+                "true_class",
+            }
+            embedding_cols = [col for col in numeric_cols if col not in excluded]
+
+        if len(embedding_cols) < 3:
+            return pd.DataFrame(columns=["bucket", "pc1", "pc2", "pc3"])
+
+        X = combined[embedding_cols].fillna(0.0).to_numpy(dtype=float)
+        X_mean = X.mean(axis=0)
+        X_std = X.std(axis=0)
+        X_std[X_std == 0] = 1.0
+        X_norm = (X - X_mean) / X_std
+
+        pca = PCA(n_components=3, random_state=42)
+        projected = pca.fit_transform(X_norm)
+
+        projection_df = pd.DataFrame(
+            {
+                "bucket": combined["bucket"].astype(str),
+                "pc1": projected[:, 0],
+                "pc2": projected[:, 1],
+                "pc3": projected[:, 2],
+            }
+        )
+
+        self._clear10_pca_projection_cache = projection_df
+        return projection_df.copy()

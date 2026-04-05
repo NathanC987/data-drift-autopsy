@@ -5,6 +5,7 @@ from drift_autopsy.config.schema import (
     LocalizerConfig,
     RCAConfig,
     DataConfig,
+    ImageDataConfig,
     PipelineConfig,
 )
 from drift_autopsy.config.loader import ConfigLoader
@@ -14,6 +15,7 @@ __all__ = [
     "LocalizerConfig",
     "RCAConfig",
     "DataConfig",
+    "ImageDataConfig",
     "PipelineConfig",
     "ConfigLoader",
 ]

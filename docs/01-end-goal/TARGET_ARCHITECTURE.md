@@ -6,27 +6,41 @@ Core SDK (Python)
 -> Self-hosted deployment (Docker/Kubernetes)
 -> Optional SaaS control plane (dashboard/orchestration/policy management)
 
+Near-term approved architecture progression:
+
+1. Tabular baseline system (completed)
+2. Image classification support through embedding-first transformation (approved next)
+
 ## Logical Components
 
 1. Ingestion and profiling layer
 - Batch and stream adapters
-- Feature and target profiling
+- Feature, embedding, and target profiling
 - Data quality and schema checks
+
+1a. Representation extraction layer (image pathway)
+- Image encoder/extractor interfaces (registry-driven)
+- Default ResNet extraction path
+- Extensible hooks for future encoders (CLIP, SimCLR, DINOv2, MAE, ViT, ConvNeXt, EfficientNet)
+- Embedding cache and extraction metadata for reproducibility
 
 2. Detection engine
 - Multi-method detector runtime
 - Detector scheduling and execution planner
 - Detector scoring normalization and confidence modeling
 - Extensible detectors for leakage, misinformation, and hallucination signals
+- Embedding-space detector support (for example MMD, KS/PSI on dimensions, PCA/FID-style distances)
 
 3. Localization engine
 - Feature-level and slice-level localization
 - Interaction-aware localization for multivariate patterns
+- Metadata/class/slice localization for image-derived embedding records
 
 4. Root cause analysis engine
 - SHAP and model-aware explainers
 - Drift-cause correlation analysis
 - Impact decomposition and trace output
+- Embedding-first RCA path for image workflows (dimension shift attribution + output correlation)
 
 5. Remediation engine
 - Policy-triggered retraining workflows
@@ -77,11 +91,12 @@ Core SDK (Python)
 ## Data Flow (High Level)
 
 1. Reference baseline and incoming data are ingested.
-2. Detection engine evaluates relevant drift/failure modes.
-3. Localization and RCA are triggered according to policy.
-4. Remediation engine receives event severity and context.
-5. Actions are recommended or executed based on policy.
-6. Artifacts and decisions are persisted for audit and replay.
+2. For image pathways, raw samples are transformed into embedding-plus-prediction records.
+3. Detection engine evaluates relevant drift/failure modes.
+4. Localization and RCA are triggered according to policy.
+5. Remediation engine receives event severity and context.
+6. Actions are recommended or executed based on policy.
+7. Artifacts and decisions are persisted for audit and replay.
 
 ## Undecided Integration Areas (Explicit)
 

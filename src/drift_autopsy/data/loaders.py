@@ -1,9 +1,10 @@
 """Data loaders for various formats."""
 
 from pathlib import Path
-from typing import Optional, List, Union
+from typing import Optional, List, Union, Dict, Any
 import pandas as pd
 import logging
+import json
 
 from drift_autopsy.core.dataset import Dataset
 
@@ -194,3 +195,170 @@ class FolktablesLoader:
             feature_cols=list(features.columns),
             metadata_cols=['group', 'state'],
         )
+
+
+class Clear10Loader:
+    """
+    Loader utilities for CLEAR-10 folder-based image and metadata layout.
+
+    Expected root structure:
+      - labeled_images/<bucket>/<class>/*.jpg
+      - labeled_metadata/<bucket>/<class>.json
+      - class_names.txt
+    """
+
+    @staticmethod
+    def list_buckets(root_path: Union[str, Path]) -> List[int]:
+        """List available integer bucket directories under labeled_images."""
+        root = Path(root_path)
+        image_root = root / "labeled_images"
+        if not image_root.exists():
+            raise FileNotFoundError(f"CLEAR-10 labeled_images folder not found: {image_root}")
+
+        buckets: List[int] = []
+        for child in image_root.iterdir():
+            if child.is_dir() and child.name.isdigit():
+                buckets.append(int(child.name))
+        return sorted(buckets)
+
+    @staticmethod
+    def load_class_names(root_path: Union[str, Path]) -> List[str]:
+        """Load ordered class names from class_names.txt."""
+        root = Path(root_path)
+        class_names_path = root / "class_names.txt"
+        if not class_names_path.exists():
+            raise FileNotFoundError(f"CLEAR-10 class_names.txt not found: {class_names_path}")
+
+        class_names: List[str] = []
+        with open(class_names_path, "r") as f:
+            for line in f:
+                value = line.strip()
+                if value:
+                    class_names.append(value)
+
+        if not class_names:
+            raise ValueError("CLEAR-10 class_names.txt is empty")
+
+        return class_names
+
+    @staticmethod
+    def load_metadata_index(root_path: Union[str, Path]) -> Dict[str, Dict[str, str]]:
+        """Load the top-level metadata index mapping bucket->class->json path."""
+        root = Path(root_path)
+        index_path = root / "labeled_metadata.json"
+        if not index_path.exists():
+            raise FileNotFoundError(f"CLEAR-10 labeled_metadata.json not found: {index_path}")
+
+        with open(index_path, "r") as f:
+            payload = json.load(f)
+
+        if not isinstance(payload, dict):
+            raise ValueError("CLEAR-10 labeled_metadata.json must be a dictionary")
+
+        return payload
+
+    @staticmethod
+    def _safe_bucket_timestamp(date_taken: str, bucket: int) -> str:
+        """
+        Return ISO-like timestamp from DATE_TAKEN, with deterministic fallback.
+
+        DATE_TAKEN in CLEAR metadata often looks like "YYYY-MM-DD HH:MM:SS.0".
+        """
+        if isinstance(date_taken, str) and date_taken.strip():
+            return date_taken.strip()
+        # Fallback keeps temporal ordering by bucket even if date metadata is missing.
+        return f"bucket-{bucket:02d}"
+
+    @staticmethod
+    def _resolve_image_path(root: Path, bucket: int, class_name: str, sample_id: str) -> Optional[Path]:
+        """Resolve image path for a sample id using common extensions."""
+        class_dir = root / "labeled_images" / str(bucket) / class_name
+        for ext in (".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG"):
+            candidate = class_dir / f"{sample_id}{ext}"
+            if candidate.exists():
+                return candidate
+        return None
+
+    @staticmethod
+    def build_bucket_dataframe(
+        root_path: Union[str, Path],
+        bucket: int,
+        include_background: bool = True,
+        max_samples_per_class: Optional[int] = None,
+    ) -> pd.DataFrame:
+        """
+        Build normalized tabular records for one CLEAR-10 bucket.
+
+        Output columns include:
+          sample_id, bucket, class_name, y_true, image_path,
+          timestamp, source, device, user_tags, lon, lat
+        """
+        root = Path(root_path)
+        class_names = Clear10Loader.load_class_names(root)
+        metadata_index = Clear10Loader.load_metadata_index(root)
+
+        bucket_key = str(bucket)
+        if bucket_key not in metadata_index:
+            raise ValueError(f"Bucket {bucket} not found in CLEAR-10 metadata index")
+
+        class_to_idx = {name: idx for idx, name in enumerate(class_names)}
+
+        rows: List[Dict[str, Any]] = []
+        for class_name in class_names:
+            if not include_background and class_name.upper() == "BACKGROUND":
+                continue
+
+            class_metadata_rel = metadata_index[bucket_key].get(class_name)
+            if class_metadata_rel is None:
+                logger.warning(
+                    "Missing metadata for bucket=%s class=%s in labeled_metadata.json",
+                    bucket,
+                    class_name,
+                )
+                continue
+
+            class_metadata_path = root / class_metadata_rel
+            if not class_metadata_path.exists():
+                logger.warning("Metadata file not found: %s", class_metadata_path)
+                continue
+
+            with open(class_metadata_path, "r") as f:
+                class_records = json.load(f)
+
+            if not isinstance(class_records, dict):
+                logger.warning("Unexpected metadata format in %s", class_metadata_path)
+                continue
+
+            n_taken = 0
+            for sample_id, meta in class_records.items():
+                if max_samples_per_class is not None and n_taken >= max_samples_per_class:
+                    break
+
+                sample_id_str = str(sample_id)
+                image_path = Clear10Loader._resolve_image_path(root, bucket, class_name, sample_id_str)
+                if image_path is None:
+                    # Keep ingestion robust in presence of occasional metadata/image mismatches.
+                    continue
+
+                date_taken = meta.get("DATE_TAKEN", "") if isinstance(meta, dict) else ""
+                rows.append(
+                    {
+                        "sample_id": sample_id_str,
+                        "bucket": int(bucket),
+                        "class_name": class_name,
+                        "y_true": class_to_idx[class_name],
+                        "image_path": str(image_path),
+                        "timestamp": Clear10Loader._safe_bucket_timestamp(date_taken, bucket),
+                        "source": "clear10",
+                        "device": meta.get("DEVICE", "") if isinstance(meta, dict) else "",
+                        "user_tags": meta.get("USER_TAGS", "") if isinstance(meta, dict) else "",
+                        "lon": meta.get("LON", "") if isinstance(meta, dict) else "",
+                        "lat": meta.get("LAT", "") if isinstance(meta, dict) else "",
+                    }
+                )
+                n_taken += 1
+
+        if not rows:
+            raise ValueError(f"No samples were resolved for CLEAR-10 bucket {bucket}")
+
+        return pd.DataFrame(rows)
