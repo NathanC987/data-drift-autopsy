@@ -32,6 +32,66 @@ def load_data(results_path: str) -> DriftResultsLoader:
     return loader
 
 
+def render_reliability_section(loader: DriftResultsLoader, scope: str) -> None:
+    """Render Prediction Reliability (Hallucination Detection) section."""
+    st.markdown("---")
+    st.header("Prediction Reliability (Hallucination Detection)")
+
+    reliability_df = loader.get_reliability_results(scope=scope)
+    summary = loader.get_reliability_summary(scope=scope)
+
+    if reliability_df.empty:
+        st.info("No reliability analysis data available yet. Add reliability outputs to your results JSON.")
+        return
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Predictions Analyzed", summary["total_predictions"])
+    with col2:
+        st.metric("Avg Risk Score", f"{summary['avg_risk_score']:.3f}")
+    with col3:
+        st.metric("High-Risk Predictions", summary["high_risk_count"])
+
+    m1, m2, m3, m4, m5 = st.columns(5)
+    with m1:
+        st.metric("Confidence", f"{summary['avg_confidence']:.3f}")
+    with m2:
+        st.metric("OOD Score", f"{summary['avg_ood']:.3f}")
+    with m3:
+        st.metric("Stability", f"{summary['avg_stability']:.3f}")
+    with m4:
+        st.metric("Explanation", f"{summary['avg_explanation']:.3f}")
+    with m5:
+        suspicious = int((reliability_df["calibration"].astype(str).str.lower() == "suspicious").sum())
+        st.metric("Suspicious Calibration", suspicious)
+
+    chart_col1, chart_col2 = st.columns(2)
+    with chart_col1:
+        risk_fig = viz.create_reliability_risk_distribution(reliability_df)
+        st.plotly_chart(risk_fig, width="stretch")
+    with chart_col2:
+        signal_fig = viz.create_reliability_signal_profile(reliability_df)
+        st.plotly_chart(signal_fig, width="stretch")
+
+    display_cols = [
+        "analysis_key",
+        "detector",
+        "prediction_id",
+        "confidence",
+        "ood",
+        "stability",
+        "calibration",
+        "explanation",
+        "cbpe_score",
+        "risk_score",
+        "risk_label",
+    ]
+    available_cols = [col for col in display_cols if col in reliability_df.columns]
+
+    st.subheader("Reliability Details")
+    st.dataframe(reliability_df[available_cols], width="stretch")
+
+
 def render_folktables_dashboard(
     loader: DriftResultsLoader,
     selected_years,
@@ -274,6 +334,8 @@ def render_folktables_dashboard(
             st.metric("Avg Recommendations/Analysis", f"{avg_recs:.1f}")
     else:
         st.info("No RCA data available. Enable RCA in your drift detection pipeline to see root cause analysis.")
+
+    render_reliability_section(loader=loader, scope="folktables")
 
     if show_raw_data:
         st.markdown("---")

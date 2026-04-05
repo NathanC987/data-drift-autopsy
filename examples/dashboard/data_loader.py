@@ -378,6 +378,193 @@ class DriftResultsLoader:
         
         return pd.DataFrame(importance_data)
 
+    def get_reliability_results(self, scope: str = "all") -> pd.DataFrame:
+        """
+        Get flattened reliability/hallucination detection results.
+
+        Args:
+            scope: "all" | "folktables" | "clear10"
+
+        Returns:
+            DataFrame with normalized columns:
+                source, analysis_key, detector, prediction_id,
+                confidence, ood, stability, calibration,
+                explanation, cbpe_score, risk_score, risk_label
+        """
+        if self.raw_data is None:
+            self.load()
+
+        rows = []
+
+        top_level_reliability = self.raw_data.get("reliability", [])
+        if isinstance(top_level_reliability, list):
+            for entry in top_level_reliability:
+                if not isinstance(entry, dict):
+                    continue
+                rows.append(
+                    {
+                        "source": "top_level",
+                        "analysis_key": str(entry.get("analysis_key", "-")),
+                        "detector": str(entry.get("detector", "-")),
+                        "prediction_id": str(entry.get("prediction_id", "-")),
+                        "confidence": self._safe_float(entry.get("confidence")),
+                        "ood": self._safe_float(entry.get("ood")),
+                        "stability": self._safe_float(entry.get("stability")),
+                        "calibration": str(entry.get("calibration", "unknown")),
+                        "explanation": self._safe_float(entry.get("explanation"), default=0.5),
+                        "cbpe_score": self._safe_float(entry.get("cbpe_score"), default=float("nan")),
+                        "risk_score": self._safe_float(entry.get("risk_score")),
+                        "risk_label": str(entry.get("risk_label", "UNKNOWN")).upper(),
+                    }
+                )
+
+        yearly_data = self.raw_data.get("yearly_results", self.raw_data)
+        if isinstance(yearly_data, dict):
+            for analysis_key, analysis_payload in yearly_data.items():
+                if not isinstance(analysis_payload, dict):
+                    continue
+
+                analysis_type = str(analysis_payload.get("analysis_type", "")).lower()
+                inferred_source = "clear10" if analysis_type == "bucket" else "folktables"
+
+                direct_rel = analysis_payload.get("reliability")
+                if isinstance(direct_rel, list):
+                    for entry in direct_rel:
+                        if not isinstance(entry, dict):
+                            continue
+                        rows.append(
+                            {
+                                "source": inferred_source,
+                                "analysis_key": str(analysis_key),
+                                "detector": str(entry.get("detector", "-")),
+                                "prediction_id": str(entry.get("prediction_id", "-")),
+                                "confidence": self._safe_float(entry.get("confidence")),
+                                "ood": self._safe_float(entry.get("ood")),
+                                "stability": self._safe_float(entry.get("stability")),
+                                "calibration": str(entry.get("calibration", "unknown")),
+                                "explanation": self._safe_float(entry.get("explanation"), default=0.5),
+                                "cbpe_score": self._safe_float(entry.get("cbpe_score"), default=float("nan")),
+                                "risk_score": self._safe_float(entry.get("risk_score")),
+                                "risk_label": str(entry.get("risk_label", "UNKNOWN")).upper(),
+                            }
+                        )
+
+                pipelines = analysis_payload.get("pipelines", {})
+                if isinstance(pipelines, dict):
+                    for pipeline_name, pipeline_payload in pipelines.items():
+                        if not isinstance(pipeline_payload, dict):
+                            continue
+
+                        reliability_payload = pipeline_payload.get("reliability")
+                        detector_name = (
+                            pipeline_payload.get("detection", {}).get("detector_name")
+                            or str(pipeline_name).replace("_", " ").title()
+                        )
+
+                        entries = []
+                        if isinstance(reliability_payload, dict):
+                            entries = [reliability_payload]
+                        elif isinstance(reliability_payload, list):
+                            entries = [e for e in reliability_payload if isinstance(e, dict)]
+
+                        for entry in entries:
+                            rows.append(
+                                {
+                                    "source": inferred_source,
+                                    "analysis_key": str(analysis_key),
+                                    "detector": str(entry.get("detector", detector_name)),
+                                    "prediction_id": str(entry.get("prediction_id", "-")),
+                                    "confidence": self._safe_float(entry.get("confidence")),
+                                    "ood": self._safe_float(entry.get("ood")),
+                                    "stability": self._safe_float(entry.get("stability")),
+                                    "calibration": str(entry.get("calibration", "unknown")),
+                                    "explanation": self._safe_float(entry.get("explanation"), default=0.5),
+                                    "cbpe_score": self._safe_float(entry.get("cbpe_score"), default=float("nan")),
+                                    "risk_score": self._safe_float(entry.get("risk_score")),
+                                    "risk_label": str(entry.get("risk_label", "UNKNOWN")).upper(),
+                                }
+                            )
+
+        bucket_results = self.raw_data.get("bucket_results", {})
+        if isinstance(bucket_results, dict):
+            for bucket_key, bucket_payload in bucket_results.items():
+                if not isinstance(bucket_payload, dict):
+                    continue
+
+                reliability_payload = bucket_payload.get("reliability")
+                entries = []
+                if isinstance(reliability_payload, dict):
+                    entries = [reliability_payload]
+                elif isinstance(reliability_payload, list):
+                    entries = [e for e in reliability_payload if isinstance(e, dict)]
+
+                for entry in entries:
+                    rows.append(
+                        {
+                            "source": "clear10",
+                            "analysis_key": str(bucket_key),
+                            "detector": str(entry.get("detector", "-")),
+                            "prediction_id": str(entry.get("prediction_id", "-")),
+                            "confidence": self._safe_float(entry.get("confidence")),
+                            "ood": self._safe_float(entry.get("ood")),
+                            "stability": self._safe_float(entry.get("stability")),
+                            "calibration": str(entry.get("calibration", "unknown")),
+                            "explanation": self._safe_float(entry.get("explanation"), default=0.5),
+                            "cbpe_score": self._safe_float(entry.get("cbpe_score"), default=float("nan")),
+                            "risk_score": self._safe_float(entry.get("risk_score")),
+                            "risk_label": str(entry.get("risk_label", "UNKNOWN")).upper(),
+                        }
+                    )
+
+        if not rows:
+            return pd.DataFrame(
+                columns=[
+                    "source",
+                    "analysis_key",
+                    "detector",
+                    "prediction_id",
+                    "confidence",
+                    "ood",
+                    "stability",
+                    "calibration",
+                    "explanation",
+                    "cbpe_score",
+                    "risk_score",
+                    "risk_label",
+                ]
+            )
+
+        out = pd.DataFrame(rows)
+
+        if scope in {"folktables", "clear10"}:
+            out = out[out["source"] == scope]
+
+        return out.sort_values(["source", "analysis_key", "prediction_id"], na_position="last")
+
+    def get_reliability_summary(self, scope: str = "all") -> Dict[str, float]:
+        """Get summary metrics for reliability outputs."""
+        reliability_df = self.get_reliability_results(scope=scope)
+        if reliability_df.empty:
+            return {
+                "total_predictions": 0,
+                "avg_confidence": 0.0,
+                "avg_ood": 0.0,
+                "avg_stability": 0.0,
+                "avg_explanation": 0.0,
+                "avg_risk_score": 0.0,
+                "high_risk_count": 0,
+            }
+
+        return {
+            "total_predictions": int(len(reliability_df)),
+            "avg_confidence": float(reliability_df["confidence"].mean()),
+            "avg_ood": float(reliability_df["ood"].mean()),
+            "avg_stability": float(reliability_df["stability"].mean()),
+            "avg_explanation": float(reliability_df["explanation"].mean()),
+            "avg_risk_score": float(reliability_df["risk_score"].mean()),
+            "high_risk_count": int((reliability_df["risk_label"] == "HIGH").sum()),
+        }
+
     def get_slice_analysis_results(self) -> pd.DataFrame:
         """
         Get flattened slice analysis results from pipeline metadata.

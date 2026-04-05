@@ -16,6 +16,12 @@ SEVERITY_COLORS = {
     "critical": "#DC143C",  # Crimson
 }
 
+RISK_COLORS = {
+    "LOW": "#90EE90",
+    "MEDIUM": "#FFA500",
+    "HIGH": "#DC143C",
+}
+
 
 def create_drift_timeline(df: pd.DataFrame, title: Optional[str] = None) -> go.Figure:
     """
@@ -489,6 +495,87 @@ def create_feature_importance_heatmap(df: pd.DataFrame) -> go.Figure:
         template="plotly_white",
     )
     
+    return fig
+
+
+def create_reliability_risk_distribution(df: pd.DataFrame) -> go.Figure:
+    """Create reliability risk-label distribution chart."""
+    fig = go.Figure()
+    if df.empty or "risk_label" not in df.columns:
+        fig.update_layout(title="Reliability Risk Distribution (No Data)", template="plotly_white", height=320)
+        return fig
+
+    counts = (
+        df["risk_label"]
+        .fillna("UNKNOWN")
+        .astype(str)
+        .str.upper()
+        .value_counts()
+        .reset_index()
+    )
+    counts.columns = ["risk_label", "count"]
+    colors = [RISK_COLORS.get(label, "#808080") for label in counts["risk_label"]]
+
+    fig.add_trace(
+        go.Bar(
+            x=counts["risk_label"],
+            y=counts["count"],
+            marker_color=colors,
+            text=counts["count"],
+            textposition="outside",
+        )
+    )
+    fig.update_layout(
+        title="Reliability Risk Distribution",
+        xaxis_title="Risk Label",
+        yaxis_title="Predictions",
+        template="plotly_white",
+        height=320,
+    )
+    return fig
+
+
+def create_reliability_signal_profile(df: pd.DataFrame) -> go.Figure:
+    """Create average reliability signal profile chart."""
+    fig = go.Figure()
+    required_cols = ["confidence", "ood", "stability", "explanation", "risk_score"]
+    if df.empty or not set(required_cols).issubset(df.columns):
+        fig.update_layout(title="Reliability Signal Profile (No Data)", template="plotly_white", height=320)
+        return fig
+
+    confidence_risk = 1.0 - float(df["confidence"].mean())
+    profile = {
+        "Confidence Risk": confidence_risk,
+        "OOD": float(df["ood"].mean()),
+        "Stability": float(df["stability"].mean()),
+        "Explanation": float(df["explanation"].mean()),
+        "Final Risk": float(df["risk_score"].mean()),
+    }
+
+    profile_df = pd.DataFrame(
+        {
+            "signal": list(profile.keys()),
+            "value": [float(np.clip(v, 0.0, 1.0)) for v in profile.values()],
+        }
+    )
+
+    fig.add_trace(
+        go.Bar(
+            x=profile_df["signal"],
+            y=profile_df["value"],
+            marker_color="#1f77b4",
+            text=np.round(profile_df["value"], 3),
+            textposition="outside",
+        )
+    )
+    fig.update_layout(
+        title="Average Reliability Signals",
+        xaxis_title="Signal",
+        yaxis_title="Score (0-1)",
+        yaxis=dict(range=[0, 1]),
+        template="plotly_white",
+        height=320,
+    )
     return fig
 
 

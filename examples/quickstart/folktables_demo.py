@@ -19,6 +19,7 @@ from drift_autopsy.data import FolktablesLoader
 from drift_autopsy.detectors import KSTest, PSI, MMD, CBPE
 from drift_autopsy.localizers import UnivariateLocalizer
 from drift_autopsy.rca import SHAPAnalyzer
+from drift_autopsy.reliability import ReliabilityAnalyzer
 from drift_autopsy.utils import setup_logging
 
 
@@ -33,17 +34,90 @@ DETECTOR_THRESHOLDS = {
 LOCALIZATION_THRESHOLD = 0.05
 
 
-def build_state_code_mapping(year: int, states):
+def _dataset_to_cache_df(dataset: Dataset) -> pd.DataFrame:
+    """Convert Dataset to cacheable DataFrame with target + metadata columns."""
+    df = dataset.data.copy()
+
+    if dataset.target is not None:
+        df["target"] = dataset.target.values if hasattr(dataset.target, "values") else dataset.target
+
+    if dataset.metadata is not None:
+        for column in dataset.metadata.columns:
+            df[f"meta__{column}"] = dataset.metadata[column].values
+
+    return df
+
+
+def _dataset_from_cache_df(df: pd.DataFrame) -> Dataset:
+    """Restore Dataset from cache DataFrame."""
+    metadata_cols = [column for column in df.columns if column.startswith("meta__")]
+    metadata = None
+    if metadata_cols:
+        metadata = df[metadata_cols].copy()
+        metadata.columns = [column.replace("meta__", "", 1) for column in metadata.columns]
+
+    target = df["target"] if "target" in df.columns else None
+
+    feature_cols = [column for column in df.columns if column not in {"target", *metadata_cols}]
+    features = df[feature_cols].copy()
+
+    return Dataset(
+        data=features,
+        feature_names=list(features.columns),
+        target=target,
+        target_name="target" if target is not None else None,
+        metadata=metadata,
+    )
+
+
+def load_acs_income_local_first(
+    year: int,
+    state: str,
+    data_root: Path,
+    dataset_name: str,
+) -> Dataset:
+    """Load ACS Income from local cache first, fallback to Folktables download."""
+    cache_dir = data_root / dataset_name / "acs_income"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    cache_parquet = cache_dir / f"acs_income_{state}_{year}.parquet"
+    cache_csv = cache_dir / f"acs_income_{state}_{year}.csv"
+
+    if cache_parquet.exists():
+        print(f"  Using local cached dataset: {cache_parquet}")
+        cached_df = pd.read_parquet(cache_parquet)
+        return _dataset_from_cache_df(cached_df)
+
+    if cache_csv.exists():
+        print(f"  Using local cached dataset: {cache_csv}")
+        cached_df = pd.read_csv(cache_csv)
+        return _dataset_from_cache_df(cached_df)
+
+    print(f"  Local cache miss for {state} {year}, downloading from Folktables...")
+    dataset = FolktablesLoader.load_acs_income(
+        year=year,
+        states=[state],
+        download=True,
+    )
+
+    cache_df = _dataset_to_cache_df(dataset)
+    cache_df.to_parquet(cache_parquet, index=False)
+    print(f"  Cached dataset to: {cache_parquet}")
+    return dataset
+
+
+def build_state_code_mapping(year: int, states, data_root: Path, dataset_name: str):
     """Build mapping between ACS state codes and state abbreviations."""
     code_to_state = {}
     state_to_code = {}
 
     print("Resolving ACS state metadata codes...")
     for state in states:
-        ds = FolktablesLoader.load_acs_income(
+        ds = load_acs_income_local_first(
             year=year,
-            states=[state],
-            download=True,
+            state=state,
+            data_root=data_root,
+            dataset_name=dataset_name,
         )
         state_code = str(ds.metadata["state"].mode().iloc[0])
         code_to_state[state_code] = state
@@ -147,14 +221,15 @@ def run_pipelines(
     return run_results
 
 
-def load_multi_state_income_dataset(year: int, states):
+def load_multi_state_income_dataset(year: int, states, data_root: Path, dataset_name: str):
     """Load ACS Income per-state and concatenate for deterministic geographic coverage."""
     state_datasets = []
     for state in states:
-        ds = FolktablesLoader.load_acs_income(
+        ds = load_acs_income_local_first(
             year=year,
-            states=[state],
-            download=True,
+            state=state,
+            data_root=data_root,
+            dataset_name=dataset_name,
         )
         state_datasets.append(ds)
 
@@ -172,6 +247,38 @@ def load_multi_state_income_dataset(year: int, states):
     )
 
 
+def build_reliability_records(
+    model,
+    reference_df: pd.DataFrame,
+    test_df: pd.DataFrame,
+    cbpe_score: float,
+    analysis_key: str,
+    max_samples: int = 200,
+):
+    """Generate reliability outputs for a subset of samples."""
+    if test_df.empty:
+        return []
+
+    sample_df = test_df.sample(n=min(max_samples, len(test_df)), random_state=42).reset_index(drop=True)
+
+    analyzer = ReliabilityAnalyzer(
+        model=model,
+        data_type="tabular",
+        reference_data=reference_df,
+        task_type="classification",
+        cbpe_reference_score=cbpe_score,
+    )
+
+    records = analyzer.analyze_batch(sample_df)
+    for idx, record in enumerate(records):
+        record["analysis_key"] = analysis_key
+        record["detector"] = "model_agnostic"
+        if record.get("prediction_id") is None:
+            record["prediction_id"] = f"{analysis_key}_{idx}"
+
+    return records
+
+
 def main():
     # Setup logging
     setup_logging(level="INFO")
@@ -187,15 +294,18 @@ def main():
     TEST_YEARS = [2015, 2016, 2017, 2018]
     STATE = "CA"
     GEO_STATES = ["CA", "TX", "NY", "FL", "WA"]
+    DATA_ROOT = Path("data")
+    DATASET_NAME = "folktables_us_census"
     OUTPUT_DIR = Path("outputs")
     OUTPUT_DIR.mkdir(exist_ok=True)
     
     # Step 1: Load training data (2014)
     print(f"Loading training data: {STATE} {BASE_YEAR}")
-    train_dataset = FolktablesLoader.load_acs_income(
+    train_dataset = load_acs_income_local_first(
         year=BASE_YEAR,
-        states=[STATE],
-        download=True
+        state=STATE,
+        data_root=DATA_ROOT,
+        dataset_name=DATASET_NAME,
     )
     print(f"  Loaded: {train_dataset.n_samples} samples, {train_dataset.n_features} features")
     print()
@@ -227,7 +337,12 @@ def main():
     )
 
     # Build explicit state<->code mapping for readable outputs (e.g., CA->TX).
-    code_to_state, state_to_code = build_state_code_mapping(BASE_YEAR, GEO_STATES)
+    code_to_state, state_to_code = build_state_code_mapping(
+        BASE_YEAR,
+        GEO_STATES,
+        data_root=DATA_ROOT,
+        dataset_name=DATASET_NAME,
+    )
     reference_state_code = state_to_code[STATE]
     print(f"  Reference state '{STATE}' maps to metadata state value: {reference_state_code}")
     
@@ -253,10 +368,11 @@ def main():
         
         # Load test data
         print(f"Loading test data: {STATE} {year}")
-        test_dataset = FolktablesLoader.load_acs_income(
+        test_dataset = load_acs_income_local_first(
             year=year,
-            states=[STATE],
-            download=True
+            state=STATE,
+            data_root=DATA_ROOT,
+            dataset_name=DATASET_NAME,
         )
         print(f"  Loaded: {test_dataset.n_samples} samples")
         
@@ -286,12 +402,26 @@ def main():
             train_dataset_with_preds=train_dataset_with_preds,
             test_dataset_with_preds=test_dataset_with_preds,
         )
+
+        cbpe_result = year_results.get("CBPE", {}).get("detection", {})
+        cbpe_reference = cbpe_result.get("p_value")
+        if cbpe_reference is None:
+            cbpe_reference = 0.5
+
+        reliability_records = build_reliability_records(
+            model=model,
+            reference_df=train_dataset.data,
+            test_df=test_dataset.data,
+            cbpe_score=float(cbpe_reference),
+            analysis_key=str(year),
+        )
         
         all_results[year] = {
             "analysis_type": "temporal",
             "actual_accuracy": float(test_score),
             "accuracy_drop": float(test_score - train_score),
             "pipelines": year_results,
+            "reliability": reliability_records,
         }
 
     # Step 5: Run geographic drift analysis (cross-state at BASE_YEAR)
@@ -306,6 +436,8 @@ def main():
     geo_dataset = load_multi_state_income_dataset(
         year=BASE_YEAR,
         states=GEO_STATES,
+        data_root=DATA_ROOT,
+        dataset_name=DATASET_NAME,
     )
     X_geo = geo_dataset.to_numpy()
     geo_proba = model.predict_proba(X_geo)
@@ -334,6 +466,19 @@ def main():
         slice_config=geo_slice_config,
     )
 
+    geo_cbpe_result = geographic_results.get("CBPE", {}).get("detection", {})
+    geo_cbpe_reference = geo_cbpe_result.get("p_value")
+    if geo_cbpe_reference is None:
+        geo_cbpe_reference = 0.5
+
+    geographic_reliability = build_reliability_records(
+        model=model,
+        reference_df=geo_dataset.data,
+        test_df=geo_dataset.data,
+        cbpe_score=float(geo_cbpe_reference),
+        analysis_key="geographic_analysis",
+    )
+
     all_results["geographic_analysis"] = {
         "analysis_type": "geographic",
         "year": BASE_YEAR,
@@ -343,6 +488,7 @@ def main():
         "states_analyzed": GEO_STATES,
         "slice_column": "state",
         "pipelines": geographic_results,
+        "reliability": geographic_reliability,
     }
     
     # Step 6: Save results

@@ -35,6 +35,18 @@ from drift_autopsy.localizers import UnivariateLocalizer
 # Import RCA analyzers
 from drift_autopsy.rca import SHAPAnalyzer
 
+# Import reliability analyzers
+from drift_autopsy.reliability import (
+    ReliabilityAnalyzer,
+    ConfidenceExtractor,
+    OODDetector,
+    StabilityChecker,
+    CalibrationChecker,
+    ExplanationConsistencyChecker,
+    RiskScoringEngine,
+    RiskWeights,
+)
+
 # Data utilities
 from drift_autopsy.data import (
     DataLoader,
@@ -67,6 +79,14 @@ __all__ = [
     "CBPE",
     "UnivariateLocalizer",
     "SHAPAnalyzer",
+    "ReliabilityAnalyzer",
+    "ConfidenceExtractor",
+    "OODDetector",
+    "StabilityChecker",
+    "CalibrationChecker",
+    "ExplanationConsistencyChecker",
+    "RiskScoringEngine",
+    "RiskWeights",
     "DataLoader",
     "FolktablesLoader",
     "EmbeddingBaselineClassifier",
