@@ -156,9 +156,36 @@ Each record follows this schema:
   "cbpe_score": 0.80,
   "risk_score": 0.82,
   "risk_label": "HIGH",
-  "details": { ... }
+  "details": {
+    "quality": {
+      "required_signals": ["..."],
+      "missing_required_signals": [],
+      "unavailable_signals": [],
+      "degraded": false,
+      "high_quality": true
+    },
+    "signal_status": {
+      "confidence": {"required": true, "available": true, "reason": null},
+      "ood": {"required": true, "available": true, "reason": null},
+      "stability": {"required": true, "available": true, "reason": null},
+      "calibration": {"required": false, "available": true, "reason": null},
+      "explanation": {"required": true, "available": true, "reason": null}
+    },
+    "risk": {
+      "weighting": {
+        "used_signals": ["..."],
+        "missing_signals": [],
+        "renormalized_weights": {"...": 0.0}
+      }
+    }
+  }
 }
 ```
+
+Notes:
+- Missing/unavailable signals are represented as `null` (not neutral placeholders).
+- Risk score uses only available signals and renormalizes weights accordingly.
+- The layer is permissive by default: it returns degraded outputs with explicit metadata rather than hard failing.
 
 ## Dashboard Integration
 
@@ -218,3 +245,4 @@ analyzer.save_results(batch_results, "outputs/reliability_results.json")
 - Label-free by design for production use
 - Reuses existing CBPE/SHAP/Grad-CAM ecosystem
 - Modular so each reliability signal can be replaced or extended independently
+- Explicit reliability-quality metadata ensures unavailable modality-specific signals are auditable and non-misleading

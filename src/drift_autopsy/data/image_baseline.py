@@ -162,7 +162,37 @@ class EmbeddingBaselineClassifier:
             "f1_macro": float(f1),
         }
 
-    def predict(self, df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
+    def predict_proba(self, x: pd.DataFrame | np.ndarray) -> np.ndarray:
+        """Predict class probabilities for reliability utilities and diagnostics."""
+        if self.classes_ is None:
+            raise RuntimeError("Baseline model is not fitted")
+
+        if isinstance(x, pd.DataFrame):
+            feature_cols = self._feature_columns(x)
+            values = x[feature_cols].to_numpy(dtype=float)
+        else:
+            values = np.asarray(x, dtype=float)
+            if values.ndim == 1:
+                values = values.reshape(1, -1)
+
+        return self.model.predict_proba(values).astype(float)
+
+    def predict(self, x: pd.DataFrame | np.ndarray) -> np.ndarray:
+        """Predict class labels from embedding features."""
+        if self.classes_ is None:
+            raise RuntimeError("Baseline model is not fitted")
+
+        if isinstance(x, pd.DataFrame):
+            feature_cols = self._feature_columns(x)
+            values = x[feature_cols].to_numpy(dtype=float)
+        else:
+            values = np.asarray(x, dtype=float)
+            if values.ndim == 1:
+                values = values.reshape(1, -1)
+
+        return self.model.predict(values).astype(int)
+
+    def predict_with_proba(self, df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
         """Predict class labels and probabilities from embedding dataframe."""
         if self.classes_ is None:
             raise RuntimeError("Baseline model is not fitted")
@@ -170,13 +200,13 @@ class EmbeddingBaselineClassifier:
         feature_cols = self._feature_columns(df)
         x = df[feature_cols].to_numpy(dtype=float)
 
-        y_pred = self.model.predict(x).astype(int)
-        proba = self.model.predict_proba(x).astype(float)
+        y_pred = self.predict(x)
+        proba = self.predict_proba(x)
         return y_pred, proba
 
     def attach_predictions(self, df: pd.DataFrame, class_count: int) -> pd.DataFrame:
         """Return a new dataframe with y_pred and pred_proba_* columns."""
-        y_pred, proba = self.predict(df)
+        y_pred, proba = self.predict_with_proba(df)
 
         out = df.copy()
         out["y_pred"] = y_pred

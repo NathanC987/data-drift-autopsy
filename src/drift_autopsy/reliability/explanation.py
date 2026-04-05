@@ -67,6 +67,19 @@ class ExplanationConsistencyChecker:
             n_test_samples=self.shap_test_samples,
         )
         rca_result = analyzer.analyze(reference_data, current_data, model=self.model)
+        explanations_payload = rca_result.explanations or {}
+        if isinstance(explanations_payload, dict) and explanations_payload.get("error"):
+            return {
+                "explanation_score": None,
+                "metadata": {
+                    "method": "shap_unavailable",
+                    "available": False,
+                    "reason": str(explanations_payload.get("error")),
+                },
+                "details": {
+                    "top_importance_changes": [],
+                },
+            }
 
         distribution_changes = rca_result.distribution_changes or {}
         current_vector = self._vector_from_shap_distribution(distribution_changes)
@@ -83,9 +96,10 @@ class ExplanationConsistencyChecker:
             "metadata": {
                 "method": method,
                 "n_features": int(len(current_vector)),
+                "available": True,
             },
             "details": {
-                "top_importance_changes": (rca_result.explanations or {}).get("top_importance_changes", []),
+                "top_importance_changes": explanations_payload.get("top_importance_changes", []),
             },
         }
 
@@ -104,15 +118,19 @@ class ExplanationConsistencyChecker:
 
         if baseline_heatmap is None or current_heatmap is None:
             return {
-                "explanation_score": 0.5,
-                "metadata": {"method": "missing_gradcam"},
+                "explanation_score": None,
+                "metadata": {
+                    "method": "missing_gradcam",
+                    "available": False,
+                    "reason": "gradcam adapter or heatmaps unavailable",
+                },
                 "details": {},
             }
 
         score = _cosine_distance(np.asarray(baseline_heatmap), np.asarray(current_heatmap))
         return {
             "explanation_score": float(np.clip(score, 0.0, 1.0)),
-            "metadata": {"method": "gradcam_cosine_shift"},
+            "metadata": {"method": "gradcam_cosine_shift", "available": True},
             "details": {},
         }
 
@@ -143,7 +161,11 @@ class ExplanationConsistencyChecker:
             )
 
         return {
-            "explanation_score": 0.5,
-            "metadata": {"method": "fallback"},
+            "explanation_score": None,
+            "metadata": {
+                "method": "fallback",
+                "available": False,
+                "reason": "modality prerequisites not satisfied",
+            },
             "details": {},
         }

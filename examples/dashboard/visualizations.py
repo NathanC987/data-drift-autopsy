@@ -535,6 +535,125 @@ def create_reliability_risk_distribution(df: pd.DataFrame) -> go.Figure:
     return fig
 
 
+def create_reliability_risk_gauge(avg_risk_score: float, high_risk_ratio: float) -> go.Figure:
+    """Create an at-a-glance gauge for overall reliability risk."""
+    value = float(np.clip(avg_risk_score, 0.0, 1.0)) if np.isfinite(avg_risk_score) else 0.0
+    high_ratio = float(np.clip(high_risk_ratio, 0.0, 1.0)) if np.isfinite(high_risk_ratio) else 0.0
+
+    fig = go.Figure(
+        go.Indicator(
+            mode="gauge+number",
+            value=value,
+            number={"valueformat": ".3f"},
+            title={"text": "Overall Reliability Risk"},
+            gauge={
+                "axis": {"range": [0, 1]},
+                "bar": {"color": "#1f77b4"},
+                "steps": [
+                    {"range": [0, 0.33], "color": "#d4edda"},
+                    {"range": [0.33, 0.66], "color": "#fff3cd"},
+                    {"range": [0.66, 1.0], "color": "#f8d7da"},
+                ],
+            },
+        )
+    )
+
+    fig.add_annotation(
+        text=f"High-risk records: {high_ratio:.1%}",
+        x=0.5,
+        y=0.02,
+        showarrow=False,
+        font={"size": 12, "color": "#4a4a4a"},
+    )
+    fig.update_layout(template="plotly_white", height=320, margin=dict(l=30, r=30, t=55, b=40))
+    return fig
+
+
+def create_reliability_signal_availability(df: pd.DataFrame) -> go.Figure:
+    """Create chart for percentage of records with each diagnostic signal available."""
+    fig = go.Figure()
+    if df.empty:
+        fig.update_layout(title="Signal Availability (No Data)", template="plotly_white", height=320)
+        return fig
+
+    signal_map = {
+        "confidence": "confidence",
+        "ood": "ood",
+        "stability": "stability",
+        "explanation": "explanation",
+        "risk_score": "risk_score",
+    }
+
+    labels = []
+    values = []
+    for label, col in signal_map.items():
+        if col not in df.columns:
+            continue
+        availability = float(df[col].notna().mean())
+        labels.append(label.replace("_", " ").title())
+        values.append(availability)
+
+    if "calibration" in df.columns:
+        calibration_available = (~df["calibration"].astype(str).str.lower().isin(["unknown", "nan", "none"])).mean()
+        labels.append("Calibration")
+        values.append(float(calibration_available))
+
+    fig.add_trace(
+        go.Bar(
+            x=labels,
+            y=values,
+            marker_color="#17a2b8",
+            text=[f"{v:.1%}" for v in values],
+            textposition="outside",
+        )
+    )
+    fig.update_layout(
+        title="Diagnostic Signal Availability",
+        xaxis_title="Signal",
+        yaxis_title="Availability Rate",
+        yaxis=dict(range=[0, 1], tickformat=".0%"),
+        template="plotly_white",
+        height=320,
+    )
+    return fig
+
+
+def create_reliability_calibration_breakdown(df: pd.DataFrame) -> go.Figure:
+    """Create calibration-status breakdown donut chart."""
+    fig = go.Figure()
+    if df.empty or "calibration" not in df.columns:
+        fig.update_layout(title="Calibration Status (No Data)", template="plotly_white", height=320)
+        return fig
+
+    labels = (
+        df["calibration"]
+        .fillna("unknown")
+        .astype(str)
+        .str.lower()
+        .replace({"nan": "unknown", "none": "unknown"})
+        .value_counts()
+    )
+
+    color_map = {
+        "good": "#2ca02c",
+        "suspicious": "#ff7f0e",
+        "unknown": "#7f7f7f",
+    }
+    colors = [color_map.get(name, "#7f7f7f") for name in labels.index.tolist()]
+
+    fig.add_trace(
+        go.Pie(
+            labels=[str(name).title() for name in labels.index.tolist()],
+            values=labels.values.tolist(),
+            hole=0.45,
+            marker=dict(colors=colors),
+            textinfo="label+percent",
+        )
+    )
+    fig.update_layout(template="plotly_white", height=320)
+    return fig
+
+
 def create_reliability_signal_profile(df: pd.DataFrame) -> go.Figure:
     """Create average reliability signal profile chart."""
     fig = go.Figure()
@@ -543,19 +662,22 @@ def create_reliability_signal_profile(df: pd.DataFrame) -> go.Figure:
         fig.update_layout(title="Reliability Signal Profile (No Data)", template="plotly_white", height=320)
         return fig
 
-    confidence_risk = 1.0 - float(df["confidence"].mean())
+    confidence_mean = float(df["confidence"].mean()) if df["confidence"].notna().any() else float("nan")
+    confidence_risk = (
+        1.0 - confidence_mean if np.isfinite(confidence_mean) else float("nan")
+    )
     profile = {
         "Confidence Risk": confidence_risk,
-        "OOD": float(df["ood"].mean()),
-        "Stability": float(df["stability"].mean()),
-        "Explanation": float(df["explanation"].mean()),
-        "Final Risk": float(df["risk_score"].mean()),
+        "OOD": float(df["ood"].mean()) if df["ood"].notna().any() else float("nan"),
+        "Stability": float(df["stability"].mean()) if df["stability"].notna().any() else float("nan"),
+        "Explanation": float(df["explanation"].mean()) if df["explanation"].notna().any() else float("nan"),
+        "Final Risk": float(df["risk_score"].mean()) if df["risk_score"].notna().any() else float("nan"),
     }
 
     profile_df = pd.DataFrame(
         {
             "signal": list(profile.keys()),
-            "value": [float(np.clip(v, 0.0, 1.0)) for v in profile.values()],
+            "value": [float(np.clip(v, 0.0, 1.0)) if np.isfinite(v) else 0.0 for v in profile.values()],
         }
     )
 

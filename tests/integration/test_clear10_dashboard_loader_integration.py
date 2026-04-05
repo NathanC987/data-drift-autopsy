@@ -22,6 +22,7 @@ def test_clear10_dashboard_loader_contract_from_generated_report():
     drift_df = loader.get_clear10_drift_timeline()
     localization_df = loader.get_clear10_localization_summary()
     rca_df = loader.get_clear10_rca_summary()
+    reliability_df = loader.get_reliability_results(scope="clear10")
 
     assert isinstance(baseline, dict)
     assert baseline
@@ -39,3 +40,16 @@ def test_clear10_dashboard_loader_contract_from_generated_report():
 
     assert not rca_df.empty
     assert set(["bucket", "top_changes", "n_recommendations"]).issubset(rca_df.columns)
+
+    assert set(
+        [
+            "source",
+            "analysis_key",
+            "prediction_id",
+            "confidence",
+            "ood",
+            "stability",
+            "risk_score",
+            "risk_label",
+        ]
+    ).issubset(reliability_df.columns)

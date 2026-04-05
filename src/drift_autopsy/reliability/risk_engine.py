@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import numpy as np
 
@@ -58,44 +58,102 @@ class RiskScoringEngine:
 
     def weighted_score(
         self,
-        confidence_score: float,
-        ood_score: float,
-        stability_score: float,
-        calibration_risk: float,
-        explanation_score: float,
-    ) -> float:
-        """Compute weighted risk score in [0, 1]."""
-        confidence_risk = 1.0 - self._clip(confidence_score)
-        score = (
-            self.weights.confidence_risk * confidence_risk
-            + self.weights.ood_score * self._clip(ood_score)
-            + self.weights.stability_score * self._clip(stability_score)
-            + self.weights.calibration_risk * self._clip(calibration_risk)
-            + self.weights.explanation_score * self._clip(explanation_score)
+        confidence_score: Optional[float],
+        ood_score: Optional[float],
+        stability_score: Optional[float],
+        calibration_risk: Optional[float],
+        explanation_score: Optional[float],
+    ) -> tuple[Optional[float], Dict[str, Any]]:
+        """Compute weighted risk score in [0, 1] by renormalizing over available signals."""
+
+        signal_values: Dict[str, Optional[float]] = {
+            "confidence_risk": None
+            if confidence_score is None
+            else (1.0 - self._clip(confidence_score)),
+            "ood_score": None if ood_score is None else self._clip(ood_score),
+            "stability_score": None if stability_score is None else self._clip(stability_score),
+            "calibration_risk": None if calibration_risk is None else self._clip(calibration_risk),
+            "explanation_score": None if explanation_score is None else self._clip(explanation_score),
+        }
+
+        weight_map = {
+            "confidence_risk": self.weights.confidence_risk,
+            "ood_score": self.weights.ood_score,
+            "stability_score": self.weights.stability_score,
+            "calibration_risk": self.weights.calibration_risk,
+            "explanation_score": self.weights.explanation_score,
+        }
+
+        used_signals = [name for name, value in signal_values.items() if value is not None]
+        missing_signals = [name for name, value in signal_values.items() if value is None]
+        raw_weight_sum = float(sum(weight_map[name] for name in used_signals))
+
+        if not used_signals or raw_weight_sum <= 0.0:
+            return None, {
+                "used_signals": used_signals,
+                "missing_signals": missing_signals,
+                "renormalized_weights": {},
+                "components": signal_values,
+            }
+
+        renormalized_weights = {
+            name: float(weight_map[name] / raw_weight_sum) for name in used_signals
+        }
+        score = float(
+            sum(renormalized_weights[name] * float(signal_values[name]) for name in used_signals)
         )
-        return self._clip(score)
+
+        return self._clip(score), {
+            "used_signals": used_signals,
+            "missing_signals": missing_signals,
+            "renormalized_weights": renormalized_weights,
+            "components": signal_values,
+        }
 
     @staticmethod
     def rule_based_label(
-        confidence_score: float,
-        ood_score: float,
-        stability_score: float,
+        confidence_score: Optional[float],
+        ood_score: Optional[float],
+        stability_score: Optional[float],
         calibration_flag: str,
-        explanation_score: float,
+        explanation_score: Optional[float],
     ) -> str:
         """Fallback rule-based risk label."""
-        if ood_score > 0.7 and confidence_score > 0.9:
+        if (
+            ood_score is not None
+            and confidence_score is not None
+            and ood_score > 0.7
+            and confidence_score > 0.9
+        ):
             return "HIGH"
-        if stability_score > 0.7 and confidence_score > 0.85:
+        if (
+            stability_score is not None
+            and confidence_score is not None
+            and stability_score > 0.7
+            and confidence_score > 0.85
+        ):
             return "HIGH"
-        if calibration_flag == "suspicious" and explanation_score > 0.6:
+        if calibration_flag == "suspicious" and explanation_score is not None and explanation_score > 0.6:
             return "HIGH"
-        if ood_score > 0.5 or stability_score > 0.5 or explanation_score > 0.5:
+        if (
+            (ood_score is not None and ood_score > 0.5)
+            or (stability_score is not None and stability_score > 0.5)
+            or (explanation_score is not None and explanation_score > 0.5)
+        ):
             return "MEDIUM"
+        if (
+            ood_score is None
+            and stability_score is None
+            and explanation_score is None
+            and confidence_score is None
+        ):
+            return "UNKNOWN"
         return "LOW"
 
-    def label_from_score(self, risk_score: float) -> str:
+    def label_from_score(self, risk_score: Optional[float]) -> str:
         """Map weighted score to label."""
+        if risk_score is None:
+            return "UNKNOWN"
         if risk_score >= self.high_threshold:
             return "HIGH"
         if risk_score >= self.low_threshold:
@@ -104,15 +162,15 @@ class RiskScoringEngine:
 
     def combine(
         self,
-        confidence_score: float,
-        ood_score: float,
-        stability_score: float,
+        confidence_score: Optional[float],
+        ood_score: Optional[float],
+        stability_score: Optional[float],
         calibration_flag: str,
-        calibration_risk: float,
-        explanation_score: float,
+        calibration_risk: Optional[float],
+        explanation_score: Optional[float],
     ) -> Dict[str, Any]:
         """Return weighted score, weighted label, rule label, and final label."""
-        weighted = self.weighted_score(
+        weighted, weighted_meta = self.weighted_score(
             confidence_score=confidence_score,
             ood_score=ood_score,
             stability_score=stability_score,
@@ -137,4 +195,5 @@ class RiskScoringEngine:
             "risk_label": final_label,
             "weighted_label": weighted_label,
             "rule_label": rule_label,
+            "weighting": weighted_meta,
         }

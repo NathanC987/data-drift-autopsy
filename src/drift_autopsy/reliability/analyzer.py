@@ -19,6 +19,21 @@ from drift_autopsy.reliability.risk_engine import RiskScoringEngine, RiskWeights
 from drift_autopsy.reliability.stability import StabilityChecker
 
 
+_CONFIDENCE_UNAVAILABLE_METHODS = {
+    "missing_predict_proba",
+    "missing_logits",
+    "unsupported_model",
+}
+
+_REQUIRED_SIGNALS_BY_MODALITY = {
+    "tabular": {"confidence", "ood", "stability", "explanation"},
+    "image": {"confidence", "ood", "stability", "explanation"},
+    "text": {"confidence", "ood", "stability", "calibration"},
+    "audio": {"confidence", "ood", "stability"},
+    "unstructured": {"confidence", "ood", "stability"},
+}
+
+
 def _safe_float(value: Any, default: float = 0.0) -> float:
     try:
         numeric = float(value)
@@ -26,6 +41,16 @@ def _safe_float(value: Any, default: float = 0.0) -> float:
         return float(default)
     if not np.isfinite(numeric):
         return float(default)
+    return float(numeric)
+
+
+def _safe_optional_float(value: Any) -> Optional[float]:
+    try:
+        numeric = float(value)
+    except (TypeError, ValueError):
+        return None
+    if not np.isfinite(numeric):
+        return None
     return float(numeric)
 
 
@@ -201,6 +226,9 @@ class ReliabilityAnalyzer:
         ref_conf = self.confidence_extractor.extract_batch(self.reference_data)
         self._reference_confidences = np.asarray(ref_conf["scores"], dtype=float)
 
+    def _required_signals(self) -> set[str]:
+        return set(_REQUIRED_SIGNALS_BY_MODALITY.get(self.data_type, _REQUIRED_SIGNALS_BY_MODALITY["unstructured"]))
+
     @staticmethod
     def _as_dataset_tabular(data: Any, feature_names: Optional[List[str]] = None) -> Dataset:
         if isinstance(data, Dataset):
@@ -241,24 +269,103 @@ class ReliabilityAnalyzer:
         precomputed_explanation_output: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """Analyze reliability risk for a single prediction/input."""
-        confidence_output = self.confidence_extractor.extract(input_sample)
-        confidence_score = _safe_float(confidence_output["confidence_score"])
+        required_signals = self._required_signals()
 
-        ood_score = _safe_float(self.ood_detector.compute_ood_score(input_sample))
+        signal_status: Dict[str, Dict[str, Any]] = {
+            name: {
+                "required": name in required_signals,
+                "available": False,
+                "reason": "not_computed",
+            }
+            for name in ["confidence", "ood", "stability", "calibration", "explanation"]
+        }
 
-        stability_output = self.stability_checker.compute_stability(input_sample)
-        stability_score = _safe_float(stability_output["stability_score"])
+        confidence_output: Dict[str, Any] = {}
+        confidence_score: Optional[float] = None
+        confidence_method = "unknown"
+        try:
+            confidence_output = self.confidence_extractor.extract(input_sample)
+            confidence_method = str(confidence_output.get("metadata", {}).get("method", "unknown"))
+            confidence_score = _safe_optional_float(confidence_output.get("confidence_score"))
+            confidence_available = (
+                confidence_score is not None and confidence_method not in _CONFIDENCE_UNAVAILABLE_METHODS
+            )
+            signal_status["confidence"] = {
+                "required": "confidence" in required_signals,
+                "available": confidence_available,
+                "reason": None if confidence_available else f"method={confidence_method}",
+                "method": confidence_method,
+            }
+            if not confidence_available:
+                confidence_score = None
+        except Exception as exc:
+            signal_status["confidence"] = {
+                "required": "confidence" in required_signals,
+                "available": False,
+                "reason": f"exception: {exc}",
+                "method": confidence_method,
+            }
 
-        current_conf = self.confidence_extractor.extract_batch([input_sample])["scores"]
+        ood_score: Optional[float] = None
+        try:
+            ood_score = _safe_optional_float(self.ood_detector.compute_ood_score(input_sample))
+            signal_status["ood"] = {
+                "required": "ood" in required_signals,
+                "available": ood_score is not None,
+                "reason": None if ood_score is not None else "invalid ood score",
+            }
+        except Exception as exc:
+            signal_status["ood"] = {
+                "required": "ood" in required_signals,
+                "available": False,
+                "reason": f"exception: {exc}",
+            }
+
+        stability_output: Dict[str, Any] = {}
+        stability_score: Optional[float] = None
+        try:
+            stability_output = self.stability_checker.compute_stability(input_sample)
+            stability_score = _safe_optional_float(stability_output.get("stability_score"))
+            signal_status["stability"] = {
+                "required": "stability" in required_signals,
+                "available": stability_score is not None,
+                "reason": None if stability_score is not None else "invalid stability score",
+            }
+        except Exception as exc:
+            signal_status["stability"] = {
+                "required": "stability" in required_signals,
+                "available": False,
+                "reason": f"exception: {exc}",
+            }
+
+        effective_cbpe = _safe_optional_float(cbpe_score if cbpe_score is not None else self.cbpe_reference_score)
+        current_conf = np.array([])
+        if confidence_score is not None:
+            try:
+                current_conf = self.confidence_extractor.extract_batch([input_sample])["scores"]
+            except Exception:
+                current_conf = np.array([])
+
         conf_shift = self.calibration_checker.confidence_shift(
             self._reference_confidences if self._reference_confidences is not None else np.array([]),
             current_conf,
         )
         calibration_output = self.calibration_checker.evaluate(
-            confidence_score=confidence_score,
-            cbpe_score=cbpe_score if cbpe_score is not None else self.cbpe_reference_score,
+            confidence_score=confidence_score if confidence_score is not None else 0.0,
+            cbpe_score=effective_cbpe,
             confidence_distribution_shift=conf_shift,
         )
+        calibration_available = bool(calibration_output.get("metadata", {}).get("available", False))
+        calibration_risk = (
+            _safe_optional_float(calibration_output.get("calibration_risk"))
+            if calibration_available
+            else None
+        )
+        signal_status["calibration"] = {
+            "required": "calibration" in required_signals,
+            "available": calibration_available,
+            "reason": calibration_output.get("metadata", {}).get("reason"),
+        }
 
         if precomputed_explanation_output is not None:
             explanation_output = precomputed_explanation_output
@@ -283,14 +390,23 @@ class ReliabilityAnalyzer:
                 current_input=input_sample,
             )
 
-        explanation_score = _safe_float(explanation_output.get("explanation_score", 0.5), default=0.5)
+        explanation_score = _safe_optional_float(explanation_output.get("explanation_score"))
+        explanation_available = bool(explanation_output.get("metadata", {}).get("available", explanation_score is not None))
+        if not explanation_available:
+            explanation_score = None
+        signal_status["explanation"] = {
+            "required": "explanation" in required_signals,
+            "available": explanation_available,
+            "reason": explanation_output.get("metadata", {}).get("reason"),
+            "method": explanation_output.get("metadata", {}).get("method"),
+        }
 
         risk_output = self.risk_engine.combine(
             confidence_score=confidence_score,
             ood_score=ood_score,
             stability_score=stability_score,
             calibration_flag=calibration_output["calibration_flag"],
-            calibration_risk=calibration_output["calibration_risk"],
+            calibration_risk=calibration_risk,
             explanation_score=explanation_score,
         )
 
@@ -300,15 +416,13 @@ class ReliabilityAnalyzer:
             "ood": ood_score,
             "stability": stability_score,
             "calibration": calibration_output["calibration_flag"],
-            "calibration_risk": _safe_float(calibration_output["calibration_risk"]),
+            "calibration_risk": calibration_risk,
             "explanation": explanation_score,
-            "cbpe_score": _safe_float(
-                cbpe_score if cbpe_score is not None else self.cbpe_reference_score,
-                default=0.5,
-            ),
-            "risk_score": _safe_float(risk_output["risk_score"]),
+            "cbpe_score": effective_cbpe,
+            "risk_score": _safe_optional_float(risk_output.get("risk_score")),
             "risk_label": risk_output["risk_label"],
             "details": {
+                "signal_status": signal_status,
                 "confidence": confidence_output,
                 "stability": stability_output,
                 "calibration": calibration_output,

@@ -44,39 +44,119 @@ def render_reliability_section(loader: DriftResultsLoader, scope: str) -> None:
         st.info("No reliability analysis data available yet. Add reliability outputs to your results JSON.")
         return
 
+    def _fmt_metric(value) -> str:
+        try:
+            numeric = float(value)
+        except (TypeError, ValueError):
+            return "N/A"
+        if numeric != numeric:
+            return "N/A"
+        return f"{numeric:.3f}"
+
+    def _fmt_pct(value) -> str:
+        try:
+            numeric = float(value)
+        except (TypeError, ValueError):
+            return "N/A"
+        if numeric != numeric:
+            return "N/A"
+        return f"{numeric:.1%}"
+
+    total_predictions = int(summary.get("total_predictions", 0))
+    high_risk_count = int(summary.get("high_risk_count", 0))
+    suspicious_count = int((reliability_df["calibration"].astype(str).str.lower() == "suspicious").sum())
+
+    high_risk_ratio = (high_risk_count / total_predictions) if total_predictions else 0.0
+    suspicious_ratio = (suspicious_count / total_predictions) if total_predictions else 0.0
+    avg_risk_score = float(summary.get("avg_risk_score", 0.0)) if total_predictions else 0.0
+
+    if avg_risk_score < 0.33:
+        overall_label = "Mostly Reliable"
+        overall_help = "Most predictions look stable and trustworthy."
+    elif avg_risk_score < 0.66:
+        overall_label = "Needs Attention"
+        overall_help = "Some predictions may be unreliable and should be monitored."
+    else:
+        overall_label = "High Reliability Risk"
+        overall_help = "A large share of predictions appear unreliable."
+
+    st.caption(
+        "This section estimates how trustworthy model predictions are. "
+        "Higher risk means higher chance the prediction is wrong or unsupported by diagnostics."
+    )
+
+    st.subheader("Executive Summary")
+    s1, s2, s3, s4 = st.columns(4)
+    with s1:
+        st.metric("Overall Status", overall_label)
+    with s2:
+        st.metric("Likely Hallucinations", f"{high_risk_count}", delta=_fmt_pct(high_risk_ratio))
+    with s3:
+        st.metric("Avg Risk Score", _fmt_metric(summary.get("avg_risk_score")))
+    with s4:
+        st.metric("Calibration Alerts", f"{suspicious_count}", delta=_fmt_pct(suspicious_ratio))
+
+    st.info(overall_help)
+
+    diag_col1, diag_col2 = st.columns(2)
+    with diag_col1:
+        gauge_fig = viz.create_reliability_risk_gauge(
+            avg_risk_score=avg_risk_score,
+            high_risk_ratio=high_risk_ratio,
+        )
+        st.plotly_chart(gauge_fig, width="stretch")
+    with diag_col2:
+        risk_fig = viz.create_reliability_risk_distribution(reliability_df)
+        st.plotly_chart(risk_fig, width="stretch")
+
+    tech_title = "Technical Diagnostics"
+    if scope == "clear10":
+        tech_title = "Technical Diagnostics (Embedding Reliability)"
+    st.subheader(tech_title)
+
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.metric("Predictions Analyzed", summary["total_predictions"])
+        st.metric("Predictions Analyzed", total_predictions)
     with col2:
-        st.metric("Avg Risk Score", f"{summary['avg_risk_score']:.3f}")
+        st.metric("Avg Risk Score", _fmt_metric(summary.get("avg_risk_score")))
     with col3:
-        st.metric("High-Risk Predictions", summary["high_risk_count"])
+        st.metric("High-Risk Predictions", high_risk_count)
 
     m1, m2, m3, m4, m5 = st.columns(5)
     with m1:
-        st.metric("Confidence", f"{summary['avg_confidence']:.3f}")
+        st.metric("Confidence", _fmt_metric(summary.get("avg_confidence")))
     with m2:
-        st.metric("OOD Score", f"{summary['avg_ood']:.3f}")
+        st.metric("OOD Score", _fmt_metric(summary.get("avg_ood")))
     with m3:
-        st.metric("Stability", f"{summary['avg_stability']:.3f}")
+        st.metric("Stability", _fmt_metric(summary.get("avg_stability")))
     with m4:
-        st.metric("Explanation", f"{summary['avg_explanation']:.3f}")
+        st.metric("Explanation", _fmt_metric(summary.get("avg_explanation")))
     with m5:
-        suspicious = int((reliability_df["calibration"].astype(str).str.lower() == "suspicious").sum())
-        st.metric("Suspicious Calibration", suspicious)
+        st.metric("Suspicious Calibration", suspicious_count)
 
     chart_col1, chart_col2 = st.columns(2)
     with chart_col1:
-        risk_fig = viz.create_reliability_risk_distribution(reliability_df)
-        st.plotly_chart(risk_fig, width="stretch")
-    with chart_col2:
         signal_fig = viz.create_reliability_signal_profile(reliability_df)
         st.plotly_chart(signal_fig, width="stretch")
+    with chart_col2:
+        avail_fig = viz.create_reliability_signal_availability(reliability_df)
+        st.plotly_chart(avail_fig, width="stretch")
+
+    cal_col1, cal_col2 = st.columns(2)
+    with cal_col1:
+        st.markdown("**Calibration Health**")
+        calibration_fig = viz.create_reliability_calibration_breakdown(reliability_df)
+        st.plotly_chart(calibration_fig, width="stretch")
+    with cal_col2:
+        st.markdown("**How To Read This Section**")
+        st.markdown(
+            "- **Likely Hallucinations**: predictions labeled HIGH risk.\n"
+            "- **Calibration Alerts**: model confidence may be too optimistic.\n"
+            "- **Signal Availability**: shows which diagnostics are actually computed."
+        )
 
     display_cols = [
         "analysis_key",
-        "detector",
-        "prediction_id",
         "confidence",
         "ood",
         "stability",
@@ -88,8 +168,21 @@ def render_reliability_section(loader: DriftResultsLoader, scope: str) -> None:
     ]
     available_cols = [col for col in display_cols if col in reliability_df.columns]
 
+    table_df = reliability_df.copy()
     st.subheader("Reliability Details")
-    st.dataframe(reliability_df[available_cols], width="stretch")
+    alert_only = st.checkbox(
+        "Show only potentially problematic records",
+        value=False,
+        key=f"{scope}_reliability_alert_only",
+    )
+    if alert_only:
+        alert_mask = (
+            (table_df["risk_label"].astype(str).str.upper() == "HIGH")
+            | (table_df["calibration"].astype(str).str.lower() == "suspicious")
+        )
+        table_df = table_df[alert_mask]
+
+    st.dataframe(table_df[available_cols], width="stretch")
 
 
 def render_folktables_dashboard(
@@ -753,14 +846,14 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
                             st.image(
                                 first["input_image_path"],
                                 caption=f"Input image | {first['caption']}",
-                                use_container_width=True,
+                                width="stretch",
                             )
                     with col_a_cam:
                         if first["gradcam_path"] and Path(first["gradcam_path"]).exists():
                             st.image(
                                 first["gradcam_path"],
                                 caption=f"Grad-CAM overlay | {first['caption']}",
-                                use_container_width=True,
+                                width="stretch",
                             )
 
                     if len(pair) > 1:
@@ -770,15 +863,17 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
                                 st.image(
                                     second["input_image_path"],
                                     caption=f"Input image | {second['caption']}",
-                                    use_container_width=True,
+                                    width="stretch",
                                 )
                         with col_b_cam:
                             if second["gradcam_path"] and Path(second["gradcam_path"]).exists():
                                 st.image(
                                     second["gradcam_path"],
                                     caption=f"Grad-CAM overlay | {second['caption']}",
-                                    use_container_width=True,
+                                    width="stretch",
                                 )
+
+    render_reliability_section(loader=loader, scope="clear10")
 
 
 def main():

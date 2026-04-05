@@ -48,22 +48,40 @@ class CalibrationChecker:
             Dictionary with calibration_flag and calibration_risk in [0, 1].
         """
         conf = float(np.clip(confidence_score, 0.0, 1.0))
-        cbpe = float(np.clip(cbpe_score, 0.0, 1.0)) if cbpe_score is not None else 0.5
         shift = float(np.clip(confidence_distribution_shift, 0.0, 1.0))
 
-        overconfidence = max(0.0, conf - cbpe)
-        gap_risk = float(np.clip(overconfidence / max(self.overconfidence_gap, 1e-8), 0.0, 1.0))
+        cbpe = None
+        gap_risk = None
+        if cbpe_score is not None:
+            cbpe = float(np.clip(cbpe_score, 0.0, 1.0))
+            overconfidence = max(0.0, conf - cbpe)
+            gap_risk = float(np.clip(overconfidence / max(self.overconfidence_gap, 1e-8), 0.0, 1.0))
+        else:
+            overconfidence = None
 
-        calibration_risk = float(np.clip(0.7 * gap_risk + 0.3 * shift, 0.0, 1.0))
+        if gap_risk is None:
+            calibration_risk = shift
+            components = {"confidence_shift": 1.0}
+            available = False
+            reason = "cbpe_score unavailable; calibration uses confidence shift only"
+        else:
+            calibration_risk = float(np.clip(0.7 * gap_risk + 0.3 * shift, 0.0, 1.0))
+            components = {"gap_risk": 0.7, "confidence_shift": 0.3}
+            available = True
+            reason = None
+
         calibration_flag = "suspicious" if calibration_risk >= self.suspicious_threshold else "good"
 
         return {
             "calibration_flag": calibration_flag,
             "calibration_risk": calibration_risk,
             "metadata": {
+                "available": available,
+                "reason": reason,
                 "confidence": conf,
                 "cbpe_score": cbpe,
                 "confidence_distribution_shift": shift,
                 "overconfidence_gap": overconfidence,
+                "weighting_components": components,
             },
         }

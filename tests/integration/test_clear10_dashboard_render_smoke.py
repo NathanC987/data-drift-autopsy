@@ -23,6 +23,7 @@ def test_clear10_render_path_builds_figures_from_generated_report():
     drift_df = loader.get_clear10_drift_timeline()
     localization_df = loader.get_clear10_localization_summary()
     rca_df = loader.get_clear10_rca_summary()
+    reliability_df = loader.get_reliability_results(scope="clear10")
 
     assert not proxy_df.empty
     assert not drift_df.empty
@@ -52,3 +53,17 @@ def test_clear10_render_path_builds_figures_from_generated_report():
         )
         assert isinstance(fig, go.Figure)
         assert len(fig.data) >= 1
+
+    risk_fig = viz.create_reliability_risk_distribution(reliability_df)
+    signal_fig = viz.create_reliability_signal_profile(reliability_df)
+    gauge_fig = viz.create_reliability_risk_gauge(
+        avg_risk_score=float(reliability_df["risk_score"].mean()) if not reliability_df.empty else 0.0,
+        high_risk_ratio=float((reliability_df["risk_label"] == "HIGH").mean()) if not reliability_df.empty else 0.0,
+    )
+    availability_fig = viz.create_reliability_signal_availability(reliability_df)
+    calibration_fig = viz.create_reliability_calibration_breakdown(reliability_df)
+    assert isinstance(risk_fig, go.Figure)
+    assert isinstance(signal_fig, go.Figure)
+    assert isinstance(gauge_fig, go.Figure)
+    assert isinstance(availability_fig, go.Figure)
+    assert isinstance(calibration_fig, go.Figure)
