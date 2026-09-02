@@ -14,6 +14,7 @@ sys.path.insert(0, str(project_root))
 
 from examples.dashboard.data_loader import DriftResultsLoader
 from examples.dashboard import visualizations as viz
+from examples.dashboard.remediation import render_remediation_dashboard
 
 
 # Page configuration
@@ -115,14 +116,14 @@ def render_folktables_dashboard(
     with col1:
         if not cbpe_df.empty:
             fig = viz.create_drift_timeline(cbpe_df, title="CBPE Score Timeline")
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
         else:
             st.info("No CBPE data available")
 
     with col2:
         if not cbpe_df.empty:
             fig = viz.create_detector_comparison(cbpe_df, title="CBPE Comparison")
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
         else:
             st.info("No CBPE data available")
 
@@ -133,14 +134,14 @@ def render_folktables_dashboard(
     with col1:
         if not drift_detectors_df.empty:
             fig = viz.create_drift_timeline(drift_detectors_df, title="Drift Score Timeline")
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
         else:
             st.info("No drift detector data available")
 
     with col2:
         if not drift_detectors_df.empty:
             fig = viz.create_detector_comparison(drift_detectors_df, title="Detector Comparison")
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
         else:
             st.info("No drift detector data available")
 
@@ -151,7 +152,7 @@ def render_folktables_dashboard(
         st.subheader("Model Performance Over Time")
         if not perf_df.empty:
             fig = viz.create_performance_chart(perf_df)
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
         else:
             st.info("No performance data available")
 
@@ -159,7 +160,7 @@ def render_folktables_dashboard(
         st.subheader("Drift Severity Distribution")
         if not all_detectors_df.empty:
             fig = viz.create_severity_distribution(all_detectors_df)
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
         else:
             st.info("No severity data available")
 
@@ -174,13 +175,13 @@ def render_folktables_dashboard(
         with col1:
             st.subheader("Feature Drift Heatmap")
             fig = viz.create_feature_heatmap(feature_df)
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
 
         with col2:
             st.subheader("Top Drifted Features")
             top_n = st.slider("Number of features", 5, 20, 10)
             fig = viz.create_top_drifted_features(feature_df, top_n=top_n)
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
     else:
         st.info("No feature drift data available")
 
@@ -190,7 +191,7 @@ def render_folktables_dashboard(
     st.header("Drift Detection Timeline")
     if not all_detectors_df.empty:
         fig = viz.create_drift_detection_timeline(all_detectors_df)
-        st.plotly_chart(fig, width="stretch")
+        st.plotly_chart(fig, use_container_width=True)
     else:
         st.info("No drift detection data available")
 
@@ -204,7 +205,7 @@ def render_folktables_dashboard(
 
         with col1:
             fig = viz.create_slice_drift_heatmap(slice_df, title="Slice Drift Score by Detector")
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
 
         with col2:
             st.subheader("Slice Summary")
@@ -224,7 +225,7 @@ def render_folktables_dashboard(
                 "reference_samples",
                 "test_samples",
             ]],
-            width="stretch",
+            use_container_width=True,
         )
     else:
         st.info("No slice analysis data available. Run a pipeline with slice_config enabled.")
@@ -243,22 +244,22 @@ def render_folktables_dashboard(
             st.subheader("Feature Importance Comparison")
             top_n_importance = st.slider("Number of features to compare", 5, 15, 10, key="importance_slider")
             fig = viz.create_feature_importance_comparison(importance_changes_df, top_n=top_n_importance)
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
 
         with col2:
             st.subheader("Importance Changes Over Time")
             top_features = st.slider("Number of features to track", 3, 10, 5, key="timeline_slider")
             fig = viz.create_importance_change_timeline(importance_changes_df, top_features=top_features)
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
 
         st.subheader("Feature Importance Changes Heatmap")
         fig = viz.create_feature_importance_heatmap(importance_changes_df)
-        st.plotly_chart(fig, width="stretch")
+        st.plotly_chart(fig, use_container_width=True)
 
         st.subheader("Recommendations")
         rec_df = viz.create_rca_recommendations_table(rca_df)
         if not rec_df.empty:
-            st.dataframe(rec_df, width="stretch")
+            st.dataframe(rec_df, use_container_width=True)
         else:
             st.info("No recommendations available")
 
@@ -275,6 +276,11 @@ def render_folktables_dashboard(
     else:
         st.info("No RCA data available. Enable RCA in your drift detection pipeline to see root cause analysis.")
 
+    st.markdown("---")
+    
+    # Render Remediation Module
+    render_remediation_dashboard(loader)
+
     if show_raw_data:
         st.markdown("---")
         st.header("Raw Data Tables")
@@ -283,20 +289,20 @@ def render_folktables_dashboard(
 
         with tab1:
             st.subheader("Detector Results")
-            st.dataframe(all_detectors_df, width="stretch")
+            st.dataframe(all_detectors_df, use_container_width=True)
 
         with tab2:
             st.subheader("Feature Drift")
-            st.dataframe(feature_df, width="stretch")
+            st.dataframe(feature_df, use_container_width=True)
 
         with tab3:
             st.subheader("Performance Metrics")
-            st.dataframe(perf_df, width="stretch")
+            st.dataframe(perf_df, use_container_width=True)
 
         with tab4:
             st.subheader("RCA Results")
             if not rca_df.empty:
-                st.dataframe(rca_df, width="stretch")
+                st.dataframe(rca_df, use_container_width=True)
             else:
                 st.info("No RCA data available")
 
@@ -382,7 +388,7 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
                         lower_threshold=lower_threshold,
                         upper_threshold=upper_threshold,
                     )
-                    st.plotly_chart(fig, width="stretch")
+                    st.plotly_chart(fig, use_container_width=True)
 
         remaining_metrics = [m for m in available_metrics if m not in rendered_metrics]
         for metric_name in remaining_metrics:
@@ -414,7 +420,7 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
                 lower_threshold=lower_threshold,
                 upper_threshold=upper_threshold,
             )
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
 
         classwise_df = loader.get_clear10_proxy_metrics_classwise()
         if not classwise_df.empty:
@@ -482,7 +488,7 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
             )
 
             with graph_col:
-                st.plotly_chart(fig, width="stretch")
+                st.plotly_chart(fig, use_container_width=True)
 
     st.markdown("---")
 
@@ -541,12 +547,12 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
                             threshold=threshold,
                             alert_direction=alert_direction,
                         )
-                        st.plotly_chart(fig, width="stretch")
+                        st.plotly_chart(fig, use_container_width=True)
 
                     with right_col:
                         st.subheader("PCA 3D Bucket Projection")
                         pca_fig = viz.create_pca_bucket_3d_scatter(pca_projection_df)
-                        st.plotly_chart(pca_fig, width="stretch")
+                        st.plotly_chart(pca_fig, use_container_width=True)
                 else:
                     st.subheader(detector_name)
                     st.caption(f"Alert semantics: {semantics}")
@@ -556,7 +562,7 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
                         threshold=threshold,
                         alert_direction=alert_direction,
                     )
-                    st.plotly_chart(fig, width="stretch")
+                    st.plotly_chart(fig, use_container_width=True)
             else:
                 left_col, right_col = st.columns(2)
                 for col_idx, detector_name in enumerate(detector_row):
@@ -589,7 +595,7 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
                             threshold=threshold,
                             alert_direction=alert_direction,
                         )
-                        st.plotly_chart(fig, width="stretch")
+                        st.plotly_chart(fig, use_container_width=True)
 
         remaining_detectors = [d for d in detectors if d not in rendered_detectors]
         for detector_name in remaining_detectors:
@@ -617,7 +623,7 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
                 threshold=threshold,
                 alert_direction=alert_direction,
             )
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
 
     st.markdown("---")
 
@@ -626,7 +632,7 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
     if localization_df.empty:
         st.info("No localization summary data available.")
     else:
-        st.dataframe(localization_df, width="stretch")
+        st.dataframe(localization_df, use_container_width=True)
 
     st.markdown("---")
 
@@ -636,7 +642,7 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
     if rca_df.empty:
         st.info("No RCA summary data available.")
     else:
-        st.dataframe(rca_df, width="stretch")
+        st.dataframe(rca_df, use_container_width=True)
 
     st.subheader("Visual RCA (Grad-CAM)")
     if visual_rca_df.empty:
@@ -647,7 +653,7 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
             status_cols = ["bucket", "bucket_severity", "status", "reason"]
             st.dataframe(
                 visual_rca_df[status_cols].drop_duplicates().sort_values("bucket"),
-                width="stretch",
+                use_container_width=True,
             )
         else:
             for bucket in sorted(enabled_df["bucket"].dropna().unique().tolist()):
