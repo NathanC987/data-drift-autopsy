@@ -62,11 +62,6 @@ data/clear10/
 *.log
 logs/
 
-# Local Output & Temp Files
-outputs/*.json
-_check_rca.py
-_rca_output.txt
-
 # Secrets & Environment
 .env
 

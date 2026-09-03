@@ -1,0 +1,33 @@
+Feature Importance Shifts (2014 vs 2018):
+============================================================
+  OCCP        ref=0.0385  test=0.0709  change=+0.0323
+  WKHP        ref=0.0006  test=0.0047  change=+0.0041
+  POBP        ref=0.0005  test=0.0043  change=+0.0037
+  AGEP        ref=0.0012  test=0.0044  change=+0.0032
+  SCHL        ref=0.0002  test=0.0008  change=+0.0006
+  RELP        ref=0.0000  test=0.0004  change=+0.0003
+  MAR         ref=0.0000  test=0.0001  change=+0.0001
+  SEX         ref=0.0000  test=0.0000  change=+0.0000
+  COW         ref=0.0000  test=0.0000  change=+0.0000
+  RAC1P       ref=0.0000  test=0.0000  change=+0.0000
+
+Recommendations from RCA:
+  - Features with increased model reliance: OCCP, WKHP, POBP
+  - Features both drifted and importance-shifted: WKHP, OCCP, POBP, AGEP, SCHL - likely root causes
+
+Feature-level drift (KS Test 2018):
+  Drift detected: True
+  Score: 0.03689103488704987
+  Severity: critical
+
+  Individual feature drifts:
+    OCCP        score=0.0369  drifted=True  severity=critical
+    SCHL        score=0.0288  drifted=True  severity=critical
+    RAC1P       score=0.0209  drifted=True  severity=critical
+    POBP        score=0.0208  drifted=True  severity=critical
+    MAR         score=0.0193  drifted=True  severity=critical
+    RELP        score=0.0179  drifted=True  severity=critical
+    WKHP        score=0.0167  drifted=True  severity=critical
+    AGEP        score=0.0165  drifted=True  severity=critical
+    SEX         score=0.0054  drifted=False  severity=none
+    COW         score=0.0042  drifted=False  severity=none

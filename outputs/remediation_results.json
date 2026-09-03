@@ -1,0 +1,43 @@
+{
+  "remediation_type": "full_retraining_expanded_data",
+  "original_training_years": [
+    2014
+  ],
+  "retrained_training_years": [
+    2014,
+    2015,
+    2016
+  ],
+  "test_years": [
+    2017,
+    2018
+  ],
+  "original_scores": {
+    "2014": 0.7985,
+    "2015": 0.7925,
+    "2016": 0.7894,
+    "2017": 0.7846,
+    "2018": 0.7789
+  },
+  "retrained_scores": {
+    "2014": 0.7983,
+    "2015": 0.7932,
+    "2016": 0.7904,
+    "2017": 0.7862,
+    "2018": 0.7807
+  },
+  "comparison": {
+    "2017": {
+      "original_accuracy": 0.7846,
+      "retrained_accuracy": 0.7862,
+      "improvement": 0.0016,
+      "improved": true
+    },
+    "2018": {
+      "original_accuracy": 0.7789,
+      "retrained_accuracy": 0.7807,
+      "improvement": 0.0018,
+      "improved": true
+    }
+  }
+}
