@@ -14,7 +14,7 @@ sys.path.insert(0, str(project_root))
 
 from examples.dashboard.data_loader import DriftResultsLoader
 from examples.dashboard import visualizations as viz
-
+from examples.dashboard.remediation import render_remediation_dashboard
 
 # Page configuration
 st.set_page_config(
@@ -275,6 +275,12 @@ def render_folktables_dashboard(
     else:
         st.info("No RCA data available. Enable RCA in your drift detection pipeline to see root cause analysis.")
 
+    render_reliability_section(loader=loader, scope="folktables")
+
+    st.markdown("---")
+
+    render_remediation_dashboard(loader=loader)
+    
     if show_raw_data:
         st.markdown("---")
         st.header("Raw Data Tables")

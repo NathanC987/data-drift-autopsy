@@ -196,6 +196,49 @@ class FolktablesLoader:
             metadata_cols=['group', 'state'],
         )
 
+    ACS_INCOME_FEATURES = [
+        "AGEP", "COW", "SCHL", "MAR", "OCCP", "POBP", "RELP", "WKHP", "SEX", "RAC1P",
+    ]
+
+    @classmethod
+    def load_acs_income_cached(
+        cls,
+        year: int,
+        state: str,
+        data_root: Union[str, Path] = "data",
+        dataset_name: str = "folktables_us_census",
+        download: bool = False,
+    ) -> "pd.DataFrame":
+        """Load one ACS Income (state, year) as a DataFrame, local cache first.
+
+        Returns a frame with the 10 ACS Income feature columns, a ``target``
+        column, and a ``state`` metadata column. Falls back to a Folktables
+        download only when ``download=True`` and no cache exists.
+        """
+        cache = (
+            Path(data_root) / dataset_name / "acs_income" / f"acs_income_{state}_{year}.parquet"
+        )
+        if cache.exists():
+            return pd.read_parquet(cache)
+
+        csv_cache = cache.with_suffix(".csv")
+        if csv_cache.exists():
+            return pd.read_csv(csv_cache)
+
+        if not download:
+            raise FileNotFoundError(
+                f"No cached ACS Income data at {cache}. Pass download=True to fetch it."
+            )
+
+        dataset = cls.load_acs_income(year=year, states=[state], download=True)
+        frame = dataset.data.copy()
+        frame["target"] = dataset.target.to_numpy() if hasattr(dataset.target, "to_numpy") else dataset.target
+        if dataset.metadata is not None and "state" in dataset.metadata.columns:
+            frame["state"] = dataset.metadata["state"].to_numpy()
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        frame.to_parquet(cache, index=False)
+        return frame
+
 
 class Clear10Loader:
     """

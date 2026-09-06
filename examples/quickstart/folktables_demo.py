@@ -172,10 +172,87 @@ def load_multi_state_income_dataset(year: int, states):
     )
 
 
+def estimate_cbpe_accuracy(
+    reference_confidence: np.ndarray,
+    reference_correct: np.ndarray,
+    test_confidence: np.ndarray,
+    n_bins: int = 10,
+) -> float:
+    """Label-free accuracy estimate for the test set (CBPE-style).
+
+    Calibrates a per-bin accuracy from reference-set confidence and correctness,
+    then averages those calibrated bin accuracies over the test set's confidence
+    histogram. Returns a bounded estimate in [0, 1] that the reliability layer's
+    calibration check can compare against prediction confidence. Passing the CBPE
+    detector's chi-square p-value here instead (as an earlier version did) is a
+    category error: the p-value is not a performance estimate and drives the
+    overconfidence gap to an artificial floor or ceiling.
+    """
+    reference_confidence = np.asarray(reference_confidence, dtype=float)
+    reference_correct = np.asarray(reference_correct, dtype=float)
+    test_confidence = np.asarray(test_confidence, dtype=float)
+
+    if reference_confidence.size == 0 or test_confidence.size == 0:
+        return 0.5
+
+    bin_edges = np.linspace(0.0, 1.0, n_bins + 1)
+    ref_bin = np.clip(np.digitize(reference_confidence, bin_edges[1:-1]), 0, n_bins - 1)
+    test_bin = np.clip(np.digitize(test_confidence, bin_edges[1:-1]), 0, n_bins - 1)
+
+    global_accuracy = float(reference_correct.mean())
+    bin_accuracy = np.full(n_bins, global_accuracy, dtype=float)
+    for bin_idx in range(n_bins):
+        mask = ref_bin == bin_idx
+        if np.any(mask):
+            bin_accuracy[bin_idx] = float(reference_correct[mask].mean())
+
+    return float(np.clip(np.mean(bin_accuracy[test_bin]), 0.0, 1.0))
+
+
+def build_reliability_records(
+    model,
+    reference_df: pd.DataFrame,
+    test_df: pd.DataFrame,
+    estimated_accuracy: float,
+    analysis_key: str,
+    max_samples: int = 200,
+):
+    """Generate reliability outputs for a subset of samples.
+
+    ``estimated_accuracy`` is a label-free performance estimate in [0, 1]; the
+    reliability layer uses it as the calibration reference for the overconfidence
+    gap (confidence minus estimated correctness).
+    """
+    if test_df.empty:
+        return []
+
+    sample_df = test_df.sample(n=min(max_samples, len(test_df)), random_state=42).reset_index(drop=True)
+
+    analyzer = ReliabilityAnalyzer(
+        model=model,
+        data_type="tabular",
+        reference_data=reference_df,
+        task_type="classification",
+        cbpe_reference_score=estimated_accuracy,
+    )
+
+    records = analyzer.analyze_batch(sample_df)
+    for idx, record in enumerate(records):
+        record["analysis_key"] = analysis_key
+        record["detector"] = "model_agnostic"
+        if record.get("prediction_id") is None:
+            record["prediction_id"] = f"{analysis_key}_{idx}"
+
+    return records
+
+
 def main():
     # Setup logging
     setup_logging(level="INFO")
-    
+
+    # Seed global RNG so SHAP sampling and reliability sampling are reproducible.
+    np.random.seed(42)
+
     print("=" * 80)
     print("Folktables Temporal + Geographic Drift Analysis Demo")
     print("Dataset: ACS Income (Temporal: CA 2014-2018, Geographic: cross-state)")
@@ -217,6 +294,8 @@ def main():
     
     # Get predictions on training data for CBPE baseline
     train_proba = model.predict_proba(X_train)
+    train_confidence = train_proba.max(axis=1)
+    train_correct = (model.predict(X_train) == y_train).astype(float)
     train_dataset_with_preds = Dataset(
         data=train_dataset.data,
         feature_names=train_dataset.feature_names,
@@ -286,11 +365,30 @@ def main():
             train_dataset_with_preds=train_dataset_with_preds,
             test_dataset_with_preds=test_dataset_with_preds,
         )
-        
+
+        estimated_accuracy = estimate_cbpe_accuracy(
+            reference_confidence=train_confidence,
+            reference_correct=train_correct,
+            test_confidence=test_proba.max(axis=1),
+        )
+        print(
+            f"  CBPE estimated accuracy: {estimated_accuracy:.4f} "
+            f"(actual {test_score:.4f}, gap {estimated_accuracy - test_score:+.4f})"
+        )
+
+        reliability_records = build_reliability_records(
+            model=model,
+            reference_df=train_dataset.data,
+            test_df=test_dataset.data,
+            estimated_accuracy=estimated_accuracy,
+            analysis_key=str(year),
+        )
+
         all_results[year] = {
             "analysis_type": "temporal",
             "actual_accuracy": float(test_score),
             "accuracy_drop": float(test_score - train_score),
+            "cbpe_estimated_accuracy": estimated_accuracy,
             "pipelines": year_results,
         }
 
@@ -334,6 +432,25 @@ def main():
         slice_config=geo_slice_config,
     )
 
+    geo_estimated_accuracy = estimate_cbpe_accuracy(
+        reference_confidence=train_confidence,
+        reference_correct=train_correct,
+        test_confidence=geo_proba.max(axis=1),
+    )
+    geo_actual_accuracy = float(model.score(X_geo, geo_dataset.target.values))
+    print(
+        f"  CBPE estimated accuracy (pooled states): {geo_estimated_accuracy:.4f} "
+        f"(actual {geo_actual_accuracy:.4f})"
+    )
+
+    geographic_reliability = build_reliability_records(
+        model=model,
+        reference_df=geo_dataset.data,
+        test_df=geo_dataset.data,
+        estimated_accuracy=geo_estimated_accuracy,
+        analysis_key="geographic_analysis",
+    )
+
     all_results["geographic_analysis"] = {
         "analysis_type": "geographic",
         "year": BASE_YEAR,
@@ -342,6 +459,7 @@ def main():
         "slice_value_labels": code_to_state,
         "states_analyzed": GEO_STATES,
         "slice_column": "state",
+        "cbpe_estimated_accuracy": geo_estimated_accuracy,
         "pipelines": geographic_results,
     }
     

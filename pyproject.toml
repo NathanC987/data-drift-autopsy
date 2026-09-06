@@ -54,7 +54,10 @@ image = [
     "torchvision>=0.15.0",
     "Pillow>=9.0.0",
 ]
-all = ["drift-autopsy[analysis,demo,dashboard,image]"]
+concept = [
+    "open_clip_torch>=2.24.0",
+]
+all = ["drift-autopsy[analysis,demo,dashboard,image,concept]"]
 dev = [
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",

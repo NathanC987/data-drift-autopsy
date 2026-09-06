@@ -1,0 +1,167 @@
+{
+  "settings": [
+    {
+      "shift_name": "ACS temporal (CA 2014->2018)",
+      "reference_accuracy": 0.7968577279234547,
+      "baseline_before": 0.7790304857792656,
+      "triage": {
+        "will_retraining_help": false,
+        "rationale": "reference and production are barely separable (AUC 0.54) and no cheap probe recovered more than 12% of the gap",
+        "signals": {
+          "domain_classifier_auc": 0.5379483781023278,
+          "effective_sample_fraction": 0.9939213356456276,
+          "feature_drop_sensitivity": 0.1558196127161644,
+          "estimated_gap": 0.004138058164094072,
+          "observed_gap": 0.01782724214418907,
+          "cheap_probe_recovery": {
+            "importance_weighted_retrain": 0.017201009657052544,
+            "retrain_on_recent": 0.12069375109363965
+          }
+        }
+      },
+      "results": [
+        {
+          "strategy": "full_retrain",
+          "shift_name": "ACS temporal (CA 2014->2018)",
+          "accuracy_before": 0.77903,
+          "accuracy_after": 0.78092,
+          "accuracy_recovered": 0.00189,
+          "fraction_of_gap_recovered": 0.1058,
+          "reference_accuracy": 0.79686,
+          "wall_clock_seconds": 0.2151,
+          "train_samples": 506420,
+          "n_features_used": 10,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 40513600.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 0.008766,
+          "extra": {}
+        },
+        {
+          "strategy": "feature_drop_retrain",
+          "shift_name": "ACS temporal (CA 2014->2018)",
+          "accuracy_before": 0.77903,
+          "accuracy_after": 0.59637,
+          "accuracy_recovered": -0.18266,
+          "fraction_of_gap_recovered": -10.2464,
+          "reference_accuracy": 0.79686,
+          "wall_clock_seconds": 0.0759,
+          "train_samples": 506420,
+          "n_features_used": 2,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 4051360.0,
+          "effective_sample_size": null,
+          "recovery_per_second": -2.407344,
+          "extra": {
+            "dropped_features": [
+              "OCCP",
+              "SCHL",
+              "RAC1P",
+              "POBP",
+              "MAR",
+              "RELP",
+              "WKHP",
+              "AGEP"
+            ]
+          }
+        },
+        {
+          "strategy": "importance_weighted_retrain",
+          "shift_name": "ACS temporal (CA 2014->2018)",
+          "accuracy_before": 0.77903,
+          "accuracy_after": 0.77934,
+          "accuracy_recovered": 0.00031,
+          "fraction_of_gap_recovered": 0.0172,
+          "reference_accuracy": 0.79686,
+          "wall_clock_seconds": 0.0943,
+          "train_samples": 128758,
+          "n_features_used": 10,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 3732528853.5916104,
+          "effective_sample_size": 127975.3,
+          "recovery_per_second": 0.003252,
+          "extra": {
+            "effective_sample_size": 127975.32333505971,
+            "domain_classifier_auc": 0.5379483781023278
+          }
+        },
+        {
+          "strategy": "head_refit",
+          "shift_name": "ACS temporal (CA 2014->2018)",
+          "accuracy_before": 0.77903,
+          "accuracy_after": 0.77909,
+          "accuracy_recovered": 6e-05,
+          "fraction_of_gap_recovered": 0.0032,
+          "reference_accuracy": 0.79686,
+          "wall_clock_seconds": 0.1397,
+          "train_samples": 130758,
+          "n_features_used": 10,
+          "n_production_labels_required": 2000,
+          "fit_flops_proxy": 10460640.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 0.000403,
+          "extra": {}
+        },
+        {
+          "strategy": "calibration_only",
+          "shift_name": "ACS temporal (CA 2014->2018)",
+          "accuracy_before": 0.77903,
+          "accuracy_after": 0.77893,
+          "accuracy_recovered": -0.0001,
+          "fraction_of_gap_recovered": -0.0054,
+          "reference_accuracy": 0.79686,
+          "wall_clock_seconds": 0.0062,
+          "train_samples": 2000,
+          "n_features_used": 1,
+          "n_production_labels_required": 2000,
+          "fit_flops_proxy": 2000.0,
+          "effective_sample_size": null,
+          "recovery_per_second": -0.015623,
+          "extra": {
+            "note": "recovers calibration, not accuracy"
+          }
+        },
+        {
+          "strategy": "retrain_on_recent[previous]",
+          "shift_name": "ACS temporal (CA 2014->2018)",
+          "accuracy_before": 0.77903,
+          "accuracy_after": 0.78118,
+          "accuracy_recovered": 0.00215,
+          "fraction_of_gap_recovered": 0.1207,
+          "reference_accuracy": 0.79686,
+          "wall_clock_seconds": 0.2053,
+          "train_samples": 318945,
+          "n_features_used": 10,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 25515600.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 0.010481,
+          "extra": {
+            "windows_used": 1
+          }
+        }
+      ]
+    }
+  ],
+  "remediation_type": "localisation_driven_suite",
+  "original_training_years": [
+    2014
+  ],
+  "retrained_training_years": [
+    2014,
+    2015,
+    2016
+  ],
+  "test_years": [
+    2017,
+    2018
+  ],
+  "comparison": {
+    "2018": {
+      "original_accuracy": 0.779,
+      "retrained_accuracy": 0.7809,
+      "improvement": 0.0019,
+      "improved": true
+    }
+  }
+}

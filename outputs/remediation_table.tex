@@ -1,0 +1,13 @@
+\begin{table}[!htbp]
+\centering
+\caption{Remediation triage: the cheap label-free probe's recovery predicts the verdict, which matches whether any strategy recovers the gap.}
+\label{tab:triage}
+\renewcommand{\arraystretch}{1.2}\setlength{\tabcolsep}{3pt}\scriptsize
+\begin{tabular}{@{}l r l r r r l@{}}
+\toprule
+setting & gap (pp) & cheapest fix & recovered & cost (s) & full retrain & triage \\
+\midrule
+ACS temporal & 1.8 & retrain on recent & 12\% & 0.21 & 11\% & do not retrain \\
+\bottomrule
+\end{tabular}
+\end{table}

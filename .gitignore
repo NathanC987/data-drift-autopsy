@@ -25,6 +25,7 @@ venv/
 env/
 ENV/
 .venv
+.env
 
 # IDE
 .vscode/
@@ -57,6 +58,7 @@ dmypy.json
 data/raw/
 data/processed/
 data/clear10/
+paper/
 
 # Logs
 *.log

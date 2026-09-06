@@ -1,0 +1,2851 @@
+{
+  "7": {
+    "overall": [
+      {
+        "concept": "a sports field",
+        "delta": 0.015132992116629045,
+        "ref_mass": 0.058937679130100666,
+        "prod_mass": 0.07407067124672971,
+        "alignment": -0.05234983329055301
+      },
+      {
+        "concept": "flash photography",
+        "delta": 0.008930801009809995,
+        "ref_mass": 0.024283985524573608,
+        "prod_mass": 0.0332147865343836,
+        "alignment": -0.025488604129927102
+      },
+      {
+        "concept": "a high resolution photo",
+        "delta": 0.006539492632419444,
+        "ref_mass": 0.044508543429828684,
+        "prod_mass": 0.05104803606224813,
+        "alignment": -0.07493509797545517
+      },
+      {
+        "concept": "a modern photograph",
+        "delta": 0.006355838919228647,
+        "ref_mass": 0.0155455498916705,
+        "prod_mass": 0.021901388810899147,
+        "alignment": -0.05526055614186534
+      },
+      {
+        "concept": "a black and white photo",
+        "delta": 0.00631398735573163,
+        "ref_mass": 0.007844438142636611,
+        "prod_mass": 0.014158425498368241,
+        "alignment": -0.0166880223127088
+      },
+      {
+        "concept": "an overexposed photo",
+        "delta": 0.003904369759133171,
+        "ref_mass": 0.01625350647951109,
+        "prod_mass": 0.020157876238644262,
+        "alignment": -0.05862069200626
+      },
+      {
+        "concept": "sunny weather",
+        "delta": 0.0037643879595458136,
+        "ref_mass": 0.005021955256927566,
+        "prod_mass": 0.00878634321647338,
+        "alignment": -0.056186366417786876
+      },
+      {
+        "concept": "a logo",
+        "delta": 0.0036222235786081674,
+        "ref_mass": 0.00479161521916727,
+        "prod_mass": 0.008413838797775438,
+        "alignment": -0.08768638008980602
+      },
+      {
+        "concept": "a film photograph",
+        "delta": 0.0023080111975255398,
+        "ref_mass": 0.00969390096418269,
+        "prod_mass": 0.01200191216170823,
+        "alignment": -0.08734534924980616
+      },
+      {
+        "concept": "a cluttered background",
+        "delta": 0.0021733385218962314,
+        "ref_mass": 0.0034696348906411373,
+        "prod_mass": 0.005642973412537369,
+        "alignment": -0.08586649520646686
+      },
+      {
+        "concept": "a sign",
+        "delta": -0.0024715552692056338,
+        "ref_mass": 0.019993592073197376,
+        "prod_mass": 0.017522036803991742,
+        "alignment": -0.07864078977853763
+      },
+      {
+        "concept": "a watermark",
+        "delta": -0.0024818161465168056,
+        "ref_mass": 0.006271324598859546,
+        "prod_mass": 0.0037895084523427405,
+        "alignment": -0.09986226246692098
+      },
+      {
+        "concept": "a wide shot",
+        "delta": -0.0025168798966417605,
+        "ref_mass": 0.20839918091772935,
+        "prod_mass": 0.2058823010210876,
+        "alignment": -0.09666957960877806
+      },
+      {
+        "concept": "a street scene",
+        "delta": -0.002562632924330054,
+        "ref_mass": 0.0110668551926985,
+        "prod_mass": 0.008504222268368446,
+        "alignment": -0.06988961529294531
+      },
+      {
+        "concept": "a low resolution photo",
+        "delta": -0.0029093133340295785,
+        "ref_mass": 0.17298147825587215,
+        "prod_mass": 0.17007216492184257,
+        "alignment": -0.08439379648937084
+      },
+      {
+        "concept": "an outdoor scene",
+        "delta": -0.003009605105504373,
+        "ref_mass": 0.008673549938009166,
+        "prod_mass": 0.005663944832504793,
+        "alignment": -0.09403766511555159
+      },
+      {
+        "concept": "a blurry photo",
+        "delta": -0.006861590471995655,
+        "ref_mass": 0.01994680524484103,
+        "prod_mass": 0.013085214772845376,
+        "alignment": -0.11572776291559221
+      },
+      {
+        "concept": "a close-up shot",
+        "delta": -0.008889018467194695,
+        "ref_mass": 0.03888474180919696,
+        "prod_mass": 0.029995723342002265,
+        "alignment": -0.10572674364305293
+      },
+      {
+        "concept": "a stadium",
+        "delta": -0.01344312829690474,
+        "ref_mass": 0.018297127741785654,
+        "prod_mass": 0.004853999444880913,
+        "alignment": -0.10865600793633227
+      },
+      {
+        "concept": "a digital photograph",
+        "delta": -0.02359367832732312,
+        "ref_mass": 0.11568292891428184,
+        "prod_mass": 0.09208925058695872,
+        "alignment": -0.10757912879344474
+      }
+    ],
+    "per_class": {
+      "soccer": {
+        "n_ref": 300,
+        "n_prod": 300,
+        "concepts": [
+          {
+            "concept": "motion blur",
+            "delta": 0.03648875285981097,
+            "ref_mass": 0.12192967859301775,
+            "prod_mass": 0.15841843145282872,
+            "alignment": -0.023202602936023678
+          },
+          {
+            "concept": "a low resolution photo",
+            "delta": 0.02521424158836255,
+            "ref_mass": 0.10340968984688312,
+            "prod_mass": 0.12862393143524567,
+            "alignment": -0.0464442798266475
+          },
+          {
+            "concept": "an indoor scene",
+            "delta": 0.009685638532194184,
+            "ref_mass": 0.005982327616228269,
+            "prod_mass": 0.015667966148422453,
+            "alignment": -0.049289029332093004
+          },
+          {
+            "concept": "a wide shot",
+            "delta": 0.006719763769492737,
+            "ref_mass": 0.2677864249805266,
+            "prod_mass": 0.27450618875001936,
+            "alignment": -0.08229870277840817
+          },
+          {
+            "concept": "a blurry photo",
+            "delta": 0.0044826171945267345,
+            "ref_mass": 0.010588196522856216,
+            "prod_mass": 0.01507081371738295,
+            "alignment": -0.030199144846624677
+          },
+          {
+            "concept": "a high resolution photo",
+            "delta": 0.0033711204232398807,
+            "ref_mass": 0.013805891158170767,
+            "prod_mass": 0.017177011581410648,
+            "alignment": -0.04209617351447896
+          },
+          {
+            "concept": "a digital photograph",
+            "delta": 0.0023376265455455,
+            "ref_mass": 0.019926020842555802,
+            "prod_mass": 0.022263647388101302,
+            "alignment": -0.03652838258977913
+          },
+          {
+            "concept": "overcast weather",
+            "delta": 0.00157545108145639,
+            "ref_mass": 0.0006398710354706825,
+            "prod_mass": 0.0022153221169270727,
+            "alignment": -0.02973302361311234
+          },
+          {
+            "concept": "foggy weather",
+            "delta": 0.0014188851634395832,
+            "ref_mass": 4.779625331384364e-05,
+            "prod_mass": 0.0014666814167534268,
+            "alignment": -0.03467595716050319
+          },
+          {
+            "concept": "a centered subject",
+            "delta": 0.0010124793116984936,
+            "ref_mass": 0.002171817373538338,
+            "prod_mass": 0.0031842966852368318,
+            "alignment": -0.022842956935108218
+          },
+          {
+            "concept": "low light",
+            "delta": -0.00036299518558979946,
+            "ref_mass": 0.0016760368156223564,
+            "prod_mass": 0.001313041630032557,
+            "alignment": -0.044506664797206816
+          },
+          {
+            "concept": "a night photo",
+            "delta": -0.0004368876523257644,
+            "ref_mass": 0.0008029138606994848,
+            "prod_mass": 0.00036602620837372044,
+            "alignment": -0.028230282847215883
+          },
+          {
+            "concept": "a black and white photo",
+            "delta": -0.0004703889626227623,
+            "ref_mass": 0.00246195336259771,
+            "prod_mass": 0.0019915643999749476,
+            "alignment": -0.023718722692583676
+          },
+          {
+            "concept": "a grainy photo",
+            "delta": -0.0006588103143346403,
+            "ref_mass": 0.0012729530525419027,
+            "prod_mass": 0.0006141427382072625,
+            "alignment": -0.056737391445729535
+          },
+          {
+            "concept": "sunny weather",
+            "delta": -0.0007010273165933856,
+            "ref_mass": 0.0014610408769872088,
+            "prod_mass": 0.0007600135603938232,
+            "alignment": -0.07426366382629293
+          },
+          {
+            "concept": "a stadium",
+            "delta": -0.0009202615572090644,
+            "ref_mass": 0.0024733546952608507,
+            "prod_mass": 0.0015530931380517863,
+            "alignment": -0.12052258083867462
+          },
+          {
+            "concept": "a close-up shot",
+            "delta": -0.0012420227033816652,
+            "ref_mass": 0.0032586046220330887,
+            "prod_mass": 0.0020165819186514235,
+            "alignment": -0.035782979535466455
+          },
+          {
+            "concept": "a watermark",
+            "delta": -0.0017554911506274572,
+            "ref_mass": 0.005664299452675907,
+            "prod_mass": 0.00390880830204845,
+            "alignment": -0.0386294215756408
+          },
+          {
+            "concept": "an outdoor scene",
+            "delta": -0.0028437053345013504,
+            "ref_mass": 0.01541397350498247,
+            "prod_mass": 0.01257026817048112,
+            "alignment": -0.13039233188165852
+          },
+          {
+            "concept": "a sports field",
+            "delta": -0.08404743181583457,
+            "ref_mass": 0.4092673552323765,
+            "prod_mass": 0.32521992341654193,
+            "alignment": -0.11237523902863852
+          }
+        ]
+      },
+      "baseball": {
+        "n_ref": 300,
+        "n_prod": 300,
+        "concepts": [
+          {
+            "concept": "a sports field",
+            "delta": 0.2488258916257271,
+            "ref_mass": 0.2213315227202941,
+            "prod_mass": 0.4701574143460212,
+            "alignment": -0.0010981927311761244
+          },
+          {
+            "concept": "motion blur",
+            "delta": 0.02835299663077285,
+            "ref_mass": 0.03939390165448554,
+            "prod_mass": 0.06774689828525839,
+            "alignment": 0.018949296203306598
+          },
+          {
+            "concept": "a low resolution photo",
+            "delta": 0.008749305271847488,
+            "ref_mass": 0.07792013749241021,
+            "prod_mass": 0.0866694427642577,
+            "alignment": -0.020841889939403672
+          },
+          {
+            "concept": "a high resolution photo",
+            "delta": 0.003647230355874609,
+            "ref_mass": 0.014952564852697116,
+            "prod_mass": 0.018599795208571725,
+            "alignment": -0.01914891911594571
+          },
+          {
+            "concept": "a digital photograph",
+            "delta": 0.0034426824837870754,
+            "ref_mass": 0.03305929346006071,
+            "prod_mass": 0.036501975943847784,
+            "alignment": -0.02606891527003332
+          },
+          {
+            "concept": "no people",
+            "delta": 0.0010645813806402244,
+            "ref_mass": 0.00018239001461983802,
+            "prod_mass": 0.0012469713952600625,
+            "alignment": -0.038031073495855536
+          },
+          {
+            "concept": "text in the image",
+            "delta": 0.0009661858090798778,
+            "ref_mass": 0.0015641935626756103,
+            "prod_mass": 0.002530379371755488,
+            "alignment": -0.01923693440731754
+          },
+          {
+            "concept": "a single person",
+            "delta": 0.0008655645197717726,
+            "ref_mass": 0.00195225615716727,
+            "prod_mass": 0.0028178206769390425,
+            "alignment": 0.01760588838682415
+          },
+          {
+            "concept": "an overexposed photo",
+            "delta": 0.0006398446400710908,
+            "ref_mass": 0.0014846074807386817,
+            "prod_mass": 0.0021244521208097725,
+            "alignment": -0.008894503690999735
+          },
+          {
+            "concept": "sunny weather",
+            "delta": 0.0006331684626766584,
+            "ref_mass": 0.00031703975247189076,
+            "prod_mass": 0.0009502082151485492,
+            "alignment": -0.008883523038994753
+          },
+          {
+            "concept": "low light",
+            "delta": -0.0008891073428745158,
+            "ref_mass": 0.0036427812931822097,
+            "prod_mass": 0.002753673950307694,
+            "alignment": -0.05616176438388956
+          },
+          {
+            "concept": "a film photograph",
+            "delta": -0.0010895139802665295,
+            "ref_mass": 0.0017569191842165802,
+            "prod_mass": 0.0006674052039500507,
+            "alignment": -0.027573190475199263
+          },
+          {
+            "concept": "a sign",
+            "delta": -0.0012755279057738624,
+            "ref_mass": 0.003830480551707801,
+            "prod_mass": 0.0025549526459339384,
+            "alignment": -0.026930480460019723
+          },
+          {
+            "concept": "a grainy photo",
+            "delta": -0.0014530096571605312,
+            "ref_mass": 0.004658485167884098,
+            "prod_mass": 0.0032054755107235665,
+            "alignment": -0.024378624739160377
+          },
+          {
+            "concept": "a black and white photo",
+            "delta": -0.002184848572915429,
+            "ref_mass": 0.0024347207936107687,
+            "prod_mass": 0.0002498722206953394,
+            "alignment": -0.01603677485140221
+          },
+          {
+            "concept": "a night photo",
+            "delta": -0.0028539675174415694,
+            "ref_mass": 0.004817156111237981,
+            "prod_mass": 0.0019631885937964116,
+            "alignment": -0.05718188795013931
+          },
+          {
+            "concept": "a close-up shot",
+            "delta": -0.004427384839813846,
+            "ref_mass": 0.009149666473199251,
+            "prod_mass": 0.004722281633385405,
+            "alignment": -0.03665261861894062
+          },
+          {
+            "concept": "an indoor scene",
+            "delta": -0.006939046712398948,
+            "ref_mass": 0.008683071560604569,
+            "prod_mass": 0.0017440248482056202,
+            "alignment": -0.07481818093939857
+          },
+          {
+            "concept": "a wide shot",
+            "delta": -0.126981369993798,
+            "ref_mass": 0.34769564033671047,
+            "prod_mass": 0.22071427034291247,
+            "alignment": -0.07113919640528624
+          },
+          {
+            "concept": "a stadium",
+            "delta": -0.1465926008463272,
+            "ref_mass": 0.18884088324125317,
+            "prod_mass": 0.04224828239492598,
+            "alignment": -0.11948208925114889
+          }
+        ]
+      },
+      "hockey": {
+        "n_ref": 300,
+        "n_prod": 300,
+        "concepts": [
+          {
+            "concept": "a wide shot",
+            "delta": 0.05557701060632614,
+            "ref_mass": 0.6006989155976645,
+            "prod_mass": 0.6562759262039907,
+            "alignment": -0.01441956417806537
+          },
+          {
+            "concept": "an indoor scene",
+            "delta": 0.02123724682497239,
+            "ref_mass": 0.04230150458695737,
+            "prod_mass": 0.06353875141192976,
+            "alignment": -0.0012281178391913422
+          },
+          {
+            "concept": "a sports field",
+            "delta": 0.0035627691069106474,
+            "ref_mass": 0.010383014200791525,
+            "prod_mass": 0.013945783307702173,
+            "alignment": 0.017699097414472852
+          },
+          {
+            "concept": "an overexposed photo",
+            "delta": 0.00021717039907499444,
+            "ref_mass": 0.0012766137836504726,
+            "prod_mass": 0.001493784182725467,
+            "alignment": -0.0154220648997247
+          },
+          {
+            "concept": "an underexposed photo",
+            "delta": 0.00019650058572523183,
+            "ref_mass": 0.002944693925311048,
+            "prod_mass": 0.0031411945110362796,
+            "alignment": -0.018759800825856515
+          },
+          {
+            "concept": "a plain background",
+            "delta": 0.000173602729037137,
+            "ref_mass": 0.001076887486659109,
+            "prod_mass": 0.001250490215696246,
+            "alignment": 0.009440148494971403
+          },
+          {
+            "concept": "a grainy photo",
+            "delta": 9.318058915669893e-05,
+            "ref_mass": 0.00023608651064765688,
+            "prod_mass": 0.0003292670998043558,
+            "alignment": -0.01231239689462486
+          },
+          {
+            "concept": "text in the image",
+            "delta": 9.589477432007075e-06,
+            "ref_mass": 0.002087968184299409,
+            "prod_mass": 0.002097557661731416,
+            "alignment": -0.0025835550635443716
+          },
+          {
+            "concept": "a cluttered background",
+            "delta": 9.57629154016174e-06,
+            "ref_mass": 0.00012675951592995173,
+            "prod_mass": 0.00013633580747011347,
+            "alignment": -0.0032090961692199105
+          },
+          {
+            "concept": "a watermark",
+            "delta": 7.256641965252468e-06,
+            "ref_mass": 0.0004194494262622177,
+            "prod_mass": 0.00042670606822747017,
+            "alignment": -0.021462947144390013
+          },
+          {
+            "concept": "an outdoor scene",
+            "delta": -0.0014588756115912517,
+            "ref_mass": 0.0021032379505671914,
+            "prod_mass": 0.0006443623389759395,
+            "alignment": -0.034604150552100185
+          },
+          {
+            "concept": "a blurry photo",
+            "delta": -0.0021523723404682704,
+            "ref_mass": 0.008150278739605705,
+            "prod_mass": 0.005997906399137435,
+            "alignment": -0.029270130977860936
+          },
+          {
+            "concept": "a black and white photo",
+            "delta": -0.002196792829422498,
+            "ref_mass": 0.002751739584428592,
+            "prod_mass": 0.000554946755006094,
+            "alignment": 0.042004642500246145
+          },
+          {
+            "concept": "a close-up shot",
+            "delta": -0.003545457471129861,
+            "ref_mass": 0.014616752335082634,
+            "prod_mass": 0.011071294863952773,
+            "alignment": -0.028319791082625178
+          },
+          {
+            "concept": "a high resolution photo",
+            "delta": -0.0051412443800646565,
+            "ref_mass": 0.023231812484288246,
+            "prod_mass": 0.01809056810422359,
+            "alignment": -0.03375829748942324
+          },
+          {
+            "concept": "rainy weather",
+            "delta": -0.005438716835448451,
+            "ref_mass": 0.005471360871168612,
+            "prod_mass": 3.264403572016028e-05,
+            "alignment": -0.02282369168302051
+          },
+          {
+            "concept": "a digital photograph",
+            "delta": -0.006369909991535088,
+            "ref_mass": 0.019674606641254158,
+            "prod_mass": 0.01330469664971907,
+            "alignment": -0.04246977054795188
+          },
+          {
+            "concept": "a street scene",
+            "delta": -0.00886748878098776,
+            "ref_mass": 0.009257650975168473,
+            "prod_mass": 0.0003901621941807124,
+            "alignment": -0.06924006651392983
+          },
+          {
+            "concept": "a low resolution photo",
+            "delta": -0.012882668814018408,
+            "ref_mass": 0.11550718543136956,
+            "prod_mass": 0.10262451661735116,
+            "alignment": -0.02781436094709546
+          },
+          {
+            "concept": "motion blur",
+            "delta": -0.027064674834431715,
+            "ref_mass": 0.11593007639991736,
+            "prod_mass": 0.08886540156548564,
+            "alignment": -0.03000678489829367
+          }
+        ]
+      },
+      "BACKGROUND": {
+        "n_ref": 300,
+        "n_prod": 299,
+        "concepts": [
+          {
+            "concept": "a low resolution photo",
+            "delta": 0.02808143572810899,
+            "ref_mass": 0.12057326905386402,
+            "prod_mass": 0.148654704781973,
+            "alignment": -0.04758117350765011
+          },
+          {
+            "concept": "a wide shot",
+            "delta": 0.020329239356840195,
+            "ref_mass": 0.13914898682173948,
+            "prod_mass": 0.15947822617857968,
+            "alignment": -0.053734156064530456
+          },
+          {
+            "concept": "a logo",
+            "delta": 0.0185386417204821,
+            "ref_mass": 0.03287532874462636,
+            "prod_mass": 0.05141397046510846,
+            "alignment": -0.04272055341723622
+          },
+          {
+            "concept": "a high resolution photo",
+            "delta": 0.009524601848455043,
+            "ref_mass": 0.04721205701186962,
+            "prod_mass": 0.05673665886032466,
+            "alignment": -0.05408985261842541
+          },
+          {
+            "concept": "a digital photograph",
+            "delta": 0.009445829348944869,
+            "ref_mass": 0.05782858823116128,
+            "prod_mass": 0.06727441758010615,
+            "alignment": -0.06482216927093445
+          },
+          {
+            "concept": "a night photo",
+            "delta": 0.006492672976781829,
+            "ref_mass": 0.0016814693618783208,
+            "prod_mass": 0.008174142338660149,
+            "alignment": -0.006338464467650951
+          },
+          {
+            "concept": "a sepia photo",
+            "delta": 0.005783852899488838,
+            "ref_mass": 0.009013976575938826,
+            "prod_mass": 0.014797829475427664,
+            "alignment": -0.036023822902241626
+          },
+          {
+            "concept": "a centered subject",
+            "delta": 0.004162417097759184,
+            "ref_mass": 0.008643350493127422,
+            "prod_mass": 0.012805767590886606,
+            "alignment": -0.0804804531604691
+          },
+          {
+            "concept": "an underexposed photo",
+            "delta": 0.003508794849054587,
+            "ref_mass": 0.0022967655877551884,
+            "prod_mass": 0.005805560436809775,
+            "alignment": -0.05058788447255519
+          },
+          {
+            "concept": "an overexposed photo",
+            "delta": 0.003416570324057588,
+            "ref_mass": 0.001966816238051206,
+            "prod_mass": 0.005383386562108794,
+            "alignment": -0.03903358548797935
+          },
+          {
+            "concept": "a black and white photo",
+            "delta": -0.0025371063656010554,
+            "ref_mass": 0.010499738044200745,
+            "prod_mass": 0.00796263167859969,
+            "alignment": -0.02359055601613456
+          },
+          {
+            "concept": "a sports field",
+            "delta": -0.0026652222941166556,
+            "ref_mass": 0.0036574272769441998,
+            "prod_mass": 0.0009922049828275442,
+            "alignment": -0.05850361247609534
+          },
+          {
+            "concept": "an aerial view",
+            "delta": -0.004351236528188172,
+            "ref_mass": 0.010597344959978626,
+            "prod_mass": 0.006246108431790454,
+            "alignment": -0.0726467959211613
+          },
+          {
+            "concept": "a film photograph",
+            "delta": -0.005130581987653093,
+            "ref_mass": 0.0175663154329019,
+            "prod_mass": 0.012435733445248807,
+            "alignment": -0.07789020450484044
+          },
+          {
+            "concept": "an indoor scene",
+            "delta": -0.01248244181590578,
+            "ref_mass": 0.03478470094558502,
+            "prod_mass": 0.02230225912967924,
+            "alignment": -0.0405192049818864
+          },
+          {
+            "concept": "a crowd of people",
+            "delta": -0.013526443458909581,
+            "ref_mass": 0.021354937243447624,
+            "prod_mass": 0.007828493784538043,
+            "alignment": -0.027784462170989767
+          },
+          {
+            "concept": "text in the image",
+            "delta": -0.013823945097657372,
+            "ref_mass": 0.11660306915962783,
+            "prod_mass": 0.10277912406197046,
+            "alignment": -0.06835086567799073
+          },
+          {
+            "concept": "a sign",
+            "delta": -0.018752960743172314,
+            "ref_mass": 0.18818299809761774,
+            "prod_mass": 0.16943003735444542,
+            "alignment": -0.05864039510862185
+          },
+          {
+            "concept": "a watermark",
+            "delta": -0.019982546370573378,
+            "ref_mass": 0.02734983760473605,
+            "prod_mass": 0.007367291234162673,
+            "alignment": -0.11749889341458458
+          },
+          {
+            "concept": "an outdoor scene",
+            "delta": -0.027427547449663223,
+            "ref_mass": 0.04900020423885129,
+            "prod_mass": 0.021572656789188068,
+            "alignment": -0.11174419733039624
+          }
+        ]
+      }
+    },
+    "dim_exemplars": [
+      {
+        "dimension": "feature_7",
+        "drift_score": 0.05786858576667494,
+        "ref_center": 0.7789642810821533,
+        "prod_mean": 0.7568733096122742,
+        "reference_images": [
+          "data/clear10/labeled_images/1/BACKGROUND/1161663934.jpg",
+          "data/clear10/labeled_images/1/sweater/1654399661.jpg",
+          "data/clear10/labeled_images/1/BACKGROUND/1232073624.jpg",
+          "data/clear10/labeled_images/1/racing/1883886090.jpg"
+        ],
+        "production_images": [
+          "data/clear10/labeled_images/7/BACKGROUND/7230481102.jpg",
+          "data/clear10/labeled_images/7/racing/6946319396.jpg",
+          "data/clear10/labeled_images/7/racing/6297288067.jpg",
+          "data/clear10/labeled_images/7/bus/6697522191.jpg"
+        ]
+      },
+      {
+        "dimension": "feature_174",
+        "drift_score": 0.05196707750847878,
+        "ref_center": 1.0138877630233765,
+        "prod_mean": 1.0617616176605225,
+        "reference_images": [
+          "data/clear10/labeled_images/1/bus/1449395215.jpg",
+          "data/clear10/labeled_images/1/bus/534648530.jpg",
+          "data/clear10/labeled_images/1/bus/1187000458.jpg",
+          "data/clear10/labeled_images/1/bus/2307346734.jpg"
+        ],
+        "production_images": [
+          "data/clear10/labeled_images/7/bus/7177896780.jpg",
+          "data/clear10/labeled_images/7/bus/6692729571.jpg",
+          "data/clear10/labeled_images/7/bus/7326597276.jpg",
+          "data/clear10/labeled_images/7/bus/6485397313.jpg"
+        ]
+      },
+      {
+        "dimension": "feature_281",
+        "drift_score": 0.05186422918906995,
+        "ref_center": 0.7810816764831543,
+        "prod_mean": 0.8132303953170776,
+        "reference_images": [
+          "data/clear10/labeled_images/1/BACKGROUND/1042594244.jpg",
+          "data/clear10/labeled_images/1/cosplay/2162164531.jpg",
+          "data/clear10/labeled_images/1/BACKGROUND/2198487936.jpg",
+          "data/clear10/labeled_images/1/racing/520909985.jpg"
+        ],
+        "production_images": [
+          "data/clear10/labeled_images/7/racing/6235157984.jpg",
+          "data/clear10/labeled_images/7/BACKGROUND/7311918638.jpg",
+          "data/clear10/labeled_images/7/racing/7309324752.jpg",
+          "data/clear10/labeled_images/7/racing/7198256832.jpg"
+        ]
+      }
+    ],
+    "metadata_validation": {
+      "spearman_rho": 0.6571428571428573,
+      "p_value": 0.1561749271137024,
+      "n_matched": 6,
+      "matched": [
+        {
+          "concept": "a black and white photo",
+          "tag": "blackandwhite",
+          "concept_delta": 0.00631398735573163,
+          "tag_shift": 0.007232727272727273
+        },
+        {
+          "concept": "an outdoor scene",
+          "tag": "outdoor",
+          "concept_delta": -0.003009605105504373,
+          "tag_shift": 0.01755787878787879
+        },
+        {
+          "concept": "a street scene",
+          "tag": "city",
+          "concept_delta": -0.002562632924330054,
+          "tag_shift": 0.0012730303030303028
+        },
+        {
+          "concept": "a stadium",
+          "tag": "stadium",
+          "concept_delta": -0.01344312829690474,
+          "tag_shift": -0.026505757575757575
+        },
+        {
+          "concept": "a sign",
+          "tag": "sign",
+          "concept_delta": -0.0024715552692056338,
+          "tag_shift": 0.0016178787878787862
+        },
+        {
+          "concept": "a blurry photo",
+          "tag": "blur",
+          "concept_delta": -0.006861590471995655,
+          "tag_shift": 1.8787878787878548e-05
+        }
+      ]
+    },
+    "metadata_validation_focus": {
+      "class": "BACKGROUND",
+      "spearman_rho": -0.14285714285714288,
+      "p_value": 0.735764859879812,
+      "n_matched": 8,
+      "matched": [
+        {
+          "concept": "a black and white photo",
+          "tag": "blackandwhite",
+          "concept_delta": -0.0025371063656010554,
+          "tag_shift": -0.023170000000000003
+        },
+        {
+          "concept": "a night photo",
+          "tag": "night",
+          "concept_delta": 0.006492672976781829,
+          "tag_shift": 0.004273333333333334
+        },
+        {
+          "concept": "an outdoor scene",
+          "tag": "outdoor",
+          "concept_delta": -0.027427547449663223,
+          "tag_shift": -0.09229000000000004
+        },
+        {
+          "concept": "an indoor scene",
+          "tag": "indoor",
+          "concept_delta": -0.01248244181590578,
+          "tag_shift": 0.047806666666666664
+        },
+        {
+          "concept": "a crowd of people",
+          "tag": "people",
+          "concept_delta": -0.013526443458909581,
+          "tag_shift": 0.26830333333333334
+        },
+        {
+          "concept": "text in the image",
+          "tag": "text",
+          "concept_delta": -0.013823945097657372,
+          "tag_shift": 0.11471666666666663
+        },
+        {
+          "concept": "a sign",
+          "tag": "sign",
+          "concept_delta": -0.018752960743172314,
+          "tag_shift": 0.02826999999999999
+        },
+        {
+          "concept": "an aerial view",
+          "tag": "aerial",
+          "concept_delta": -0.004351236528188172,
+          "tag_shift": 0.00535
+        }
+      ]
+    },
+    "photographic_era": {
+      "reference_median_year": 2007.0,
+      "production_median_year": 2012.0
+    }
+  },
+  "8": {
+    "overall": [
+      {
+        "concept": "a sports field",
+        "delta": 0.012845068328287128,
+        "ref_mass": 0.058937679130100666,
+        "prod_mass": 0.0717827474583878,
+        "alignment": -0.05660314403120628
+      },
+      {
+        "concept": "a high resolution photo",
+        "delta": 0.01082909342119788,
+        "ref_mass": 0.044508543429828684,
+        "prod_mass": 0.055337636851026564,
+        "alignment": -0.07186027075037457
+      },
+      {
+        "concept": "flash photography",
+        "delta": 0.008797126933639675,
+        "ref_mass": 0.024283985524573608,
+        "prod_mass": 0.03308111245821328,
+        "alignment": -0.018648745881871216
+      },
+      {
+        "concept": "an overexposed photo",
+        "delta": 0.0070675648773270705,
+        "ref_mass": 0.01625350647951109,
+        "prod_mass": 0.023321071356838162,
+        "alignment": -0.058457163660230065
+      },
+      {
+        "concept": "a low resolution photo",
+        "delta": 0.006594050769926696,
+        "ref_mass": 0.17298147825587215,
+        "prod_mass": 0.17957552902579885,
+        "alignment": -0.08321985527433803
+      },
+      {
+        "concept": "a black and white photo",
+        "delta": 0.00557774669431472,
+        "ref_mass": 0.007844438142636611,
+        "prod_mass": 0.013422184836951331,
+        "alignment": -0.024416831008364195
+      },
+      {
+        "concept": "a modern photograph",
+        "delta": 0.005103386015133021,
+        "ref_mass": 0.0155455498916705,
+        "prod_mass": 0.02064893590680352,
+        "alignment": -0.053776519795355075
+      },
+      {
+        "concept": "sunny weather",
+        "delta": 0.004391624854297187,
+        "ref_mass": 0.005021955256927566,
+        "prod_mass": 0.009413580111224753,
+        "alignment": -0.0423850678047598
+      },
+      {
+        "concept": "a single person",
+        "delta": 0.004112978317707079,
+        "ref_mass": 0.016129422938061955,
+        "prod_mass": 0.020242401255769035,
+        "alignment": -0.0542016219463512
+      },
+      {
+        "concept": "a logo",
+        "delta": 0.00324998718781702,
+        "ref_mass": 0.00479161521916727,
+        "prod_mass": 0.00804160240698429,
+        "alignment": -0.07996698195202398
+      },
+      {
+        "concept": "text in the image",
+        "delta": -0.0010774813627658399,
+        "ref_mass": 0.015352063359493637,
+        "prod_mass": 0.014274581996727797,
+        "alignment": -0.08514949500024807
+      },
+      {
+        "concept": "a watermark",
+        "delta": -0.0011967214939745023,
+        "ref_mass": 0.006271324598859546,
+        "prod_mass": 0.005074603104885044,
+        "alignment": -0.09438246712074458
+      },
+      {
+        "concept": "an outdoor scene",
+        "delta": -0.002544115574669533,
+        "ref_mass": 0.008673549938009166,
+        "prod_mass": 0.006129434363339633,
+        "alignment": -0.0865054416332028
+      },
+      {
+        "concept": "a night photo",
+        "delta": -0.0030667133215814286,
+        "ref_mass": 0.01563123399919629,
+        "prod_mass": 0.012564520677614861,
+        "alignment": -0.08049106732494163
+      },
+      {
+        "concept": "a sign",
+        "delta": -0.00494102935043891,
+        "ref_mass": 0.019993592073197376,
+        "prod_mass": 0.015052562722758466,
+        "alignment": -0.08507001174229359
+      },
+      {
+        "concept": "a blurry photo",
+        "delta": -0.005434592705929029,
+        "ref_mass": 0.01994680524484103,
+        "prod_mass": 0.014512212538912002,
+        "alignment": -0.11510639922758979
+      },
+      {
+        "concept": "a close-up shot",
+        "delta": -0.008308108902401416,
+        "ref_mass": 0.03888474180919696,
+        "prod_mass": 0.030576632906795544,
+        "alignment": -0.10471048812146358
+      },
+      {
+        "concept": "a stadium",
+        "delta": -0.010539549475589622,
+        "ref_mass": 0.018297127741785654,
+        "prod_mass": 0.007757578266196032,
+        "alignment": -0.11157605474253787
+      },
+      {
+        "concept": "a wide shot",
+        "delta": -0.015246602764807438,
+        "ref_mass": 0.20839918091772935,
+        "prod_mass": 0.19315257815292192,
+        "alignment": -0.10355727415874579
+      },
+      {
+        "concept": "a digital photograph",
+        "delta": -0.021426782937389338,
+        "ref_mass": 0.11568292891428184,
+        "prod_mass": 0.0942561459768925,
+        "alignment": -0.10556365332214453
+      }
+    ],
+    "per_class": {
+      "baseball": {
+        "n_ref": 300,
+        "n_prod": 300,
+        "concepts": [
+          {
+            "concept": "a sports field",
+            "delta": 0.15722225310527144,
+            "ref_mass": 0.2213315227202941,
+            "prod_mass": 0.37855377582556554,
+            "alignment": -0.016433661637456742
+          },
+          {
+            "concept": "motion blur",
+            "delta": 0.04507569926579715,
+            "ref_mass": 0.03939390165448554,
+            "prod_mass": 0.08446960092028269,
+            "alignment": 0.020869390189019527
+          },
+          {
+            "concept": "a low resolution photo",
+            "delta": 0.029515979300105508,
+            "ref_mass": 0.07792013749241021,
+            "prod_mass": 0.10743611679251572,
+            "alignment": -0.023301395000657817
+          },
+          {
+            "concept": "a digital photograph",
+            "delta": 0.008965324872892574,
+            "ref_mass": 0.03305929346006071,
+            "prod_mass": 0.04202461833295328,
+            "alignment": -0.027298590894812808
+          },
+          {
+            "concept": "a high resolution photo",
+            "delta": 0.008626275179910912,
+            "ref_mass": 0.014952564852697116,
+            "prod_mass": 0.023578840032608028,
+            "alignment": -0.020393185790262655
+          },
+          {
+            "concept": "a blurry photo",
+            "delta": 0.004736058648549767,
+            "ref_mass": 0.010559110632126582,
+            "prod_mass": 0.01529516928067635,
+            "alignment": -0.02726895871274772
+          },
+          {
+            "concept": "an overexposed photo",
+            "delta": 0.0018040722376378385,
+            "ref_mass": 0.0014846074807386817,
+            "prod_mass": 0.0032886797183765202,
+            "alignment": 0.00010633564173678084
+          },
+          {
+            "concept": "flash photography",
+            "delta": 0.001618945329329437,
+            "ref_mass": 0.0008735839072753021,
+            "prod_mass": 0.002492529236604739,
+            "alignment": 0.0415860703702086
+          },
+          {
+            "concept": "an underexposed photo",
+            "delta": 0.001235227330048386,
+            "ref_mass": 0.0022847216850246962,
+            "prod_mass": 0.003519949015073082,
+            "alignment": -0.02352151954639101
+          },
+          {
+            "concept": "a single person",
+            "delta": 0.000987676139754793,
+            "ref_mass": 0.00195225615716727,
+            "prod_mass": 0.002939932296922063,
+            "alignment": 0.02255519222674399
+          },
+          {
+            "concept": "a grainy photo",
+            "delta": -0.0011230537059445517,
+            "ref_mass": 0.004658485167884098,
+            "prod_mass": 0.003535431461939546,
+            "alignment": -0.02883632631916487
+          },
+          {
+            "concept": "a crowd of people",
+            "delta": -0.0018311394457629839,
+            "ref_mass": 0.0019556377806577733,
+            "prod_mass": 0.00012449833489478943,
+            "alignment": -0.13794635808604538
+          },
+          {
+            "concept": "a black and white photo",
+            "delta": -0.0023779468291365794,
+            "ref_mass": 0.0024347207936107687,
+            "prod_mass": 5.677396447418908e-05,
+            "alignment": -0.022982816997284612
+          },
+          {
+            "concept": "a night photo",
+            "delta": -0.0029138661476695114,
+            "ref_mass": 0.004817156111237981,
+            "prod_mass": 0.0019032899635684697,
+            "alignment": -0.04351660050267792
+          },
+          {
+            "concept": "a sepia photo",
+            "delta": -0.003036062665397206,
+            "ref_mass": 0.0031036599464573343,
+            "prod_mass": 6.759728106012829e-05,
+            "alignment": -0.04138671318531309
+          },
+          {
+            "concept": "a sign",
+            "delta": -0.0032259524316807387,
+            "ref_mass": 0.003830480551707801,
+            "prod_mass": 0.000604528120027062,
+            "alignment": -0.031150435276152057
+          },
+          {
+            "concept": "a close-up shot",
+            "delta": -0.005178699436802516,
+            "ref_mass": 0.009149666473199251,
+            "prod_mass": 0.003970967036396735,
+            "alignment": -0.03739103418697358
+          },
+          {
+            "concept": "an indoor scene",
+            "delta": -0.005934638603306969,
+            "ref_mass": 0.008683071560604569,
+            "prod_mass": 0.0027484329572975987,
+            "alignment": -0.0808778703912382
+          },
+          {
+            "concept": "a stadium",
+            "delta": -0.11338349852089041,
+            "ref_mass": 0.18884088324125317,
+            "prod_mass": 0.07545738472036276,
+            "alignment": -0.12879227228729206
+          },
+          {
+            "concept": "a wide shot",
+            "delta": -0.12168585231386866,
+            "ref_mass": 0.34769564033671047,
+            "prod_mass": 0.2260097880228418,
+            "alignment": -0.08136269004295006
+          }
+        ]
+      },
+      "bus": {
+        "n_ref": 300,
+        "n_prod": 300,
+        "concepts": [
+          {
+            "concept": "a street scene",
+            "delta": 0.01681751075667199,
+            "ref_mass": 0.06076705343730288,
+            "prod_mass": 0.07758456419397487,
+            "alignment": 0.005308775645072728
+          },
+          {
+            "concept": "motion blur",
+            "delta": 0.012779606285185714,
+            "ref_mass": 0.04073413350159951,
+            "prod_mass": 0.053513739786785225,
+            "alignment": -0.013209167770013344
+          },
+          {
+            "concept": "a high resolution photo",
+            "delta": 0.008446615564990156,
+            "ref_mass": 0.07219729217147788,
+            "prod_mass": 0.08064390773646804,
+            "alignment": -0.025721803608704533
+          },
+          {
+            "concept": "a black and white photo",
+            "delta": 0.007670221681108508,
+            "ref_mass": 0.007017615088761782,
+            "prod_mass": 0.01468783676987029,
+            "alignment": -0.017335551376713644
+          },
+          {
+            "concept": "text in the image",
+            "delta": 0.0047882995844615965,
+            "ref_mass": 0.012899718275771788,
+            "prod_mass": 0.017688017860233385,
+            "alignment": -0.01066425121861237
+          },
+          {
+            "concept": "a digital photograph",
+            "delta": 0.0042888531383682565,
+            "ref_mass": 0.07319441640465195,
+            "prod_mass": 0.0774832695430202,
+            "alignment": -0.026259157469501637
+          },
+          {
+            "concept": "rainy weather",
+            "delta": 0.0036940543835253838,
+            "ref_mass": 0.00027299956069359627,
+            "prod_mass": 0.00396705394421898,
+            "alignment": -0.0336698633878606
+          },
+          {
+            "concept": "a logo",
+            "delta": 0.0032870287486827686,
+            "ref_mass": 0.007282747475145404,
+            "prod_mass": 0.010569776223828172,
+            "alignment": -0.010436595728288296
+          },
+          {
+            "concept": "a sign",
+            "delta": 0.0029238866369136855,
+            "ref_mass": 0.015031750479598323,
+            "prod_mass": 0.01795563711651201,
+            "alignment": -0.01370633475611853
+          },
+          {
+            "concept": "a modern photograph",
+            "delta": 0.0021947007067197617,
+            "ref_mass": 0.008767119092453108,
+            "prod_mass": 0.01096181979917287,
+            "alignment": -0.014107204831876413
+          },
+          {
+            "concept": "a watermark",
+            "delta": -0.0015678870587123796,
+            "ref_mass": 0.0026963132382266638,
+            "prod_mass": 0.0011284261795142842,
+            "alignment": -0.018207169496035073
+          },
+          {
+            "concept": "a close-up shot",
+            "delta": -0.00214286174169664,
+            "ref_mass": 0.0060371803374420045,
+            "prod_mass": 0.0038943185957453644,
+            "alignment": -0.053673779284156356
+          },
+          {
+            "concept": "a low resolution photo",
+            "delta": -0.003047673075461388,
+            "ref_mass": 0.2621513789172598,
+            "prod_mass": 0.2591037058417984,
+            "alignment": -0.03470125852093075
+          },
+          {
+            "concept": "inside a building",
+            "delta": -0.004029801247481844,
+            "ref_mass": 0.008623218911843901,
+            "prod_mass": 0.004593417664362057,
+            "alignment": -0.10154904570952111
+          },
+          {
+            "concept": "a crowd of people",
+            "delta": -0.004259543089550162,
+            "ref_mass": 0.005624793452872811,
+            "prod_mass": 0.0013652503633226492,
+            "alignment": -0.053733123411603356
+          },
+          {
+            "concept": "an overexposed photo",
+            "delta": -0.004710044592672189,
+            "ref_mass": 0.007687638446550406,
+            "prod_mass": 0.0029775938538782174,
+            "alignment": -0.049943864242033086
+          },
+          {
+            "concept": "an indoor scene",
+            "delta": -0.00481891070999309,
+            "ref_mass": 0.009392174491256617,
+            "prod_mass": 0.004573263781263526,
+            "alignment": -0.08848046922174205
+          },
+          {
+            "concept": "a wide shot",
+            "delta": -0.006133922773462752,
+            "ref_mass": 0.2994389322933328,
+            "prod_mass": 0.29330500951987004,
+            "alignment": -0.03594292585445713
+          },
+          {
+            "concept": "a night photo",
+            "delta": -0.007286760345214271,
+            "ref_mass": 0.014388275450994348,
+            "prod_mass": 0.0071015151057800775,
+            "alignment": -0.04729037308834351
+          },
+          {
+            "concept": "a blurry photo",
+            "delta": -0.022500481637146318,
+            "ref_mass": 0.0406454741229421,
+            "prod_mass": 0.018144992485795784,
+            "alignment": -0.06681459758403596
+          }
+        ]
+      },
+      "camera": {
+        "n_ref": 299,
+        "n_prod": 300,
+        "concepts": [
+          {
+            "concept": "a film photograph",
+            "delta": 0.02842326550606978,
+            "ref_mass": 0.048293813813879864,
+            "prod_mass": 0.07671707931994964,
+            "alignment": -0.09133115981924284
+          },
+          {
+            "concept": "a modern photograph",
+            "delta": 0.0171326410670668,
+            "ref_mass": 0.08773450514936891,
+            "prod_mass": 0.10486714621643571,
+            "alignment": -0.09050229050650296
+          },
+          {
+            "concept": "flash photography",
+            "delta": 0.01580307163199879,
+            "ref_mass": 0.16101470310108998,
+            "prod_mass": 0.17681777473308877,
+            "alignment": -0.11438516588022805
+          },
+          {
+            "concept": "a high resolution photo",
+            "delta": 0.010173091020460039,
+            "ref_mass": 0.026724846926504398,
+            "prod_mass": 0.036897937946964436,
+            "alignment": -0.0917439383335966
+          },
+          {
+            "concept": "a cluttered background",
+            "delta": 0.006880116550103834,
+            "ref_mass": 0.00011282784685421641,
+            "prod_mass": 0.006992944396958051,
+            "alignment": -0.07879854197776054
+          },
+          {
+            "concept": "a black and white photo",
+            "delta": 0.006479257403143045,
+            "ref_mass": 0.023752609404828828,
+            "prod_mass": 0.030231866807971873,
+            "alignment": -0.06950719901700586
+          },
+          {
+            "concept": "a low resolution photo",
+            "delta": 0.004966279067746507,
+            "ref_mass": 0.07061020943688906,
+            "prod_mass": 0.07557648850463557,
+            "alignment": -0.10987044218080183
+          },
+          {
+            "concept": "a wide shot",
+            "delta": 0.0038999561008451243,
+            "ref_mass": 0.004681867595939858,
+            "prod_mass": 0.008581823696784983,
+            "alignment": -0.06641036494864304
+          },
+          {
+            "concept": "an overexposed photo",
+            "delta": 0.0036269547884420703,
+            "ref_mass": 0.03531281416752589,
+            "prod_mass": 0.03893976895596796,
+            "alignment": -0.14457622729261316
+          },
+          {
+            "concept": "a faded photo",
+            "delta": 0.0025410035091550393,
+            "ref_mass": 0.003918962106673522,
+            "prod_mass": 0.0064599656158285616,
+            "alignment": -0.1196797919744307
+          },
+          {
+            "concept": "overcast weather",
+            "delta": 2.2110753538713256e-06,
+            "ref_mass": 7.431207993665216e-06,
+            "prod_mass": 9.642283347536542e-06,
+            "alignment": -0.07848446854106352
+          },
+          {
+            "concept": "a grainy photo",
+            "delta": -0.0006737023365277692,
+            "ref_mass": 0.019544008478364138,
+            "prod_mass": 0.01887030614183637,
+            "alignment": -0.14021277882043032
+          },
+          {
+            "concept": "a centered subject",
+            "delta": -0.0015711337054386525,
+            "ref_mass": 0.005019429329018044,
+            "prod_mass": 0.0034482956235793918,
+            "alignment": -0.1269181899047403
+          },
+          {
+            "concept": "a watermark",
+            "delta": -0.002158504806333201,
+            "ref_mass": 0.0028423767955330433,
+            "prod_mass": 0.000683871989199842,
+            "alignment": -0.10722142304999432
+          },
+          {
+            "concept": "a sign",
+            "delta": -0.0030631929427466105,
+            "ref_mass": 0.00313664479629,
+            "prod_mass": 7.345185354338979e-05,
+            "alignment": -0.05764699433620812
+          },
+          {
+            "concept": "a close-up shot",
+            "delta": -0.008948754820781259,
+            "ref_mass": 0.06855649750281595,
+            "prod_mass": 0.05960774268203469,
+            "alignment": -0.12026124807717753
+          },
+          {
+            "concept": "an underexposed photo",
+            "delta": -0.010269321334098476,
+            "ref_mass": 0.038707084607787934,
+            "prod_mass": 0.028437763273689458,
+            "alignment": -0.1551571762465231
+          },
+          {
+            "concept": "a night photo",
+            "delta": -0.014064505447512688,
+            "ref_mass": 0.019940854524921434,
+            "prod_mass": 0.005876349077408746,
+            "alignment": -0.16626930516810717
+          },
+          {
+            "concept": "a blurry photo",
+            "delta": -0.017778361234511833,
+            "ref_mass": 0.03314780733885261,
+            "prod_mass": 0.015369446104340776,
+            "alignment": -0.17604319974333826
+          },
+          {
+            "concept": "a digital photograph",
+            "delta": -0.04850928883449712,
+            "ref_mass": 0.330529407760534,
+            "prod_mass": 0.2820201189260369,
+            "alignment": -0.1367973869222603
+          }
+        ]
+      },
+      "cosplay": {
+        "n_ref": 300,
+        "n_prod": 300,
+        "concepts": [
+          {
+            "concept": "flash photography",
+            "delta": 0.03364122695325315,
+            "ref_mass": 0.06582251674896449,
+            "prod_mass": 0.09946374370221764,
+            "alignment": 0.007042106527196737
+          },
+          {
+            "concept": "a high resolution photo",
+            "delta": 0.008158352916064995,
+            "ref_mass": 0.08673071942930302,
+            "prod_mass": 0.09488907234536802,
+            "alignment": -0.007592768092676236
+          },
+          {
+            "concept": "a close-up shot",
+            "delta": 0.007641889343247096,
+            "ref_mass": 0.06096848563918987,
+            "prod_mass": 0.06861037498243697,
+            "alignment": 0.0035497421954279896
+          },
+          {
+            "concept": "a single person",
+            "delta": 0.006767366365482742,
+            "ref_mass": 0.02147418538866883,
+            "prod_mass": 0.02824155175415157,
+            "alignment": 0.024396154363616297
+          },
+          {
+            "concept": "a night photo",
+            "delta": 0.006230131079854866,
+            "ref_mass": 0.013280986622157192,
+            "prod_mass": 0.019511117702012058,
+            "alignment": 0.018455654316336337
+          },
+          {
+            "concept": "an overexposed photo",
+            "delta": 0.005610149943284796,
+            "ref_mass": 0.0148275747430304,
+            "prod_mass": 0.020437724686315197,
+            "alignment": 0.012183885497417436
+          },
+          {
+            "concept": "sunny weather",
+            "delta": 0.004889884261743131,
+            "ref_mass": 0.021791305521579866,
+            "prod_mass": 0.026681189783322998,
+            "alignment": -0.0020199515585229665
+          },
+          {
+            "concept": "a modern photograph",
+            "delta": 0.0042744749996962254,
+            "ref_mass": 0.01970425910427602,
+            "prod_mass": 0.023978734103972246,
+            "alignment": -0.001567563280201835
+          },
+          {
+            "concept": "no people",
+            "delta": 0.0038636599520169585,
+            "ref_mass": 0.010786915447743498,
+            "prod_mass": 0.014650575399760456,
+            "alignment": 0.012423295835340617
+          },
+          {
+            "concept": "a black and white photo",
+            "delta": 0.0025371758256247656,
+            "ref_mass": 0.0021873332479405636,
+            "prod_mass": 0.004724509073565329,
+            "alignment": 0.014112283241129352
+          },
+          {
+            "concept": "a film photograph",
+            "delta": -0.0017401475299798452,
+            "ref_mass": 0.005088850361043279,
+            "prod_mass": 0.003348702831063434,
+            "alignment": -0.04680001563897193
+          },
+          {
+            "concept": "a blurry photo",
+            "delta": -0.001815262692058095,
+            "ref_mass": 0.005312141976695278,
+            "prod_mass": 0.003496879284637183,
+            "alignment": -0.03092350403084939
+          },
+          {
+            "concept": "motion blur",
+            "delta": -0.0028286532343852495,
+            "ref_mass": 0.004283317962792377,
+            "prod_mass": 0.0014546647284071276,
+            "alignment": -0.06379697874655842
+          },
+          {
+            "concept": "an outdoor scene",
+            "delta": -0.003890254419348415,
+            "ref_mass": 0.007537287492781442,
+            "prod_mass": 0.0036470330734330266,
+            "alignment": -0.059564755779112605
+          },
+          {
+            "concept": "a crowd of people",
+            "delta": -0.0046080536730781566,
+            "ref_mass": 0.02090106292527377,
+            "prod_mass": 0.016293009252195612,
+            "alignment": -0.06972771662743794
+          },
+          {
+            "concept": "a low resolution photo",
+            "delta": -0.004738242445720131,
+            "ref_mass": 0.2824036848533143,
+            "prod_mass": 0.27766544240759417,
+            "alignment": -0.015068941290371302
+          },
+          {
+            "concept": "a wide shot",
+            "delta": -0.0061182968786889225,
+            "ref_mass": 0.1751975958699812,
+            "prod_mass": 0.1690792989912923,
+            "alignment": -0.010583925843416959
+          },
+          {
+            "concept": "an indoor scene",
+            "delta": -0.009999140594912852,
+            "ref_mass": 0.03327681973337845,
+            "prod_mass": 0.023277679138465596,
+            "alignment": -0.0354419368378951
+          },
+          {
+            "concept": "a street scene",
+            "delta": -0.021688938167556262,
+            "ref_mass": 0.04029770513005858,
+            "prod_mass": 0.018608766962502316,
+            "alignment": -0.07601801856167892
+          },
+          {
+            "concept": "a digital photograph",
+            "delta": -0.030724811161825585,
+            "ref_mass": 0.07812026717410692,
+            "prod_mass": 0.04739545601228133,
+            "alignment": -0.04527710266952117
+          }
+        ]
+      },
+      "BACKGROUND": {
+        "n_ref": 300,
+        "n_prod": 297,
+        "concepts": [
+          {
+            "concept": "a wide shot",
+            "delta": 0.04673237329386046,
+            "ref_mass": 0.13914898682173948,
+            "prod_mass": 0.18588136011559994,
+            "alignment": -0.0523617198052125
+          },
+          {
+            "concept": "a low resolution photo",
+            "delta": 0.02696838908562539,
+            "ref_mass": 0.12057326905386402,
+            "prod_mass": 0.1475416581394894,
+            "alignment": -0.05742835160797901
+          },
+          {
+            "concept": "a logo",
+            "delta": 0.02666206907910003,
+            "ref_mass": 0.03287532874462636,
+            "prod_mass": 0.05953739782372639,
+            "alignment": -0.0631793219456938
+          },
+          {
+            "concept": "a high resolution photo",
+            "delta": 0.018782472307295628,
+            "ref_mass": 0.04721205701186962,
+            "prod_mass": 0.06599452931916525,
+            "alignment": -0.054899061363688606
+          },
+          {
+            "concept": "a sports field",
+            "delta": 0.005993196866635851,
+            "ref_mass": 0.0036574272769441998,
+            "prod_mass": 0.00965062414358005,
+            "alignment": -0.05128682850784108
+          },
+          {
+            "concept": "overcast weather",
+            "delta": 0.005097371358743238,
+            "ref_mass": 0.0008741874467383296,
+            "prod_mass": 0.005971558805481568,
+            "alignment": -0.05021552501654532
+          },
+          {
+            "concept": "rainy weather",
+            "delta": 0.004992544933979969,
+            "ref_mass": 0.000848699585747323,
+            "prod_mass": 0.005841244519727291,
+            "alignment": -0.05600513614167945
+          },
+          {
+            "concept": "sunny weather",
+            "delta": 0.003725228107710265,
+            "ref_mass": 0.0011303856064402784,
+            "prod_mass": 0.004855613714150543,
+            "alignment": -0.06143575425620606
+          },
+          {
+            "concept": "a night photo",
+            "delta": 0.003604818035556723,
+            "ref_mass": 0.0016814693618783208,
+            "prod_mass": 0.005286287397435044,
+            "alignment": -0.0185204374957139
+          },
+          {
+            "concept": "an overexposed photo",
+            "delta": 0.0031182114252226454,
+            "ref_mass": 0.001966816238051206,
+            "prod_mass": 0.005085027663273851,
+            "alignment": -0.06612990128437196
+          },
+          {
+            "concept": "a cluttered background",
+            "delta": -0.0016427776981821117,
+            "ref_mass": 0.005418673523787827,
+            "prod_mass": 0.0037758958256057153,
+            "alignment": -0.09526742223622252
+          },
+          {
+            "concept": "no people",
+            "delta": -0.0017418309612421772,
+            "ref_mass": 0.0038942907491977654,
+            "prod_mass": 0.002152459787955588,
+            "alignment": -0.09555560046103939
+          },
+          {
+            "concept": "inside a building",
+            "delta": -0.004345349152820592,
+            "ref_mass": 0.009379378092367042,
+            "prod_mass": 0.00503402893954645,
+            "alignment": -0.047055296788231164
+          },
+          {
+            "concept": "a digital photograph",
+            "delta": -0.00610715179879838,
+            "ref_mass": 0.05782858823116128,
+            "prod_mass": 0.0517214364323629,
+            "alignment": -0.08281130243606843
+          },
+          {
+            "concept": "an indoor scene",
+            "delta": -0.006587579666619204,
+            "ref_mass": 0.03478470094558502,
+            "prod_mass": 0.028197121278965818,
+            "alignment": -0.053178404514662284
+          },
+          {
+            "concept": "a film photograph",
+            "delta": -0.012107670398690654,
+            "ref_mass": 0.0175663154329019,
+            "prod_mass": 0.005458645034211246,
+            "alignment": -0.11262217160698068
+          },
+          {
+            "concept": "a watermark",
+            "delta": -0.016917824720416322,
+            "ref_mass": 0.02734983760473605,
+            "prod_mass": 0.01043201288431973,
+            "alignment": -0.11674525597861939
+          },
+          {
+            "concept": "text in the image",
+            "delta": -0.026745382496612485,
+            "ref_mass": 0.11660306915962783,
+            "prod_mass": 0.08985768666301534,
+            "alignment": -0.09909228280192758
+          },
+          {
+            "concept": "an outdoor scene",
+            "delta": -0.027373700223984172,
+            "ref_mass": 0.04900020423885129,
+            "prod_mass": 0.02162650401486712,
+            "alignment": -0.10140761191269973
+          },
+          {
+            "concept": "a sign",
+            "delta": -0.044098389150555944,
+            "ref_mass": 0.18818299809761774,
+            "prod_mass": 0.1440846089470618,
+            "alignment": -0.08735901182622563
+          }
+        ]
+      }
+    },
+    "dim_exemplars": [
+      {
+        "dimension": "feature_310",
+        "drift_score": 0.050955414012738856,
+        "ref_center": 0.588952898979187,
+        "prod_mean": 0.5109364986419678,
+        "reference_images": [
+          "data/clear10/labeled_images/1/baseball/470924120.jpg",
+          "data/clear10/labeled_images/1/sweater/2178068871.jpg",
+          "data/clear10/labeled_images/1/BACKGROUND/536966570.jpg",
+          "data/clear10/labeled_images/1/BACKGROUND/2227399246.jpg"
+        ],
+        "production_images": [
+          "data/clear10/labeled_images/8/baseball/7659349046.jpg",
+          "data/clear10/labeled_images/8/BACKGROUND/7664691302.jpg",
+          "data/clear10/labeled_images/8/camera/8367003308.jpg",
+          "data/clear10/labeled_images/8/camera/8364813192.jpg"
+        ]
+      },
+      {
+        "dimension": "feature_221",
+        "drift_score": 0.04883227176220807,
+        "ref_center": 1.245590329170227,
+        "prod_mean": 1.2719858884811401,
+        "reference_images": [
+          "data/clear10/labeled_images/1/baseball/1412646141.jpg",
+          "data/clear10/labeled_images/1/soccer/1427126779.jpg",
+          "data/clear10/labeled_images/1/soccer/1170414630.jpg",
+          "data/clear10/labeled_images/1/baseball/779880909.jpg"
+        ],
+        "production_images": [
+          "data/clear10/labeled_images/8/soccer/7975890980.jpg",
+          "data/clear10/labeled_images/8/soccer/8219502864.jpg",
+          "data/clear10/labeled_images/8/soccer/7989725895.jpg",
+          "data/clear10/labeled_images/8/baseball/7953202910.jpg"
+        ]
+      },
+      {
+        "dimension": "feature_362",
+        "drift_score": 0.04883227176220807,
+        "ref_center": 0.7910467982292175,
+        "prod_mean": 0.7533437013626099,
+        "reference_images": [
+          "data/clear10/labeled_images/1/cosplay/2269486785.jpg",
+          "data/clear10/labeled_images/1/cosplay/2169004306.jpg",
+          "data/clear10/labeled_images/1/cosplay/468311242.jpg",
+          "data/clear10/labeled_images/1/sweater/2226561435.jpg"
+        ],
+        "production_images": [
+          "data/clear10/labeled_images/8/cosplay/7589420108.jpg",
+          "data/clear10/labeled_images/8/BACKGROUND/7634797756.jpg",
+          "data/clear10/labeled_images/8/laptop/7618097902.jpg",
+          "data/clear10/labeled_images/8/camera/8184451511.jpg"
+        ]
+      }
+    ],
+    "metadata_validation": {
+      "spearman_rho": 0.6666666666666669,
+      "p_value": 0.07098765432098755,
+      "n_matched": 8,
+      "matched": [
+        {
+          "concept": "a black and white photo",
+          "tag": "blackandwhite",
+          "concept_delta": 0.00557774669431472,
+          "tag_shift": 0.003002121212121213
+        },
+        {
+          "concept": "a night photo",
+          "tag": "night",
+          "concept_delta": -0.0030667133215814286,
+          "tag_shift": 0.005951212121212121
+        },
+        {
+          "concept": "an outdoor scene",
+          "tag": "outdoor",
+          "concept_delta": -0.002544115574669533,
+          "tag_shift": -0.008955151515151472
+        },
+        {
+          "concept": "a stadium",
+          "tag": "stadium",
+          "concept_delta": -0.010539549475589622,
+          "tag_shift": -0.03509363636363636
+        },
+        {
+          "concept": "a single person",
+          "tag": "portrait",
+          "concept_delta": 0.004112978317707079,
+          "tag_shift": 0.010565757575757576
+        },
+        {
+          "concept": "text in the image",
+          "tag": "text",
+          "concept_delta": -0.0010774813627658399,
+          "tag_shift": 0.03635484848484848
+        },
+        {
+          "concept": "a sign",
+          "tag": "sign",
+          "concept_delta": -0.00494102935043891,
+          "tag_shift": -0.0020842424242424225
+        },
+        {
+          "concept": "a blurry photo",
+          "tag": "blur",
+          "concept_delta": -0.005434592705929029,
+          "tag_shift": -0.002237575757575758
+        }
+      ]
+    },
+    "metadata_validation_focus": {
+      "class": "BACKGROUND",
+      "spearman_rho": -0.12613124477737828,
+      "p_value": 0.7875721594074738,
+      "n_matched": 7,
+      "matched": [
+        {
+          "concept": "a night photo",
+          "tag": "night",
+          "concept_delta": 0.003604818035556723,
+          "tag_shift": 0.002596666666666667
+        },
+        {
+          "concept": "an outdoor scene",
+          "tag": "outdoor",
+          "concept_delta": -0.027373700223984172,
+          "tag_shift": -0.1187733333333334
+        },
+        {
+          "concept": "an indoor scene",
+          "tag": "indoor",
+          "concept_delta": -0.006587579666619204,
+          "tag_shift": 0.0204766666666667
+        },
+        {
+          "concept": "inside a building",
+          "tag": "indoor",
+          "concept_delta": -0.004345349152820592,
+          "tag_shift": 0.0204766666666667
+        },
+        {
+          "concept": "text in the image",
+          "tag": "text",
+          "concept_delta": -0.026745382496612485,
+          "tag_shift": 0.06653000000000003
+        },
+        {
+          "concept": "a sign",
+          "tag": "sign",
+          "concept_delta": -0.044098389150555944,
+          "tag_shift": 0.004619999999999999
+        },
+        {
+          "concept": "rainy weather",
+          "tag": "rain",
+          "concept_delta": 0.004992544933979969,
+          "tag_shift": 0.00203
+        }
+      ]
+    },
+    "photographic_era": {
+      "reference_median_year": 2007.0,
+      "production_median_year": 2012.0
+    }
+  },
+  "10": {
+    "overall": [
+      {
+        "concept": "a sports field",
+        "delta": 0.0169832493820885,
+        "ref_mass": 0.058937679130100666,
+        "prod_mass": 0.07592092851218916,
+        "alignment": -0.02019826716407055
+      },
+      {
+        "concept": "a high resolution photo",
+        "delta": 0.012032221843486311,
+        "ref_mass": 0.044508543429828684,
+        "prod_mass": 0.056540765273314995,
+        "alignment": -0.054614563121294604
+      },
+      {
+        "concept": "a wide shot",
+        "delta": 0.010049671546523836,
+        "ref_mass": 0.20839918091772935,
+        "prod_mass": 0.2184488524642532,
+        "alignment": -0.05968167338703081
+      },
+      {
+        "concept": "flash photography",
+        "delta": 0.00751528359859821,
+        "ref_mass": 0.024283985524573608,
+        "prod_mass": 0.03179926912317182,
+        "alignment": -0.004802023443460944
+      },
+      {
+        "concept": "a modern photograph",
+        "delta": 0.007505211052664763,
+        "ref_mass": 0.0155455498916705,
+        "prod_mass": 0.023050760944335263,
+        "alignment": -0.035014957367936896
+      },
+      {
+        "concept": "low light",
+        "delta": 0.00644699553624471,
+        "ref_mass": 0.004599687611135284,
+        "prod_mass": 0.011046683147379993,
+        "alignment": -0.02749818441319911
+      },
+      {
+        "concept": "a low resolution photo",
+        "delta": 0.006420848127208806,
+        "ref_mass": 0.17298147825587215,
+        "prod_mass": 0.17940232638308096,
+        "alignment": -0.06348351068448936
+      },
+      {
+        "concept": "sunny weather",
+        "delta": 0.005056482246124481,
+        "ref_mass": 0.005021955256927566,
+        "prod_mass": 0.010078437503052047,
+        "alignment": -0.026806274545227906
+      },
+      {
+        "concept": "a black and white photo",
+        "delta": 0.004451945640260279,
+        "ref_mass": 0.007844438142636611,
+        "prod_mass": 0.01229638378289689,
+        "alignment": -0.0042536263817857765
+      },
+      {
+        "concept": "a single person",
+        "delta": 0.002912236265428851,
+        "ref_mass": 0.016129422938061955,
+        "prod_mass": 0.019041659203490807,
+        "alignment": -0.054079546770800166
+      },
+      {
+        "concept": "a crowd of people",
+        "delta": -0.002914563645362496,
+        "ref_mass": 0.00518855001932509,
+        "prod_mass": 0.0022739863739625944,
+        "alignment": -0.10564674461802145
+      },
+      {
+        "concept": "an outdoor scene",
+        "delta": -0.003237266386793244,
+        "ref_mass": 0.008673549938009166,
+        "prod_mass": 0.005436283551215922,
+        "alignment": -0.05360287461654724
+      },
+      {
+        "concept": "motion blur",
+        "delta": -0.0035034031970203466,
+        "ref_mass": 0.0698794323148459,
+        "prod_mass": 0.06637602911782556,
+        "alignment": -0.04740805892206888
+      },
+      {
+        "concept": "text in the image",
+        "delta": -0.003543935003872036,
+        "ref_mass": 0.015352063359493637,
+        "prod_mass": 0.011808128355621601,
+        "alignment": -0.08213366874616454
+      },
+      {
+        "concept": "a street scene",
+        "delta": -0.004198706050781608,
+        "ref_mass": 0.0110668551926985,
+        "prod_mass": 0.006868149141916892,
+        "alignment": -0.021038542880736193
+      },
+      {
+        "concept": "a close-up shot",
+        "delta": -0.007810926979647706,
+        "ref_mass": 0.03888474180919696,
+        "prod_mass": 0.031073814829549254,
+        "alignment": -0.08647547002890989
+      },
+      {
+        "concept": "a sign",
+        "delta": -0.008135106267400325,
+        "ref_mass": 0.019993592073197376,
+        "prod_mass": 0.01185848580579705,
+        "alignment": -0.08036134585350231
+      },
+      {
+        "concept": "a blurry photo",
+        "delta": -0.010115336570952515,
+        "ref_mass": 0.01994680524484103,
+        "prod_mass": 0.009831468673888516,
+        "alignment": -0.0951058693739244
+      },
+      {
+        "concept": "a stadium",
+        "delta": -0.013852173718526425,
+        "ref_mass": 0.018297127741785654,
+        "prod_mass": 0.00444495402325923,
+        "alignment": -0.06352895237487785
+      },
+      {
+        "concept": "a digital photograph",
+        "delta": -0.028718686496966697,
+        "ref_mass": 0.11568292891428184,
+        "prod_mass": 0.08696424241731514,
+        "alignment": -0.09092194251801665
+      }
+    ],
+    "per_class": {
+      "BACKGROUND": {
+        "n_ref": 300,
+        "n_prod": 300,
+        "concepts": [
+          {
+            "concept": "a night photo",
+            "delta": 0.06621268391220304,
+            "ref_mass": 0.0016814693618783208,
+            "prod_mass": 0.06789415327408137,
+            "alignment": 0.15741482114809074
+          },
+          {
+            "concept": "low light",
+            "delta": 0.06115321729406725,
+            "ref_mass": 0.0022863316974949545,
+            "prod_mass": 0.0634395489915622,
+            "alignment": 0.13520248412529662
+          },
+          {
+            "concept": "a wide shot",
+            "delta": 0.05250426020446802,
+            "ref_mass": 0.13914898682173948,
+            "prod_mass": 0.1916532470262075,
+            "alignment": 0.07211057980743454
+          },
+          {
+            "concept": "a low resolution photo",
+            "delta": 0.032156441179248416,
+            "ref_mass": 0.12057326905386402,
+            "prod_mass": 0.15272971023311244,
+            "alignment": 0.06167123066642145
+          },
+          {
+            "concept": "a black and white photo",
+            "delta": 0.01699578839728967,
+            "ref_mass": 0.010499738044200745,
+            "prod_mass": 0.027495526441490416,
+            "alignment": 0.1226250670244163
+          },
+          {
+            "concept": "an underexposed photo",
+            "delta": 0.011397605217210754,
+            "ref_mass": 0.0022967655877551884,
+            "prod_mass": 0.013694370804965942,
+            "alignment": 0.10655575164806133
+          },
+          {
+            "concept": "a grainy photo",
+            "delta": 0.010216057904794077,
+            "ref_mass": 0.0059081699222160505,
+            "prod_mass": 0.01612422782701013,
+            "alignment": 0.09243855765424712
+          },
+          {
+            "concept": "a logo",
+            "delta": 0.005379302577495235,
+            "ref_mass": 0.03287532874462636,
+            "prod_mass": 0.0382546313221216,
+            "alignment": -0.04224885945516291
+          },
+          {
+            "concept": "a blurry photo",
+            "delta": 0.004781040325045061,
+            "ref_mass": 0.0034556283374124522,
+            "prod_mass": 0.008236668662457513,
+            "alignment": 0.0883964551012588
+          },
+          {
+            "concept": "overcast weather",
+            "delta": 0.0032446939995421148,
+            "ref_mass": 0.0008741874467383296,
+            "prod_mass": 0.0041188814462804445,
+            "alignment": 0.048755090482535866
+          },
+          {
+            "concept": "a film photograph",
+            "delta": -0.004642291003112578,
+            "ref_mass": 0.0175663154329019,
+            "prod_mass": 0.012924024429789323,
+            "alignment": 0.06514648595707537
+          },
+          {
+            "concept": "an aerial view",
+            "delta": -0.007329504007182606,
+            "ref_mass": 0.010597344959978626,
+            "prod_mass": 0.00326784095279602,
+            "alignment": 0.05595424255218966
+          },
+          {
+            "concept": "a crowd of people",
+            "delta": -0.01601225066276104,
+            "ref_mass": 0.021354937243447624,
+            "prod_mass": 0.005342686580686584,
+            "alignment": -0.005949459384336367
+          },
+          {
+            "concept": "a digital photograph",
+            "delta": -0.017072674066664635,
+            "ref_mass": 0.05782858823116128,
+            "prod_mass": 0.04075591416449664,
+            "alignment": 0.04769351376030087
+          },
+          {
+            "concept": "a close-up shot",
+            "delta": -0.018324023057212074,
+            "ref_mass": 0.028530573179146573,
+            "prod_mass": 0.010206550121934499,
+            "alignment": 0.021397435243863193
+          },
+          {
+            "concept": "a watermark",
+            "delta": -0.01939400773064469,
+            "ref_mass": 0.02734983760473605,
+            "prod_mass": 0.007955829874091365,
+            "alignment": 0.007697220593590689
+          },
+          {
+            "concept": "an indoor scene",
+            "delta": -0.020899324326596545,
+            "ref_mass": 0.03478470094558502,
+            "prod_mass": 0.013885376618988475,
+            "alignment": 0.055103633974068394
+          },
+          {
+            "concept": "an outdoor scene",
+            "delta": -0.03043942879061998,
+            "ref_mass": 0.04900020423885129,
+            "prod_mass": 0.01856077544823131,
+            "alignment": 0.03666671086754962
+          },
+          {
+            "concept": "text in the image",
+            "delta": -0.046461156702760895,
+            "ref_mass": 0.11660306915962783,
+            "prod_mass": 0.07014191245686693,
+            "alignment": -0.043147073470000394
+          },
+          {
+            "concept": "a sign",
+            "delta": -0.0776789588644471,
+            "ref_mass": 0.18818299809761774,
+            "prod_mass": 0.11050403923317063,
+            "alignment": -0.03877138013215704
+          }
+        ]
+      },
+      "hockey": {
+        "n_ref": 300,
+        "n_prod": 300,
+        "concepts": [
+          {
+            "concept": "a wide shot",
+            "delta": 0.12200951907452429,
+            "ref_mass": 0.6006989155976645,
+            "prod_mass": 0.7227084346721888,
+            "alignment": 0.03531186399302573
+          },
+          {
+            "concept": "an indoor scene",
+            "delta": 0.018876075259561788,
+            "ref_mass": 0.04230150458695737,
+            "prod_mass": 0.061177579846519156,
+            "alignment": 0.0457081980226879
+          },
+          {
+            "concept": "snowy weather",
+            "delta": 0.0006033766009857143,
+            "ref_mass": 0.0004036124920339057,
+            "prod_mass": 0.00100698909301962,
+            "alignment": 0.003802462160157217
+          },
+          {
+            "concept": "a grainy photo",
+            "delta": 0.00039367132634021316,
+            "ref_mass": 0.00023608651064765688,
+            "prod_mass": 0.0006297578369878701,
+            "alignment": 0.020054401573263436
+          },
+          {
+            "concept": "a domestic interior",
+            "delta": 1.3885231704813819e-06,
+            "ref_mass": 4.663584890378148e-06,
+            "prod_mass": 6.05210806085953e-06,
+            "alignment": 0.02480414209634592
+          },
+          {
+            "concept": "a natural landscape",
+            "delta": -3.1941923551693894e-08,
+            "ref_mass": 8.424132816678336e-08,
+            "prod_mass": 5.2299404615089466e-08,
+            "alignment": 0.034008165860110406
+          },
+          {
+            "concept": "a sepia photo",
+            "delta": -1.2107893846618427e-05,
+            "ref_mass": 3.25044457908427e-05,
+            "prod_mass": 2.0396551944224276e-05,
+            "alignment": 0.06537435518202031
+          },
+          {
+            "concept": "a cluttered background",
+            "delta": -2.161578915822331e-05,
+            "ref_mass": 0.00012675951592995173,
+            "prod_mass": 0.00010514372677172842,
+            "alignment": 0.03231869976349801
+          },
+          {
+            "concept": "foggy weather",
+            "delta": -3.1347373864328205e-05,
+            "ref_mass": 3.603695794682567e-05,
+            "prod_mass": 4.689584082497462e-06,
+            "alignment": 0.025128958651309718
+          },
+          {
+            "concept": "an old photograph",
+            "delta": -3.3768650574196626e-05,
+            "ref_mass": 0.00011471485646910848,
+            "prod_mass": 8.094620589491186e-05,
+            "alignment": 0.014305887741782009
+          },
+          {
+            "concept": "an underexposed photo",
+            "delta": -0.0014804388563155932,
+            "ref_mass": 0.002944693925311048,
+            "prod_mass": 0.0014642550689954546,
+            "alignment": 0.009925534416578383
+          },
+          {
+            "concept": "flash photography",
+            "delta": -0.0021980689034809906,
+            "ref_mass": 0.0028149964977283305,
+            "prod_mass": 0.0006169275942473398,
+            "alignment": 0.002708349737123642
+          },
+          {
+            "concept": "a blurry photo",
+            "delta": -0.002322211323832442,
+            "ref_mass": 0.008150278739605705,
+            "prod_mass": 0.005828067415773263,
+            "alignment": 0.022081850779158873
+          },
+          {
+            "concept": "rainy weather",
+            "delta": -0.005358996172920168,
+            "ref_mass": 0.005471360871168612,
+            "prod_mass": 0.00011236469824844342,
+            "alignment": 0.015687757982563166
+          },
+          {
+            "concept": "a street scene",
+            "delta": -0.009146080100587737,
+            "ref_mass": 0.009257650975168473,
+            "prod_mass": 0.00011157087458073658,
+            "alignment": 0.000482636741897453
+          },
+          {
+            "concept": "a close-up shot",
+            "delta": -0.010957362667968968,
+            "ref_mass": 0.014616752335082634,
+            "prod_mass": 0.0036593896671136654,
+            "alignment": -0.01443522161179963
+          },
+          {
+            "concept": "a high resolution photo",
+            "delta": -0.01264750169980522,
+            "ref_mass": 0.023231812484288246,
+            "prod_mass": 0.010584310784483027,
+            "alignment": -0.005831006609874283
+          },
+          {
+            "concept": "a digital photograph",
+            "delta": -0.013625571542254484,
+            "ref_mass": 0.019674606641254158,
+            "prod_mass": 0.006049035098999675,
+            "alignment": -0.0158631690331054
+          },
+          {
+            "concept": "motion blur",
+            "delta": -0.02692416563606846,
+            "ref_mass": 0.11593007639991736,
+            "prod_mass": 0.0890059107638489,
+            "alignment": 0.029057243125768892
+          },
+          {
+            "concept": "a low resolution photo",
+            "delta": -0.04355413109166528,
+            "ref_mass": 0.11550718543136956,
+            "prod_mass": 0.07195305433970428,
+            "alignment": 0.004680663858035245
+          }
+        ]
+      },
+      "sweater": {
+        "n_ref": 299,
+        "n_prod": 300,
+        "concepts": [
+          {
+            "concept": "sunny weather",
+            "delta": 0.0237918466047398,
+            "ref_mass": 0.013558006220562614,
+            "prod_mass": 0.03734985282530241,
+            "alignment": -0.021672628472116783
+          },
+          {
+            "concept": "a single person",
+            "delta": 0.020758285878683787,
+            "ref_mass": 0.06154950657837733,
+            "prod_mass": 0.08230779245706112,
+            "alignment": -0.055046135173728056
+          },
+          {
+            "concept": "a high resolution photo",
+            "delta": 0.018206641462030694,
+            "ref_mass": 0.05175725401906637,
+            "prod_mass": 0.06996389548109706,
+            "alignment": -0.06706238392492424
+          },
+          {
+            "concept": "a modern photograph",
+            "delta": 0.016956564311327835,
+            "ref_mass": 0.010763750942625976,
+            "prod_mass": 0.02772031525395381,
+            "alignment": -0.032760190440857054
+          },
+          {
+            "concept": "no people",
+            "delta": 0.011438702822250062,
+            "ref_mass": 0.002318234559645554,
+            "prod_mass": 0.013756937381895616,
+            "alignment": -0.027684422443461722
+          },
+          {
+            "concept": "flash photography",
+            "delta": 0.009958625931504844,
+            "ref_mass": 0.0043058284356609295,
+            "prod_mass": 0.014264454367165775,
+            "alignment": -0.0272084018436273
+          },
+          {
+            "concept": "a black and white photo",
+            "delta": 0.009451808418334933,
+            "ref_mass": 0.013955058047946426,
+            "prod_mass": 0.02340686646628136,
+            "alignment": -0.03530551537927851
+          },
+          {
+            "concept": "motion blur",
+            "delta": 0.007315847676278927,
+            "ref_mass": 0.0020052172970103518,
+            "prod_mass": 0.00932106497328928,
+            "alignment": -0.0370166197243114
+          },
+          {
+            "concept": "a sepia photo",
+            "delta": 0.007266444134324326,
+            "ref_mass": 0.007890477036137832,
+            "prod_mass": 0.015156921170462159,
+            "alignment": -0.061799946093788395
+          },
+          {
+            "concept": "snowy weather",
+            "delta": 0.006028166465714387,
+            "ref_mass": 0.0046368621498953065,
+            "prod_mass": 0.010665028615609693,
+            "alignment": -0.05745651892038813
+          },
+          {
+            "concept": "a cluttered background",
+            "delta": -0.002869062837142494,
+            "ref_mass": 0.003938450522104728,
+            "prod_mass": 0.0010693876849622338,
+            "alignment": -0.07979482039366144
+          },
+          {
+            "concept": "an old photograph",
+            "delta": -0.003011441050878655,
+            "ref_mass": 0.004572322856209895,
+            "prod_mass": 0.0015608818053312397,
+            "alignment": -0.05319029533936191
+          },
+          {
+            "concept": "a grainy photo",
+            "delta": -0.0032192192170463,
+            "ref_mass": 0.043602020724187764,
+            "prod_mass": 0.040382801507141464,
+            "alignment": -0.09167025435586809
+          },
+          {
+            "concept": "a low resolution photo",
+            "delta": -0.004098244859945865,
+            "ref_mass": 0.30943538507715923,
+            "prod_mass": 0.30533714021721337,
+            "alignment": -0.07928184459502681
+          },
+          {
+            "concept": "a night photo",
+            "delta": -0.004430513429853646,
+            "ref_mass": 0.019114551328986002,
+            "prod_mass": 0.014684037899132356,
+            "alignment": -0.07387362863490736
+          },
+          {
+            "concept": "a wide shot",
+            "delta": -0.006650623729705339,
+            "ref_mass": 0.028588350267537855,
+            "prod_mass": 0.021937726537832516,
+            "alignment": -0.08668718677933113
+          },
+          {
+            "concept": "a film photograph",
+            "delta": -0.007876995853002852,
+            "ref_mass": 0.016165038151650563,
+            "prod_mass": 0.008288042298647711,
+            "alignment": -0.0858087153972982
+          },
+          {
+            "concept": "a digital photograph",
+            "delta": -0.009043347813420512,
+            "ref_mass": 0.060970681686638495,
+            "prod_mass": 0.05192733387321798,
+            "alignment": -0.08789516576018284
+          },
+          {
+            "concept": "a blurry photo",
+            "delta": -0.02785964341367461,
+            "ref_mass": 0.0481358319660843,
+            "prod_mass": 0.02027618855240969,
+            "alignment": -0.09405558108632035
+          },
+          {
+            "concept": "a close-up shot",
+            "delta": -0.08366834321418534,
+            "ref_mass": 0.16689826161385166,
+            "prod_mass": 0.08322991839966631,
+            "alignment": -0.11721120431417713
+          }
+        ]
+      },
+      "bus": {
+        "n_ref": 300,
+        "n_prod": 300,
+        "concepts": [
+          {
+            "concept": "a low resolution photo",
+            "delta": 0.034180524793855416,
+            "ref_mass": 0.2621513789172598,
+            "prod_mass": 0.29633190371111523,
+            "alignment": -0.02283479714212299
+          },
+          {
+            "concept": "a high resolution photo",
+            "delta": 0.028429249667549145,
+            "ref_mass": 0.07219729217147788,
+            "prod_mass": 0.10062654183902703,
+            "alignment": -0.011684356778606159
+          },
+          {
+            "concept": "a digital photograph",
+            "delta": 0.012706410047584826,
+            "ref_mass": 0.07319441640465195,
+            "prod_mass": 0.08590082645223678,
+            "alignment": -0.017695888405323733
+          },
+          {
+            "concept": "motion blur",
+            "delta": 0.008237317536209612,
+            "ref_mass": 0.04073413350159951,
+            "prod_mass": 0.04897145103780912,
+            "alignment": -0.022083290353534756
+          },
+          {
+            "concept": "a logo",
+            "delta": 0.005482674288394136,
+            "ref_mass": 0.007282747475145404,
+            "prod_mass": 0.01276542176353954,
+            "alignment": 0.004036030938487168
+          },
+          {
+            "concept": "text in the image",
+            "delta": 0.005305475603832779,
+            "ref_mass": 0.012899718275771788,
+            "prod_mass": 0.018205193879604568,
+            "alignment": -0.006638315432393682
+          },
+          {
+            "concept": "a modern photograph",
+            "delta": 0.004564075826089559,
+            "ref_mass": 0.008767119092453108,
+            "prod_mass": 0.013331194918542667,
+            "alignment": -0.005462482220268249
+          },
+          {
+            "concept": "a wide shot",
+            "delta": 0.0036908444053265765,
+            "ref_mass": 0.2994389322933328,
+            "prod_mass": 0.30312977669865937,
+            "alignment": -0.024598269866216882
+          },
+          {
+            "concept": "low light",
+            "delta": 0.0022560675011901827,
+            "ref_mass": 0.006855870971687386,
+            "prod_mass": 0.009111938472877569,
+            "alignment": -0.0010818557352203946
+          },
+          {
+            "concept": "a stadium",
+            "delta": 0.0007072752147218254,
+            "ref_mass": 0.000532601890035931,
+            "prod_mass": 0.0012398771047577564,
+            "alignment": -0.00669262215136047
+          },
+          {
+            "concept": "a close-up shot",
+            "delta": -0.0031142502925449573,
+            "ref_mass": 0.0060371803374420045,
+            "prod_mass": 0.0029229300448970473,
+            "alignment": -0.04485503858104217
+          },
+          {
+            "concept": "a sign",
+            "delta": -0.0033089555861846153,
+            "ref_mass": 0.015031750479598323,
+            "prod_mass": 0.011722794893413708,
+            "alignment": -0.015470289954861929
+          },
+          {
+            "concept": "an overexposed photo",
+            "delta": -0.0047774964486272595,
+            "ref_mass": 0.007687638446550406,
+            "prod_mass": 0.0029101419979231462,
+            "alignment": -0.0505361777256171
+          },
+          {
+            "concept": "a crowd of people",
+            "delta": -0.005112151229656729,
+            "ref_mass": 0.005624793452872811,
+            "prod_mass": 0.0005126422232160817,
+            "alignment": -0.06444698522766024
+          },
+          {
+            "concept": "an indoor scene",
+            "delta": -0.005274889333356582,
+            "ref_mass": 0.009392174491256617,
+            "prod_mass": 0.004117285157900034,
+            "alignment": -0.06262427447382302
+          },
+          {
+            "concept": "inside a building",
+            "delta": -0.00531777822810424,
+            "ref_mass": 0.008623218911843901,
+            "prod_mass": 0.003305440683739661,
+            "alignment": -0.07866686716086643
+          },
+          {
+            "concept": "a black and white photo",
+            "delta": -0.005355397756674901,
+            "ref_mass": 0.007017615088761782,
+            "prod_mass": 0.0016622173320868813,
+            "alignment": -0.04243322315072427
+          },
+          {
+            "concept": "a night photo",
+            "delta": -0.005905585205699393,
+            "ref_mass": 0.014388275450994348,
+            "prod_mass": 0.008482690245294956,
+            "alignment": -0.029965404089557102
+          },
+          {
+            "concept": "a street scene",
+            "delta": -0.01992162976689941,
+            "ref_mass": 0.06076705343730288,
+            "prod_mass": 0.040845423670403475,
+            "alignment": -0.023921766818983656
+          },
+          {
+            "concept": "a blurry photo",
+            "delta": -0.030940885204490162,
+            "ref_mass": 0.0406454741229421,
+            "prod_mass": 0.009704588918451941,
+            "alignment": -0.06679967532510286
+          }
+        ]
+      }
+    },
+    "dim_exemplars": [
+      {
+        "dimension": "feature_342",
+        "drift_score": 0.06581582961206976,
+        "ref_center": 0.7273551821708679,
+        "prod_mean": 0.7720931172370911,
+        "reference_images": [
+          "data/clear10/labeled_images/1/dress/521297807.jpg",
+          "data/clear10/labeled_images/1/sweater/1040781597.jpg",
+          "data/clear10/labeled_images/1/camera/486035877.jpg",
+          "data/clear10/labeled_images/1/sweater/2224232862.jpg"
+        ],
+        "production_images": [
+          "data/clear10/labeled_images/10/dress/12186099803.jpg",
+          "data/clear10/labeled_images/10/dress/9780131715.jpg",
+          "data/clear10/labeled_images/10/cosplay/11709885614.jpg",
+          "data/clear10/labeled_images/10/sweater/11944167795.jpg"
+        ]
+      },
+      {
+        "dimension": "feature_475",
+        "drift_score": 0.06401216531598582,
+        "ref_center": 0.7968000173568726,
+        "prod_mean": 0.8561238050460815,
+        "reference_images": [
+          "data/clear10/labeled_images/1/cosplay/1908402898.jpg",
+          "data/clear10/labeled_images/1/cosplay/1507029199.jpg",
+          "data/clear10/labeled_images/1/cosplay/911304465.jpg",
+          "data/clear10/labeled_images/1/camera/1338949191.jpg"
+        ],
+        "production_images": [
+          "data/clear10/labeled_images/10/cosplay/10855145613.jpg",
+          "data/clear10/labeled_images/10/cosplay/10535026463.jpg",
+          "data/clear10/labeled_images/10/camera/10057749146.jpg",
+          "data/clear10/labeled_images/10/BACKGROUND/9825649695.jpg"
+        ]
+      },
+      {
+        "dimension": "feature_83",
+        "drift_score": 0.05770163735597332,
+        "ref_center": 1.8259382247924805,
+        "prod_mean": 1.7723345756530762,
+        "reference_images": [
+          "data/clear10/labeled_images/1/soccer/537717117.jpg",
+          "data/clear10/labeled_images/1/soccer/2286501982.jpg",
+          "data/clear10/labeled_images/1/soccer/1023935010.jpg",
+          "data/clear10/labeled_images/1/soccer/479027482.jpg"
+        ],
+        "production_images": [
+          "data/clear10/labeled_images/10/soccer/10415916843.jpg",
+          "data/clear10/labeled_images/10/soccer/9763392483.jpg",
+          "data/clear10/labeled_images/10/soccer/11913385614.jpg",
+          "data/clear10/labeled_images/10/soccer/9859628744.jpg"
+        ]
+      }
+    ],
+    "metadata_validation": {
+      "spearman_rho": 0.7107079942220003,
+      "p_value": 0.014228402717866509,
+      "n_matched": 11,
+      "matched": [
+        {
+          "concept": "a black and white photo",
+          "tag": "blackandwhite",
+          "concept_delta": 0.004451945640260279,
+          "tag_shift": 0.03355545454545454
+        },
+        {
+          "concept": "low light",
+          "tag": "night",
+          "concept_delta": 0.00644699553624471,
+          "tag_shift": 0.02991939393939394
+        },
+        {
+          "concept": "an outdoor scene",
+          "tag": "outdoor",
+          "concept_delta": -0.003237266386793244,
+          "tag_shift": 0.02575212121212128
+        },
+        {
+          "concept": "a street scene",
+          "tag": "city",
+          "concept_delta": -0.004198706050781608,
+          "tag_shift": 0.012149999999999998
+        },
+        {
+          "concept": "a stadium",
+          "tag": "stadium",
+          "concept_delta": -0.013852173718526425,
+          "tag_shift": -0.03284454545454545
+        },
+        {
+          "concept": "a crowd of people",
+          "tag": "people",
+          "concept_delta": -0.002914563645362496,
+          "tag_shift": 0.10185151515151514
+        },
+        {
+          "concept": "a single person",
+          "tag": "portrait",
+          "concept_delta": 0.002912236265428851,
+          "tag_shift": 0.01198090909090909
+        },
+        {
+          "concept": "text in the image",
+          "tag": "text",
+          "concept_delta": -0.003543935003872036,
+          "tag_shift": 0.030099393939393947
+        },
+        {
+          "concept": "a sign",
+          "tag": "sign",
+          "concept_delta": -0.008135106267400325,
+          "tag_shift": -0.003169696969696968
+        },
+        {
+          "concept": "a blurry photo",
+          "tag": "blur",
+          "concept_delta": -0.010115336570952515,
+          "tag_shift": -0.003076060606060606
+        },
+        {
+          "concept": "motion blur",
+          "tag": "blur",
+          "concept_delta": -0.0035034031970203466,
+          "tag_shift": -0.003076060606060606
+        }
+      ]
+    },
+    "metadata_validation_focus": {
+      "class": "BACKGROUND",
+      "spearman_rho": 0.7065994945288228,
+      "p_value": 0.05006339467042153,
+      "n_matched": 8,
+      "matched": [
+        {
+          "concept": "a black and white photo",
+          "tag": "blackandwhite",
+          "concept_delta": 0.01699578839728967,
+          "tag_shift": 0.34359333333333336
+        },
+        {
+          "concept": "a night photo",
+          "tag": "night",
+          "concept_delta": 0.06621268391220304,
+          "tag_shift": 0.26569
+        },
+        {
+          "concept": "low light",
+          "tag": "night",
+          "concept_delta": 0.06115321729406725,
+          "tag_shift": 0.26569
+        },
+        {
+          "concept": "an outdoor scene",
+          "tag": "outdoor",
+          "concept_delta": -0.03043942879061998,
+          "tag_shift": -0.06996333333333338
+        },
+        {
+          "concept": "an indoor scene",
+          "tag": "indoor",
+          "concept_delta": -0.020899324326596545,
+          "tag_shift": -0.060909999999999964
+        },
+        {
+          "concept": "a crowd of people",
+          "tag": "people",
+          "concept_delta": -0.01601225066276104,
+          "tag_shift": 0.13611999999999996
+        },
+        {
+          "concept": "text in the image",
+          "tag": "text",
+          "concept_delta": -0.046461156702760895,
+          "tag_shift": -0.020693333333333314
+        },
+        {
+          "concept": "a sign",
+          "tag": "sign",
+          "concept_delta": -0.0776789588644471,
+          "tag_shift": -0.016770000000000007
+        }
+      ]
+    },
+    "photographic_era": {
+      "reference_median_year": 2007.0,
+      "production_median_year": 2013.0
+    }
+  }
+}

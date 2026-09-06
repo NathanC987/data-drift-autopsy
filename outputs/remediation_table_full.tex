@@ -1,0 +1,18 @@
+\begin{table}[!htbp]
+\centering
+\caption{Localisation-driven remediation, all strategies.}
+\label{tab:remediation-full}
+\renewcommand{\arraystretch}{1.15}\setlength{\tabcolsep}{3pt}\footnotesize
+\begin{tabular}{@{}l l r r r r r r @{}}
+\toprule
+shift name & strategy & accuracy before & accuracy after & fraction of gap recovered & wall clock seconds & train samples & n production labels required \\
+\midrule
+ACS temporal (CA 2014$\rightarrow$2018) & full\_retrain & 0.7790 & 0.7809 & 0.1058 & 0.2151 & 506420 & 0 \\
+ACS temporal (CA 2014$\rightarrow$2018) & feature\_drop\_retrain & 0.7790 & 0.5964 & -10.2464 & 0.0759 & 506420 & 0 \\
+ACS temporal (CA 2014$\rightarrow$2018) & importance\_weighted\_retrain & 0.7790 & 0.7793 & 0.0172 & 0.0943 & 128758 & 0 \\
+ACS temporal (CA 2014$\rightarrow$2018) & head\_refit & 0.7790 & 0.7791 & 0.0032 & 0.1397 & 130758 & 2000 \\
+ACS temporal (CA 2014$\rightarrow$2018) & calibration\_only & 0.7790 & 0.7789 & -0.0054 & 0.0062 & 2000 & 2000 \\
+ACS temporal (CA 2014$\rightarrow$2018) & retrain\_on\_recent(previous) & 0.7790 & 0.7812 & 0.1207 & 0.2053 & 318945 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
