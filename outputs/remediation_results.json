@@ -6,15 +6,15 @@
       "baseline_before": 0.7790304857792656,
       "triage": {
         "will_retraining_help": false,
-        "rationale": "reference and production are barely separable (AUC 0.54) and no cheap probe recovered more than 12% of the gap",
+        "rationale": "reference and production are barely separable (AUC 0.52) and no cheap probe recovered more than 12% of the gap",
         "signals": {
-          "domain_classifier_auc": 0.5379483781023278,
-          "effective_sample_fraction": 0.9939213356456276,
+          "domain_classifier_auc": 0.5212755033781524,
+          "effective_sample_fraction": 0.9835474131114146,
           "feature_drop_sensitivity": 0.1558196127161644,
           "estimated_gap": 0.004138058164094072,
           "observed_gap": 0.01782724214418907,
           "cheap_probe_recovery": {
-            "importance_weighted_retrain": 0.017201009657052544,
+            "importance_weighted_retrain": 0.027808298945565888,
             "retrain_on_recent": 0.12069375109363965
           }
         }
@@ -28,13 +28,13 @@
           "accuracy_recovered": 0.00189,
           "fraction_of_gap_recovered": 0.1058,
           "reference_accuracy": 0.79686,
-          "wall_clock_seconds": 0.2151,
+          "wall_clock_seconds": 0.1733,
           "train_samples": 506420,
           "n_features_used": 10,
           "n_production_labels_required": 0,
           "fit_flops_proxy": 40513600.0,
           "effective_sample_size": null,
-          "recovery_per_second": 0.008766,
+          "recovery_per_second": 0.010881,
           "extra": {}
         },
         {
@@ -45,13 +45,13 @@
           "accuracy_recovered": -0.18266,
           "fraction_of_gap_recovered": -10.2464,
           "reference_accuracy": 0.79686,
-          "wall_clock_seconds": 0.0759,
+          "wall_clock_seconds": 0.044,
           "train_samples": 506420,
           "n_features_used": 2,
           "n_production_labels_required": 0,
           "fit_flops_proxy": 4051360.0,
           "effective_sample_size": null,
-          "recovery_per_second": -2.407344,
+          "recovery_per_second": -4.156093,
           "extra": {
             "dropped_features": [
               "OCCP",
@@ -69,20 +69,20 @@
           "strategy": "importance_weighted_retrain",
           "shift_name": "ACS temporal (CA 2014->2018)",
           "accuracy_before": 0.77903,
-          "accuracy_after": 0.77934,
-          "accuracy_recovered": 0.00031,
-          "fraction_of_gap_recovered": 0.0172,
+          "accuracy_after": 0.77953,
+          "accuracy_recovered": 0.0005,
+          "fraction_of_gap_recovered": 0.0278,
           "reference_accuracy": 0.79686,
-          "wall_clock_seconds": 0.0943,
+          "wall_clock_seconds": 0.0359,
           "train_samples": 128758,
           "n_features_used": 10,
           "n_production_labels_required": 0,
           "fit_flops_proxy": 3732528853.5916104,
-          "effective_sample_size": 127975.3,
-          "recovery_per_second": 0.003252,
+          "effective_sample_size": 126639.6,
+          "recovery_per_second": 0.013817,
           "extra": {
-            "effective_sample_size": 127975.32333505971,
-            "domain_classifier_auc": 0.5379483781023278
+            "effective_sample_size": 126639.5978173995,
+            "domain_classifier_auc": 0.5212755033781524
           }
         },
         {
@@ -93,13 +93,13 @@
           "accuracy_recovered": 6e-05,
           "fraction_of_gap_recovered": 0.0032,
           "reference_accuracy": 0.79686,
-          "wall_clock_seconds": 0.1397,
+          "wall_clock_seconds": 0.0354,
           "train_samples": 130758,
           "n_features_used": 10,
           "n_production_labels_required": 2000,
           "fit_flops_proxy": 10460640.0,
           "effective_sample_size": null,
-          "recovery_per_second": 0.000403,
+          "recovery_per_second": 0.001588,
           "extra": {}
         },
         {
@@ -110,13 +110,13 @@
           "accuracy_recovered": -0.0001,
           "fraction_of_gap_recovered": -0.0054,
           "reference_accuracy": 0.79686,
-          "wall_clock_seconds": 0.0062,
+          "wall_clock_seconds": 0.0005,
           "train_samples": 2000,
           "n_features_used": 1,
           "n_production_labels_required": 2000,
           "fit_flops_proxy": 2000.0,
           "effective_sample_size": null,
-          "recovery_per_second": -0.015623,
+          "recovery_per_second": -0.196773,
           "extra": {
             "note": "recovers calibration, not accuracy"
           }
@@ -129,16 +129,483 @@
           "accuracy_recovered": 0.00215,
           "fraction_of_gap_recovered": 0.1207,
           "reference_accuracy": 0.79686,
-          "wall_clock_seconds": 0.2053,
+          "wall_clock_seconds": 0.105,
           "train_samples": 318945,
           "n_features_used": 10,
           "n_production_labels_required": 0,
           "fit_flops_proxy": 25515600.0,
           "effective_sample_size": null,
-          "recovery_per_second": 0.010481,
+          "recovery_per_second": 0.02049,
           "extra": {
             "windows_used": 1
           }
+        }
+      ]
+    },
+    {
+      "shift_name": "ACS geographic (CA->WA, 2014)",
+      "reference_accuracy": 0.7968577279234547,
+      "baseline_before": 0.7738510038161606,
+      "triage": {
+        "will_retraining_help": false,
+        "rationale": "the shift is separable (AUC 0.85) but no cheap probe recovered more than 5% of the gap -- the loss is likely concept-level, not covariate; collecting production labels or investigating the label rule comes before a full retrain",
+        "signals": {
+          "domain_classifier_auc": 0.8541264095604448,
+          "effective_sample_fraction": 0.5491012078571623,
+          "feature_drop_sensitivity": 0.1548876462669566,
+          "estimated_gap": 0.014155077767967872,
+          "observed_gap": 0.023006724107294096,
+          "cheap_probe_recovery": {
+            "importance_weighted_retrain": 0.05288657592761968
+          }
+        }
+      },
+      "results": [
+        {
+          "strategy": "full_retrain",
+          "shift_name": "ACS geographic (CA->WA, 2014)",
+          "accuracy_before": 0.77385,
+          "accuracy_after": 0.77385,
+          "accuracy_recovered": 0.0,
+          "fraction_of_gap_recovered": 0.0,
+          "reference_accuracy": 0.79686,
+          "wall_clock_seconds": 0.0348,
+          "train_samples": 128758,
+          "n_features_used": 10,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 10300640.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 0.0,
+          "extra": {}
+        },
+        {
+          "strategy": "feature_drop_retrain",
+          "shift_name": "ACS geographic (CA->WA, 2014)",
+          "accuracy_before": 0.77385,
+          "accuracy_after": 0.63448,
+          "accuracy_recovered": -0.13937,
+          "fraction_of_gap_recovered": -6.0579,
+          "reference_accuracy": 0.79686,
+          "wall_clock_seconds": 0.0113,
+          "train_samples": 128758,
+          "n_features_used": 1,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 515032.0,
+          "effective_sample_size": null,
+          "recovery_per_second": -12.302786,
+          "extra": {
+            "dropped_features": [
+              "POBP",
+              "RAC1P",
+              "RELP",
+              "MAR",
+              "SCHL",
+              "COW",
+              "WKHP",
+              "AGEP",
+              "OCCP"
+            ]
+          }
+        },
+        {
+          "strategy": "importance_weighted_retrain",
+          "shift_name": "ACS geographic (CA->WA, 2014)",
+          "accuracy_before": 0.77385,
+          "accuracy_after": 0.77507,
+          "accuracy_recovered": 0.00122,
+          "fraction_of_gap_recovered": 0.0529,
+          "reference_accuracy": 0.79686,
+          "wall_clock_seconds": 0.0351,
+          "train_samples": 128758,
+          "n_features_used": 10,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 1604294975.8593109,
+          "effective_sample_size": 70701.2,
+          "recovery_per_second": 0.034702,
+          "extra": {
+            "effective_sample_size": 70701.17332127251,
+            "domain_classifier_auc": 0.8541264095604448
+          }
+        },
+        {
+          "strategy": "head_refit",
+          "shift_name": "ACS geographic (CA->WA, 2014)",
+          "accuracy_before": 0.77385,
+          "accuracy_after": 0.77429,
+          "accuracy_recovered": 0.00044,
+          "fraction_of_gap_recovered": 0.0192,
+          "reference_accuracy": 0.79686,
+          "wall_clock_seconds": 0.0346,
+          "train_samples": 130758,
+          "n_features_used": 10,
+          "n_production_labels_required": 2000,
+          "fit_flops_proxy": 10460640.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 0.012789,
+          "extra": {}
+        },
+        {
+          "strategy": "calibration_only",
+          "shift_name": "ACS geographic (CA->WA, 2014)",
+          "accuracy_before": 0.77385,
+          "accuracy_after": 0.77435,
+          "accuracy_recovered": 0.0005,
+          "fraction_of_gap_recovered": 0.0216,
+          "reference_accuracy": 0.79686,
+          "wall_clock_seconds": 0.0004,
+          "train_samples": 2000,
+          "n_features_used": 1,
+          "n_production_labels_required": 2000,
+          "fit_flops_proxy": 2000.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 1.269433,
+          "extra": {
+            "note": "recovers calibration, not accuracy"
+          }
+        }
+      ]
+    },
+    {
+      "shift_name": "ACS synthetic covariate shift (AGEP+WKHP)",
+      "reference_accuracy": 0.7975481801625486,
+      "baseline_before": 0.7204055560085896,
+      "triage": {
+        "will_retraining_help": true,
+        "rationale": "the cheap probe 'importance_weighted_retrain' already recovered 55% of the gap (AUC 0.95) -- retraining is worth escalating",
+        "signals": {
+          "domain_classifier_auc": 0.9481377167725215,
+          "effective_sample_fraction": 0.33259556828486186,
+          "feature_drop_sensitivity": 0.035487768045907586,
+          "estimated_gap": -0.02398486269895206,
+          "observed_gap": 0.077142624153959,
+          "cheap_probe_recovery": {
+            "importance_weighted_retrain": 0.550387596899225
+          }
+        }
+      },
+      "results": [
+        {
+          "strategy": "full_retrain",
+          "shift_name": "ACS synthetic covariate shift (AGEP+WKHP)",
+          "accuracy_before": 0.72041,
+          "accuracy_after": 0.72041,
+          "accuracy_recovered": 0.0,
+          "fraction_of_gap_recovered": 0.0,
+          "reference_accuracy": 0.79755,
+          "wall_clock_seconds": 0.029,
+          "train_samples": 110364,
+          "n_features_used": 10,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 8829120.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 0.0,
+          "extra": {}
+        },
+        {
+          "strategy": "feature_drop_retrain",
+          "shift_name": "ACS synthetic covariate shift (AGEP+WKHP)",
+          "accuracy_before": 0.72041,
+          "accuracy_after": 0.76354,
+          "accuracy_recovered": 0.04314,
+          "fraction_of_gap_recovered": 0.5592,
+          "reference_accuracy": 0.79755,
+          "wall_clock_seconds": 0.0198,
+          "train_samples": 110364,
+          "n_features_used": 8,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 6180384.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 2.183758,
+          "extra": {
+            "dropped_features": [
+              "AGEP",
+              "WKHP"
+            ]
+          }
+        },
+        {
+          "strategy": "importance_weighted_retrain",
+          "shift_name": "ACS synthetic covariate shift (AGEP+WKHP)",
+          "accuracy_before": 0.72041,
+          "accuracy_after": 0.76286,
+          "accuracy_recovered": 0.04246,
+          "fraction_of_gap_recovered": 0.5504,
+          "reference_accuracy": 0.79755,
+          "wall_clock_seconds": 0.0319,
+          "train_samples": 110364,
+          "n_features_used": 10,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 1607610730.3720548,
+          "effective_sample_size": 36706.6,
+          "recovery_per_second": 1.332623,
+          "extra": {
+            "effective_sample_size": 36706.577298190496,
+            "domain_classifier_auc": 0.9481377167725215
+          }
+        },
+        {
+          "strategy": "head_refit",
+          "shift_name": "ACS synthetic covariate shift (AGEP+WKHP)",
+          "accuracy_before": 0.72041,
+          "accuracy_after": 0.72927,
+          "accuracy_recovered": 0.00886,
+          "fraction_of_gap_recovered": 0.1149,
+          "reference_accuracy": 0.79755,
+          "wall_clock_seconds": 0.0299,
+          "train_samples": 112364,
+          "n_features_used": 10,
+          "n_production_labels_required": 2000,
+          "fit_flops_proxy": 8989120.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 0.29663,
+          "extra": {}
+        },
+        {
+          "strategy": "calibration_only",
+          "shift_name": "ACS synthetic covariate shift (AGEP+WKHP)",
+          "accuracy_before": 0.72041,
+          "accuracy_after": 0.7929,
+          "accuracy_recovered": 0.07249,
+          "fraction_of_gap_recovered": 0.9397,
+          "reference_accuracy": 0.79755,
+          "wall_clock_seconds": 0.0004,
+          "train_samples": 2000,
+          "n_features_used": 1,
+          "n_production_labels_required": 2000,
+          "fit_flops_proxy": 2000.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 186.350153,
+          "extra": {
+            "note": "recovers calibration, not accuracy"
+          }
+        }
+      ]
+    },
+    {
+      "shift_name": "CLEAR-10 bucket 6",
+      "reference_accuracy": 0.9171717171717172,
+      "baseline_before": 0.8921212121212121,
+      "triage": {
+        "will_retraining_help": true,
+        "rationale": "the cheap probe 'retrain_on_recent' already recovered 41% of the gap (AUC 0.62) -- retraining is worth escalating",
+        "signals": {
+          "domain_classifier_auc": 0.6247447613045533,
+          "effective_sample_fraction": 0.9821828238953255,
+          "feature_drop_sensitivity": 0.0,
+          "estimated_gap": 0.0,
+          "observed_gap": 0.0250505050505051,
+          "cheap_probe_recovery": {
+            "importance_weighted_retrain": 0.02419354838709688,
+            "retrain_on_recent": 0.41129032258064696
+          }
+        }
+      },
+      "results": [
+        {
+          "strategy": "full_retrain",
+          "shift_name": "CLEAR-10 bucket 6",
+          "accuracy_before": 0.89212,
+          "accuracy_after": 0.91697,
+          "accuracy_recovered": 0.02485,
+          "fraction_of_gap_recovered": 0.9919,
+          "reference_accuracy": 0.91717,
+          "wall_clock_seconds": 4.315,
+          "train_samples": 15500,
+          "n_features_used": 512,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 2372864000.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 0.005759,
+          "extra": {}
+        },
+        {
+          "strategy": "importance_weighted_retrain",
+          "shift_name": "CLEAR-10 bucket 6",
+          "accuracy_before": 0.89212,
+          "accuracy_after": 0.89273,
+          "accuracy_recovered": 0.00061,
+          "fraction_of_gap_recovered": 0.0242,
+          "reference_accuracy": 0.91717,
+          "wall_clock_seconds": 0.1945,
+          "train_samples": 2308,
+          "n_features_used": 512,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 322772755.53425384,
+          "effective_sample_size": 2266.9,
+          "recovery_per_second": 0.003116,
+          "extra": {
+            "effective_sample_size": 2266.8779575504104,
+            "domain_classifier_auc": 0.6247447613045533
+          }
+        },
+        {
+          "strategy": "retrain_on_recent[previous]",
+          "shift_name": "CLEAR-10 bucket 6",
+          "accuracy_before": 0.89212,
+          "accuracy_after": 0.90242,
+          "accuracy_recovered": 0.0103,
+          "fraction_of_gap_recovered": 0.4113,
+          "reference_accuracy": 0.91717,
+          "wall_clock_seconds": 0.7451,
+          "train_samples": 5607,
+          "n_features_used": 512,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 422005248.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 0.013828,
+          "extra": {
+            "windows_used": 1
+          }
+        },
+        {
+          "strategy": "retrain_on_recent[all_prior]",
+          "shift_name": "CLEAR-10 bucket 6",
+          "accuracy_before": 0.89212,
+          "accuracy_after": 0.91697,
+          "accuracy_recovered": 0.02485,
+          "fraction_of_gap_recovered": 0.9919,
+          "reference_accuracy": 0.91717,
+          "wall_clock_seconds": 4.3183,
+          "train_samples": 15500,
+          "n_features_used": 512,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 2372864000.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 0.005754,
+          "extra": {
+            "windows_used": 4
+          }
+        },
+        {
+          "strategy": "head_refit",
+          "shift_name": "CLEAR-10 bucket 6",
+          "accuracy_before": 0.89212,
+          "accuracy_after": 0.91697,
+          "accuracy_recovered": 0.02485,
+          "fraction_of_gap_recovered": 0.9919,
+          "reference_accuracy": 0.91717,
+          "wall_clock_seconds": 0.4542,
+          "train_samples": 3958,
+          "n_features_used": 512,
+          "n_production_labels_required": 1650,
+          "fit_flops_proxy": 261417984.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 0.054707,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "shift_name": "CLEAR-10 bucket 10",
+      "reference_accuracy": 0.9171717171717172,
+      "baseline_before": 0.8848484848484849,
+      "triage": {
+        "will_retraining_help": true,
+        "rationale": "the cheap probe 'retrain_on_recent' already recovered 92% of the gap (AUC 0.67) -- retraining is worth escalating",
+        "signals": {
+          "domain_classifier_auc": 0.6716461845491308,
+          "effective_sample_fraction": 0.9744231077520489,
+          "feature_drop_sensitivity": 0.0,
+          "estimated_gap": 0.0,
+          "observed_gap": 0.03232323232323231,
+          "cheap_probe_recovery": {
+            "importance_weighted_retrain": -0.037500000000000255,
+            "retrain_on_recent": 0.9187499999999994
+          }
+        }
+      },
+      "results": [
+        {
+          "strategy": "full_retrain",
+          "shift_name": "CLEAR-10 bucket 10",
+          "accuracy_before": 0.88485,
+          "accuracy_after": 0.91152,
+          "accuracy_recovered": 0.02667,
+          "fraction_of_gap_recovered": 0.825,
+          "reference_accuracy": 0.91717,
+          "wall_clock_seconds": 11.9358,
+          "train_samples": 28692,
+          "n_features_used": 512,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 6595946496.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 0.002234,
+          "extra": {}
+        },
+        {
+          "strategy": "importance_weighted_retrain",
+          "shift_name": "CLEAR-10 bucket 10",
+          "accuracy_before": 0.88485,
+          "accuracy_after": 0.88364,
+          "accuracy_recovered": -0.00121,
+          "fraction_of_gap_recovered": -0.0375,
+          "reference_accuracy": 0.91717,
+          "wall_clock_seconds": 0.1938,
+          "train_samples": 2308,
+          "n_features_used": 512,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 325136147.53425384,
+          "effective_sample_size": 2249.0,
+          "recovery_per_second": -0.006256,
+          "extra": {
+            "effective_sample_size": 2248.9685326917297,
+            "domain_classifier_auc": 0.6716461845491308
+          }
+        },
+        {
+          "strategy": "retrain_on_recent[previous]",
+          "shift_name": "CLEAR-10 bucket 10",
+          "accuracy_before": 0.88485,
+          "accuracy_after": 0.91455,
+          "accuracy_recovered": 0.0297,
+          "fraction_of_gap_recovered": 0.9187,
+          "reference_accuracy": 0.91717,
+          "wall_clock_seconds": 0.6935,
+          "train_samples": 5606,
+          "n_features_used": 512,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 396097536.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 0.042824,
+          "extra": {
+            "windows_used": 1
+          }
+        },
+        {
+          "strategy": "retrain_on_recent[all_prior]",
+          "shift_name": "CLEAR-10 bucket 10",
+          "accuracy_before": 0.88485,
+          "accuracy_after": 0.91152,
+          "accuracy_recovered": 0.02667,
+          "fraction_of_gap_recovered": 0.825,
+          "reference_accuracy": 0.91717,
+          "wall_clock_seconds": 11.9261,
+          "train_samples": 28692,
+          "n_features_used": 512,
+          "n_production_labels_required": 0,
+          "fit_flops_proxy": 6595946496.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 0.002236,
+          "extra": {
+            "windows_used": 8
+          }
+        },
+        {
+          "strategy": "head_refit",
+          "shift_name": "CLEAR-10 bucket 10",
+          "accuracy_before": 0.88485,
+          "accuracy_after": 0.93212,
+          "accuracy_recovered": 0.04727,
+          "fraction_of_gap_recovered": 1.4625,
+          "reference_accuracy": 0.91717,
+          "wall_clock_seconds": 0.4083,
+          "train_samples": 3958,
+          "n_features_used": 512,
+          "n_production_labels_required": 1650,
+          "fit_flops_proxy": 243179520.0,
+          "effective_sample_size": null,
+          "recovery_per_second": 0.115786,
+          "extra": {}
         }
       ]
     }

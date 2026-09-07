@@ -7,7 +7,11 @@
 \toprule
 setting & gap (pp) & cheapest fix & recovered & cost (s) & full retrain & triage \\
 \midrule
-ACS temporal & 1.8 & retrain on recent & 12\% & 0.21 & 11\% & do not retrain \\
+ACS temporal & 1.8 & retrain on recent & 12\% & 0.10 & 11\% & do not retrain \\
+ACS geographic & 2.3 & importance weighted & 5\% & 0.04 & 0\% & do not retrain \\
+ACS synthetic covariate shift & 7.7 & feature drop & 56\% & 0.02 & 0\% & escalate \\
+CLEAR-10 bucket 6 & 2.5 & retrain on recent & 41\% & 0.75 & 99\% & escalate \\
+CLEAR-10 bucket 10 & 3.2 & retrain on recent & 92\% & 0.69 & 82\% & escalate \\
 \bottomrule
 \end{tabular}
 \end{table}

@@ -24,9 +24,15 @@ def density_ratio_weights(
     max_depth: int = 5,
     n_splits: int = 5,
     clip: float = 20.0,
+    max_rows_for_fit: int = 5000,
     random_state: int = 42,
 ) -> Tuple[np.ndarray, Dict[str, Any]]:
-    """Return per-reference-row weights (mean 1) and diagnostics."""
+    """Return per-reference-row weights (mean 1) and diagnostics.
+
+    When the stacked data is large the domain classifier is cross-fitted on a
+    balanced subsample and its probabilities applied to every reference row,
+    which keeps the estimate stable but bounds the cost on wide embeddings.
+    """
     X_ref = np.asarray(X_ref, dtype=float)
     X_prod = np.asarray(X_prod, dtype=float)
     n_ref, n_prod = len(X_ref), len(X_prod)
@@ -34,19 +40,32 @@ def density_ratio_weights(
     X = np.vstack([X_ref, X_prod])
     y = np.r_[np.zeros(n_ref), np.ones(n_prod)]
 
-    oof = np.zeros(len(X))
-    skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=random_state)
-    for train_idx, test_idx in skf.split(X, y):
-        clf = RandomForestClassifier(
-            n_estimators=n_estimators,
-            max_depth=max_depth,
-            random_state=random_state,
-            n_jobs=-1,
-        )
-        clf.fit(X[train_idx], y[train_idx])
-        oof[test_idx] = clf.predict_proba(X[test_idx])[:, 1]
+    rng = np.random.RandomState(random_state)
+    fit_cap = max(1000, min(len(X), max_rows_for_fit))
+    fit_idx = np.arange(len(X)) if len(X) <= fit_cap else rng.choice(len(X), fit_cap, replace=False)
 
-    auc = _auc(y, oof)
+    oof_fit = np.zeros(len(fit_idx))
+    skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=random_state)
+    Xf, yf = X[fit_idx], y[fit_idx]
+    for train_idx, test_idx in skf.split(Xf, yf):
+        clf = RandomForestClassifier(
+            n_estimators=n_estimators, max_depth=max_depth,
+            random_state=random_state, n_jobs=-1,
+        )
+        clf.fit(Xf[train_idx], yf[train_idx])
+        oof_fit[test_idx] = clf.predict_proba(Xf[test_idx])[:, 1]
+
+    if len(fit_idx) == len(X):
+        oof = oof_fit
+    else:
+        final = RandomForestClassifier(
+            n_estimators=n_estimators, max_depth=max_depth,
+            random_state=random_state, n_jobs=-1,
+        ).fit(Xf, yf)
+        oof = final.predict_proba(X)[:, 1]
+        oof[fit_idx] = oof_fit  # keep the honest out-of-fold values where we have them
+
+    auc = _auc(yf, oof_fit)
     p_ref = np.clip(oof[:n_ref], 1e-3, 1 - 1e-3)
     weights = (p_ref / (1.0 - p_ref)) * (n_ref / n_prod)
     weights = np.clip(weights, 0.0, clip)

@@ -14,6 +14,7 @@ sys.path.insert(0, str(project_root))
 
 from examples.dashboard.data_loader import DriftResultsLoader
 from examples.dashboard import visualizations as viz
+from examples.dashboard import story
 from examples.dashboard.remediation import render_remediation_dashboard
 
 # Page configuration
@@ -38,278 +39,161 @@ def render_folktables_dashboard(
     selected_detectors,
     show_raw_data: bool,
 ) -> None:
-    """Render the existing Folktables dashboard view."""
-    if not selected_years:
-        st.warning("Please select at least one year")
+    """Folktables (ACS Income) view, told as the seven-step pipeline story."""
+    if not selected_years or not selected_detectors:
+        st.warning("Select at least one year and one detector in the sidebar.")
         return
 
-    if not selected_detectors:
-        st.warning("Please select at least one detector")
-        return
-
-    # Summary metrics
-    st.header("Summary Metrics")
-
-    summary = loader.get_summary_stats()
-
-    col1, col2, col3, col4 = st.columns(4)
-
-    with col1:
-        st.metric(
-            "Total Years Analyzed",
-            summary["total_years"],
-        )
-
-    with col2:
-        st.metric(
-            "Drift Events Detected",
-            summary["total_drift_events"],
-        )
-
-    with col3:
-        st.metric(
-            "Average Accuracy",
-            f"{summary['avg_accuracy']:.1%}",
-            delta=None,
-        )
-
-    with col4:
-        st.metric(
-            "Drifted Features",
-            summary["unique_drifted_features"],
-        )
-
-    st.markdown("---")
-
-    # Load filtered data
     all_detectors_df = loader.get_all_detectors_timeline()
-    all_detectors_df = all_detectors_df[
-        (all_detectors_df["year"].isin(selected_years))
-    ]
-
+    all_detectors_df = all_detectors_df[all_detectors_df["year"].isin(selected_years)]
     detector_name_map = {d.replace("_", " ").title(): d for d in selected_detectors}
-    all_detectors_df = all_detectors_df[
-        all_detectors_df["detector"].isin(detector_name_map.keys())
-    ]
+    all_detectors_df = all_detectors_df[all_detectors_df["detector"].isin(detector_name_map.keys())]
 
     perf_df = loader.get_performance_metrics()
     perf_df = perf_df[perf_df["year"].isin(selected_years)]
-
     feature_df = loader.get_feature_drift_timeline()
     feature_df = feature_df[feature_df["year"].isin(selected_years)]
-
     slice_df = loader.get_slice_analysis_results()
     if not slice_df.empty:
         slice_df = slice_df[slice_df["detector"].isin(detector_name_map.keys())]
-
-    # Main visualizations
-    st.header("Drift Analysis")
-
-    drift_detectors_df = all_detectors_df[all_detectors_df["detector"].isin(["Ks Test", "Psi", "Mmd"])].copy()
-    cbpe_df = all_detectors_df[all_detectors_df["detector"] == "Cbpe"].copy()
-
-    # Row 1: CBPE
-    st.subheader("Performance Estimator (CBPE)")
-    col1, col2 = st.columns(2)
-
-    with col1:
-        if not cbpe_df.empty:
-            fig = viz.create_drift_timeline(cbpe_df, title="CBPE Score Timeline")
-            st.plotly_chart(fig, width="stretch")
-        else:
-            st.info("No CBPE data available")
-
-    with col2:
-        if not cbpe_df.empty:
-            fig = viz.create_detector_comparison(cbpe_df, title="CBPE Comparison")
-            st.plotly_chart(fig, width="stretch")
-        else:
-            st.info("No CBPE data available")
-
-    # Row 2: Drift detectors
-    st.subheader("Drift Detectors (KS Test, PSI, MMD)")
-    col1, col2 = st.columns(2)
-
-    with col1:
-        if not drift_detectors_df.empty:
-            fig = viz.create_drift_timeline(drift_detectors_df, title="Drift Score Timeline")
-            st.plotly_chart(fig, width="stretch")
-        else:
-            st.info("No drift detector data available")
-
-    with col2:
-        if not drift_detectors_df.empty:
-            fig = viz.create_detector_comparison(drift_detectors_df, title="Detector Comparison")
-            st.plotly_chart(fig, width="stretch")
-        else:
-            st.info("No drift detector data available")
-
-    # Row 3: Performance and severity
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.subheader("Model Performance Over Time")
-        if not perf_df.empty:
-            fig = viz.create_performance_chart(perf_df)
-            st.plotly_chart(fig, width="stretch")
-        else:
-            st.info("No performance data available")
-
-    with col2:
-        st.subheader("Drift Severity Distribution")
-        if not all_detectors_df.empty:
-            fig = viz.create_severity_distribution(all_detectors_df)
-            st.plotly_chart(fig, width="stretch")
-        else:
-            st.info("No severity data available")
-
-    st.markdown("---")
-
-    # Feature-level analysis
-    st.header("Feature-Level Analysis")
-
-    if not feature_df.empty:
-        col1, col2 = st.columns([2, 1])
-
-        with col1:
-            st.subheader("Feature Drift Heatmap")
-            fig = viz.create_feature_heatmap(feature_df)
-            st.plotly_chart(fig, width="stretch")
-
-        with col2:
-            st.subheader("Top Drifted Features")
-            top_n = st.slider("Number of features", 5, 20, 10)
-            fig = viz.create_top_drifted_features(feature_df, top_n=top_n)
-            st.plotly_chart(fig, width="stretch")
-    else:
-        st.info("No feature drift data available")
-
-    st.markdown("---")
-
-    # Detection timeline
-    st.header("Drift Detection Timeline")
-    if not all_detectors_df.empty:
-        fig = viz.create_drift_detection_timeline(all_detectors_df)
-        st.plotly_chart(fig, width="stretch")
-    else:
-        st.info("No drift detection data available")
-
-    st.markdown("---")
-
-    # Slice-level analysis
-    st.header("Slice-Level Drift Analysis")
-    if not slice_df.empty:
-        col1, col2 = st.columns([2, 1])
-        slice_label_col = "slice_key_label" if "slice_key_label" in slice_df.columns else "slice_key"
-
-        with col1:
-            fig = viz.create_slice_drift_heatmap(slice_df, title="Slice Drift Score by Detector")
-            st.plotly_chart(fig, width="stretch")
-
-        with col2:
-            st.subheader("Slice Summary")
-            st.metric("Slices Evaluated", slice_df[slice_label_col].nunique())
-            st.metric("Slice Drift Events", int(slice_df["drift_detected"].sum()))
-            st.metric("Avg Slice Score", f"{slice_df['score'].mean():.4f}")
-
-        st.subheader("Slice-Level Details")
-        st.dataframe(
-            slice_df[[
-                "analysis_key",
-                "detector",
-                slice_label_col,
-                "drift_detected",
-                "severity",
-                "score",
-                "reference_samples",
-                "test_samples",
-            ]],
-            width="stretch",
-        )
-    else:
-        st.info("No slice analysis data available. Run a pipeline with slice_config enabled.")
-
-    st.markdown("---")
-
-    # Root Cause Analysis
-    st.header("Root Cause Analysis")
     rca_df = loader.get_rca_results()
     importance_changes_df = loader.get_feature_importance_changes()
 
-    if not rca_df.empty and not importance_changes_df.empty:
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.subheader("Feature Importance Comparison")
-            top_n_importance = st.slider("Number of features to compare", 5, 15, 10, key="importance_slider")
-            fig = viz.create_feature_importance_comparison(importance_changes_df, top_n=top_n_importance)
-            st.plotly_chart(fig, width="stretch")
-
-        with col2:
-            st.subheader("Importance Changes Over Time")
-            top_features = st.slider("Number of features to track", 3, 10, 5, key="timeline_slider")
-            fig = viz.create_importance_change_timeline(importance_changes_df, top_features=top_features)
-            st.plotly_chart(fig, width="stretch")
-
-        st.subheader("Feature Importance Changes Heatmap")
-        fig = viz.create_feature_importance_heatmap(importance_changes_df)
-        st.plotly_chart(fig, width="stretch")
-
-        st.subheader("Recommendations")
-        rec_df = viz.create_rca_recommendations_table(rca_df)
-        if not rec_df.empty:
-            st.dataframe(rec_df, width="stretch")
-        else:
-            st.info("No recommendations available")
-
-        st.subheader("RCA Summary")
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric("Total Analyses", len(rca_df))
-        with col2:
-            total_recs = rca_df["n_recommendations"].sum()
-            st.metric("Total Recommendations", int(total_recs))
-        with col3:
-            avg_recs = rca_df["n_recommendations"].mean()
-            st.metric("Avg Recommendations/Analysis", f"{avg_recs:.1f}")
-    else:
-        st.info("No RCA data available. Enable RCA in your drift detection pipeline to see root cause analysis.")
-
-    render_reliability_section(loader=loader, scope="folktables")
-
+    story.render_executive_summary(story.folktables_summary(loader))
     st.markdown("---")
 
-    render_remediation_dashboard(loader=loader)
-    
+    # ---- Step 0 -----------------------------------------------------------
+    story.step_header(0)
+    c1, c2, c3 = st.columns(3)
+    c1.markdown("**Model**\n\nStandardised logistic regression (tabular, binary: income > \\$50k)")
+    c2.markdown("**Reference window**\n\nCalifornia 2014")
+    c3.markdown(
+        "**Production windows**\n\nCalifornia " + ", ".join(str(y) for y in selected_years)
+        + " (temporal) and other US states in 2014 (geographic)"
+    )
+    st.markdown("---")
+
+    # ---- Step 1 -----------------------------------------------------------
+    story.step_header(1)
+    cbpe_df = all_detectors_df[all_detectors_df["detector"] == "Cbpe"].copy()
+    col1, col2 = st.columns(2)
+    with col1:
+        if not perf_df.empty:
+            st.plotly_chart(viz.create_performance_chart(perf_df), width="stretch")
+        else:
+            st.info("No measured-accuracy series (labels held out only for validation).")
+    with col2:
+        if not cbpe_df.empty:
+            st.plotly_chart(viz.create_drift_timeline(cbpe_df, title="CBPE confidence-shift statistic"), width="stretch")
+        else:
+            st.info("No CBPE data available")
+    st.caption(
+        "CBPE compares the model's confidence histogram now against the reference. A significant "
+        "shift is a label-free signal that performance has moved; here it grows every year."
+    )
+    st.markdown("---")
+
+    # ---- Step 2 -----------------------------------------------------------
+    story.step_header(2)
+    drift_detectors_df = all_detectors_df[all_detectors_df["detector"].isin(["Ks Test", "Psi", "Mmd"])].copy()
+    col1, col2 = st.columns(2)
+    with col1:
+        if not drift_detectors_df.empty:
+            st.plotly_chart(viz.create_drift_timeline(drift_detectors_df, title="Detector score over time"), width="stretch")
+    with col2:
+        if not all_detectors_df.empty:
+            st.plotly_chart(viz.create_severity_distribution(all_detectors_df), width="stretch")
+    if not all_detectors_df.empty:
+        st.plotly_chart(viz.create_drift_detection_timeline(all_detectors_df), width="stretch")
+    st.caption(
+        "KS and CBPE call the shift critical every year; PSI and MMD stay quiet - the change is real "
+        "but spread thinly, no single feature moves far on its own."
+    )
+    st.markdown("---")
+
+    # ---- Step 3 -----------------------------------------------------------
+    story.step_header(3, "features and slices")
+    if not feature_df.empty:
+        col1, col2 = st.columns([2, 1])
+        with col1:
+            st.plotly_chart(viz.create_feature_heatmap(feature_df), width="stretch")
+        with col2:
+            top_n = st.slider("Top features", 5, 20, 10)
+            st.plotly_chart(viz.create_top_drifted_features(feature_df, top_n=top_n), width="stretch")
+    if not slice_df.empty:
+        st.subheader("Slice localisation (by US state)")
+        slice_label_col = "slice_key_label" if "slice_key_label" in slice_df.columns else "slice_key"
+        col1, col2 = st.columns([2, 1])
+        with col1:
+            st.plotly_chart(viz.create_slice_drift_heatmap(slice_df, title="Slice drift by detector"), width="stretch")
+        with col2:
+            st.metric("Slices evaluated", slice_df[slice_label_col].nunique())
+            st.metric("Slice drift events", int(slice_df["drift_detected"].sum()))
+            st.metric("Avg slice score", f"{slice_df['score'].mean():.4f}")
+        st.dataframe(
+            slice_df[["analysis_key", "detector", slice_label_col, "drift_detected", "severity",
+                      "score", "reference_samples", "test_samples"]],
+            width="stretch", hide_index=True,
+        )
+        st.caption(
+            "Cross-state comparison isolates the drift to place-of-birth and race code - deploying the "
+            "California model to another state is a much larger shift than any single year."
+        )
+    st.markdown("---")
+
+    # ---- Step 4 -----------------------------------------------------------
+    story.step_header(4, "SHAP attribution")
+    if not rca_df.empty and not importance_changes_df.empty:
+        col1, col2 = st.columns(2)
+        with col1:
+            n_imp = st.slider("Features to compare", 5, 15, 10, key="importance_slider")
+            st.plotly_chart(viz.create_feature_importance_comparison(importance_changes_df, top_n=n_imp), width="stretch")
+        with col2:
+            n_trk = st.slider("Features to track", 3, 10, 5, key="timeline_slider")
+            st.plotly_chart(viz.create_importance_change_timeline(importance_changes_df, top_features=n_trk), width="stretch")
+        st.plotly_chart(viz.create_feature_importance_heatmap(importance_changes_df), width="stretch")
+        rec_df = viz.create_rca_recommendations_table(rca_df)
+        if not rec_df.empty:
+            st.subheader("Generated recommendations")
+            st.dataframe(rec_df, width="stretch", hide_index=True)
+        st.caption(
+            "SHAP shows the model swinging its reliance between occupation and place-of-birth as the "
+            "surveys re-code those fields - the features that both drifted and changed importance are "
+            "flagged as the likely root cause."
+        )
+    else:
+        st.info("No SHAP RCA data. Enable RCA in the pipeline (KS Test path in the demo).")
+    st.markdown("---")
+
+    # ---- Step 5 -----------------------------------------------------------
+    story.step_header(5)
+    story.render_reliability_step(loader, "ACS Income")
+    st.markdown("---")
+
+    # ---- Step 6 -----------------------------------------------------------
+    render_remediation_dashboard(loader=loader, scope="acs")
+
     if show_raw_data:
         st.markdown("---")
-        st.header("Raw Data Tables")
-
-        tab1, tab2, tab3, tab4 = st.tabs(["Detector Results", "Feature Drift", "Performance Metrics", "RCA Data"])
-
-        with tab1:
-            st.subheader("Detector Results")
-            st.dataframe(all_detectors_df, width="stretch")
-
-        with tab2:
-            st.subheader("Feature Drift")
-            st.dataframe(feature_df, width="stretch")
-
-        with tab3:
-            st.subheader("Performance Metrics")
-            st.dataframe(perf_df, width="stretch")
-
-        with tab4:
-            st.subheader("RCA Results")
-            if not rca_df.empty:
-                st.dataframe(rca_df, width="stretch")
-            else:
-                st.info("No RCA data available")
+        with st.expander("Raw data tables"):
+            tab1, tab2, tab3, tab4 = st.tabs(["Detectors", "Feature drift", "Performance", "RCA"])
+            tab1.dataframe(all_detectors_df, width="stretch")
+            tab2.dataframe(feature_df, width="stretch")
+            tab3.dataframe(perf_df, width="stretch")
+            tab4.dataframe(rca_df, width="stretch")
 
 
 def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
-    """Render CLEAR-10 dashboard view in required section order."""
-    st.header("1. Baseline Model Performance")
+    """CLEAR-10 (image) view, told as the seven-step pipeline story."""
+    story.render_executive_summary(story.clear10_summary(loader))
+    st.markdown("---")
+
+    story.step_header(0)
+    c1, c2, c3 = st.columns(3)
+    c1.markdown("**Model**\n\nLinear head on frozen ImageNet ResNet-18 embeddings (11-way image classifier)")
+    c2.markdown("**Reference window**\n\nBucket 1 (earliest photos)")
+    c3.markdown("**Production windows**\n\nBuckets 2-10, each compared against the one before it")
+    st.subheader("Reference model performance")
     baseline = loader.get_clear10_baseline_performance()
 
     if baseline:
@@ -335,7 +219,7 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
 
     st.markdown("---")
 
-    st.header("2. Proxy Performance Estimation")
+    story.step_header(1)
     proxy_df = loader.get_clear10_proxy_metrics()
     if proxy_df.empty:
         st.info("No proxy metric data available.")
@@ -492,7 +376,7 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
 
     st.markdown("---")
 
-    st.header("3. Drift Detection")
+    story.step_header(2)
     drift_df = loader.get_clear10_drift_timeline()
     pca_projection_df = loader.get_clear10_pca_3d_projection()
     if drift_df.empty:
@@ -627,7 +511,7 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
 
     st.markdown("---")
 
-    st.header("4. Localization")
+    story.step_header(3, "embedding dimensions and class slices")
     localization_df = loader.get_clear10_localization_summary()
     if localization_df.empty:
         st.info("No localization summary data available.")
@@ -636,7 +520,7 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
 
     st.markdown("---")
 
-    st.header("5. RCA")
+    story.step_header(4, "embedding-shift attribution and Grad-CAM")
     rca_df = loader.get_clear10_rca_summary()
     visual_rca_df = loader.get_clear10_visual_rca()
     if rca_df.empty:
@@ -723,6 +607,17 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
                                     caption=f"Grad-CAM overlay | {second['caption']}",
                                     use_container_width=True,
                                 )
+
+    st.markdown("---")
+    st.subheader("Concept-level cause (what changed, in words)")
+    story.render_concept_rca_step(bucket="10")
+
+    st.markdown("---")
+    story.step_header(5)
+    story.render_reliability_step(loader, "CLEAR-10")
+
+    st.markdown("---")
+    render_remediation_dashboard(loader=loader, scope="clear10")
 
 
 def main():

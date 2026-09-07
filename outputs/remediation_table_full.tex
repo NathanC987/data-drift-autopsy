@@ -7,12 +7,32 @@
 \toprule
 shift name & strategy & accuracy before & accuracy after & fraction of gap recovered & wall clock seconds & train samples & n production labels required \\
 \midrule
-ACS temporal (CA 2014$\rightarrow$2018) & full\_retrain & 0.7790 & 0.7809 & 0.1058 & 0.2151 & 506420 & 0 \\
-ACS temporal (CA 2014$\rightarrow$2018) & feature\_drop\_retrain & 0.7790 & 0.5964 & -10.2464 & 0.0759 & 506420 & 0 \\
-ACS temporal (CA 2014$\rightarrow$2018) & importance\_weighted\_retrain & 0.7790 & 0.7793 & 0.0172 & 0.0943 & 128758 & 0 \\
-ACS temporal (CA 2014$\rightarrow$2018) & head\_refit & 0.7790 & 0.7791 & 0.0032 & 0.1397 & 130758 & 2000 \\
-ACS temporal (CA 2014$\rightarrow$2018) & calibration\_only & 0.7790 & 0.7789 & -0.0054 & 0.0062 & 2000 & 2000 \\
-ACS temporal (CA 2014$\rightarrow$2018) & retrain\_on\_recent(previous) & 0.7790 & 0.7812 & 0.1207 & 0.2053 & 318945 & 0 \\
+ACS temporal (CA 2014$\rightarrow$2018) & full\_retrain & 0.7790 & 0.7809 & 0.1058 & 0.1733 & 506420 & 0 \\
+ACS temporal (CA 2014$\rightarrow$2018) & feature\_drop\_retrain & 0.7790 & 0.5964 & -10.2464 & 0.0440 & 506420 & 0 \\
+ACS temporal (CA 2014$\rightarrow$2018) & importance\_weighted\_retrain & 0.7790 & 0.7795 & 0.0278 & 0.0359 & 128758 & 0 \\
+ACS temporal (CA 2014$\rightarrow$2018) & head\_refit & 0.7790 & 0.7791 & 0.0032 & 0.0354 & 130758 & 2000 \\
+ACS temporal (CA 2014$\rightarrow$2018) & calibration\_only & 0.7790 & 0.7789 & -0.0054 & 0.0005 & 2000 & 2000 \\
+ACS temporal (CA 2014$\rightarrow$2018) & retrain\_on\_recent(previous) & 0.7790 & 0.7812 & 0.1207 & 0.1050 & 318945 & 0 \\
+ACS geographic (CA$\rightarrow$WA, 2014) & full\_retrain & 0.7739 & 0.7739 & 0.0000 & 0.0348 & 128758 & 0 \\
+ACS geographic (CA$\rightarrow$WA, 2014) & feature\_drop\_retrain & 0.7739 & 0.6345 & -6.0579 & 0.0113 & 128758 & 0 \\
+ACS geographic (CA$\rightarrow$WA, 2014) & importance\_weighted\_retrain & 0.7739 & 0.7751 & 0.0529 & 0.0351 & 128758 & 0 \\
+ACS geographic (CA$\rightarrow$WA, 2014) & head\_refit & 0.7739 & 0.7743 & 0.0192 & 0.0346 & 130758 & 2000 \\
+ACS geographic (CA$\rightarrow$WA, 2014) & calibration\_only & 0.7739 & 0.7743 & 0.0216 & 0.0004 & 2000 & 2000 \\
+ACS synthetic covariate shift (AGEP+WKHP) & full\_retrain & 0.7204 & 0.7204 & 0.0000 & 0.0290 & 110364 & 0 \\
+ACS synthetic covariate shift (AGEP+WKHP) & feature\_drop\_retrain & 0.7204 & 0.7635 & 0.5592 & 0.0198 & 110364 & 0 \\
+ACS synthetic covariate shift (AGEP+WKHP) & importance\_weighted\_retrain & 0.7204 & 0.7629 & 0.5504 & 0.0319 & 110364 & 0 \\
+ACS synthetic covariate shift (AGEP+WKHP) & head\_refit & 0.7204 & 0.7293 & 0.1149 & 0.0299 & 112364 & 2000 \\
+ACS synthetic covariate shift (AGEP+WKHP) & calibration\_only & 0.7204 & 0.7929 & 0.9397 & 0.0004 & 2000 & 2000 \\
+CLEAR-10 bucket 6 & full\_retrain & 0.8921 & 0.9170 & 0.9919 & 4.3150 & 15500 & 0 \\
+CLEAR-10 bucket 6 & importance\_weighted\_retrain & 0.8921 & 0.8927 & 0.0242 & 0.1945 & 2308 & 0 \\
+CLEAR-10 bucket 6 & retrain\_on\_recent(previous) & 0.8921 & 0.9024 & 0.4113 & 0.7451 & 5607 & 0 \\
+CLEAR-10 bucket 6 & retrain\_on\_recent(all\_prior) & 0.8921 & 0.9170 & 0.9919 & 4.3183 & 15500 & 0 \\
+CLEAR-10 bucket 6 & head\_refit & 0.8921 & 0.9170 & 0.9919 & 0.4542 & 3958 & 1650 \\
+CLEAR-10 bucket 10 & full\_retrain & 0.8849 & 0.9115 & 0.8250 & 11.9358 & 28692 & 0 \\
+CLEAR-10 bucket 10 & importance\_weighted\_retrain & 0.8849 & 0.8836 & -0.0375 & 0.1938 & 2308 & 0 \\
+CLEAR-10 bucket 10 & retrain\_on\_recent(previous) & 0.8849 & 0.9145 & 0.9187 & 0.6935 & 5606 & 0 \\
+CLEAR-10 bucket 10 & retrain\_on\_recent(all\_prior) & 0.8849 & 0.9115 & 0.8250 & 11.9261 & 28692 & 0 \\
+CLEAR-10 bucket 10 & head\_refit & 0.8849 & 0.9321 & 1.4625 & 0.4083 & 3958 & 1650 \\
 \bottomrule
 \end{tabular}
 \end{table}

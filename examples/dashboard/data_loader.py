@@ -944,3 +944,80 @@ class DriftResultsLoader:
 
         self._clear10_pca_projection_cache = projection_df
         return projection_df.copy()
+
+    # ------------------------------------------------------------------ #
+    # Reliability / hallucination layer
+
+    def _iter_reliability_blocks(self):
+        """Yield (window_label, [records]) for whichever result schema is loaded."""
+        if self.raw_data is None:
+            self.load()
+        data = self.raw_data
+
+        # CLEAR-10: bucket_results[b]["reliability"]
+        buckets = data.get("bucket_results")
+        if isinstance(buckets, dict):
+            for key in sorted(buckets, key=lambda k: int(k) if str(k).isdigit() else 0):
+                recs = buckets[key].get("reliability")
+                if recs:
+                    yield f"bucket {key}", recs
+            return
+
+        # Folktables: top-level year keys + geographic_analysis, each with "reliability"
+        for key, node in data.items():
+            if not isinstance(node, dict):
+                continue
+            recs = node.get("reliability")
+            if recs:
+                label = "geographic" if key == "geographic_analysis" else key
+                yield label, recs
+
+    def get_reliability_summary(self) -> pd.DataFrame:
+        """One row per window: means + suspicious share + dominant label."""
+        rows = []
+        for label, recs in self._iter_reliability_blocks():
+            df = pd.DataFrame(recs)
+            if df.empty:
+                continue
+            n = len(df)
+            susp = df.get("calibration", pd.Series(dtype=str)).eq("suspicious").sum()
+            rows.append(
+                {
+                    "window": label,
+                    "n": n,
+                    "mean_confidence": self._safe_float(df.get("confidence", pd.Series([np.nan])).mean()),
+                    "mean_ood": self._safe_float(df.get("ood", pd.Series([np.nan])).mean()),
+                    "mean_stability": self._safe_float(df.get("stability", pd.Series([np.nan])).mean()),
+                    "mean_calibration_risk": self._safe_float(
+                        df.get("calibration_risk", pd.Series([np.nan])).mean()
+                    ),
+                    "mean_risk": self._safe_float(df.get("risk_score", pd.Series([np.nan])).mean()),
+                    "suspicious_pct": 100.0 * susp / n if n else 0.0,
+                    "high_risk_pct": 100.0
+                    * df.get("risk_label", pd.Series(dtype=str)).eq("HIGH").sum()
+                    / n
+                    if n
+                    else 0.0,
+                }
+            )
+        return pd.DataFrame(rows)
+
+    def get_reliability_records(self, window: Optional[str] = None) -> pd.DataFrame:
+        """Flat per-prediction records, optionally filtered to one window."""
+        frames = []
+        for label, recs in self._iter_reliability_blocks():
+            if window is not None and label != window:
+                continue
+            df = pd.DataFrame(recs)
+            if df.empty:
+                continue
+            df.insert(0, "window", label)
+            frames.append(df)
+        if not frames:
+            return pd.DataFrame()
+        keep = [
+            "window", "confidence", "ood", "stability", "calibration",
+            "calibration_risk", "explanation", "risk_score", "risk_label",
+        ]
+        out = pd.concat(frames, ignore_index=True)
+        return out[[c for c in keep if c in out.columns]]
