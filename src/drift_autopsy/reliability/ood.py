@@ -8,15 +8,6 @@ import numpy as np
 from sklearn.ensemble import IsolationForest
 
 
-def _normalize(values: np.ndarray, eps: float = 1e-8) -> np.ndarray:
-    values = np.asarray(values, dtype=float)
-    low = np.min(values) if len(values) else 0.0
-    high = np.max(values) if len(values) else 1.0
-    if high - low < eps:
-        return np.zeros_like(values, dtype=float)
-    return np.clip((values - low) / (high - low + eps), 0.0, 1.0)
-
-
 class OODDetector:
     """
     Generic OOD detector with tabular and embedding-based backends.
@@ -44,6 +35,8 @@ class OODDetector:
         self._iforest: Optional[IsolationForest] = None
         self._distance_p95: float = 1.0
         self._distance_p50: float = 0.0
+        self._iforest_lo: float = 0.0
+        self._iforest_hi: float = 1.0
 
     @staticmethod
     def _to_2d_numeric(x: Any) -> np.ndarray:
@@ -79,18 +72,28 @@ class OODDetector:
         auto_method = "isolation_forest" if self.data_type == "tabular" else "embedding_distance"
         selected_method = auto_method if self.method == "auto" else self.method
 
+        # A per-feature standardised-distance backstop is always fitted: an
+        # isolation forest built on the reference alone under-flags inputs whose
+        # individual features have simply been rescaled, which is exactly the
+        # covariate-shift case the reliability layer is meant to catch.
+        self._ref_mean = np.mean(reference_vectors, axis=0)
+        self._ref_std = np.std(reference_vectors, axis=0) + 1e-8
+        dists = np.linalg.norm((reference_vectors - self._ref_mean) / self._ref_std, axis=1)
+        self._distance_p50 = float(np.percentile(dists, 90)) if len(dists) else 0.0
+        self._distance_p95 = float(np.percentile(dists, 99)) if len(dists) else 1.0
+
         if selected_method == "isolation_forest":
             self._iforest = IsolationForest(
                 contamination=self.contamination,
                 random_state=self.random_state,
             )
             self._iforest.fit(reference_vectors)
-        else:
-            self._ref_mean = np.mean(reference_vectors, axis=0)
-            self._ref_std = np.std(reference_vectors, axis=0) + 1e-8
-            dists = np.linalg.norm((reference_vectors - self._ref_mean) / self._ref_std, axis=1)
-            self._distance_p50 = float(np.percentile(dists, 50)) if len(dists) else 0.0
-            self._distance_p95 = float(np.percentile(dists, 95)) if len(dists) else 1.0
+            ref_risk = -self._iforest.decision_function(reference_vectors)
+            # Map so in-distribution data scores near 0 and only genuine
+            # outliers ramp up: the reference's 90th percentile is the 0 point,
+            # its 99th is the 1 point.
+            self._iforest_lo = float(np.percentile(ref_risk, 90)) if len(ref_risk) else 0.0
+            self._iforest_hi = float(np.percentile(ref_risk, 99)) if len(ref_risk) else 1.0
 
         return self
 
@@ -103,16 +106,25 @@ class OODDetector:
 
         vectors = self._vectorize(x)
 
-        if self._iforest is not None:
-            decision = self._iforest.decision_function(vectors)
-            raw_risk = -decision
-            scores = _normalize(raw_risk)
-            method = "isolation_forest"
-        else:
+        dist_scores = None
+        if self._ref_mean is not None:
             centered = (vectors - self._ref_mean) / self._ref_std
             dist = np.linalg.norm(centered, axis=1)
             denom = max(self._distance_p95 - self._distance_p50, 1e-8)
-            scores = np.clip((dist - self._distance_p50) / denom, 0.0, 1.0)
+            dist_scores = np.clip((dist - self._distance_p50) / denom, 0.0, 1.0)
+
+        if self._iforest is not None:
+            raw_risk = -self._iforest.decision_function(vectors)
+            denom = max(self._iforest_hi - self._iforest_lo, 1e-8)
+            if_scores = np.clip((raw_risk - self._iforest_lo) / denom, 0.0, 1.0)
+            if dist_scores is not None:
+                scores = np.maximum(if_scores, dist_scores)
+                method = "isolation_forest+distance"
+            else:
+                scores = if_scores
+                method = "isolation_forest"
+        else:
+            scores = dist_scores if dist_scores is not None else np.zeros(len(vectors))
             method = "embedding_distance"
 
         return {

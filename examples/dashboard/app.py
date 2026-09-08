@@ -16,6 +16,7 @@ from examples.dashboard.data_loader import DriftResultsLoader
 from examples.dashboard import visualizations as viz
 from examples.dashboard import story
 from examples.dashboard.remediation import render_remediation_dashboard
+from examples.dashboard.injection_benchmark import render_injection_benchmark
 
 # Page configuration
 st.set_page_config(
@@ -581,14 +582,14 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
                             st.image(
                                 first["input_image_path"],
                                 caption=f"Input image | {first['caption']}",
-                                use_container_width=True,
+                                width='stretch',
                             )
                     with col_a_cam:
                         if first["gradcam_path"] and Path(first["gradcam_path"]).exists():
                             st.image(
                                 first["gradcam_path"],
                                 caption=f"Grad-CAM overlay | {first['caption']}",
-                                use_container_width=True,
+                                width='stretch',
                             )
 
                     if len(pair) > 1:
@@ -598,14 +599,14 @@ def render_clear10_dashboard(loader: DriftResultsLoader) -> None:
                                 st.image(
                                     second["input_image_path"],
                                     caption=f"Input image | {second['caption']}",
-                                    use_container_width=True,
+                                    width='stretch',
                                 )
                         with col_b_cam:
                             if second["gradcam_path"] and Path(second["gradcam_path"]).exists():
                                 st.image(
                                     second["gradcam_path"],
                                     caption=f"Grad-CAM overlay | {second['caption']}",
-                                    use_container_width=True,
+                                    width='stretch',
                                 )
 
     st.markdown("---")
@@ -685,7 +686,9 @@ def main():
         st.subheader("Display Options")
         show_raw_data = st.checkbox("Show Raw Data Tables", value=False)
     # Top-tab mode switch
-    folktables_tab, clear10_tab = st.tabs(["Folktables Demo", "CLEAR-10 Demo"])
+    folktables_tab, clear10_tab, benchmark_tab = st.tabs(
+        ["Folktables Demo", "CLEAR-10 Demo", "Injection Benchmark"]
+    )
 
     with folktables_tab:
         if folktables_loader is None:
@@ -703,6 +706,9 @@ def main():
             st.info("Provide a valid CLEAR-10 results file path in the sidebar to view this tab.")
         else:
             render_clear10_dashboard(clear10_loader)
+
+    with benchmark_tab:
+        render_injection_benchmark()
 
     # Footer
     st.markdown("---")

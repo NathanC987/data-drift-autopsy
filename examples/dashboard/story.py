@@ -101,7 +101,8 @@ def folktables_summary(loader) -> str:
     if rem:
         verdicts = {
             s["shift_name"]: s["triage"]["will_retraining_help"]
-            for s in rem.get("settings", []) if "ACS" in s["shift_name"]
+            for s in rem.get("settings", [])
+            if "ACS" in s["shift_name"] and "synthetic" not in s["shift_name"].lower()
         }
         if verdicts and not any(verdicts.values()):
             bits.append(
@@ -350,7 +351,9 @@ def render_remediation_step(scope: str) -> None:
 
     settings = rem.get("settings", [])
     if scope == "acs":
-        settings = [s for s in settings if "ACS" in s["shift_name"]]
+        # the synthetic covariate shift lives in the Injection Benchmark tab now;
+        # this step is about the real ACS shifts only
+        settings = [s for s in settings if "ACS" in s["shift_name"] and "synthetic" not in s["shift_name"].lower()]
     else:
         settings = [s for s in settings if "CLEAR" in s["shift_name"]]
     if not settings:
@@ -402,9 +405,9 @@ def render_remediation_step(scope: str) -> None:
         st.markdown(
             "**Reading:** on the real census shifts every strategy sits near zero - dropping the "
             "KS-localised features is actively harmful because those features carry the decision. "
-            "On the *controlled* covariate shift (a known scaling of two features) the same cheap "
-            "strategies recover most of the gap with no labels, which is how we know the machinery "
-            "is sound and the real shift is simply concept-level."
+            "The *Injection Benchmark* tab shows the same machinery recovering most of the gap with "
+            "no labels on a controlled covariate shift, which is how we know the failure here is "
+            "about the shift (it is concept-level), not the method."
         )
     else:
         st.markdown(

@@ -1,0 +1,17 @@
+\begin{table}[!htbp]
+\centering
+\caption{Drift-injection benchmark at the strongest injected intensity: the pipeline names every injected drift type, the label-free accuracy estimate is optimistic for all four, and the reliability score is informative only when the shift is covariate.}
+\label{tab:injection-benchmark}
+\renewcommand{\arraystretch}{1.2}\setlength{\tabcolsep}{3pt}\scriptsize
+\begin{tabular}{@{}l r r r c c l c@{}}
+\toprule
+injected & true drop & est.\ error & KS loc.\ F1 & audit loc. & rel.\ AUROC & verdict & result \\
+\midrule
+no drift & -0.011 & -0.011 & clean & -- & -- & none & OK \\
+covariate & +0.164 & +0.232 & 1.00 & yes & 0.56 & covariate & OK \\
+prior & +0.043 & +0.016 & -- & -- & 0.47 & prior & OK \\
+concept & +0.248 & +0.248 & 0.00 & yes & 0.43 & concept & OK \\
+label noise & +0.189 & +0.189 & clean & -- & 0.51 & label noise & OK \\
+\bottomrule
+\end{tabular}
+\end{table}

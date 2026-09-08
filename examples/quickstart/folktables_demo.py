@@ -19,6 +19,7 @@ from drift_autopsy.data import FolktablesLoader
 from drift_autopsy.detectors import KSTest, PSI, MMD, CBPE
 from drift_autopsy.localizers import UnivariateLocalizer
 from drift_autopsy.rca import SHAPAnalyzer
+from drift_autopsy.reliability import ReliabilityAnalyzer
 from drift_autopsy.utils import setup_logging
 
 
