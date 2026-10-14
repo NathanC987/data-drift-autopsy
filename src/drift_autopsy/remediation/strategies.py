@@ -1,14 +1,28 @@
-"""Remediation strategies, each driven by the drift diagnosis.
+"""Remediation strategies.
 
-Every strategy returns a :class:`RemediationResult`. The label cost differs:
-``full_retrain``/``feature_drop_retrain``/``importance_weighted_retrain`` and
-``retrain_on_recent`` reuse labels the team already has (reference or delayed);
-``head_refit``/``calibration_only`` need a small slice of fresh production
-labels.
+Label cost differs, and each result reports it:
+
+* ``importance_weighted_retrain`` - reference data only, reweighted toward
+  production (no labels).
+* ``feature_drop_retrain``       - reference (+ delayed windows) without the
+  localised features (no fresh labels).
+* ``retrain_on_recent``          - reference + the most recent delayed-label
+  window (labels the team already receives with a delay).
+* ``full_retrain``               - reference + every delayed-label window.
+* ``label_retrain``              - reference + a fresh labelled production
+  sample of ``n_labels`` rows (buys labels).
+* ``recalibrate``                - isotonic recalibration of the deployed
+  binary model on ``n_labels`` fresh production labels (buys labels).
+
+A strategy that needs data the context lacks (no delayed windows, no
+production labels, a non-binary model for recalibration) raises
+``NotApplicable`` and is skipped, rather than silently returning the deployed
+model.
 """
 
 from __future__ import annotations
 
+import time
 from typing import Optional
 
 import numpy as np
@@ -17,139 +31,121 @@ from sklearn.isotonic import IsotonicRegression
 from drift_autopsy.remediation.base import (
     RemediationContext,
     RemediationResult,
-    accuracy_on,
-    flops_proxy_lr,
-    flops_proxy_rf,
-    timed_fit,
+    fit_model,
+    flops_proxy_forest,
+    grade,
 )
 from drift_autopsy.remediation.importance_weighting import density_ratio_weights
 
 
-def _result(ctx: RemediationContext, name: str, model, seconds: float, n_iter: int,
-            n_rows: int, n_features: int, n_labels: int, **extra) -> RemediationResult:
-    return RemediationResult(
-        strategy=name,
-        shift_name=ctx.shift_name,
-        accuracy_before=ctx.baseline_before,
-        accuracy_after=accuracy_on(model, _select(ctx.holdout_X, extra.get("_keep")), ctx.holdout_y),
-        reference_accuracy=float(ctx.reference_accuracy),
-        wall_clock_seconds=seconds,
-        train_samples=n_rows,
-        n_features_used=n_features,
-        n_production_labels_required=n_labels,
-        fit_flops_proxy=flops_proxy_lr(n_rows, n_features, n_iter) + extra.get("_extra_flops", 0.0),
-        effective_sample_size=extra.get("effective_sample_size"),
-        extra={k: v for k, v in extra.items() if not k.startswith("_")},
-    )
+class NotApplicable(Exception):
+    """The strategy needs data the context does not have."""
 
 
-def _select(X: np.ndarray, keep: Optional[np.ndarray]) -> np.ndarray:
-    return X if keep is None else X[:, keep]
+def importance_weighted_retrain(ctx: RemediationContext) -> RemediationResult:
+    weights, diag = density_ratio_weights(ctx.reference_X, ctx.production_X, random_state=ctx.seed)
+    model, sec, n_iter = fit_model(ctx.model_factory, ctx.reference_X, ctx.reference_y, sample_weight=weights)
+    rf = flops_proxy_forest(diag["n_estimators"] * diag["n_splits"], diag["n_rows_fit"], ctx.reference_X.shape[1])
+    return grade(ctx, "importance_weighted_retrain", model, sec + diag["seconds"], n_iter,
+                 len(ctx.reference_X), ctx.reference_X.shape[1], 0, extra_flops=rf,
+                 domain_classifier_auc=diag["domain_classifier_auc"],
+                 effective_sample_fraction=diag["effective_sample_fraction"])
+
+
+def feature_drop_retrain(ctx: RemediationContext) -> RemediationResult:
+    if not ctx.drifted_features:
+        raise NotApplicable("no localised features to drop")
+    drop = {ctx.feature_names.index(f) for f in ctx.drifted_features}
+    keep = np.array([i for i in range(len(ctx.feature_names)) if i not in drop], dtype=int)
+    if keep.size == 0:
+        raise NotApplicable("every feature is localised")
+    X = np.vstack([ctx.reference_X] + [w[0] for w in ctx.recent_windows])[:, keep]
+    y = np.concatenate([ctx.reference_y] + [w[1] for w in ctx.recent_windows])
+    factory = _column_subset_factory(ctx, keep)
+    model, sec, n_iter = fit_model(factory, X, y)
+    return grade(ctx, "feature_drop_retrain", model, sec, n_iter, len(X), len(keep), 0, keep=keep,
+                 dropped_features=list(ctx.drifted_features))
+
+
+def retrain_on_recent(ctx: RemediationContext) -> RemediationResult:
+    if not ctx.recent_windows:
+        raise NotApplicable("no delayed-label window")
+    X_new, y_new = ctx.recent_windows[-1]
+    X = np.vstack([ctx.reference_X, X_new])
+    y = np.concatenate([ctx.reference_y, y_new])
+    model, sec, n_iter = fit_model(ctx.model_factory, X, y)
+    return grade(ctx, "retrain_on_recent", model, sec, n_iter, len(X), X.shape[1], 0)
 
 
 def full_retrain(ctx: RemediationContext) -> RemediationResult:
-    """Retrain on reference + every recent window with (delayed) labels."""
-    Xs = [ctx.reference_X] + [w[0] for w in ctx.recent_windows]
-    ys = [ctx.reference_y] + [w[1] for w in ctx.recent_windows]
-    X, y = np.vstack(Xs), np.concatenate(ys)
-    model, sec, n_iter = timed_fit(ctx.model_factory(), X, y)
-    return _result(ctx, "full_retrain", model, sec, n_iter, len(X), X.shape[1], 0)
+    if len(ctx.recent_windows) < 2:
+        raise NotApplicable("needs two or more delayed-label windows (else it equals retrain_on_recent)")
+    X = np.vstack([ctx.reference_X] + [w[0] for w in ctx.recent_windows])
+    y = np.concatenate([ctx.reference_y] + [w[1] for w in ctx.recent_windows])
+    model, sec, n_iter = fit_model(ctx.model_factory, X, y)
+    return grade(ctx, "full_retrain", model, sec, n_iter, len(X), X.shape[1], 0,
+                 windows_used=len(ctx.recent_windows))
 
 
-def feature_drop_retrain(ctx: RemediationContext, drop_features=None) -> RemediationResult:
-    """Drop the localised drifted features, then retrain on reference + recent."""
-    drop = list(drop_features) if drop_features is not None else list(ctx.drifted_features)
-    drop_idx = [ctx.feature_names.index(f) for f in drop if f in ctx.feature_names]
-    keep = np.array([i for i in range(len(ctx.feature_names)) if i not in drop_idx], dtype=int)
-
-    Xs = [ctx.reference_X] + [w[0] for w in ctx.recent_windows]
-    ys = [ctx.reference_y] + [w[1] for w in ctx.recent_windows]
-    X, y = np.vstack(Xs)[:, keep], np.concatenate(ys)
-    model, sec, n_iter = timed_fit(ctx.model_factory(), X, y)
-    return _result(
-        ctx, "feature_drop_retrain", model, sec, n_iter, len(X), len(keep), 0,
-        dropped_features=drop, _keep=keep,
-    )
-
-
-def importance_weighted_retrain(ctx: RemediationContext, clip: float = 20.0) -> RemediationResult:
-    """Covariate-shift correction: weighted ERM on reference data, zero prod labels."""
-    weights, diag = density_ratio_weights(ctx.reference_X, ctx.production_X, clip=clip)
-    model, sec, n_iter = timed_fit(
-        ctx.model_factory(), ctx.reference_X, ctx.reference_y, sample_weight=weights
-    )
-    rf_flops = flops_proxy_rf(diag["n_estimators"], len(ctx.reference_X) + len(ctx.production_X),
-                              ctx.reference_X.shape[1])
-    return _result(
-        ctx, "importance_weighted_retrain", model, sec, n_iter,
-        len(ctx.reference_X), ctx.reference_X.shape[1], 0,
-        effective_sample_size=diag["effective_sample_size"],
-        domain_classifier_auc=diag["domain_classifier_auc"],
-        _extra_flops=rf_flops,
-    )
-
-
-def retrain_on_recent(ctx: RemediationContext, window: str = "previous") -> RemediationResult:
-    """Retrain on reference + the most recent window(s). The cheap strategy for streams."""
-    if not ctx.recent_windows:
-        raise ValueError("retrain_on_recent needs ctx.recent_windows")
-    picked = ctx.recent_windows[-1:] if window == "previous" else ctx.recent_windows
-    Xs = [ctx.reference_X] + [w[0] for w in picked]
-    ys = [ctx.reference_y] + [w[1] for w in picked]
-    X, y = np.vstack(Xs), np.concatenate(ys)
-    model, sec, n_iter = timed_fit(ctx.model_factory(), X, y)
-    return _result(
-        ctx, f"retrain_on_recent[{window}]", model, sec, n_iter, len(X), X.shape[1], 0,
-        windows_used=len(picked),
-    )
-
-
-def head_refit(ctx: RemediationContext, n_recent_labels: int = 2000, seed: int = 42) -> RemediationResult:
-    """Refit the model on reference + a small fresh slice of production labels."""
+def label_retrain(ctx: RemediationContext, n_labels: int = 2000) -> RemediationResult:
     if ctx.production_y is None:
-        raise ValueError("head_refit needs ctx.production_y")
-    rng = np.random.default_rng(seed)
-    n = min(n_recent_labels, len(ctx.production_X))
-    idx = rng.choice(len(ctx.production_X), n, replace=False)
+        raise NotApplicable("no production labels")
+    idx = _label_sample(ctx, n_labels)
     X = np.vstack([ctx.reference_X, ctx.production_X[idx]])
     y = np.concatenate([ctx.reference_y, ctx.production_y[idx]])
-    model, sec, n_iter = timed_fit(ctx.model_factory(), X, y)
-    return _result(ctx, "head_refit", model, sec, n_iter, len(X), X.shape[1], n)
+    model, sec, n_iter = fit_model(ctx.model_factory, X, y)
+    return grade(ctx, "label_retrain", model, sec, n_iter, len(X), X.shape[1], len(idx))
 
 
-def calibration_only(ctx: RemediationContext, n_recent_labels: int = 2000, seed: int = 42) -> RemediationResult:
-    """Isotonic recalibration of the deployed model's score on a small labelled slice.
-
-    For a binary linear model this barely moves argmax accuracy; it is reported
-    to show that cheap label-free-ish fixes recover calibration, not accuracy.
-    """
+def recalibrate(ctx: RemediationContext, n_labels: int = 2000) -> RemediationResult:
     if ctx.production_y is None:
-        raise ValueError("calibration_only needs ctx.production_y")
-    rng = np.random.default_rng(seed)
-    n = min(n_recent_labels, len(ctx.production_X))
-    idx = rng.choice(len(ctx.production_X), n, replace=False)
+        raise NotApplicable("no production labels")
+    if len(getattr(ctx.base_model, "classes_", [])) != 2:
+        raise NotApplicable("isotonic recalibration here is for binary models")
+    idx = _label_sample(ctx, n_labels)
+    scores = ctx.base_model.predict_proba(ctx.production_X[idx])[:, 1]
+    start = time.perf_counter()
+    iso = IsotonicRegression(out_of_bounds="clip").fit(scores, ctx.production_y[idx])
+    seconds = time.perf_counter() - start
+    model = _Recalibrated(ctx.base_model, iso)
+    return grade(ctx, "recalibrate", model, seconds, 1, len(idx), 1, len(idx))
 
-    import time as _t
 
-    scores_cal = ctx.base_model.predict_proba(ctx.production_X[idx])[:, 1]
-    start = _t.perf_counter()
-    iso = IsotonicRegression(out_of_bounds="clip").fit(scores_cal, ctx.production_y[idx])
-    seconds = _t.perf_counter() - start
+# --------------------------------------------------------------------------- #
 
-    scores_hold = ctx.base_model.predict_proba(ctx.holdout_X)[:, 1]
-    preds = (iso.predict(scores_hold) >= 0.5).astype(int)
-    after = float(np.mean(preds == ctx.holdout_y))
+def _label_sample(ctx: RemediationContext, n_labels: int) -> np.ndarray:
+    rng = np.random.default_rng(ctx.seed)
+    return rng.choice(len(ctx.production_X), min(n_labels, len(ctx.production_X)), replace=False)
 
-    return RemediationResult(
-        strategy="calibration_only",
-        shift_name=ctx.shift_name,
-        accuracy_before=ctx.baseline_before,
-        accuracy_after=after,
-        reference_accuracy=float(ctx.reference_accuracy),
-        wall_clock_seconds=seconds,
-        train_samples=n,
-        n_features_used=1,
-        n_production_labels_required=n,
-        fit_flops_proxy=float(n),
-        extra={"note": "recovers calibration, not accuracy"},
-    )
+
+class _Recalibrated:
+    """Deployed binary model with an isotonic map on its positive-class score."""
+
+    def __init__(self, base, iso):
+        self.base, self.iso = base, iso
+        self.classes_ = base.classes_
+
+    def predict(self, X):
+        p = self.iso.predict(self.base.predict_proba(X)[:, 1])
+        return np.where(p >= 0.5, self.classes_[1], self.classes_[0])
+
+
+def _column_subset_factory(ctx: RemediationContext, keep: np.ndarray):
+    """Factory for a model on a column subset. Uses ``ctx.model_factory`` when it
+    accepts a ``keep_columns`` argument, else the factory as is."""
+    def factory():
+        try:
+            return ctx.model_factory(keep_columns=keep)
+        except TypeError:
+            return ctx.model_factory()
+    return factory
+
+
+STRATEGIES = {
+    "importance_weighted_retrain": importance_weighted_retrain,
+    "feature_drop_retrain": feature_drop_retrain,
+    "retrain_on_recent": retrain_on_recent,
+    "full_retrain": full_retrain,
+    "label_retrain": label_retrain,
+    "recalibrate": recalibrate,
+}

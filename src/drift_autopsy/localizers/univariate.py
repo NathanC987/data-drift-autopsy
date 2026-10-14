@@ -10,6 +10,7 @@ from drift_autopsy.core.localizer import BaseDriftLocalizer
 from drift_autopsy.core.dataset import Dataset
 from drift_autopsy.core.result import DetectionResult, LocalizationResult, FeatureDrift, DriftSeverity
 from drift_autopsy.registry import LocalizerRegistry
+from drift_autopsy.stats import chi2_homogeneity, reject, severity_from_p_value
 
 logger = logging.getLogger(__name__)
 
@@ -19,14 +20,16 @@ class UnivariateLocalizer(BaseDriftLocalizer):
     """
     Univariate drift localization using per-feature statistical tests.
     
-    Runs statistical tests (KS test for continuous, chi-square for categorical)
-    on each feature individually to identify which features are drifting.
+    Runs a two-sample KS test on each numeric (continuous or ordinal) feature
+    and a two-sample chi-square test of homogeneity on each nominal feature
+    (``Dataset.categorical_features``), then controls the family-wise error
+    rate across features. Feature scores are effect sizes in [0, 1]: the KS
+    statistic or Cramer's V.
     
     Args:
         threshold: P-value threshold for feature-level drift (default: 0.05)
         correction: Multiple testing correction ("bonferroni", "holm", or None)
         top_k: Return only top k drifted features (default: None = all)
-        min_samples_categorical: Minimum samples for categorical test (default: 5)
     """
     
     def __init__(
@@ -34,13 +37,11 @@ class UnivariateLocalizer(BaseDriftLocalizer):
         threshold: float = 0.05,
         correction: Optional[str] = "bonferroni",
         top_k: Optional[int] = None,
-        min_samples_categorical: int = 5,
     ):
         super().__init__(name="univariate")
         self.threshold = threshold
         self.correction = correction
         self.top_k = top_k
-        self.min_samples_categorical = min_samples_categorical
     
     def _test_numeric_feature(
         self,
@@ -75,51 +76,34 @@ class UnivariateLocalizer(BaseDriftLocalizer):
         feature_name: str,
     ) -> tuple:
         """
-        Test categorical feature using chi-square test.
+        Test a nominal feature with a two-sample chi-square test of homogeneity.
+
+        Categories with an expected count below five are pooled (Cochran's rule).
         
+        The returned effect size is Cramer's V, which lies in [0, 1] like the
+        KS statistic used for numeric features, so feature scores are comparable.
+        The chi-square statistic itself is kept in the distribution info.
+
         Returns:
-            (statistic, p_value, distribution_info)
+            (cramers_v, p_value, distribution_info)
         """
-        # Get value counts
-        ref_counts = ref_values.value_counts()
-        test_counts = test_values.value_counts()
-        
-        # Align categories
-        all_categories = sorted(set(ref_counts.index) | set(test_counts.index))
-        
-        ref_counts_aligned = np.array([ref_counts.get(cat, 0) for cat in all_categories])
-        test_counts_aligned = np.array([test_counts.get(cat, 0) for cat in all_categories])
-        
-        # Filter categories with minimum samples
-        valid_mask = (ref_counts_aligned >= self.min_samples_categorical) | \
-                     (test_counts_aligned >= self.min_samples_categorical)
-        
-        if valid_mask.sum() < 2:
-            # Not enough categories for test
-            return 0.0, 1.0, {"message": "Insufficient categories"}
-        
-        ref_counts_valid = ref_counts_aligned[valid_mask]
-        test_counts_valid = test_counts_aligned[valid_mask]
-        
-        # Normalize to get expected proportions
-        ref_proportions = ref_counts_valid / ref_counts_valid.sum()
-        expected_counts = ref_proportions * test_counts_valid.sum()
-        
-        # Chi-square test
-        try:
-            chi2_stat, p_value = stats.chisquare(test_counts_valid, expected_counts)
-            
-            dist_info = {
-                "n_categories": len(all_categories),
-                "n_tested_categories": valid_mask.sum(),
-                "ref_mode": ref_values.mode()[0] if len(ref_values.mode()) > 0 else None,
-                "test_mode": test_values.mode()[0] if len(test_values.mode()) > 0 else None,
-            }
-            
-            return float(chi2_stat), float(p_value), dist_info
-        except Exception as e:
-            logger.warning(f"Chi-square test failed for '{feature_name}': {e}")
-            return 0.0, 1.0, {"error": str(e)}
+        result = chi2_homogeneity(ref_values.to_numpy(), test_values.to_numpy())
+        seen = set(ref_values.unique().tolist())
+        unseen_mask = ~test_values.isin(seen)
+        ref_mode = ref_values.mode()
+        test_mode = test_values.mode()
+        dist_info = {
+            "n_categories": int(result["n_categories"]),
+            "n_tested_cells": int(result["n_cells"]),
+            "n_categories_pooled": int(result["n_pooled"]),
+            "dof": int(result["dof"]),
+            "chi2_statistic": float(result["statistic"]),
+            "unseen_category_share": float(unseen_mask.mean()) if len(test_values) else 0.0,
+            "n_unseen_categories": int(test_values[unseen_mask].nunique()),
+            "ref_mode": ref_mode.iloc[0] if len(ref_mode) else None,
+            "test_mode": test_mode.iloc[0] if len(test_mode) else None,
+        }
+        return float(result["cramers_v"]), float(result["p_value"]), dist_info
     
     def localize(
         self,
@@ -145,8 +129,15 @@ class UnivariateLocalizer(BaseDriftLocalizer):
         
         feature_drifts = []
         
-        # Test numeric features
-        numeric_cols = ref_df.select_dtypes(include=[np.number]).columns
+        categorical = set(reference_data.categorical_features or []) | set(
+            ref_df.select_dtypes(include=["object", "category", "bool"]).columns
+        )
+        numeric_cols = [
+            c for c in ref_df.select_dtypes(include=[np.number]).columns if c not in categorical
+        ]
+        categorical_cols = [c for c in reference_data.feature_names if c in categorical]
+
+        # Test numeric (continuous or ordinal) features with KS
         
         for col in numeric_cols:
             if col not in test_df.columns:
@@ -172,9 +163,7 @@ class UnivariateLocalizer(BaseDriftLocalizer):
                 "dist_info": dist_info,
             })
         
-        # Test categorical features
-        categorical_cols = ref_df.select_dtypes(include=['object', 'category']).columns
-        
+        # Test nominal features with the chi-square homogeneity test
         for col in categorical_cols:
             if col not in test_df.columns:
                 continue
@@ -205,43 +194,29 @@ class UnivariateLocalizer(BaseDriftLocalizer):
                 feature_drifts=[],
             )
         
-        # Extract p-values
         p_values = np.array([fd["p_value"] for fd in feature_drifts])
-        
-        # Adjust threshold
-        adjusted_threshold = self.threshold
+        m = len(p_values)
+        rejected = reject(p_values, self.threshold, self.correction)
+
+        # Threshold each feature was compared against: alpha/m (Bonferroni),
+        # alpha/(m - rank) (Holm step-down) or alpha (no correction).
         if self.correction == "bonferroni":
-            adjusted_threshold = self.threshold / len(p_values)
-            logger.debug(f"Bonferroni correction: adjusted threshold = {adjusted_threshold:.6f}")
+            feature_thresholds = np.full(m, self.threshold / m)
         elif self.correction == "holm":
-            # Sort p-values and apply Holm correction
-            sorted_indices = np.argsort(p_values)
-            adjusted_thresholds = self.threshold / (len(p_values) - np.arange(len(p_values)))
+            ranks = np.empty(m, dtype=int)
+            ranks[np.argsort(p_values, kind="stable")] = np.arange(m)
+            feature_thresholds = self.threshold / (m - ranks)
+        else:
+            feature_thresholds = np.full(m, self.threshold)
+        adjusted_threshold = float(feature_thresholds.min())
         
-        # Create FeatureDrift objects
         feature_drift_objects = []
-        
         for i, fd in enumerate(feature_drifts):
-            if self.correction == "holm":
-                idx_in_sorted = np.where(sorted_indices == i)[0][0]
-                threshold_for_feature = adjusted_thresholds[idx_in_sorted]
-            else:
-                threshold_for_feature = adjusted_threshold
-            
-            drift_detected = fd["p_value"] < threshold_for_feature
-            
-            # Determine severity
-            if fd["p_value"] >= threshold_for_feature:
-                severity = DriftSeverity.NONE
-            elif fd["p_value"] >= threshold_for_feature / 2:
-                severity = DriftSeverity.LOW
-            elif fd["p_value"] >= threshold_for_feature / 10:
-                severity = DriftSeverity.MEDIUM
-            elif fd["p_value"] >= threshold_for_feature / 100:
-                severity = DriftSeverity.HIGH
-            else:
-                severity = DriftSeverity.CRITICAL
-            
+            drift_detected = bool(rejected[i])
+            severity = (
+                severity_from_p_value(fd["p_value"], float(feature_thresholds[i]))
+                if drift_detected else DriftSeverity.NONE
+            )
             feature_drift_objects.append(
                 FeatureDrift(
                     feature_name=fd["name"],
@@ -249,7 +224,7 @@ class UnivariateLocalizer(BaseDriftLocalizer):
                     score=fd["statistic"],
                     p_value=fd["p_value"],
                     severity=severity,
-                    distribution_shift=fd["dist_info"],
+                    distribution_shift={**fd["dist_info"], "test": fd["type"]},
                 )
             )
         

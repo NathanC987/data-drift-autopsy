@@ -71,3 +71,28 @@ def test_concept_probe_ranking_shapes():
     assert {"concept", "delta", "ref_mass", "prod_mass", "alignment"} <= ranked[0].keys()
     assert ranked[0]["delta"] >= ranked[-1]["delta"]
     assert abs(sum(r["delta"] for r in ranked)) < 1e-6  # mass shift sums to zero
+
+
+def test_concept_shift_intervals_flag_planted_shift_only():
+    from drift_autopsy.rca import concept_probe as cp
+
+    rng = np.random.default_rng(1)
+    concept_matrix = np.eye(4, 8)                       # concept i = axis i
+    names = ["a", "b", "c", "d"]
+    ref = cp._l2(rng.normal(size=(400, 8)) * 0.1 + np.r_[1, 1, 1, 1, 0, 0, 0, 0])
+    prod = cp._l2(rng.normal(size=(400, 8)) * 0.1 + np.r_[2, 1, 1, 1, 0, 0, 0, 0])   # toward "a"
+    iv = cp.concept_shift_intervals(ref, prod, concept_matrix, names, temperature=0.05, n_bootstrap=500)
+    assert iv["a"]["significant"] and iv["a"]["delta"] > 0
+
+
+def test_metadata_validation_counts_each_tag_once():
+    from drift_autopsy.rca import concept_probe as cp
+
+    ranking = [{"concept": c, "delta": d} for c, d in
+               [("x1", 0.5), ("x2", 0.3), ("y", 0.1), ("z", -0.2), ("w", -0.4)]]
+    mapping = {"x1": "X", "x2": "X", "y": "Y", "z": "Z", "w": "W"}
+    shifts = {"X": 0.4, "Y": 0.2, "Z": -0.1, "W": -0.3}
+    out = cp.validate_against_metadata(ranking, shifts, concept_to_tag=mapping, n_permutations=2000)
+    assert out["n_tags"] == 4                 # X counted once, from the mean of x1 and x2
+    assert out["spearman_rho"] == 1.0
+    assert 0 < out["p_value"] <= 0.1          # 4 tags: the exact two-sided p is 2/24

@@ -9,6 +9,8 @@ from drift_autopsy.core.detector import BaseDriftDetector
 from drift_autopsy.core.dataset import Dataset
 from drift_autopsy.core.result import DetectionResult, DriftSeverity
 from drift_autopsy.registry import DetectorRegistry
+from drift_autopsy.stats import adjusted_threshold as adjusted_threshold_for
+from drift_autopsy.stats import reject, severity_from_p_value
 
 logger = logging.getLogger(__name__)
 
@@ -26,18 +28,22 @@ class KSTest(BaseDriftDetector):
         threshold: P-value threshold for detecting drift (default: 0.05)
         correction: Multiple testing correction method
             - None: No correction
-            - "bonferroni": Bonferroni correction
-            - "holm": Holm-Bonferroni correction
+            - "bonferroni": Bonferroni correction (default)
+            - "holm": Holm-Bonferroni step-down correction
         aggregate_method: How to aggregate scores across features
-            - "max": Use maximum p-value deviation
-            - "mean": Use mean statistic
-            - "vote": Proportion of features showing drift
+            - "max": Largest per-feature KS statistic
+            - "mean": Mean KS statistic
+            - "vote": Proportion of features rejected under the correction
+
+    Nominal features (``Dataset.categorical_features``) are skipped: their codes
+    have no order, so a KS statistic on them is not meaningful. Use PSI or the
+    univariate localizer's chi-square test for those.
     """
     
     def __init__(
         self,
         threshold: float = 0.05,
-        correction: Optional[str] = None,
+        correction: Optional[str] = "bonferroni",
         aggregate_method: str = "max",
     ):
         super().__init__(name="ks_test")
@@ -71,10 +77,15 @@ class KSTest(BaseDriftDetector):
         
         logger.info(f"Running KS test on {test_data.n_samples} test samples")
         
-        # Get numeric features only
+        # KS compares ordered distributions, so it is applied to numeric
+        # (continuous or ordinal) features only; nominal codes have no order.
         ref_df = self._reference_data.to_pandas()
         test_df = test_data.to_pandas()
-        numeric_cols = ref_df.select_dtypes(include=[np.number]).columns.tolist()
+        categorical = set(self._reference_data.categorical_features or [])
+        numeric_cols = [
+            c for c in ref_df.select_dtypes(include=[np.number]).columns
+            if c not in categorical
+        ]
         
         if len(numeric_cols) == 0:
             logger.warning("No numeric features found for KS test")
@@ -119,48 +130,22 @@ class KSTest(BaseDriftDetector):
                 threshold=self.threshold,
             )
         
-        # Apply multiple testing correction if specified
-        adjusted_threshold = self.threshold
-        if self.correction == "bonferroni":
-            adjusted_threshold = self.threshold / len(p_values)
-            logger.debug(f"Bonferroni correction: threshold={adjusted_threshold:.6f}")
-        elif self.correction == "holm":
-            # Simplified Holm correction - use minimum p-value with strictest threshold
-            sorted_p = np.sort(p_values)
-            adjusted_threshold = self.threshold / len(p_values)
+        # Global decision: reject if the smallest p-value clears the corrected
+        # threshold (Bonferroni and Holm coincide for this first step).
+        adjusted_threshold = adjusted_threshold_for(self.threshold, len(p_values), self.correction)
+        rejected = reject(p_values, self.threshold, self.correction)
         
         # Aggregate results
-        if self.aggregate_method == "max":
-            # Use maximum statistic (most drifted feature)
-            aggregated_score = float(np.max(statistics))
-            aggregated_p = float(np.min(p_values))
-        elif self.aggregate_method == "mean":
-            # Use mean statistic
+        if self.aggregate_method == "mean":
             aggregated_score = float(np.mean(statistics))
-            aggregated_p = float(np.mean(p_values))
         elif self.aggregate_method == "vote":
-            # Proportion of features showing drift
-            drift_count = sum(p < adjusted_threshold for p in p_values)
-            aggregated_score = drift_count / len(p_values)
-            aggregated_p = float(np.min(p_values))  # Most significant
+            aggregated_score = float(np.mean(rejected))
         else:
             aggregated_score = float(np.max(statistics))
-            aggregated_p = float(np.min(p_values))
+        aggregated_p = float(np.min(p_values))
         
-        # Determine drift
         drift_detected = aggregated_p < adjusted_threshold
-        
-        # Determine severity based on p-value
-        if aggregated_p > adjusted_threshold:
-            severity = DriftSeverity.NONE
-        elif aggregated_p > adjusted_threshold / 2:
-            severity = DriftSeverity.LOW
-        elif aggregated_p > adjusted_threshold / 10:
-            severity = DriftSeverity.MEDIUM
-        elif aggregated_p > adjusted_threshold / 100:
-            severity = DriftSeverity.HIGH
-        else:
-            severity = DriftSeverity.CRITICAL
+        severity = severity_from_p_value(aggregated_p, adjusted_threshold)
         
         logger.info(
             f"KS Test result: drift={drift_detected}, "
@@ -181,5 +166,6 @@ class KSTest(BaseDriftDetector):
                 "feature_results": feature_results,
                 "correction": self.correction,
                 "aggregate_method": self.aggregate_method,
+                "n_features_rejected": int(np.sum(rejected)),
             }
         )

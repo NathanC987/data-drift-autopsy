@@ -6,7 +6,8 @@ from drift_autopsy.rca.concept_probe import (
     build_concept_matrix,
     probe_window,
     rank_concepts,
-    select_dim_exemplars,
+    concept_exemplars,
+    concept_shift_intervals,
     validate_against_metadata,
 )
 
@@ -16,6 +17,7 @@ __all__ = [
     "build_concept_matrix",
     "probe_window",
     "rank_concepts",
-    "select_dim_exemplars",
+    "concept_exemplars",
+    "concept_shift_intervals",
     "validate_against_metadata",
 ]

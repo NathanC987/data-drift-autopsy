@@ -1,4 +1,4 @@
-"""Unit tests for the controlled drift-injection benchmark."""
+"""Tests for the drift injectors, the test-based diagnosis and the benchmark aggregation."""
 
 from __future__ import annotations
 
@@ -6,34 +6,40 @@ import numpy as np
 import pandas as pd
 import pytest
 from sklearn.linear_model import LogisticRegression
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
 
 from drift_autopsy.benchmark import (
-    classify_drift_type,
-    estimator_error,
     inject_concept,
     inject_covariate,
     inject_label_noise,
     inject_none,
     inject_prior,
-    label_free_accuracy_estimate,
-    labelled_audit,
-    localisation_prf,
 )
-from drift_autopsy.benchmark.evaluate import BenchmarkData, run_benchmark
-from drift_autopsy.benchmark.spec import InjectedDriftSpec
+from drift_autopsy.benchmark.metrics import aggregate
+from drift_autopsy.core.dataset import Dataset
+from drift_autopsy.diagnosis import audit_diagnosis, bbse_weights, combine, label_free_diagnosis
 
 
 @pytest.fixture
 def toy():
     rng = np.random.default_rng(0)
-    n = 4000
-    cols = [f"f{i}" for i in range(6)]
-    X = pd.DataFrame(rng.normal(size=(n, 6)), columns=cols)
-    logits = 0.9 * X["f0"] - 0.7 * X["f2"] + 0.4 * X["f4"]
-    y = (logits + rng.normal(scale=0.5, size=n) > 0).astype(int).to_numpy()
+    n = 12000
+    cols = [f"f{i}" for i in range(5)]
+    X = pd.DataFrame(rng.normal(size=(n, 5)), columns=cols)
+    X["f4"] = rng.choice([1.0, 2.0, 3.0], size=n)          # a nominal code
+    logits = 1.2 * X["f0"] - 0.9 * X["f2"] + 0.5 * (X["f4"] == 3.0)
+    y = (rng.random(n) < 1 / (1 + np.exp(-logits))).astype(int)
     return X, y, cols
+
+
+def _split(X, y):
+    return (X.iloc[:6000], y[:6000]), (X.iloc[6000:9000].reset_index(drop=True), y[6000:9000]), \
+           (X.iloc[9000:].reset_index(drop=True), y[9000:])
+
+
+def _ds(model, X, y=None):
+    proba = model.predict_proba(X.to_numpy())
+    return Dataset(data=X.reset_index(drop=True), target=y, predictions=proba.argmax(1),
+                   prediction_probabilities=proba, categorical_features=["f4"])
 
 
 # --------------------------------------------------------------------------- #
@@ -44,194 +50,118 @@ def test_inject_none_is_identity(toy):
     r = inject_none(X, y)
     pd.testing.assert_frame_equal(r.X, X.reset_index(drop=True))
     assert np.array_equal(r.y, y)
-    assert r.spec.drift_type == "none"
     assert not r.spec.px_changed and not r.spec.pygivenx_changed
 
 
 def test_inject_covariate_touches_only_target_features(toy):
-    X, y, cols = toy
-    r = inject_covariate(X, y, ["f0", "f1"], scale=2.0, offset=1.5, intensity_label="strong",
-                         fraction=1.0)
-    # untouched features are bit-identical
-    for f in ["f2", "f3", "f4", "f5"]:
+    X, y, _ = toy
+    r = inject_covariate(X, y, ["f0", "f1"], scale=2.0, offset=1.5, intensity_label="strong", fraction=1.0)
+    for f in ["f2", "f3", "f4"]:
         assert np.allclose(r.X[f].to_numpy(), X[f].to_numpy())
-    # target features moved in spread
     assert r.X["f0"].std() > X["f0"].std() * 1.5
-    assert np.array_equal(r.y, y)                       # labels untouched
-    assert r.spec.px_changed and not r.spec.pygivenx_changed
-    assert set(r.spec.affected_features) == {"f0", "f1"}
+    assert np.array_equal(r.y, y)
+    assert r.spec.px_changed and r.spec.pxgiveny_changed and not r.spec.pygivenx_changed
 
 
-def test_inject_covariate_fraction_limits_affected_rows(toy):
-    X, y, cols = toy
-    r = inject_covariate(X, y, ["f0"], scale=3.0, offset=0.0, intensity_label="m", fraction=0.5,
-                         seed=1)
-    changed = ~np.isclose(r.X["f0"].to_numpy(), X["f0"].to_numpy())
-    assert 0.4 < changed.mean() < 0.6
-
-
-def test_inject_prior_hits_target_rate_and_preserves_conditionals(toy):
-    X, y, cols = toy
+def test_inject_prior_preserves_conditionals_but_moves_px(toy):
+    X, y, _ = toy
     r = inject_prior(X, y, target_positive_rate=0.65, intensity_label="strong", seed=0)
     assert abs(r.y.mean() - 0.65) < 0.03
-    # P(X|Y) preserved: class-conditional means are a subsample of the originals
     for cls in (0, 1):
-        orig = X.to_numpy()[y == cls].mean(axis=0)
-        new = r.X.to_numpy()[r.y == cls].mean(axis=0)
-        assert np.allclose(orig, new, atol=0.15)
-    assert not r.spec.px_changed and not r.spec.pygivenx_changed
+        assert np.allclose(X.to_numpy()[y == cls].mean(0), r.X.to_numpy()[r.y == cls].mean(0), atol=0.1)
+    assert r.spec.px_changed and not r.spec.pxgiveny_changed and not r.spec.pygivenx_changed
 
 
 def test_inject_concept_freezes_px_and_flips_only_the_region(toy):
-    X, y, cols = toy
+    X, y, _ = toy
     r = inject_concept(X, y, region_feature="f0", region_fraction=0.3, intensity_label="m", seed=0)
-    pd.testing.assert_frame_equal(r.X, X.reset_index(drop=True))   # P(X) identical
+    pd.testing.assert_frame_equal(r.X, X.reset_index(drop=True))
     flipped = r.y != y
     assert abs(flipped.mean() - 0.3) < 0.02
-    # every flipped row is in the top of f0
     assert X["f0"].to_numpy()[flipped].min() >= np.quantile(X["f0"], 0.65)
     assert r.spec.pygivenx_changed and not r.spec.px_changed
-    assert r.spec.affected_features == ["f0"]
 
 
 def test_inject_label_noise_freezes_px_and_flips_about_rate(toy):
-    X, y, cols = toy
+    X, y, _ = toy
     r = inject_label_noise(X, y, rate=0.2, intensity_label="strong", seed=0)
     pd.testing.assert_frame_equal(r.X, X.reset_index(drop=True))
     assert abs((r.y != y).mean() - 0.2) < 0.03
-    assert r.spec.pygivenx_changed and not r.spec.affected_features
 
 
 # --------------------------------------------------------------------------- #
-# grading helpers
+# diagnosis
 
-def test_localisation_prf_applicable_and_not():
-    hit = localisation_prf(["AGEP", "WKHP"], ["AGEP", "WKHP"])
-    assert hit["precision"] == 1.0 and hit["recall"] == 1.0 and hit["f1"] == 1.0
-
-    partial = localisation_prf(["AGEP", "SEX"], ["AGEP", "WKHP"])
-    assert partial["precision"] == 0.5 and partial["recall"] == 0.5
-
-    na = localisation_prf(["SCHL"], [], audit_feature=None)
-    assert na["applicable"] is False and na["clean"] is False
-    clean = localisation_prf([], [])
-    assert clean["clean"] is True
+def test_bbse_recovers_a_prior_shift(toy):
+    X, y, _ = toy
+    (Xt, yt), (Xc, yc), (Xp, yp) = _split(X, y)
+    model = LogisticRegression().fit(Xt.to_numpy(), yt)
+    shifted = inject_prior(Xp, yp, target_positive_rate=0.75, intensity_label="s", seed=1)
+    est = bbse_weights(model.predict(Xc.to_numpy()), yc, model.predict(shifted.X.to_numpy()), [0, 1])
+    assert abs(est["estimated_production_prior"][1] - shifted.y.mean()) < 0.05
 
 
-def test_estimator_error_flags_optimism():
-    spec = InjectedDriftSpec(drift_type="covariate", intensity_label="s",
-                             reference_accuracy=0.80, production_accuracy=0.60)
-    e = estimator_error(0.78, spec)
-    assert e["optimistic"] is True
-    assert e["true_drop"] == pytest.approx(0.20)
-    assert e["implied_drop"] == pytest.approx(0.02)
-
-
-def test_label_free_accuracy_estimate_is_bounded_and_sane():
-    rng = np.random.default_rng(0)
-    conf = rng.uniform(0.5, 1.0, size=2000)
-    correct = (rng.uniform(size=2000) < conf).astype(float)
-    est = label_free_accuracy_estimate(conf, correct, conf)
-    assert 0.0 <= est <= 1.0
-    assert abs(est - correct.mean()) < 0.05
-
-
-def test_labelled_audit_localises_a_planted_region(toy):
-    X, y, cols = toy
-    model = Pipeline([("s", StandardScaler()),
-                      ("c", LogisticRegression(max_iter=500, random_state=0))]).fit(X.to_numpy(), y)
-    inj = inject_concept(X, y, "f0", region_fraction=0.4, intensity_label="s", seed=0)
-    audit = labelled_audit(model, inj.X, inj.y, cols, reference_accuracy=0.80,
-                           reference_positive_rate=float(y.mean()), n_labels=1500, seed=0)
-    assert audit["measured_drop"] > 0.1
-    assert audit["structured_feature"] == "f0"
-    assert audit["structure_score"] > 0.15
+@pytest.mark.parametrize("kind,expected", [("none", "none"), ("covariate", "covariate"), ("prior", "prior"),
+                                           ("concept", "concept"), ("label_noise", "label_noise")])
+def test_diagnosis_names_each_injected_type(toy, kind, expected):
+    X, y, _ = toy
+    (Xt, yt), (Xc, yc), (Xp, yp) = _split(X, y)
+    model = LogisticRegression().fit(Xt.to_numpy(), yt)
+    inj = {
+        "none": lambda: inject_none(Xp, yp),
+        "covariate": lambda: inject_covariate(Xp, yp, ["f1", "f3"], 2.0, 1.5, "s", fraction=0.6, seed=2),
+        "prior": lambda: inject_prior(Xp, yp, 0.75, "s", seed=2),
+        "concept": lambda: inject_concept(Xp, yp, "f2", 0.3, "s", seed=2),
+        "label_noise": lambda: inject_label_noise(Xp, yp, 0.25, "s", seed=2),
+    }[kind]()
+    ref = _ds(model, Xc, yc)
+    lf = label_free_diagnosis(ref, _ds(model, inj.X))
+    idx = np.random.default_rng(3).choice(len(inj.X), 800, replace=False)
+    au = audit_diagnosis(model, ref, inj.X.iloc[idx], inj.y[idx])
+    d = combine(lf, au)
+    assert d.drift_type == expected
+    if kind == "covariate":
+        assert set(d.localized_features) <= {"f1", "f3"} and d.localized_features
+    if kind == "concept":
+        assert d.localized_features == ["f2"]
 
 
 # --------------------------------------------------------------------------- #
-# classifier
+# aggregation
 
-def _sig(**over):
-    base = dict(
-        input_detector_max_severity=0, input_drift_detected=False, n_features_localised=0,
-        features_localised=[], max_localised_ks_statistic=0.0, cbpe_detected=False,
-        cbpe_severity_rank=0, cbpe_confidence_shift=0.0, domain_classifier_auc=0.50,
-        predicted_prior_shift=0.0, estimator_implied_drop=0.0, reliability_mean_ood=0.0,
-        reliability_mean_calibration_risk=0.25, reliability_suspicious_pct=5.0,
-        reliability_high_risk_pct=2.0, iw_probe_recovery=0.0, feature_drop_sensitivity=0.0,
-        risk_region_concentration=0.0, risk_region_feature=None, label_free_stack_silent=True,
-    )
-    base.update(over)
-    return base
-
-
-def test_classify_control():
-    v = classify_drift_type(_sig(), audit={"measured_drop": 0.0, "prior_shift": 0.0,
-                                            "structure_score": 0.0})
-    assert v["predicted_type"] == "none"
+def _run(t, pred, seed, helps=False, escalate=False, err=0.01):
+    return {
+        "state": "S", "seed": seed, "drift_type": t, "intensity_label": "mild", "intensity_order": 0,
+        "diagnosis": {"drift_type": pred, "stage": "label-free"}, "diagnosis_correct": pred == t,
+        "diagnosis_by_audit_size": {"200": pred}, "estimator": {"error": err},
+        "reliability": {"auroc_risk": 0.7, "auroc_confidence_only": 0.69, "auroc_ood": 0.5,
+                        "auroc_instability": 0.6},
+        "triage": {"will_retraining_help": escalate,
+                   "probes": [{"probe": "importance_weighted_retrain", "difference": 0.01}]},
+        "triage_truth": {"retraining_helps": helps, "actual_gain": 0.02 if helps else 0.0},
+        "localization": None, "detection": {"KS Test": {"drift_detected": False}},
+        "label_free": {"min_input_p_value": 0.5}, "true_accuracy_drop": 0.0, "audit": {"audit_accuracy": 0.8},
+    }
 
 
-def test_classify_covariate_label_free():
-    v = classify_drift_type(_sig(
-        input_detector_max_severity=4, input_drift_detected=True, n_features_localised=2,
-        features_localised=["AGEP", "WKHP"], max_localised_ks_statistic=0.5,
-        domain_classifier_auc=0.95, iw_probe_recovery=0.5, label_free_stack_silent=False,
-    ))
-    assert v["predicted_type"] == "covariate" and v["stage"] == "label-free"
+def test_aggregate_counts_and_intervals():
+    runs = [_run("none", "none", 0), _run("none", "covariate", 1), _run("covariate", "covariate", 0, True, True)]
+    s = aggregate(runs)
+    assert s["type_identification"]["overall"]["k"] == 2 and s["type_identification"]["overall"]["n"] == 3
+    lo, hi = s["type_identification"]["per_type"]["none"]["ci"]
+    assert lo < 0.5 < hi
+    assert s["triage"]["confusion"] == {"tp": 1, "tn": 2, "fp": 0, "fn": 0}
+    assert s["detector_false_alarms"]["KS Test"]["rate"] == 0.0
 
-
-def test_classify_prior_via_audit():
-    v = classify_drift_type(
-        _sig(predicted_prior_shift=0.14, input_drift_detected=True, input_detector_max_severity=2,
-             max_localised_ks_statistic=0.1, domain_classifier_auc=0.60,
-             label_free_stack_silent=False),
-        audit={"measured_drop": 0.04, "prior_shift": 0.25, "structure_score": 0.05, "n_labels": 600},
-    )
-    assert v["predicted_type"] == "prior"
-
-
-def test_classify_concept_via_audit():
-    v = classify_drift_type(
-        _sig(),
-        audit={"measured_drop": 0.20, "prior_shift": 0.03, "structure_score": 0.35,
-               "structured_feature": "SCHL", "n_labels": 600},
-    )
-    assert v["predicted_type"] == "concept"
-
-
-def test_classify_label_noise_via_audit():
-    v = classify_drift_type(
-        _sig(),
-        audit={"measured_drop": 0.18, "prior_shift": 0.02, "structure_score": 0.04, "n_labels": 600},
-    )
-    assert v["predicted_type"] == "label_noise"
-
-
-# --------------------------------------------------------------------------- #
-# end-to-end
 
 @pytest.mark.integration
-def test_run_benchmark_end_to_end_small(toy):
-    X, y, cols = toy
-    Xtr, Xref, Xp, Xe = X.iloc[:2000], X.iloc[2000:2800], X.iloc[2800:3400], X.iloc[3400:]
-    ytr, yref, yp, ye = y[:2000], y[2000:2800], y[2800:3400], y[3400:]
-    data = BenchmarkData(
-        train_X=Xtr.reset_index(drop=True), train_y=ytr,
-        reference_X=Xref.reset_index(drop=True), reference_y=yref,
-        prod_pool_X=Xp.reset_index(drop=True), prod_pool_y=yp,
-        eval_pool_X=Xe.reset_index(drop=True), eval_pool_y=ye,
-        feature_names=cols,
-    )
-    # concept region + covariate features must be real columns
-    import drift_autopsy.benchmark.evaluate as ev
-    ev.COVARIATE_FEATURES, ev.CONCEPT_REGION_FEATURE = ["f0", "f1"], "f2"
+def test_run_replicate_end_to_end_small():
+    from drift_autopsy.benchmark import BenchmarkConfig, run_replicate
 
-    res = run_benchmark(data=data, drift_types=["none", "label_noise"],
-                        reliability_sample=25, audit_labels=120, progress=lambda m: None)
-    assert set(res.keys()) == {"config", "presentation", "runs", "summary"}
-    assert len(res["runs"]) == 1 + 3          # control + 3 label-noise intensities
-    for r in res["runs"]:
-        assert r["verdict"]["predicted_type"] in {"none", "covariate", "prior", "concept", "label_noise"}
-        assert "estimator" in r["grading"] and "localisation" in r["grading"]
-    assert "type_identification" in res["summary"]
-    assert "dataset_card" in res["presentation"] and "label_noise" in res["presentation"]["drift_catalog"]
+    cfg = BenchmarkConfig(states=("WA",), seeds=(0,), production_size=1500, holdout_size=800,
+                          audit_sizes=(400,), primary_audit_size=400, mmd_permutations=20,
+                          drift_types=["none", "covariate"])
+    records = run_replicate("WA", 0, cfg)
+    assert len(records) == 4
+    assert {r["drift_type"] for r in records} == {"none", "covariate"}
+    assert all("diagnosis" in r and "triage_truth" in r for r in records)

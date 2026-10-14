@@ -10,6 +10,7 @@ weighted by a model that trained on it.
 
 from __future__ import annotations
 
+import time
 from typing import Any, Dict, Tuple
 
 import numpy as np
@@ -30,9 +31,13 @@ def density_ratio_weights(
     """Return per-reference-row weights (mean 1) and diagnostics.
 
     When the stacked data is large the domain classifier is cross-fitted on a
-    balanced subsample and its probabilities applied to every reference row,
-    which keeps the estimate stable but bounds the cost on wide embeddings.
+    random subsample of ``max_rows_for_fit`` rows; rows outside the subsample are
+    scored by a classifier fitted on the whole subsample (so every row is scored
+    by a model that did not train on it). Weights are truncated at ``clip`` times
+    the mean before renormalising, the usual guard against a few rows dominating
+    an importance-weighted fit (Cortes, Mansour and Mohri, 2010).
     """
+    start = time.perf_counter()
     X_ref = np.asarray(X_ref, dtype=float)
     X_prod = np.asarray(X_prod, dtype=float)
     n_ref, n_prod = len(X_ref), len(X_prod)
@@ -50,7 +55,7 @@ def density_ratio_weights(
     for train_idx, test_idx in skf.split(Xf, yf):
         clf = RandomForestClassifier(
             n_estimators=n_estimators, max_depth=max_depth,
-            random_state=random_state, n_jobs=-1,
+            random_state=random_state, n_jobs=1,
         )
         clf.fit(Xf[train_idx], yf[train_idx])
         oof_fit[test_idx] = clf.predict_proba(Xf[test_idx])[:, 1]
@@ -60,15 +65,16 @@ def density_ratio_weights(
     else:
         final = RandomForestClassifier(
             n_estimators=n_estimators, max_depth=max_depth,
-            random_state=random_state, n_jobs=-1,
+            random_state=random_state, n_jobs=1,
         ).fit(Xf, yf)
         oof = final.predict_proba(X)[:, 1]
         oof[fit_idx] = oof_fit  # keep the honest out-of-fold values where we have them
 
     auc = _auc(yf, oof_fit)
     p_ref = np.clip(oof[:n_ref], 1e-3, 1 - 1e-3)
-    weights = (p_ref / (1.0 - p_ref)) * (n_ref / n_prod)
-    weights = np.clip(weights, 0.0, clip)
+    weights = p_ref / (1.0 - p_ref)
+    weights = weights / weights.mean()
+    weights = np.minimum(weights, clip)
     weights = weights / weights.mean()
 
     ess = float(weights.sum() ** 2 / np.sum(weights ** 2))
@@ -77,7 +83,10 @@ def density_ratio_weights(
         "effective_sample_size": ess,
         "effective_sample_fraction": ess / n_ref,
         "n_estimators": n_estimators,
+        "n_splits": n_splits,
+        "n_rows_fit": int(len(fit_idx)),
         "clip": clip,
+        "seconds": time.perf_counter() - start,
     }
 
 

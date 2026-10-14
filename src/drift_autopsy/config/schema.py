@@ -1,7 +1,7 @@
 """Pydantic schemas for configuration management."""
 
 from typing import Dict, Any, Optional, List
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class DetectorConfig(BaseModel):
@@ -226,21 +226,21 @@ class PipelineConfig(BaseModel):
     enable_rca: bool = Field(default=False, description="Enable root cause analysis")
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
     
-    class Config:
-        """Pydantic configuration."""
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "name": "temporal_drift_analysis",
                 "detector": {
                     "type": "ks_test",
                     "threshold": 0.05,
-                    "params": {"correction": "bonferroni"}
+                    "params": {"correction": "bonferroni"},
                 },
                 "localizer": {
                     "type": "univariate",
-                    "params": {"method": "sequential"}
+                    "params": {"correction": "holm"},
                 },
                 "enable_localization": True,
-                "enable_rca": False
+                "enable_rca": False,
             }
         }
+    )

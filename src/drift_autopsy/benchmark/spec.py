@@ -1,9 +1,13 @@
 """Ground-truth description of one injected drift.
 
 The benchmark injects drift we designed into a real reference distribution, so
-for every production window we know exactly what changed: which of P(X) and
-P(Y|X) moved, which features carry the change, the class prior before and
-after, and the accuracy the deployed model actually loses. The pipeline never
+for every production window we know exactly what changed: which of P(X),
+P(X|Y) and P(Y|X) moved, which features carry the change, the class prior
+before and after, and the accuracy the deployed model actually loses.
+
+Under prior shift P(X|Y) is fixed but P(X) still moves, because P(X) is the
+class-weighted mixture of the P(X|Y); ``px_changed`` is therefore True for
+prior shift and ``pxgiveny_changed`` is False. The pipeline never
 sees any of this -- it is the answer key the diagnosis is graded against.
 """
 
@@ -16,11 +20,11 @@ DRIFT_TYPES = ("none", "covariate", "prior", "concept", "label_noise")
 
 # What a correct label-free diagnosis should conclude for each injected type.
 EXPECTED_DIAGNOSIS: Dict[str, str] = {
-    "none": "no action - distributions match the reference",
-    "covariate": "importance-weighted retrain (no production labels needed)",
-    "prior": "re-weight or recalibrate the decision threshold to the new base rate",
-    "concept": "collect fresh labels - retraining on the old target rule will not help",
-    "label_noise": "audit the labelling pipeline - the model itself is not at fault",
+    "none": "no action: distributions match the reference",
+    "covariate": "importance-weighted retraining may help when the model is misspecified",
+    "prior": "reweight or recalibrate to the new class prior",
+    "concept": "collect fresh labels: retraining on the old target rule will not help",
+    "label_noise": "audit the labelling process: the model itself is not at fault",
 }
 
 
@@ -34,6 +38,7 @@ class InjectedDriftSpec:
 
     affected_features: List[str] = field(default_factory=list)
     px_changed: bool = False
+    pxgiveny_changed: bool = False
     pygivenx_changed: bool = False
 
     p_y_reference: float = 0.0
@@ -69,6 +74,7 @@ class InjectedDriftSpec:
             "params": {k: _round(v) for k, v in self.params.items()},
             "affected_features": list(self.affected_features),
             "px_changed": bool(self.px_changed),
+            "pxgiveny_changed": bool(self.pxgiveny_changed),
             "pygivenx_changed": bool(self.pygivenx_changed),
             "p_y_reference": _round(self.p_y_reference),
             "p_y_production": _round(self.p_y_production),

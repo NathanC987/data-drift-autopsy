@@ -1,373 +1,154 @@
-"""Localisation-driven remediation and remediation triage.
+"""Remediation strategies and the label-free triage on the real drift settings.
 
-Runs the remediation strategies over three settings and shows that the
-pipeline's own signals predict, in advance, whether retraining will help:
+Settings (every available window, none hand-picked):
+* ACS temporal   - production = CA 2015, 2016, 2017, 2018; the earlier years
+                   from 2015 on are delayed-label windows;
+* ACS geographic - production = TX, NY, FL, WA 2014; no delayed windows;
+* CLEAR-10       - production = bucket 2 ... 10; buckets 2 .. k-1 are
+                   delayed-label windows.
 
-  * CLEAR-10 image stream   -> retrain-on-recent recovers most of the gap cheaply
-  * real ACS shifts         -> nothing recovers the gap (largely irreducible)
-  * one synthetic ACS shift -> feature-drop + importance weighting recover it
-
-Run:  OMP_NUM_THREADS=1 python examples/quickstart/remediation_demo.py --shift both
+In each setting the deployed model is the study's monitored model (trained on
+the reference train split). The production window is split in half: an
+unlabelled production sample (density ratio; the label-buying strategies draw
+their labels from it) and a labelled holdout used only for grading. Every
+strategy's recovery is tested against the deployed model with a paired
+bootstrap; the triage verdict is graded against whether either label-free
+probe strategy (importance weighting, retrain on recent) truly helps.
+Output: outputs/remediation_results.json.
 """
 
 from __future__ import annotations
 
-import argparse
 import json
 from pathlib import Path
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import numpy as np
-import pandas as pd
-from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
+from threadpoolctl import threadpool_limits
 
-from drift_autopsy.data import FolktablesLoader
-from drift_autopsy.remediation import (
-    RemediationContext,
-    default_model_factory,
-    inject_covariate_shift,
-    parse_drifted_features,
-    remediation_triage,
-    results_to_frame,
-    results_to_latex,
-    run_remediation_suite,
-)
+from drift_autopsy.experiments import acs, clear10
+from drift_autopsy.remediation import RemediationContext, remediation_triage, run_remediation_suite
 from drift_autopsy.utils import setup_logging
 
-FEATS = FolktablesLoader.ACS_INCOME_FEATURES
-OUT = Path("outputs")
-FIG_DIR = Path("paper/figures")
-TAB_DIR = Path("outputs/clear10_tabularized_demo")
-EMB_COLS = [f"feature_{i}" for i in range(512)]
-SYNTHETIC_FEATURES = ["AGEP", "WKHP"]
-
-ACS_STRATEGIES = [
-    "full_retrain", "feature_drop_retrain", "importance_weighted_retrain",
-    "head_refit", "calibration_only",
-]
-ACS_TEMPORAL_STRATEGIES = ACS_STRATEGIES + ["retrain_on_recent[previous]"]
-CLEAR_STRATEGIES = [
-    "full_retrain", "importance_weighted_retrain",
-    "retrain_on_recent[previous]", "retrain_on_recent[all_prior]", "head_refit",
-]
+SEED = 42
+ALPHA = 0.05
+N_LABELS = 2000          # fresh labels bought by label_retrain / recalibrate
+STRATEGIES = ["importance_weighted_retrain", "retrain_on_recent", "full_retrain", "feature_drop_retrain",
+              "label_retrain", "recalibrate"]
+PROBE_STRATEGIES = {"importance_weighted_retrain", "retrain_on_recent"}
+ACS_RESULTS = Path("outputs/folktables_drift_results.json")
+CLEAR_RESULTS = Path("outputs/clear10_drift_results.json")
+OUTPUT = Path("outputs/remediation_results.json")
 
 
-def _acs(year: int, state: str = "CA") -> tuple[np.ndarray, np.ndarray]:
-    df = FolktablesLoader.load_acs_income_cached(year, state)
-    return df[FEATS].to_numpy(float), df["target"].to_numpy(int)
+def _half(X, y, seed):
+    return train_test_split(X, y, test_size=0.5, random_state=seed, stratify=y)
 
 
-def _cbpe_gap(base_model, ref_X, ref_y, prod_X) -> float:
-    """Signed label-free accuracy-drop estimate (reference minus production)."""
-    edges = np.linspace(0, 1, 11)
-    rc = base_model.predict_proba(ref_X).max(1)
-    correct = (base_model.predict(ref_X) == ref_y).astype(float)
-    rb = np.clip(np.digitize(rc, edges[1:-1]), 0, 9)
-    bin_acc = np.array([correct[rb == b].mean() if (rb == b).any() else correct.mean() for b in range(10)])
-    pc = base_model.predict_proba(prod_X).max(1)
-    pb = np.clip(np.digitize(pc, edges[1:-1]), 0, 9)
-    ref_acc = base_model.score(ref_X, ref_y)
-    return float(ref_acc - bin_acc[pb].mean())
-
-
-# --------------------------------------------------------------------------- #
-# context builders
-
-def ctx_acs_temporal(drift_json: dict) -> RemediationContext:
-    X14, y14 = _acs(2014)
-    Xtr, Xh, ytr, yh = train_test_split(X14, y14, test_size=0.3, random_state=42, stratify=y14)
-    base = default_model_factory().fit(Xtr, ytr)
-    p17_X, p17_y = _acs(2017)
-    h18_X, h18_y = _acs(2018)
-    return RemediationContext(
-        reference_X=Xtr, reference_y=ytr,
-        production_X=p17_X, production_y=p17_y,
-        holdout_X=h18_X, holdout_y=h18_y,
-        feature_names=FEATS,
-        drifted_features=parse_drifted_features(drift_json, "temporal"),
-        shift_name="ACS temporal (CA 2014->2018)",
-        base_model=base,
-        recent_windows=[_acs(2015), _acs(2016)],
-        reference_accuracy=float(base.score(Xh, yh)),
-    )
-
-
-def ctx_acs_geographic(drift_json: dict, target: str = "WA") -> RemediationContext:
-    X14, y14 = _acs(2014)
-    Xtr, Xh, ytr, yh = train_test_split(X14, y14, test_size=0.3, random_state=42, stratify=y14)
-    base = default_model_factory().fit(Xtr, ytr)
-    Xt, yt = _acs(2014, target)
-    Xu, Xe, yu, ye = train_test_split(Xt, yt, test_size=0.5, random_state=42, stratify=yt)
-    return RemediationContext(
-        reference_X=Xtr, reference_y=ytr,
-        production_X=Xu, production_y=yu,
-        holdout_X=Xe, holdout_y=ye,
-        feature_names=FEATS,
-        drifted_features=parse_drifted_features(drift_json, "geographic", target) or ["POBP", "RAC1P"],
-        shift_name=f"ACS geographic (CA->{target}, 2014)",
-        base_model=base,
-        recent_windows=[],
-        reference_accuracy=float(base.score(Xh, yh)),
-    )
-
-
-def ctx_acs_synthetic() -> RemediationContext:
-    X14, y14 = _acs(2014)
-    Xtr, Xrest, ytr, yrest = train_test_split(X14, y14, test_size=0.4, random_state=42, stratify=y14)
-    Xu, Xe, yu, ye = train_test_split(Xrest, yrest, test_size=0.5, random_state=42, stratify=yrest)
-    base = default_model_factory().fit(Xtr, ytr)
-    ref_acc = float(base.score(Xe, ye))  # accuracy on the un-shifted holdout == ceiling
-    Xu_s = inject_covariate_shift(Xu, FEATS, SYNTHETIC_FEATURES)
-    Xe_s = inject_covariate_shift(Xe, FEATS, SYNTHETIC_FEATURES)
-    return RemediationContext(
-        reference_X=Xtr, reference_y=ytr,
-        production_X=Xu_s, production_y=yu,
-        holdout_X=Xe_s, holdout_y=ye,
-        feature_names=FEATS,
-        drifted_features=list(SYNTHETIC_FEATURES),
-        shift_name=f"ACS synthetic covariate shift ({'+'.join(SYNTHETIC_FEATURES)})",
-        base_model=base,
-        recent_windows=[],
-        reference_accuracy=ref_acc,
-    )
-
-
-def _clear_bucket(b: int) -> tuple[np.ndarray, np.ndarray]:
-    df = pd.read_parquet(TAB_DIR / f"bucket_{b}.parquet")
-    return df[EMB_COLS].to_numpy(float), df["y_true"].to_numpy(int)
-
-
-def ctx_clear10(bucket: int = 10) -> RemediationContext:
-    factory = lambda: LogisticRegression(max_iter=1000, random_state=42)  # matches image pipeline
-    X1, y1 = _clear_bucket(1)
-    Xtr, Xh, ytr, yh = train_test_split(X1, y1, train_size=0.7, random_state=42, stratify=y1)
-    base = factory().fit(Xtr, ytr)
-    Xb, yb = _clear_bucket(bucket)
-    Xu, Xe, yu, ye = train_test_split(Xb, yb, test_size=0.5, random_state=42, stratify=yb)
-    return RemediationContext(
-        reference_X=Xtr, reference_y=ytr,
-        production_X=Xu, production_y=yu,
-        holdout_X=Xe, holdout_y=ye,
-        feature_names=EMB_COLS, drifted_features=[],
-        shift_name=f"CLEAR-10 bucket {bucket}",
-        base_model=base,
-        recent_windows=[_clear_bucket(b) for b in range(2, bucket)],
-        model_factory=factory,
-        reference_accuracy=float(base.score(Xh, yh)),
-    )
-
-
-# --------------------------------------------------------------------------- #
-
-def run_setting(ctx: RemediationContext, strategies: List[str]) -> dict:
-    gap_est = _cbpe_gap(ctx.base_model, ctx.reference_X, ctx.reference_y, ctx.production_X)
-    triage = remediation_triage(ctx, estimated_gap=gap_est)
-    results = run_remediation_suite(ctx, strategies)
-
-    print(f"\n=== {ctx.shift_name} ===")
-    print(f"  reference acc {ctx.reference_accuracy:.4f}  ->  before remediation {ctx.baseline_before:.4f}"
-          f"  (gap {ctx.reference_accuracy - ctx.baseline_before:+.4f})")
-    print(f"  triage: will_retraining_help={triage['will_retraining_help']}  --  {triage['rationale']}")
+def run_setting(ctx: RemediationContext, group: str) -> Dict[str, Any]:
+    triage = remediation_triage(ctx, alpha=ALPHA)
+    suite = run_remediation_suite(ctx, STRATEGIES)
+    results = [r.to_dict() for r in suite["results"]]
+    probes = [r for r in results if r["strategy"] in PROBE_STRATEGIES]
+    truth = any(r["recovery_significant"] and r["accuracy_recovered"] > 0 for r in probes)
+    print(f"\n=== {ctx.shift_name}: before {ctx.baseline_before:.4f} (reference {ctx.reference_accuracy:.4f}); "
+          f"triage {'escalate' if triage['will_retraining_help'] else 'hold'}; truth {'helps' if truth else 'no'}")
     for r in results:
-        print(f"    {r.strategy:30} after={r.accuracy_after:.4f}  recovered={r.accuracy_recovered:+.4f}"
-              f"  gap_frac={r.fraction_of_gap_recovered:+.2f}  {r.wall_clock_seconds:.3f}s"
-              f"  labels={r.n_production_labels_required}")
+        t = r["recovery_test"]
+        print(f"    {r['strategy']:28s} {r['accuracy_recovered']:+.4f} [{t['ci_low']:+.4f}, {t['ci_high']:+.4f}] "
+              f"{'*' if r['recovery_significant'] else ' '} {r['wall_clock_seconds']:.3f}s labels={r['n_production_labels_required']}")
     return {
+        "group": group,
         "shift_name": ctx.shift_name,
         "reference_accuracy": ctx.reference_accuracy,
-        "baseline_before": ctx.baseline_before,
+        "accuracy_before": ctx.baseline_before,
+        "gap": ctx.reference_accuracy - ctx.baseline_before,
+        "n_holdout": int(len(ctx.holdout_y)),
         "triage": triage,
-        "results": [r.to_dict() for r in results],
+        "results": results,
+        "skipped": suite["skipped"],
+        "probe_truth_helps": bool(truth),
+        "triage_correct": bool(triage["will_retraining_help"] == truth),
     }
 
 
-STRATEGY_MARKER = {
-    "full_retrain": ("full retrain", "o"),
-    "feature_drop_retrain": ("feature-drop", "v"),
-    "importance_weighted_retrain": ("importance weighting", "s"),
-    "retrain_on_recent[previous]": ("retrain on previous window", "D"),
-    "retrain_on_recent[all_prior]": ("retrain on all prior", "P"),
-    "head_refit": ("head refit (labels)", "^"),
-    "calibration_only": ("recalibrate (labels)", "X"),
-}
-SETTING_COLOR = {
-    "bucket 10": "#1f77b4",
-    "bucket 6": "#17becf",
-    "synthetic covariate shift": "#2ca02c",
-    "geographic": "#d62728",
-    "temporal": "#9467bd",
-}
-PARETO_STRATEGIES = {
-    "full_retrain", "importance_weighted_retrain",
-    "retrain_on_recent[previous]", "retrain_on_recent[all_prior]", "head_refit",
-}
+def acs_settings() -> List[Dict[str, Any]]:
+    drift = json.loads(ACS_RESULTS.read_text())
+    X14, y14 = acs.load_acs(2014, "CA")
+    split = acs.split_reference(X14, y14, seed=SEED)
+    factory = lambda keep_columns=None: acs.make_acs_model(random_state=SEED, keep_columns=keep_columns)
+    with threadpool_limits(limits=1):
+        model = factory().fit(split.train_X.to_numpy(float), split.train_y)
+    ref_acc = float(drift["reference"]["test_accuracy"])
+    ref_X, ref_y = split.train_X.to_numpy(float), split.train_y
+
+    def drifted(key):
+        return list(drift["windows"][key]["pipelines"]["KS Test"]["localization"]["drifted_features"])
+
+    out = []
+    years = [2015, 2016, 2017, 2018]
+    windows = {y: acs.load_acs(y, "CA") for y in years}
+    for i, year in enumerate(years):
+        X, y = windows[year]
+        Xp, Xh, yp, yh = _half(X.to_numpy(float), y, SEED)
+        recent = [(windows[p][0].to_numpy(float), windows[p][1]) for p in years[:i]]
+        ctx = RemediationContext(ref_X, ref_y, Xp, Xh, yh, acs.ACS_FEATURES, drifted(f"CA {year}"),
+                                 f"ACS temporal CA {year}", model, factory, ref_acc, recent_windows=recent,
+                                 production_y=yp, seed=SEED)
+        out.append(run_setting(ctx, "acs_temporal"))
+    for state in ["TX", "NY", "FL", "WA"]:
+        X, y = acs.load_acs(2014, state)
+        Xp, Xh, yp, yh = _half(X.to_numpy(float), y, SEED)
+        ctx = RemediationContext(ref_X, ref_y, Xp, Xh, yh, acs.ACS_FEATURES, drifted(f"{state} 2014"),
+                                 f"ACS geographic {state} 2014", model, factory, ref_acc, production_y=yp, seed=SEED)
+        out.append(run_setting(ctx, "acs_geographic"))
+    return out
 
 
-def _setting_key(name: str) -> str:
-    n = name.lower()
-    for k in SETTING_COLOR:
-        if k in n:
-            return k
-    return name
-
-
-def render_pareto(payloads: List[dict], out_path: Path) -> None:
-    import matplotlib
-
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-
-    fig, ax = plt.subplots(figsize=(7.0, 4.6))
-    seen_strats, seen_settings = set(), set()
-    for p in payloads:
-        colour = SETTING_COLOR.get(_setting_key(p["shift_name"]), "0.4")
-        label_setting = (
-            p["shift_name"].replace("CLEAR-10 ", "CLEAR-10 ").split(" (")[0]
-        )
-        for r in p["results"]:
-            if r["strategy"] not in PARETO_STRATEGIES:
-                continue
-            flops, frac = r["fit_flops_proxy"], r["fraction_of_gap_recovered"]
-            if not np.isfinite(flops) or flops <= 0 or not np.isfinite(frac):
-                continue
-            frac = min(max(frac, -0.12), 1.12)  # clip for readability
-            _, marker = STRATEGY_MARKER.get(r["strategy"], (r["strategy"], "o"))
-            ax.scatter(flops, frac, marker=marker, s=85, color=colour, edgecolor="0.2", linewidth=0.5,
-                       label=label_setting if label_setting not in seen_settings else None)
-            seen_settings.add(label_setting)
-            seen_strats.add(r["strategy"])
-
-    ax.set_xscale("log")
-    ax.set_ylim(-0.15, 1.18)
-    ax.axhline(0, color="0.6", lw=0.8)
-    ax.axhline(1.0, color="0.8", lw=0.8, ls=":")
-    ax.set_xlabel("fit cost (FLOP proxy, log scale)")
-    ax.set_ylabel("fraction of accuracy gap recovered")
-    ax.set_title("Remediation cost vs recovery (feature-drop and label-only omitted)")
-
-    from matplotlib.lines import Line2D
-
-    strat_handles = [
-        Line2D([0], [0], marker=STRATEGY_MARKER[s][1], color="0.3", ls="", label=STRATEGY_MARKER[s][0])
-        for s in STRATEGY_MARKER if s in seen_strats
-    ]
-    leg1 = ax.legend(loc="center left", bbox_to_anchor=(1.01, 0.72), fontsize=7, title="setting")
-    ax.add_artist(leg1)
-    ax.legend(handles=strat_handles, loc="center left", bbox_to_anchor=(1.01, 0.25),
-              fontsize=7, title="strategy")
-    fig.tight_layout()
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=200)
-    plt.close(fig)
-
-
-def render_summary_table(payloads: List[dict], out_path: Path) -> None:
-    """One row per setting: gap, best label-free recovery, full retrain, triage verdict."""
-    cheap = {"feature_drop_retrain", "importance_weighted_retrain", "retrain_on_recent[previous]"}
-    rows = []
-    for p in payloads:
-        gap = p["reference_accuracy"] - p["baseline_before"]
-        cands = [r for r in p["results"]
-                 if r["strategy"] in cheap and r["n_production_labels_required"] == 0]
-        best = max(cands, key=lambda r: r["fraction_of_gap_recovered"], default=None)
-        full = next((r for r in p["results"] if r["strategy"] == "full_retrain"), None)
-        rows.append({
-            "setting": p["shift_name"].split(" (")[0].replace("_", " "),
-            "gap (pp)": f"{100 * gap:.1f}",
-            "cheapest fix": best["strategy"].replace("_retrain", "").replace("[previous]", "").replace("_", " ") if best else "--",
-            "recovered": f"{best['fraction_of_gap_recovered']:.0%}" if best else "--",
-            "cost (s)": f"{best['wall_clock_seconds']:.2f}" if best else "--",
-            "full retrain": f"{full['fraction_of_gap_recovered']:.0%}" if full else "--",
-            "triage": "escalate" if p["triage"]["will_retraining_help"] else "do not retrain",
-        })
-    df = pd.DataFrame(rows)
-    body = " \\\\\n".join(" & ".join(str(v).replace("%", "\\%").replace("[", "(").replace("]", ")")
-                                     for v in r) for r in df.itertuples(index=False))
-    head = " & ".join(c.replace("_", " ") for c in df.columns)
-    out_path.write_text(
-        "\\begin{table}[!htbp]\n\\centering\n"
-        "\\caption{Remediation triage: the cheap label-free probe's recovery predicts the verdict, "
-        "which matches whether any strategy recovers the gap.}\n\\label{tab:triage}\n"
-        "\\renewcommand{\\arraystretch}{1.2}\\setlength{\\tabcolsep}{3pt}\\scriptsize\n"
-        f"\\begin{{tabular}}{{@{{}}l r l r r r l@{{}}}}\n\\toprule\n{head} \\\\\n\\midrule\n"
-        f"{body} \\\\\n\\bottomrule\n\\end{{tabular}}\n\\end{{table}}\n"
-    )
+def clear_settings() -> List[Dict[str, Any]]:
+    drift = json.loads(CLEAR_RESULTS.read_text())
+    b1 = clear10.load_bucket(clear10.REFERENCE_BUCKET)
+    split = clear10.split_reference(b1, seed=SEED)
+    factory = lambda: clear10.make_clear_model(random_state=SEED)
+    with threadpool_limits(limits=1):
+        model = factory().fit(clear10.embeddings(split.train), split.train["y_true"])
+    ref_acc = float(drift["reference"]["test_accuracy"])
+    ref_X, ref_y = clear10.embeddings(split.train), split.train["y_true"].to_numpy()
+    frames = {b: clear10.load_bucket(b) for b in clear10.ANALYSIS_BUCKETS}
+    out = []
+    for i, b in enumerate(clear10.ANALYSIS_BUCKETS):
+        f = frames[b]
+        Xp, Xh, yp, yh = _half(clear10.embeddings(f), f["y_true"].to_numpy(), SEED)
+        recent = [(clear10.embeddings(frames[p]), frames[p]["y_true"].to_numpy()) for p in clear10.ANALYSIS_BUCKETS[:i]]
+        ctx = RemediationContext(ref_X, ref_y, Xp, Xh, yh, clear10.EMBEDDING_COLUMNS, [],
+                                 f"CLEAR-10 bucket {b}", model, factory, ref_acc, recent_windows=recent,
+                                 production_y=yp, seed=SEED)
+        out.append(run_setting(ctx, "clear10"))
+    return out
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--shift", choices=["temporal", "geographic", "synthetic", "clear10", "both", "all"],
-                    default="all")
-    ap.add_argument("--geo-target", default="WA")
-    ap.add_argument("--drop-features", default="", help="comma-separated override for feature_drop_retrain")
-    ap.add_argument("--rebuild-only", action="store_true",
-                    help="regenerate tables/figure from outputs/remediation_results.json")
-    args = ap.parse_args()
     setup_logging(level="WARNING")
-
-    if args.rebuild_only:
-        payloads = json.loads((OUT / "remediation_results.json").read_text())["settings"]
-        frame = pd.DataFrame([r for p in payloads for r in p["results"]])
-        (OUT / "remediation_table_full.tex").write_text(
-            results_to_latex(frame, caption="Localisation-driven remediation, all strategies.",
-                             label="tab:remediation-full"))
-        render_summary_table(payloads, OUT / "remediation_table.tex")
-        render_pareto(payloads, FIG_DIR / "remediation_pareto.png")
-        print("rebuilt tables + figure from existing JSON")
-        return
-
-    drift_json = json.loads(Path("outputs/folktables_drift_results.json").read_text())
-    want = {"temporal", "geographic", "synthetic", "clear10"} if args.shift in ("all", "both") else {args.shift}
-
-    payloads: List[dict] = []
-    if "temporal" in want:
-        payloads.append(run_setting(ctx_acs_temporal(drift_json), ACS_TEMPORAL_STRATEGIES))
-    if "geographic" in want:
-        payloads.append(run_setting(ctx_acs_geographic(drift_json, args.geo_target), ACS_STRATEGIES))
-    if "synthetic" in want:
-        payloads.append(run_setting(ctx_acs_synthetic(), ACS_STRATEGIES))
-    if "clear10" in want:
-        for b in (6, 10):
-            payloads.append(run_setting(ctx_clear10(b), CLEAR_STRATEGIES))
-
-    OUT.mkdir(exist_ok=True)
-    frame = pd.DataFrame([r for p in payloads for r in p["results"]])
-
-    rich = {
-        "settings": payloads,
-        # back-compat block for the dashboard's existing reader
-        "remediation_type": "localisation_driven_suite",
-        "original_training_years": [2014],
-        "retrained_training_years": [2014, 2015, 2016],
-        "test_years": [2017, 2018],
-        "comparison": _backcompat_comparison(payloads),
+    settings = acs_settings() + clear_settings()
+    n_correct = sum(s["triage_correct"] for s in settings)
+    payload = {
+        "config": {"seed": SEED, "alpha": ALPHA, "n_labels_bought": N_LABELS, "strategies": STRATEGIES,
+                   "probe_strategies": sorted(PROBE_STRATEGIES),
+                   "grading": "paired bootstrap on a labelled half of each production window"},
+        "settings": settings,
+        "summary": {"n_settings": len(settings), "triage_correct": n_correct},
     }
-    (OUT / "remediation_results.json").write_text(json.dumps(rich, indent=2, default=float))
-    (OUT / "remediation_table_full.tex").write_text(
-        results_to_latex(frame, caption="Localisation-driven remediation, all strategies.",
-                         label="tab:remediation-full")
-    )
-    render_summary_table(payloads, OUT / "remediation_table.tex")
-    render_pareto(payloads, FIG_DIR / "remediation_pareto.png")
-    print(f"\nwrote outputs/remediation_results.json, outputs/remediation_table.tex, "
-          f"outputs/remediation_table_full.tex, {FIG_DIR}/remediation_pareto.png")
+    OUTPUT.write_text(json.dumps(payload, indent=1, allow_nan=False, default=_json_default))
+    print(f"\ntriage correct in {n_correct}/{len(settings)} settings; wrote {OUTPUT}")
 
 
-def _backcompat_comparison(payloads: List[dict]) -> Dict[str, dict]:
-    for p in payloads:
-        if "temporal" in p["shift_name"]:
-            full = next((r for r in p["results"] if r["strategy"] == "full_retrain"), None)
-            if full:
-                return {
-                    "2018": {
-                        "original_accuracy": round(full["accuracy_before"], 4),
-                        "retrained_accuracy": round(full["accuracy_after"], 4),
-                        "improvement": round(full["accuracy_recovered"], 4),
-                        "improved": full["accuracy_recovered"] > 0,
-                    }
-                }
-    return {}
+def _json_default(value):
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    raise TypeError(f"not JSON serialisable: {type(value)}")
 
 
 if __name__ == "__main__":

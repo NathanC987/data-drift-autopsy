@@ -67,3 +67,8 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
+
+# Derived caches (rebuilt by the scripts from data/)
+outputs/clip_concepts/clip_emb_bucket_*.npy
+outputs/clip_concepts/clip_ids_bucket_*.json
+outputs/clear10_tabularized_demo/

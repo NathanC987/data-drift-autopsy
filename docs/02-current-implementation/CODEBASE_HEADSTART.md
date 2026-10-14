@@ -1,140 +1,60 @@
-# Codebase Headstart (Current)
+# Codebase Headstart
 
-This file is for new core developers who need a complete fast orientation of the current project.
+Fast orientation for a developer joining the project.
 
-## 1. What This Project Currently Is
+## What the project does
 
-Data Drift Autopsy is currently a Python-first modular framework for:
+Label-free monitoring of a deployed classifier. Given the model, a labelled
+reference set and unlabelled production windows, the pipeline:
 
-1. Drift detection
-2. Drift localization
-3. Root cause analysis (RCA)
-4. Result visualization in Streamlit dashboard
-5. Generic slice-level drift analysis (including geographic cross-slice comparisons)
+1. estimates accuracy without labels (CBPE),
+2. tests whether the inputs, the predictions and the confidence distribution moved,
+3. localises the shift to features (or embedding dimensions and predicted classes),
+4. explains it (SHAP attribution change for tables; CLIP concept probe and class activation maps for images),
+5. names the drift type (covariate, prior, concept, label noise) by hypothesis tests, optionally with a small delayed-label audit,
+6. scores the reliability of every prediction,
+7. predicts, without production labels, whether a cheap retrain will help.
 
-Current operational style is batch/script driven, with JSON output and dashboard inspection.
+Every decision is a hypothesis test at one significance level (default 0.05) with family-wise error control.
 
-## 2. Top-Level Project Layout
+## Package map (`src/drift_autopsy/`)
 
-- `src/drift_autopsy/`: core package
-- `examples/quickstart/`: runnable demos
-- `examples/dashboard/`: streamlit app and visualization logic
-- `configs/examples/`: yaml config examples
-- `tests/`: tests
-- `outputs/`: generated run artifacts (for example demo JSON output)
-- `docs/`: developer blueprint and implementation documentation
+| Module | Role |
+|---|---|
+| `core/` | `Dataset` (with `categorical_features`), result dataclasses, `DriftPipeline` (detect -> localise -> RCA, slice mode) |
+| `stats.py` | every test the package uses: Holm/Bonferroni, severity ladders, chi-square homogeneity with Cochran pooling, weighted KS / chi-square (Kish), two-proportion test, Wilson interval, paired bootstrap, generic permutation test |
+| `estimation.py` | CBPE: histogram-binning map from confidence to accuracy |
+| `detectors/` | KS (numeric only, corrected), PSI, MMD (permutation test, mixed-type encoding), PCA reconstruction and Frechet distance (permutation tests), domain classifier, CBPE (confidence-shift test plus estimate) |
+| `localizers/univariate.py` | KS for numeric, chi-square homogeneity for nominal features, Holm step-down; effect sizes (KS statistic, Cramer's V) and unseen-category share |
+| `rca/` | `SHAPAnalyzer` (explains the full model's probability, bootstrap intervals), `concept_probe.py` (CLIP), `cam.py` (class activation maps for a linear head on a frozen ResNet) |
+| `diagnosis.py` | drift-type diagnosis: label-free stage (input, prediction and MMD tests; BBSE; label-shift consistency) and audit stage (accuracy-drop test; error-structure likelihood-ratio tests) |
+| `reliability/` | per-prediction signals (confidence risk, OOD, instability), learned logistic fusion, risk labels |
+| `remediation/` | strategies with paired-bootstrap grading, density-ratio weights, label-free triage (importance-weighted validation) |
+| `benchmark/` | drift injectors, per-window evaluation, multi-state multi-seed orchestration, aggregation with confidence intervals |
+| `experiments/` | shared setups: `acs.py` (ACS Income model, split, feature typing) and `clear10.py` (CLEAR-10 embeddings, model, split) |
+| `data/` | loaders (Folktables cache, CLEAR-10), multiclass proxy metrics, validators, generic image tabularizer |
 
-## 3. Core Package Layout (`src/drift_autopsy/`)
+## Reproducing the paper
 
-- `core/`: primary interfaces, pipeline orchestration, result models
-- `detectors/`: detector implementations (statistical/distribution/model/proxy)
-- `localizers/`: localization methods (currently univariate)
-- `rca/`: root cause analyzers (currently SHAP analyzer)
-- `registry/`: registry/factory classes for detectors/localizers/rca
-- `data/`: dataset loaders/validators
-- `config/`: config schema and loading
-- `utils/`: logging and helper utilities
+```bash
+pip install -e ".[all,dev]"
+python examples/quickstart/folktables_demo.py            # ACS temporal + geographic study
+python examples/quickstart/clear10_tabularize_demo.py    # once: ResNet-18 embeddings (GPU recommended)
+python examples/quickstart/clear10_drift_study.py        # CLEAR-10 study
+python examples/quickstart/clip_concept_probe_demo.py    # concept probe (needs the CLEAR-10 study output)
+python examples/quickstart/remediation_demo.py           # remediation + triage (needs both studies)
+python examples/quickstart/drift_injection_benchmark.py  # 650-window benchmark (parallel)
+python examples/paper/build_artifacts.py                 # every paper number, table and figure
+pytest                                                   # unit + integration tests
+streamlit run examples/dashboard/app.py                  # dashboard
+```
 
-## 4. Start Reading Order (Recommended)
+All randomness is seeded (default 42); remediation fits run on one BLAS thread so results are bit-for-bit reproducible.
 
-1. `src/drift_autopsy/core/pipeline.py`
-   - Understand end-to-end execution flow first.
+## Reading order
 
-2. `src/drift_autopsy/core/result.py`
-   - Understand output contract and serialized fields.
-
-3. `src/drift_autopsy/registry/`
-   - Understand how components are discovered and instantiated.
-
-4. `src/drift_autopsy/detectors/`
-   - Understand algorithm behavior and score semantics.
-
-5. `src/drift_autopsy/localizers/univariate.py`
-   - Understand feature-level localization path.
-
-6. `src/drift_autopsy/rca/shap_analyzer.py`
-   - Understand RCA data path and recommendation generation.
-
-7. `examples/quickstart/folktables_demo.py`
-   - See practical end-to-end usage and output generation.
-
-8. `examples/dashboard/`
-   - Understand result ingestion and UI presentation.
-
-## 5. End-to-End Runtime Path (Current)
-
-1. Demo script builds datasets and model.
-2. Drift pipelines are configured with detector/localizer/optional RCA.
-3. Pipeline `run(...)` can receive runtime threshold overrides and optional slice config.
-4. Pipeline runs aggregate detection -> localization -> RCA.
-5. If slice config is enabled, pipeline computes per-slice outputs in the same run.
-6. Results are serialized to JSON.
-7. Dashboard loader normalizes JSON and builds analysis tables.
-8. Visualizations render trend, feature, RCA, and slice-level insights.
-
-Current demo coverage includes both:
-
-- Temporal drift analysis (across years)
-- Geographic drift analysis (cross-state, via generic slice engine)
-
-## 6. Available Detector Set (Current)
-
-Registry currently exposes at least:
-
-- `ks_test`
-- `psi`
-- `mmd`
-- `domain_classifier`
-- `cbpe`
-
-## 7. Thresholds In Current Code
-
-Current API pattern supports user-provided thresholds through:
-
-1. Algorithm constructors
-2. Pipeline run-time overrides
-
-Examples:
-
-- `KSTest(threshold=...)`
-- `PSI(threshold=...)`
-- `MMD(threshold=...)`
-- `CBPE(threshold=...)`
-
-- `pipeline.run(..., detection_threshold=..., localization_threshold=...)`
-
-This is already supported in current implementation and used by demos.
-
-## 8. Current JSON Contract Highlights
-
-Per year, demo output currently stores:
-
-- performance metrics (`actual_accuracy`, `accuracy_drop`)
-- `pipelines` map
-- each pipeline has `detection`, `localization`, optional `rca`, and execution metadata
-
-Current execution metadata can include:
-
-- effective thresholds used for detector/localizer
-- threshold source (runtime override vs default)
-- optional `slice_analysis` block with per-slice outputs
-
-Dashboard loader supports two top-level formats:
-
-- wrapped (`yearly_results`)
-- direct year keys
-
-## 9. Current Known Boundaries
-
-- Streaming runtime is not implemented.
-- Full remediation engine is not implemented.
-- Drift scope is strongest in covariate/proxy paths currently.
-- Enterprise access/compliance controls are not implemented yet.
-
-## 10. Where To Update Docs After Code Changes
-
-Follow:
-
-- `UPDATE_PROTOCOL.md`
-
-This keeps documentation updates small, predictable, and non-messy.
+1. `experiments/acs.py` and `examples/quickstart/folktables_demo.py` (one full study end to end)
+2. `stats.py`, `detectors/`, `localizers/univariate.py`
+3. `diagnosis.py`, `reliability/`, `remediation/triage.py`
+4. `benchmark/evaluate.py`, `benchmark/window.py`, `benchmark/metrics.py`
+5. `examples/paper/build_artifacts.py` (how outputs become paper content)

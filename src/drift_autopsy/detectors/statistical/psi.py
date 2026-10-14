@@ -9,6 +9,7 @@ from drift_autopsy.core.detector import BaseDriftDetector
 from drift_autopsy.core.dataset import Dataset
 from drift_autopsy.core.result import DetectionResult, DriftSeverity
 from drift_autopsy.registry import DetectorRegistry
+from drift_autopsy.stats import MIN_EXPECTED_COUNT, severity_from_ratio
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,6 @@ class PSI(BaseDriftDetector):
     Args:
         threshold: PSI threshold for detecting drift (default: 0.2)
         n_bins: Number of bins for continuous features (default: 10)
-        min_bin_size: Minimum proportion in a bin to avoid division issues (default: 0.001)
         aggregate_method: How to aggregate PSI across features ("max" or "mean")
     """
     
@@ -39,77 +39,75 @@ class PSI(BaseDriftDetector):
         self,
         threshold: float = 0.2,
         n_bins: int = 10,
-        min_bin_size: float = 0.001,
         aggregate_method: str = "max",
     ):
         super().__init__(name="psi")
         self.threshold = threshold
         self.n_bins = n_bins
-        self.min_bin_size = min_bin_size
         self.aggregate_method = aggregate_method
         self._bin_edges = {}
+        self._categorical_cols = []
     
     def fit(self, reference_data: Dataset) -> None:
         """
-        Learn binning scheme from reference data.
+        Learn the binning scheme from reference data.
+
+        Numeric features get reference quantile bins whose outer edges are
+        -inf and +inf, so production values outside the reference range are
+        counted in the end bins instead of being dropped. Categorical features
+        are compared category by category.
         
         Args:
             reference_data: Reference dataset
         """
         super().fit(reference_data)
+        self._bin_edges = {}
         
         ref_df = self._reference_data.to_pandas()
-        
-        # For each numeric feature, compute quantile-based bins
-        numeric_cols = ref_df.select_dtypes(include=[np.number]).columns
+        categorical = set(reference_data.categorical_features or [])
+        numeric_cols = [
+            c for c in ref_df.select_dtypes(include=[np.number]).columns if c not in categorical
+        ]
+        self._categorical_cols = [c for c in reference_data.feature_names if c in categorical]
         
         for col in numeric_cols:
-            values = ref_df[col].dropna()
-            if len(values) > 0:
-                # Use quantile-based binning to ensure balanced bins
-                try:
-                    _, bin_edges = pd.qcut(
-                        values,
-                        q=self.n_bins,
-                        retbins=True,
-                        duplicates='drop'
-                    )
-                    self._bin_edges[col] = bin_edges
-                except Exception as e:
-                    logger.warning(f"Could not create bins for feature '{col}': {e}")
-                    # Fallback to uniform bins
-                    bin_edges = np.linspace(values.min(), values.max(), self.n_bins + 1)
-                    self._bin_edges[col] = bin_edges
+            values = ref_df[col].dropna().to_numpy(dtype=float)
+            if len(values) == 0:
+                continue
+            inner = np.unique(np.quantile(values, np.linspace(0, 1, self.n_bins + 1))[1:-1])
+            self._bin_edges[col] = np.concatenate([[-np.inf], inner, [np.inf]])
         
-        logger.info(f"PSI fitted on {reference_data.n_samples} samples with {len(self._bin_edges)} binned features")
+        logger.info(
+            f"PSI fitted on {reference_data.n_samples} samples with {len(self._bin_edges)} "
+            f"binned and {len(self._categorical_cols)} categorical features"
+        )
     
-    def _calculate_psi(
-        self,
-        expected: np.ndarray,
-        actual: np.ndarray,
-    ) -> float:
+    def _calculate_psi(self, expected_counts: np.ndarray, actual_counts: np.ndarray) -> float:
         """
-        Calculate PSI between two distributions.
-        
-        Args:
-            expected: Expected (reference) proportions
-            actual: Actual (test) proportions
-        
-        Returns:
-            PSI value
+        PSI between two count vectors over the same cells.
+
+        Counts get a Jeffreys pseudo-count of 0.5 per cell so empty cells give
+        a finite value without the mass distortion of a fixed proportion floor.
         """
-        # Add small constant to avoid division by zero
-        expected = np.maximum(expected, self.min_bin_size)
-        actual = np.maximum(actual, self.min_bin_size)
-        
-        # Normalize to sum to 1
+        expected = (np.asarray(expected_counts, dtype=float) + 0.5)
+        actual = (np.asarray(actual_counts, dtype=float) + 0.5)
         expected = expected / expected.sum()
         actual = actual / actual.sum()
-        
-        # Calculate PSI
-        psi = np.sum((actual - expected) * np.log(actual / expected))
-        
-        return float(psi)
+        return float(np.sum((actual - expected) * np.log(actual / expected)))
+
+    @staticmethod
+    def _pooled_category_counts(ref_values: pd.Series, test_values: pd.Series):
+        """Category counts with categories whose expected count is below five pooled."""
+        categories = sorted(set(ref_values.unique()) | set(test_values.unique()), key=str)
+        ref_counts = ref_values.value_counts().reindex(categories, fill_value=0).to_numpy(dtype=float)
+        test_counts = test_values.value_counts().reindex(categories, fill_value=0).to_numpy(dtype=float)
+        total = ref_counts.sum() + test_counts.sum()
+        expected = np.outer([ref_counts.sum(), test_counts.sum()], ref_counts + test_counts) / total
+        keep = (expected >= MIN_EXPECTED_COUNT).all(axis=0)
+        if (~keep).any():
+            ref_counts = np.append(ref_counts[keep], ref_counts[~keep].sum())
+            test_counts = np.append(test_counts[keep], test_counts[~keep].sum())
+        return ref_counts, test_counts, int((~keep).sum())
     
     def detect(self, test_data: Dataset) -> DetectionResult:
         """
@@ -132,66 +130,35 @@ class PSI(BaseDriftDetector):
         psi_values = []
         feature_results = {}
         
-        # Calculate PSI for each binned feature
         for col, bin_edges in self._bin_edges.items():
             if col not in test_df.columns:
                 logger.warning(f"Feature '{col}' not in test data, skipping")
                 continue
-            
-            ref_values = ref_df[col].dropna()
-            test_values = test_df[col].dropna()
-            
+            ref_values = ref_df[col].dropna().to_numpy(dtype=float)
+            test_values = test_df[col].dropna().to_numpy(dtype=float)
             if len(ref_values) == 0 or len(test_values) == 0:
                 logger.warning(f"Skipping feature '{col}' due to insufficient data")
                 continue
-            
-            # Bin the data
-            ref_binned = pd.cut(ref_values, bins=bin_edges, include_lowest=True)
-            test_binned = pd.cut(test_values, bins=bin_edges, include_lowest=True)
-            
-            # Count proportions
-            ref_counts = ref_binned.value_counts(normalize=True, sort=False)
-            test_counts = test_binned.value_counts(normalize=True, sort=False)
-            
-            # Align indices (in case some bins are empty in test)
-            ref_counts, test_counts = ref_counts.align(test_counts, fill_value=self.min_bin_size)
-            
-            # Calculate PSI
-            psi = self._calculate_psi(ref_counts.values, test_counts.values)
+            ref_counts, _ = np.histogram(ref_values, bins=bin_edges)
+            test_counts, _ = np.histogram(test_values, bins=bin_edges)
+            psi = self._calculate_psi(ref_counts, test_counts)
             psi_values.append(psi)
-            
-            feature_results[col] = {
-                "psi": float(psi),
-                "n_bins": len(bin_edges) - 1,
-            }
+            feature_results[col] = {"psi": float(psi), "n_bins": len(bin_edges) - 1}
         
-        # Check categorical features
-        categorical_cols = ref_df.select_dtypes(include=['object', 'category']).columns
-        
-        for col in categorical_cols:
+        for col in self._categorical_cols:
             if col not in test_df.columns:
                 continue
-            
             ref_values = ref_df[col].dropna()
             test_values = test_df[col].dropna()
-            
             if len(ref_values) == 0 or len(test_values) == 0:
                 continue
-            
-            # Get value counts
-            ref_counts = ref_values.value_counts(normalize=True)
-            test_counts = test_values.value_counts(normalize=True)
-            
-            # Align
-            ref_counts, test_counts = ref_counts.align(test_counts, fill_value=self.min_bin_size)
-            
-            # Calculate PSI
-            psi = self._calculate_psi(ref_counts.values, test_counts.values)
+            ref_counts, test_counts, n_pooled = self._pooled_category_counts(ref_values, test_values)
+            psi = self._calculate_psi(ref_counts, test_counts)
             psi_values.append(psi)
-            
             feature_results[col] = {
                 "psi": float(psi),
-                "n_categories": len(ref_counts),
+                "n_categories": int(len(ref_counts)),
+                "n_categories_pooled": n_pooled,
             }
         
         if len(psi_values) == 0:
@@ -215,16 +182,7 @@ class PSI(BaseDriftDetector):
         # Determine drift and severity
         drift_detected = aggregated_psi >= self.threshold
         
-        if aggregated_psi < 0.1:
-            severity = DriftSeverity.NONE
-        elif aggregated_psi < 0.2:
-            severity = DriftSeverity.LOW
-        elif aggregated_psi < 0.3:
-            severity = DriftSeverity.MEDIUM
-        elif aggregated_psi < 0.5:
-            severity = DriftSeverity.HIGH
-        else:
-            severity = DriftSeverity.CRITICAL
+        severity = severity_from_ratio(aggregated_psi, self.threshold)
         
         logger.info(
             f"PSI result: drift={drift_detected}, "

@@ -143,6 +143,7 @@ class DriftPipeline:
             predictions=sliced_predictions,
             prediction_probabilities=sliced_prediction_probabilities,
             metadata=sliced_metadata,
+            categorical_features=dataset.categorical_features,
         )
 
     def _run_single(self, reference_data: Dataset, test_data: Dataset) -> PipelineResult:

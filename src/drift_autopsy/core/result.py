@@ -5,6 +5,20 @@ from typing import Dict, List, Any, Optional
 from enum import Enum
 
 
+def _json_safe(value: Any) -> Any:
+    """Convert numpy scalars and containers to plain Python for JSON output."""
+    if isinstance(value, dict):
+        return {str(k): _json_safe(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(v) for v in value]
+    if hasattr(value, "item") and callable(value.item):
+        try:
+            return value.item()
+        except (ValueError, TypeError):
+            return value
+    return value
+
+
 class DriftSeverity(Enum):
     """Severity levels for detected drift."""
     NONE = "none"
@@ -88,6 +102,7 @@ class LocalizationResult:
                     "score": fd.score,
                     "p_value": fd.p_value,
                     "severity": fd.severity.value,
+                    "distribution_shift": _json_safe(fd.distribution_shift),
                 }
                 for fd in self.feature_drifts
             ],

@@ -1,107 +1,45 @@
-# Implemented Architecture (Current Code)
+# Implemented Architecture
 
-This file describes the architecture that exists in code now.
+## Data and model contract
 
-## 1. Main Execution Path
+- `Dataset` wraps a feature frame plus optional target, predictions, class
+  probabilities, metadata and the list of nominal features
+  (`categorical_features`). Detectors and the localizer branch on that list.
+- A study fixes three disjoint reference parts (see `experiments/acs.py`,
+  `experiments/clear10.py`): `train` fits the model; `calibration` is the
+  reference window for every detector and fits the CBPE map and the
+  reliability fusion; `test` gives the reference accuracy and a no-drift
+  control window.
 
-Primary flow:
+## Per-window flow (as run by the study scripts)
 
-1. Construct `DriftPipeline` with detector and optional localizer/RCA.
-2. Validate reference and test dataset compatibility.
-3. Optionally apply runtime threshold overrides for detector/localizer.
-4. Run aggregate detector `fit_detect`.
-5. If enabled, run aggregate localizer with detection signal.
-6. If enabled, run aggregate RCA with optional model and localization output.
-7. If slice analysis is enabled, run per-slice analysis and attach slice results in metadata.
-8. Return `PipelineResult` with detection/localization/RCA and metadata.
+1. `DriftPipeline` runs each detector against the reference window; the KS
+   pipeline also runs the univariate localizer and the SHAP analyzer.
+2. The CBPE detector reports the confidence-shift test and the accuracy estimate.
+3. `diagnosis.label_free_diagnosis` runs the input tests, the prediction test
+   and the MMD test as one Holm family, estimates the prior shift (BBSE) and
+   re-tests the inputs against the BBSE-reweighted reference.
+4. `diagnosis.audit_diagnosis` (optional) uses a small labelled sample: an
+   accuracy-drop test and per-feature likelihood-ratio tests of whether the
+   change in errors depends on the feature beyond confidence.
+5. `diagnosis.combine` names the drift type and its stage.
+6. `ReliabilityAnalyzer.analyze` scores every prediction; `summarize` reports
+   means, label shares and, when labels exist for evaluation, AUROCs.
+7. `remediation.remediation_triage` trains the cheap probes and predicts their
+   gain by importance-weighted validation; `run_remediation_suite` grades all
+   strategies on a labelled holdout.
 
-Primary source:
+## Outputs
 
-- `src/drift_autopsy/core/pipeline.py`
+Each study writes one JSON file in `outputs/` (schemas in
+`DASHBOARD_AND_DATA_CONTRACTS.md`). `examples/paper/build_artifacts.py` turns
+them into `paper/generated/results.tex` (every number cited by the paper),
+`paper/generated/tab_*.tex` and `paper/figures/gen_*.pdf`; the dashboard reads
+the same files.
 
-## 2. Composition Model
+## Failure behaviour
 
-The current architecture is interface-based and registry-enabled:
-
-- Detector can be passed as instance or registry string.
-- Localizer can be passed as instance or registry string.
-- RCA analyzer can be passed as instance or registry string.
-- Registry string construction supports parameter dictionaries (`detector_params`, `localizer_params`, `rca_params`).
-
-This allows modular swapping with low coupling.
-
-## 3. Error Handling Behavior
-
-Current behavior in pipeline:
-
-- Detection failure: raises and stops pipeline.
-- Localization failure: logs error, continues with localization result as null.
-- RCA failure: logs error, continues with RCA result as null.
-
-This design keeps detection as mandatory core step and optional stages resilient.
-
-## 4. Data Contracts
-
-Core data structures:
-
-- `Dataset` as standard data carrier
-- `DetectionResult`
-- `LocalizationResult`
-- `RCAResult`
-- `PipelineResult`
-
-JSON export from demo uses `result.to_dict()` and year-level aggregation.
-
-Additional metadata contracts in current pipeline runs include:
-
-- Effective threshold values used at runtime
-- Threshold source (`runtime_override` or component default)
-- Optional `slice_analysis` block with per-slice results
-
-## 5. Localizer Architecture
-
-Current implemented localizer:
-
-- Univariate statistical testing per feature
-- Numeric and categorical branches
-- Multiple testing correction support
-- Sorted feature drift outputs by p-value
-- Aggregate localization result can include per-slice localization outputs via `slice_drifts`
-
-## 6. RCA Architecture
-
-Current implemented RCA path:
-
-- SHAP-based analyzer
-- Uses all numeric features for model input compatibility
-- Can focus reporting/recommendations on selected or drifted features
-- Produces feature importance shifts and recommendations
-
-## 7. Dashboard Data Path
-
-Current dashboard path:
-
-1. Load JSON results via `DriftResultsLoader`.
-2. Normalize both supported JSON styles (yearly_results wrapper or direct year keys).
-3. Build tabular views for detectors, feature drift, performance, RCA, and slice-level outputs.
-4. Feed visualizations in Streamlit app.
-
-## 8. Slice Analysis Architecture (Current)
-
-Current slice path is generic and metadata-column based:
-
-1. User passes `slice_config` to `pipeline.run(...)`.
-2. Pipeline validates metadata and slice column availability.
-3. Pipeline runs aggregate analysis first.
-4. Pipeline runs per-slice analysis in one of two modes:
-	- Same-slice mode: ref slice value compared to same test slice value.
-	- Cross-slice mode: fixed reference slice value compared against each test slice.
-5. Slice results are stored in pipeline metadata for dashboard and downstream use.
-
-## 9. Current Deployment Shape
-
-- Local script execution
-- Streamlit dashboard process
-- File-based outputs under `outputs/`
-
-No service-oriented runtime orchestration layer is currently implemented.
+Localisation and RCA failures inside `DriftPipeline` are logged and the
+detection result is kept. Remediation strategies that need data the context
+lacks raise `NotApplicable` and are listed as skipped, never silently replaced
+by the deployed model.

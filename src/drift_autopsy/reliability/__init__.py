@@ -1,20 +1,16 @@
-"""Reliability and hallucination detection layer."""
+"""Per-prediction reliability: calibrated error, out-of-distribution, instability, learned fusion."""
 
-from drift_autopsy.reliability.analyzer import ReliabilityAnalyzer
-from drift_autopsy.reliability.calibration import CalibrationChecker
-from drift_autopsy.reliability.confidence import ConfidenceExtractor
-from drift_autopsy.reliability.explanation import ExplanationConsistencyChecker
-from drift_autopsy.reliability.ood import OODDetector
-from drift_autopsy.reliability.risk_engine import RiskScoringEngine, RiskWeights
+from drift_autopsy.reliability.analyzer import SIGNALS, ReliabilityAnalyzer
+from drift_autopsy.reliability.fusion import RISK_LABELS, RiskFusion
+from drift_autopsy.reliability.ood import OODDetector, TabularOODEncoder
 from drift_autopsy.reliability.stability import StabilityChecker
 
 __all__ = [
+    "SIGNALS",
+    "RISK_LABELS",
     "ReliabilityAnalyzer",
-    "ConfidenceExtractor",
+    "RiskFusion",
     "OODDetector",
+    "TabularOODEncoder",
     "StabilityChecker",
-    "CalibrationChecker",
-    "ExplanationConsistencyChecker",
-    "RiskScoringEngine",
-    "RiskWeights",
 ]

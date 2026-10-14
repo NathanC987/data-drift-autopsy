@@ -1,75 +1,17 @@
 # Examples
 
-This directory contains examples demonstrating the Drift Autopsy framework.
+| Script | What it produces |
+|---|---|
+| `quickstart/simple_example.py` | minimal `DriftPipeline` run on synthetic data |
+| `quickstart/folktables_demo.py` | ACS Income study (CA 2014 reference; CA 2015-2018 and TX/NY/FL/WA 2014 windows) -> `outputs/folktables_drift_results.json` |
+| `quickstart/clear10_tabularize_demo.py` | frozen ResNet-18 embeddings for every CLEAR-10 bucket -> `outputs/clear10_tabularized_demo/` |
+| `quickstart/clear10_drift_study.py` | CLEAR-10 study (bucket 1 reference; buckets 2-10) -> `outputs/clear10_drift_results.json` |
+| `quickstart/clip_concept_probe_demo.py` | CLIP concept probe for buckets 2-10 -> `outputs/clip_concepts/concept_rca_results.json` |
+| `quickstart/remediation_demo.py` | remediation strategies and label-free triage on every real window -> `outputs/remediation_results.json` |
+| `quickstart/drift_injection_benchmark.py` | 650-window injection benchmark (5 states x 10 seeds) -> `outputs/drift_injection_benchmark.json` |
+| `paper/build_artifacts.py` | paper numbers (`paper/generated/results.tex`), tables and figures from the outputs |
+| `dashboard/app.py` | Streamlit dashboard over the outputs |
 
-## Quick Start
-
-### Simple Example
-Basic drift detection on synthetic data:
-
-```bash
-cd examples/quickstart
-python simple_example.py
-```
-
-### Folktables Demo
-Temporal drift analysis on ACS Income data (CA 2014-2018):
-
-```bash
-cd examples/quickstart
-python folktables_demo.py
-```
-
-This will:
-1. Load ACS Income data for California (2014-2018)
-2. Train a LogisticRegression model on 2014 data
-3. Run multiple drift detectors (KS Test, PSI, MMD, CBPE) on each year
-4. Save results to `outputs/folktables_drift_results.json`
-
-**Requirements:**
-```bash
-pip install -e ".[demo]"
-```
-
-## Configuration-Driven Usage
-
-Load a pipeline from YAML config:
-
-```python
-from drift_autopsy.config import ConfigLoader
-from drift_autopsy import DriftPipeline, Dataset
-
-# Load config
-config = ConfigLoader.from_yaml("configs/examples/basic_drift_detection.yaml")
-
-# Build pipeline (you'd need to implement this helper or construct manually)
-pipeline = DriftPipeline(
-    detector=config.detector.type,
-    localizer=config.localizer.type if config.localizer else None,
-    enable_localization=config.enable_localization,
-    enable_rca=config.enable_rca,
-)
-
-# Run
-result = pipeline.run(reference, test)
-```
-
-## What Each Detector Tests
-
-- **KS Test**: Univariate distribution shifts (per feature)
-- **PSI**: Population Stability Index - binned distribution comparison
-- **MMD**: Multivariate distribution distance using kernel methods
-- **CBPE**: Confidence-Based Performance Estimation - monitors model confidence shifts
-
-## Expected Output
-
-The Folktables demo creates:
-- `outputs/folktables_drift_results.json`: Complete results for all years and detectors
-- Console output with drift detection summary and top drifted features
-
-## Next Steps
-
-1. Modify detector thresholds in the scripts or configs
-2. Try different feature selections
-3. Add RCA (SHAP) analysis by setting `enable_rca=True`
-4. Test on your own datasets using `Dataset.from_pandas()` or `Dataset.from_numpy()`
+Run order: the ACS and CLEAR-10 studies first (the concept probe and the
+remediation study read their outputs), then the benchmark, then
+`paper/build_artifacts.py`. Every script is seeded and deterministic.

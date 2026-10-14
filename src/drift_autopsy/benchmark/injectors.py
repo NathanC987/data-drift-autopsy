@@ -24,7 +24,19 @@ import numpy as np
 import pandas as pd
 
 from drift_autopsy.benchmark.spec import InjectedDriftSpec
-from drift_autopsy.remediation.synthetic import inject_covariate_shift as _scale_shift
+
+
+def _scale_shift(X: np.ndarray, feature_names: Sequence[str], shifted_features: Sequence[str],
+                 scale: float, offset: float) -> np.ndarray:
+    """Copy of ``X`` with each named feature mapped to mu + scale * (x - mu) + offset * sd."""
+    X = np.asarray(X, dtype=float).copy()
+    names = list(feature_names)
+    for f in shifted_features:
+        j = names.index(f)
+        col = X[:, j]
+        mu, sd = col.mean(), col.std()
+        X[:, j] = mu + scale * (col - mu) + offset * sd
+    return X
 
 
 @dataclass
@@ -70,8 +82,7 @@ def inject_covariate(
 ) -> InjectionResult:
     """Scale and mean-offset a named feature subset for a subpopulation.
 
-    ``x' = mean + scale*(x - mean) + offset*sd`` per feature (delegated to the
-    remediation module's shared implementation) applied to a random ``fraction``
+    ``x' = mean + scale*(x - mean) + offset*sd`` per feature, applied to a random ``fraction``
     of rows, so the marginal spread and mean move, the shift is heterogeneous
     across the population (a realistic new segment), and the target rule P(Y|X)
     is untouched.
@@ -99,6 +110,7 @@ def inject_covariate(
         params={"scale": scale, "offset": offset, "fraction": fraction},
         affected_features=list(features),
         px_changed=True,
+        pxgiveny_changed=True,
         pygivenx_changed=False,
         p_y_reference=_positive_rate(y),
         p_y_production=_positive_rate(y),
@@ -150,7 +162,8 @@ def inject_prior(
         intensity_label=intensity_label,
         params={"target_positive_rate": target},
         affected_features=[],
-        px_changed=False,
+        px_changed=True,
+        pxgiveny_changed=False,
         pygivenx_changed=False,
         p_y_reference=base_rate,
         p_y_production=_positive_rate(y_new),
@@ -201,6 +214,7 @@ def inject_concept(
         },
         affected_features=[region_feature],
         px_changed=False,
+        pxgiveny_changed=True,
         pygivenx_changed=True,
         p_y_reference=_positive_rate(y_ref),
         p_y_production=_positive_rate(y_new),
@@ -235,6 +249,7 @@ def inject_label_noise(
         params={"rate": rate, "observed_flip_fraction": float(np.mean(flip))},
         affected_features=[],
         px_changed=False,
+        pxgiveny_changed=True,
         pygivenx_changed=True,
         p_y_reference=_positive_rate(y_ref),
         p_y_production=_positive_rate(y_new),

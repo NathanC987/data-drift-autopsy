@@ -1,4 +1,4 @@
-"""FID-style Frechet distance detector for embedding drift."""
+"""Frechet distance between Gaussians fitted to reference and test embeddings."""
 
 from __future__ import annotations
 
@@ -9,92 +9,78 @@ from scipy.linalg import sqrtm
 
 from drift_autopsy.core.dataset import Dataset
 from drift_autopsy.core.detector import BaseDriftDetector
-from drift_autopsy.core.result import DetectionResult, DriftSeverity
+from drift_autopsy.core.result import DetectionResult
 from drift_autopsy.registry import DetectorRegistry
+from drift_autopsy.stats import permutation_test, severity_from_p_value
 
 logger = logging.getLogger(__name__)
 
 
+def frechet_distance(X: np.ndarray, Y: np.ndarray, covariance_eps: float = 1e-6) -> float:
+    """||mu_x - mu_y||^2 + tr(S_x + S_y - 2 (S_x S_y)^{1/2}) for Gaussian fits.
+
+    This is the statistic behind FID (Heusel et al., 2017), here computed on the
+    monitored model's own embedding space rather than Inception features.
+    """
+    d = X.shape[1]
+    cx = np.atleast_2d(np.cov(X, rowvar=False)) + np.eye(d) * covariance_eps
+    cy = np.atleast_2d(np.cov(Y, rowvar=False)) + np.eye(d) * covariance_eps
+    diff = X.mean(axis=0) - Y.mean(axis=0)
+    covmean = sqrtm(cx @ cy)
+    if np.iscomplexobj(covmean):
+        covmean = covmean.real
+    return float(diff @ diff + np.trace(cx + cy - 2.0 * covmean))
+
+
+@DetectorRegistry.register("frechet_distance")
 @DetectorRegistry.register("fid_distance")
-class FIDDistance(BaseDriftDetector):
-    """Detect drift using Frechet distance between reference and test embedding Gaussians."""
+class FrechetDistance(BaseDriftDetector):
+    """Frechet distance with a permutation test.
 
-    def __init__(
-        self,
-        threshold: float = 50.0,
-        covariance_eps: float = 1e-6,
-    ):
-        super().__init__(name="fid_distance")
+    Args:
+        threshold: Significance level of the permutation test (default: 0.05)
+        n_permutations: Permutations for the p-value (default: 200)
+        max_samples: Per-sample cap; larger samples are randomly subsampled (default: 3000)
+        covariance_eps: Ridge added to each covariance (default: 1e-6)
+        random_state: Seed for subsampling and permutations (default: 42)
+    """
+
+    def __init__(self, threshold: float = 0.05, n_permutations: int = 200, max_samples: int = 3000,
+                 covariance_eps: float = 1e-6, random_state: int = 42):
+        super().__init__(name="frechet_distance")
         self.threshold = threshold
+        self.n_permutations = n_permutations
+        self.max_samples = max_samples
         self.covariance_eps = covariance_eps
-        self._feature_cols: list[str] = []
-        self._mu_ref: np.ndarray | None = None
-        self._cov_ref: np.ndarray | None = None
+        self.random_state = random_state
 
-    def _to_numeric_matrix(self, dataset: Dataset) -> np.ndarray:
-        df = dataset.to_pandas()
-        if not self._feature_cols:
-            self._feature_cols = df.select_dtypes(include=[np.number]).columns.tolist()
-        return df[self._feature_cols].fillna(0).to_numpy(dtype=float)
-
-    def _regularized_cov(self, X: np.ndarray) -> np.ndarray:
-        cov = np.atleast_2d(np.cov(X, rowvar=False))
-        d = cov.shape[0]
-        return cov + np.eye(d) * self.covariance_eps
-
-    def fit(self, reference_data: Dataset) -> None:
-        super().fit(reference_data)
-
-        X = self._to_numeric_matrix(reference_data)
-        if X.shape[1] == 0:
-            raise ValueError("FID detector requires numeric features")
-
-        self._mu_ref = X.mean(axis=0)
-        self._cov_ref = self._regularized_cov(X)
-
-        logger.info("FID distance fitted on %d samples with %d features", X.shape[0], X.shape[1])
+    def _matrix(self, dataset: Dataset, rng: np.random.Generator) -> np.ndarray:
+        cols = [c for c in dataset.numeric_features]
+        X = dataset.to_pandas()[cols].to_numpy(dtype=float)
+        if len(X) > self.max_samples:
+            X = X[rng.choice(len(X), self.max_samples, replace=False)]
+        return X
 
     def detect(self, test_data: Dataset) -> DetectionResult:
         if not self._fitted:
             raise RuntimeError("Detector must be fitted before calling detect()")
-        assert self._mu_ref is not None
-        assert self._cov_ref is not None
-
-        X = self._to_numeric_matrix(test_data)
-        mu_test = X.mean(axis=0)
-        cov_test = self._regularized_cov(X)
-
-        diff = self._mu_ref - mu_test
-        cov_prod = self._cov_ref @ cov_test
-        covmean = sqrtm(cov_prod)
-        if np.iscomplexobj(covmean):
-            covmean = covmean.real
-
-        fid = float(diff @ diff + np.trace(self._cov_ref + cov_test - 2.0 * covmean))
-        if not np.isfinite(fid):
-            fid = float("inf")
-
-        drift_detected = fid >= self.threshold
-        if fid < self.threshold:
-            severity = DriftSeverity.NONE
-        elif fid < self.threshold * 1.5:
-            severity = DriftSeverity.LOW
-        elif fid < self.threshold * 2.5:
-            severity = DriftSeverity.MEDIUM
-        elif fid < self.threshold * 4:
-            severity = DriftSeverity.HIGH
-        else:
-            severity = DriftSeverity.CRITICAL
-
+        rng = np.random.default_rng(self.random_state)
+        X = self._matrix(self._reference_data, rng)
+        Y = self._matrix(test_data, rng)
+        test = permutation_test(lambda a, b: frechet_distance(a, b, self.covariance_eps), X, Y,
+                                self.n_permutations, random_state=self.random_state)
+        drift = test["p_value"] < self.threshold
         return DetectionResult(
             detector_name=self.name,
-            drift_detected=drift_detected,
-            severity=severity,
-            score=float(fid),
-            threshold=float(self.threshold),
-            statistic=float(fid),
-            metadata={
-                "n_features": len(self._feature_cols),
-                "covariance_eps": float(self.covariance_eps),
-            },
+            drift_detected=bool(drift),
+            severity=severity_from_p_value(test["p_value"], self.threshold),
+            score=test["statistic"],
+            threshold=self.threshold,
+            p_value=test["p_value"],
+            statistic=test["statistic"],
+            metadata={"n_permutations": self.n_permutations, "n_reference": len(X), "n_test": len(Y),
+                      "n_features": X.shape[1], "covariance_eps": self.covariance_eps},
         )
+
+
+FIDDistance = FrechetDistance  # backwards-compatible name

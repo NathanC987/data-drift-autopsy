@@ -1,213 +1,204 @@
-"""Grade one benchmark run and aggregate a sweep.
+"""Aggregate benchmark runs into rates with confidence intervals.
 
-Every function here compares a pipeline output against an
-:class:`~drift_autopsy.benchmark.spec.InjectedDriftSpec` answer key. Nothing is
-label-free -- this is the marking scheme, not part of the monitored system.
+Proportions carry 95% Wilson intervals; means carry 95% percentile intervals
+from a bootstrap over replicates (state, seed), which respects the fact that
+windows within a replicate share a model and a reference.
 """
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Sequence
+from collections import defaultdict
+from typing import Any, Dict, List, Sequence
 
 import numpy as np
+from scipy.stats import spearmanr
 
 from drift_autopsy.benchmark.spec import DRIFT_TYPES
+from drift_autopsy.stats import wilson_interval
+
+EXPECTED_TYPE = {t: t for t in DRIFT_TYPES}
 
 
-def localisation_prf(
-    localised: Sequence[str],
-    injected: Sequence[str],
-    audit_feature: Optional[str] = None,
-) -> Dict[str, Any]:
-    """Precision/recall/F1 of the localised feature set against the injected one.
-
-    ``localised`` is the label-free (KS) localisation; ``audit_feature`` is the
-    single feature the delayed-label audit flagged as carrying the loss. When no
-    feature was injected (prior, label noise) there is no target, so the score is
-    the true-negative check: did localisation correctly stay empty?
-    """
-    localised = set(localised)
-    injected = set(injected)
-    audit_hit = audit_feature in injected if (audit_feature and injected) else None
-
-    if not injected:
-        return {
-            "applicable": False,
-            "precision": None,
-            "recall": None,
-            "f1": None,
-            "false_positive_features": sorted(localised),
-            "clean": len(localised) == 0,
-            "audit_feature": audit_feature,
-            "audit_match": None,
-        }
-
-    tp = len(localised & injected)
-    precision = tp / len(localised) if localised else 0.0
-    recall = tp / len(injected)
-    f1 = (2 * precision * recall / (precision + recall)) if (precision + recall) else 0.0
-    return {
-        "applicable": True,
-        "precision": round(precision, 4),
-        "recall": round(recall, 4),
-        "f1": round(f1, 4),
-        "matched": sorted(localised & injected),
-        "missed": sorted(injected - localised),
-        "false_positive_features": sorted(localised - injected),
-        "audit_feature": audit_feature,
-        "audit_match": audit_hit,
-    }
+def _rho(x: Sequence[float], y: Sequence[float]):
+    """Spearman correlation, or None when undefined (fewer than 3 points or a constant input)."""
+    if len(x) < 3 or len(set(np.round(x, 12))) < 2 or len(set(np.round(y, 12))) < 2:
+        return None
+    r = spearmanr(x, y).correlation
+    return float(r) if np.isfinite(r) else None
 
 
-def estimator_error(estimated_accuracy: float, spec) -> Dict[str, Any]:
-    """How the label-free accuracy estimate compares to the true production accuracy."""
-    implied_drop = spec.reference_accuracy - estimated_accuracy
-    true_drop = spec.true_accuracy_drop
-    signed_error = float(estimated_accuracy - spec.production_accuracy)
-    return {
-        "estimated_accuracy": round(float(estimated_accuracy), 4),
-        "true_accuracy": round(float(spec.production_accuracy), 4),
-        "signed_error": round(signed_error, 4),
-        "optimistic": bool(signed_error > 0),
-        "implied_drop": round(float(implied_drop), 4),
-        "true_drop": round(float(true_drop), 4),
-        "drop_captured_fraction": round(
-            float(implied_drop / true_drop) if abs(true_drop) > 1e-6 else 0.0, 4
-        ),
-    }
+def _prop(k: int, n: int) -> Dict[str, Any]:
+    lo, hi = wilson_interval(k, n)
+    return {"k": int(k), "n": int(n), "rate": (k / n) if n else None, "ci": [lo, hi]}
 
 
-def type_identification_summary(runs: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """Confusion matrix + accuracy of predicted vs injected drift type."""
+def _mean_ci(values_by_replicate: Dict[Any, List[float]], n_boot: int = 2000, seed: int = 0) -> Dict[str, Any]:
+    reps = [v for v in values_by_replicate.values() if v]
+    if not reps:
+        return {"mean": None, "ci": [None, None], "n": 0}
+    flat = np.concatenate([np.asarray(v, dtype=float) for v in reps])
+    rng = np.random.default_rng(seed)
+    boots = []
+    for _ in range(n_boot):
+        pick = rng.integers(0, len(reps), len(reps))
+        boots.append(np.mean(np.concatenate([np.asarray(reps[i], dtype=float) for i in pick])))
+    lo, hi = np.percentile(boots, [2.5, 97.5])
+    return {"mean": float(flat.mean()), "ci": [float(lo), float(hi)], "n": int(flat.size)}
+
+
+def _rep(r: Dict[str, Any]):
+    return (r["state"], r["seed"])
+
+
+def type_identification(runs: List[Dict[str, Any]]) -> Dict[str, Any]:
     labels = list(DRIFT_TYPES)
     matrix = {a: {b: 0 for b in labels} for a in labels}
-    correct = 0
+    stage = {a: defaultdict(int) for a in labels}
     for r in runs:
-        true_t = r["ground_truth"]["drift_type"]
-        pred_t = r["verdict"]["predicted_type"]
-        if pred_t not in matrix[true_t]:
-            matrix[true_t][pred_t] = 0
-        matrix[true_t][pred_t] += 1
-        correct += int(true_t == pred_t)
+        matrix[r["drift_type"]][r["diagnosis"]["drift_type"]] += 1
+        stage[r["drift_type"]][r["diagnosis"]["stage"]] += 1
+    per_type = {t: _prop(matrix[t][EXPECTED_TYPE[t]], sum(matrix[t].values())) for t in labels}
+    per_intensity: Dict[str, Dict[str, Any]] = {}
+    for t in labels:
+        for lab in sorted({r["intensity_label"] for r in runs if r["drift_type"] == t}):
+            sub = [r for r in runs if r["drift_type"] == t and r["intensity_label"] == lab]
+            per_intensity[f"{t}/{lab}"] = _prop(sum(r["diagnosis_correct"] for r in sub), len(sub))
+    total = sum(r["diagnosis_correct"] for r in runs)
     return {
-        "accuracy": round(correct / len(runs), 4) if runs else 0.0,
-        "n_runs": len(runs),
+        "overall": _prop(total, len(runs)),
+        "per_type": per_type,
+        "per_intensity": per_intensity,
         "confusion_matrix": matrix,
+        "stage_counts": {t: dict(v) for t, v in stage.items()},
         "labels": labels,
     }
 
 
-def _max_detector_score(detection: Dict[str, Any]) -> float:
-    """A single continuous 'how loud is detection' number: the largest KS/PSI/MMD
-    statistic plus a bounded CBPE contribution."""
-    ks = detection.get("KS Test", {})
-    psi = detection.get("PSI", {})
-    mmd = detection.get("MMD", {})
-    cbpe = detection.get("CBPE", {})
-    parts = []
-    for b in (ks, psi, mmd):
-        if isinstance(b, dict) and "error" not in b:
-            parts.append(float(b.get("score", 0.0)))
-    cbpe_term = 0.0
-    if isinstance(cbpe, dict) and "error" not in cbpe:
-        cbpe_term = float(np.tanh(cbpe.get("score", 0.0) / 200.0))
-    return float(max(parts, default=0.0) + cbpe_term)
+def audit_budget(runs: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Type-identification rate by audit size, for the types the audit decides."""
+    out: Dict[str, Any] = {}
+    sizes = sorted({int(k) for r in runs for k in r["diagnosis_by_audit_size"]})
+    for t in ("none", "concept", "label_noise"):
+        sub = [r for r in runs if r["drift_type"] == t]
+        out[t] = {str(n): _prop(sum(r["diagnosis_by_audit_size"][str(n)] == EXPECTED_TYPE[t] for r in sub), len(sub))
+                  for n in sizes}
+    return out
 
 
-def intensity_response(runs: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """Per drift type: does each stage's output rise monotonically with the
-    injected intensity? Spearman rho over the intensity ladder for the label-free
-    detector loudness, the label-free estimator's implied drop, the delayed-label
-    audit's measured drop, and the batch high-risk rate."""
-    from scipy.stats import spearmanr
-
-    def _rho(pairs: List[tuple]) -> Optional[float]:
-        if len(pairs) < 3:
-            return None
-        xs, ys = zip(*sorted(pairs))
-        if len(set(round(v, 6) for v in ys)) < 2:
-            return 0.0
-        rho, _ = spearmanr(xs, ys)
-        return round(float(rho), 4) if np.isfinite(rho) else None
-
-    by_type: Dict[str, Dict[str, List[tuple]]] = {}
-    for r in runs:
-        t = r["ground_truth"]["drift_type"]
-        if t == "none":
-            continue
-        o = r["intensity_order"]
-        acc = by_type.setdefault(t, {"detector": [], "estimator": [], "audit": [], "risk": []})
-        acc["detector"].append((o, _max_detector_score(r["pipeline"]["detection"])))
-        acc["estimator"].append((o, abs(r["grading"]["estimator"]["implied_drop"])))
-        acc["audit"].append((o, r["labelled_audit"]["measured_drop"]))
-        acc["risk"].append((o, r["pipeline"]["reliability"].get("high_risk_pct", 0.0) or 0.0))
-
-    return {
-        t: {
-            "label_free_detector_rho": _rho(v["detector"]),
-            "label_free_estimator_rho": _rho(v["estimator"]),
-            "labelled_audit_drop_rho": _rho(v["audit"]),
-            "reliability_high_risk_rho": _rho(v["risk"]),
+def estimator(runs: List[Dict[str, Any]]) -> Dict[str, Any]:
+    out: Dict[str, Any] = {}
+    for t in DRIFT_TYPES:
+        sub = [r for r in runs if r["drift_type"] == t]
+        by_rep: Dict[Any, List[float]] = defaultdict(list)
+        for r in sub:
+            by_rep[_rep(r)].append(r["estimator"]["error"])
+        out[t] = {
+            "error": _mean_ci(by_rep),
+            "optimistic": _prop(sum(r["estimator"]["error"] > 0 for r in sub), len(sub)),
         }
-        for t, v in by_type.items()
+    return out
+
+
+def reliability(runs: List[Dict[str, Any]]) -> Dict[str, Any]:
+    out: Dict[str, Any] = {}
+    for t in DRIFT_TYPES:
+        sub = [r for r in runs if r["drift_type"] == t and r["reliability"].get("auroc_risk") is not None]
+        res = {}
+        for key in ("auroc_risk", "auroc_confidence_only", "auroc_ood", "auroc_instability"):
+            by_rep: Dict[Any, List[float]] = defaultdict(list)
+            for r in sub:
+                by_rep[_rep(r)].append(r["reliability"][key])
+            res[key] = _mean_ci(by_rep)
+        diff: Dict[Any, List[float]] = defaultdict(list)
+        for r in sub:
+            diff[_rep(r)].append(r["reliability"]["auroc_risk"] - r["reliability"]["auroc_confidence_only"])
+        res["auroc_risk_minus_confidence"] = _mean_ci(diff)
+        out[t] = res
+    return out
+
+
+def triage(runs: List[Dict[str, Any]]) -> Dict[str, Any]:
+    tp = sum(r["triage"]["will_retraining_help"] and r["triage_truth"]["retraining_helps"] for r in runs)
+    tn = sum((not r["triage"]["will_retraining_help"]) and (not r["triage_truth"]["retraining_helps"]) for r in runs)
+    fp = sum(r["triage"]["will_retraining_help"] and not r["triage_truth"]["retraining_helps"] for r in runs)
+    fn = sum((not r["triage"]["will_retraining_help"]) and r["triage_truth"]["retraining_helps"] for r in runs)
+    predicted = [next(p["difference"] for p in r["triage"]["probes"] if p["probe"] == "importance_weighted_retrain")
+                 for r in runs]
+    actual = [r["triage_truth"]["actual_gain"] for r in runs]
+    rho = _rho(predicted, actual)
+    per_type = {}
+    for t in DRIFT_TYPES:
+        sub = [r for r in runs if r["drift_type"] == t]
+        per_type[t] = {
+            "escalated": _prop(sum(r["triage"]["will_retraining_help"] for r in sub), len(sub)),
+            "truly_helps": _prop(sum(r["triage_truth"]["retraining_helps"] for r in sub), len(sub)),
+            "agreement": _prop(sum(r["triage"]["will_retraining_help"] == r["triage_truth"]["retraining_helps"]
+                                   for r in sub), len(sub)),
+        }
+    return {
+        "agreement": _prop(tp + tn, len(runs)),
+        "confusion": {"tp": tp, "tn": tn, "fp": fp, "fn": fn},
+        "precision": _prop(tp, tp + fp),
+        "recall": _prop(tp, tp + fn),
+        "spearman_predicted_vs_actual_gain": rho,
+        "per_type": per_type,
     }
 
 
-def reliability_auroc_by_type(runs: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """Strongest-intensity reliability AUROC (risk score vs prediction error) per type."""
+def localization(runs: List[Dict[str, Any]]) -> Dict[str, Any]:
+    out: Dict[str, Any] = {}
+    for t in ("covariate", "concept"):
+        sub = [r for r in runs if r["drift_type"] == t and r["diagnosis_correct"] and r["localization"]]
+        exact = sum(set(r["localization"]["localized"]) == set(r["localization"]["injected"]) for r in sub)
+        prec: Dict[Any, List[float]] = defaultdict(list)
+        rec: Dict[Any, List[float]] = defaultdict(list)
+        for r in sub:
+            prec[_rep(r)].append(r["localization"]["precision"])
+            rec[_rep(r)].append(r["localization"]["recall"])
+        out[t] = {"exact_match": _prop(exact, len(sub)), "precision": _mean_ci(prec), "recall": _mean_ci(rec)}
+    return out
+
+
+def detector_false_alarms(runs: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Per-detector alarm rate on no-drift control windows (nominal: alpha for tests)."""
+    ctrl = [r for r in runs if r["drift_type"] == "none"]
+    names = sorted({n for r in ctrl for n in r["detection"]})
+    return {n: _prop(sum(r["detection"][n]["drift_detected"] for r in ctrl), len(ctrl)) for n in names}
+
+
+def intensity_response(runs: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Spearman correlation of intensity order with the true drop, the label-free
+    evidence (-log10 of the smallest shift-test p-value) and the audited drop."""
     out: Dict[str, Any] = {}
     for t in DRIFT_TYPES:
         if t == "none":
             continue
-        cands = [r for r in runs if r["ground_truth"]["drift_type"] == t]
-        if not cands:
-            continue
-        strongest = max(cands, key=lambda r: r["intensity_order"])
-        out[t] = strongest["pipeline"]["reliability"].get("auroc_risk_vs_error")
+        sub = [r for r in runs if r["drift_type"] == t]
+        order = [r["intensity_order"] for r in sub]
+        evidence = [-np.log10(max(r["label_free"]["min_input_p_value"], 1e-300)) for r in sub]
+        drop = [r["true_accuracy_drop"] for r in sub]
+        audit_drop = [r["audit"]["audit_accuracy"] for r in sub]
+        out[t] = {
+            "true_drop_rho": _rho(order, drop),
+            "label_free_evidence_rho": _rho(order, evidence),
+            "audit_accuracy_rho": _rho(order, audit_drop),
+            "mean_true_drop_by_intensity": {
+                str(o): float(np.mean([d for oo, d in zip(order, drop) if oo == o])) for o in sorted(set(order))
+            },
+        }
     return out
 
 
-def aggregate(runs: List[Dict[str, Any]]) -> Dict[str, Any]:
-    loc_f1 = {}
-    for t in ("covariate", "concept"):
-        vals = [
-            r["grading"]["localisation"]["f1"]
-            for r in runs
-            if r["ground_truth"]["drift_type"] == t
-            and r["grading"]["localisation"].get("f1") is not None
-        ]
-        if vals:
-            loc_f1[t] = round(float(np.mean(vals)), 4)
-
-    optimistic = [
-        r["grading"]["estimator"]["optimistic"]
-        for r in runs
-        if r["ground_truth"]["drift_type"] != "none"
-    ]
-
-    clean_when_unlocalised = [
-        r["grading"]["localisation"]["clean"]
-        for r in runs
-        if not r["grading"]["localisation"]["applicable"]
-        and r["ground_truth"]["drift_type"] != "none"
-    ]
-
-    audit_localised = [
-        r["grading"]["localisation"]["audit_match"]
-        for r in runs
-        if r["grading"]["localisation"].get("audit_match") is not None
-    ]
-
+def aggregate(runs: List[Dict[str, Any]], cfg=None) -> Dict[str, Any]:
     return {
-        "type_identification": type_identification_summary(runs),
+        "n_runs": len(runs),
+        "n_replicates": len({_rep(r) for r in runs}),
+        "type_identification": type_identification(runs),
+        "audit_budget": audit_budget(runs),
+        "detector_false_alarms": detector_false_alarms(runs),
+        "estimator": estimator(runs),
+        "reliability": reliability(runs),
+        "triage": triage(runs),
+        "localization": localization(runs),
         "intensity_response": intensity_response(runs),
-        "mean_localisation_f1": loc_f1,
-        "audit_localisation_hit_rate": (
-            round(float(np.mean(audit_localised)), 4) if audit_localised else None
-        ),
-        "estimator_optimism_rate": round(float(np.mean(optimistic)), 4) if optimistic else None,
-        "localisation_clean_rate_when_no_feature_target": (
-            round(float(np.mean(clean_when_unlocalised)), 4) if clean_when_unlocalised else None
-        ),
-        "reliability_auroc_by_type": reliability_auroc_by_type(runs),
     }

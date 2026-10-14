@@ -1,94 +1,69 @@
 # Data Drift Autopsy
 
-A modular framework for data drift detection, diagnosis, and remediation in production ML systems.
+Label-free monitoring for deployed classifiers: estimate accuracy without
+labels, detect and localise drift, explain it, name its type, score every
+prediction's reliability and predict whether a cheap retrain will help. Every
+decision is a hypothesis test at one significance level with family-wise error
+control; nothing is tuned on the evaluation data.
 
-## Features
+## What it does
 
-- **Detection**: Multiple drift detection methods (statistical tests, distribution-based, model-based)
-- **Localization**: Identify which features and data slices are affected
-- **Root Cause Analysis**: Understand why drift occurred (SHAP-based explanations)
-- **Modular Design**: Easy to extend with custom detectors and analyzers
-- **Config-Driven**: Support for both Python API and YAML configuration
+| Stage | Method |
+|---|---|
+| Accuracy estimate | CBPE: histogram-binning map from confidence to accuracy, fitted on held-out labelled data |
+| Detection | KS (numeric features, corrected), PSI, MMD / PCA reconstruction / Frechet distance permutation tests, confidence-shift chi-square test |
+| Localisation | KS or chi-square homogeneity per feature (Holm), effect sizes, unseen-category share, predicted-class slices |
+| Root cause | SHAP attribution change with bootstrap intervals (tables); CLIP concept probe and class activation maps (images) |
+| Drift type | label-free: input, prediction and MMD tests, black-box shift estimation, label-shift consistency; audit: accuracy-drop and error-structure tests |
+| Reliability | confidence risk, out-of-distribution score, instability; logistic fusion learned on held-out data |
+| Remediation | strategies graded by paired bootstrap; label-free triage by importance-weighted validation |
 
-## Quick Start
+## Install
+
+```bash
+pip install -e ".[all,dev]"     # Python >= 3.10
+```
+
+## Quick start
 
 ```python
-from drift_autopsy import DriftPipeline
+import numpy as np
+from drift_autopsy import Dataset, DriftPipeline
 from drift_autopsy.detectors import KSTest
-from drift_autopsy.data import Dataset
 
-# Create pipeline
-pipeline = DriftPipeline(
-    detector=KSTest(threshold=0.05),
-    localizer="univariate",
-    enable_rca=True
-)
+rng = np.random.default_rng(0)
+reference = Dataset.from_numpy(rng.normal(size=(1000, 5)))
+production = Dataset.from_numpy(rng.normal(loc=0.5, size=(1000, 5)))
 
-# Run drift analysis
-reference = Dataset.from_pandas(reference_df)
-test = Dataset.from_pandas(test_df)
-result = pipeline.run(reference, test)
-
-print(f"Drift detected: {result.drift_detected}")
+result = DriftPipeline(detector=KSTest(), localizer="univariate").run(reference, production)
+print(result.detection.drift_detected, result.localization.drifted_features)
 ```
 
-## Dashboard
+Declare nominal features with `Dataset(..., categorical_features=[...])` so
+they are tested with count-based statistics.
 
-Interactive web dashboard for visualizing drift analysis results:
+## Reproducing the studies and the paper
 
 ```bash
-# Install dashboard dependencies
-pip install -e ".[dashboard]"
-
-# Run analysis to generate results
-python examples/quickstart/folktables_demo.py
-
-# Launch dashboard
-streamlit run examples/dashboard/app.py
-# or
-./launch_dashboard.sh
+python examples/quickstart/folktables_demo.py            # ACS Income, temporal + geographic
+python examples/quickstart/clear10_tabularize_demo.py    # once: ResNet-18 embeddings for CLEAR-10
+python examples/quickstart/clear10_drift_study.py        # CLEAR-10
+python examples/quickstart/clip_concept_probe_demo.py    # concept-level root cause
+python examples/quickstart/remediation_demo.py           # remediation and triage
+python examples/quickstart/drift_injection_benchmark.py  # 650-window injection benchmark
+python examples/paper/build_artifacts.py                 # every number, table and figure in the paper
+streamlit run examples/dashboard/app.py                  # dashboard over the outputs
+pytest                                                   # tests
 ```
 
-The dashboard provides:
-- 📈 Real-time drift metrics and KPIs
-- 📊 Interactive time-series charts
-- 🎯 Feature-level drift analysis
-- 🔍 Detector comparison visualizations
-- 📉 Model performance tracking
+Data: ACS Income via [Folktables](https://github.com/socialfoundations/folktables)
+(cached under `data/folktables_us_census/`), CLEAR-10 from the
+[CLEAR benchmark](https://clear-benchmark.github.io/) under `data/clear10/`.
 
-See [examples/dashboard/README.md](examples/dashboard/README.md) for details.
+## Documentation
 
-## Installation
-
-```bash
-pip install -e .
-pip install -e ".[all]"  # Install with all optional dependencies
-```
-
-## Development
-
-```bash
-pip install -e ".[dev]"
-pytest tests/
-mypy src/drift_autopsy
-```
-
-## Architecture
-
-- `core/`: Abstract interfaces and protocols
-- `detectors/`: Drift detection implementations
-- `localizers/`: Feature-level drift localization
-- `rca/`: Root cause analysis methods
-- `data/`: Data loading and preprocessing
-- `config/`: Configuration management
-
-## Documentation Blueprint
-
-For developer-facing project blueprint documentation, see:
-
-- `docs/README.md`
-- `docs/01-end-goal/` (enterprise target state)
-- `docs/02-current-implementation/` (current as-built state and rationale)
+- `docs/02-current-implementation/` - what is implemented, why, data contracts, limitations
+- `docs/01-end-goal/` - long-term product direction
 
 ## License
 

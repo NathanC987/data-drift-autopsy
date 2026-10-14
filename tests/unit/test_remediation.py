@@ -1,88 +1,83 @@
-"""Unit tests for the remediation package on a controlled synthetic shift."""
+"""Unit tests for remediation strategies and the label-free triage."""
 
 import numpy as np
 import pytest
 from sklearn.linear_model import LogisticRegression
 
 from drift_autopsy.remediation import (
+    NotApplicable,
     RemediationContext,
     density_ratio_weights,
-    inject_covariate_shift,
     remediation_triage,
     run_remediation_suite,
 )
 from drift_autopsy.remediation import strategies as S
 
 
-@pytest.fixture
-def covariate_shift_ctx():
-    rng = np.random.default_rng(0)
-    names = [f"f{i}" for i in range(6)]
-    n = 3000
+def _factory():
+    return LogisticRegression(max_iter=1000)
 
-    def sample(n, shift):
-        X = rng.normal(size=(n, 6))
-        if shift:
-            X[:, :2] = X[:, :2] * 1.8 + 1.5
-        # mildly non-linear boundary that uses a shifted feature -> the linear
-        # base model is misspecified and covariate reweighting helps
-        y = (0.7 * X[:, 0] ** 2 + X[:, 3] + 0.3 * rng.normal(size=n) > 1.0).astype(int)
-        return X, y
 
-    X_ref, y_ref = sample(n, shift=False)
-    X_prod, y_prod = sample(n, shift=True)
-    X_hold, y_hold = sample(n, shift=True)
+def _sample(rng, n, covariate=False, concept=False):
+    X = rng.normal(size=(n, 4))
+    if covariate:
+        X[:, 0] = X[:, 0] * 1.8 + 1.5
+    # quadratic boundary: the linear model is misspecified, so reweighting toward
+    # the production region of x0 changes the best linear fit
+    score = 0.7 * X[:, 0] ** 2 + X[:, 1] + 0.3 * rng.normal(size=n)
+    y = (score > 1.0).astype(int)
+    if concept:
+        y = np.where(X[:, 1] > 0.5, 1 - y, y)
+    return X, y
 
-    base = LogisticRegression(max_iter=500, random_state=0).fit(X_ref, y_ref)
-    # ceiling: same model family fit on unshifted data, scored on unshifted holdout
-    Xc, yc = sample(n, shift=False)
-    ref_acc = LogisticRegression(max_iter=500, random_state=0).fit(X_ref, y_ref).score(Xc, yc)
 
+def _ctx(covariate=False, concept=False, seed=0):
+    rng = np.random.default_rng(seed)
+    X_ref, y_ref = _sample(rng, 4000)
+    X_val, y_val = _sample(rng, 2000)
+    X_prod, y_prod = _sample(rng, 3000, covariate, concept)
+    X_hold, y_hold = _sample(rng, 3000, covariate, concept)
+    base = _factory().fit(X_ref, y_ref)
     return RemediationContext(
-        reference_X=X_ref, reference_y=y_ref,
-        production_X=X_prod, production_y=y_prod,
-        holdout_X=X_hold, holdout_y=y_hold,
-        feature_names=names, drifted_features=["f0", "f1"],
-        shift_name="synthetic", base_model=base,
-        model_factory=lambda: LogisticRegression(max_iter=500, random_state=0),
-        reference_accuracy=float(ref_acc),
+        reference_X=X_ref, reference_y=y_ref, production_X=X_prod, production_y=y_prod,
+        holdout_X=X_hold, holdout_y=y_hold, feature_names=["a", "b", "c", "d"],
+        drifted_features=["a"], shift_name="synthetic", base_model=base, model_factory=_factory,
+        reference_accuracy=float(base.score(X_val, y_val)), seed=seed,
     )
 
 
-def test_density_ratio_weights_flag_the_shift(covariate_shift_ctx):
-    ctx = covariate_shift_ctx
-    w, diag = density_ratio_weights(ctx.reference_X, ctx.production_X)
-    assert diag["domain_classifier_auc"] > 0.7          # shift is separable
-    assert abs(w.mean() - 1.0) < 1e-6                    # normalised
-    assert 0 < diag["effective_sample_size"] <= len(ctx.reference_X)
+def test_density_ratio_weights_are_normalised():
+    rng = np.random.default_rng(1)
+    w, diag = density_ratio_weights(rng.normal(size=(1500, 3)), rng.normal(loc=0.5, size=(1500, 3)))
+    assert abs(w.mean() - 1.0) < 1e-9
+    assert 0 < diag["effective_sample_fraction"] <= 1
+    assert diag["domain_classifier_auc"] > 0.55
 
 
-def test_importance_weighting_helps_a_misspecified_model(covariate_shift_ctx):
-    ctx = covariate_shift_ctx
-    res = S.importance_weighted_retrain(ctx)
-    plain = S.full_retrain(ctx)  # same data, no weights
-    assert res.accuracy_after >= plain.accuracy_after - 1e-6   # weighting is not worse
-    assert res.n_production_labels_required == 0
-    assert res.effective_sample_size is not None
+def test_triage_escalates_on_correctable_covariate_shift_and_iw_recovers():
+    ctx = _ctx(covariate=True)
+    triage = remediation_triage(ctx)
+    assert triage["will_retraining_help"]
+    result = S.importance_weighted_retrain(ctx)
+    assert result.recovery_significant and result.accuracy_recovered > 0
 
 
-def test_feature_drop_uses_fewer_features(covariate_shift_ctx):
-    res = S.feature_drop_retrain(covariate_shift_ctx)
-    assert res.n_features_used == 4
-    assert set(res.extra["dropped_features"]) == {"f0", "f1"}
+def test_triage_holds_on_concept_shift():
+    triage = remediation_triage(_ctx(concept=True))
+    assert not triage["will_retraining_help"]
 
 
-def test_result_schema_and_timing(covariate_shift_ctx):
-    for res in run_remediation_suite(covariate_shift_ctx,
-                                     ["full_retrain", "feature_drop_retrain",
-                                      "importance_weighted_retrain", "head_refit"]):
-        d = res.to_dict()
-        assert d["wall_clock_seconds"] > 0
-        assert d["fit_flops_proxy"] > 0
-        assert np.isfinite(d["fraction_of_gap_recovered"])
+def test_strategies_that_need_missing_data_are_skipped_not_faked():
+    ctx = _ctx()
+    with pytest.raises(NotApplicable):
+        S.full_retrain(ctx)
+    out = run_remediation_suite(ctx, ["retrain_on_recent", "importance_weighted_retrain"])
+    assert "retrain_on_recent" in out["skipped"]
+    assert [r.strategy for r in out["results"]] == ["importance_weighted_retrain"]
 
 
-def test_triage_flags_a_recoverable_shift(covariate_shift_ctx):
-    verdict = remediation_triage(covariate_shift_ctx)
-    assert verdict["will_retraining_help"] is True
-    assert verdict["signals"]["domain_classifier_auc"] > 0.7
+def test_strategies_are_deterministic():
+    ctx = _ctx(covariate=True)
+    a = S.importance_weighted_retrain(ctx).accuracy_after
+    b = S.importance_weighted_retrain(ctx).accuracy_after
+    assert a == b

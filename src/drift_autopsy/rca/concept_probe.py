@@ -15,7 +15,8 @@ Method:
   4. Rank concepts by the shift in mean concept mass, ref -> prod.
 The difference-vector alignment ``cos(mu_prod - mu_ref, concept)`` is reported as
 a secondary cross-check; it is dominated by CLIP's global offset and is not used
-for ranking.
+for ranking. The probe runs in CLIP's own embedding space; it explains how the
+image population moved, independently of the monitored model's embeddings.
 
 The concept vocabulary is hand-curated for photo-stream drift (photographic
 style/era, scene, lighting, weather, composition, people) plus the CLEAR-10
@@ -260,82 +261,106 @@ def probe_window(
     return result
 
 
-def select_dim_exemplars(
+def concept_exemplars(
     ref_frame: pd.DataFrame,
     prod_frame: pd.DataFrame,
-    drift_scores: Dict[str, float],
-    top_dims: int = 3,
-    k: int = 4,
+    ref_embeddings: np.ndarray,
+    prod_embeddings: np.ndarray,
+    concept_matrix: np.ndarray,
+    concept_names: Sequence[str],
+    concept: str,
+    k: int = 5,
+    temperature: float = 0.01,
     path_column: str = "image_path",
-) -> List[Dict[str, Any]]:
-    """For each top-drifted embedding dimension, the k most extreme ref/prod images.
+) -> Dict[str, Any]:
+    """The k images with the highest probability for ``concept``, in each population.
 
-    ``drift_scores`` maps ``feature_<d>`` -> per-dimension KS drift statistic
-    (as produced by ``clear10_report``); higher magnitude => stronger shift.
+    The same rule is applied to the reference and to production, so the figure
+    shows how the most concept-like images differ, not a contrived contrast.
+    Also returns the share of images whose top concept is ``concept``.
     """
-    ordered = [
-        name
-        for name, _ in sorted(drift_scores.items(), key=lambda kv: abs(float(kv[1])), reverse=True)
-        if str(name) in ref_frame.columns and str(name) in prod_frame.columns
-    ][:top_dims]
-
-    out: List[Dict[str, Any]] = []
-    for dim in ordered:
-        ref_center = float(ref_frame[dim].mean())
-        prod_extreme = prod_frame.reindex(
-            (prod_frame[dim] - ref_center).abs().sort_values(ascending=False).index
-        )
-        ref_extreme = ref_frame.reindex(
-            (ref_frame[dim] - ref_center).abs().sort_values(ascending=False).index
-        )
-        out.append(
-            {
-                "dimension": str(dim),
-                "drift_score": float(drift_scores.get(dim, 0.0)),
-                "ref_center": ref_center,
-                "prod_mean": float(prod_frame[dim].mean()),
-                "reference_images": ref_extreme[path_column].head(k).astype(str).tolist(),
-                "production_images": prod_extreme[path_column].head(k).astype(str).tolist(),
-            }
-        )
+    ci = list(concept_names).index(concept)
+    out: Dict[str, Any] = {"concept": concept}
+    for name, frame, emb in (("reference", ref_frame, ref_embeddings), ("production", prod_frame, prod_embeddings)):
+        probs = concept_distribution(emb, concept_matrix, temperature)
+        order = np.argsort(probs[:, ci])[::-1][:k]
+        out[name] = {
+            "images": frame.iloc[order][path_column].astype(str).tolist(),
+            "probabilities": probs[order, ci].tolist(),
+            "share_top_concept": float(np.mean(probs.argmax(axis=1) == ci)),
+        }
     return out
+
+
+def concept_shift_intervals(
+    ref_embeddings: np.ndarray,
+    prod_embeddings: np.ndarray,
+    concept_matrix: np.ndarray,
+    concept_names: Sequence[str],
+    temperature: float = 0.01,
+    n_bootstrap: int = 2000,
+    alpha: float = 0.05,
+    random_state: int = 0,
+) -> Dict[str, Dict[str, Any]]:
+    """Bootstrap interval for each concept's mass shift (Equation of the paper).
+
+    Images are resampled within the reference and within production. The
+    interval level is Bonferroni-adjusted over the concepts, so a concept whose
+    interval excludes zero has shifted at joint level ``alpha``.
+    """
+    ref_p = concept_distribution(ref_embeddings, concept_matrix, temperature)
+    prod_p = concept_distribution(prod_embeddings, concept_matrix, temperature)
+    delta = prod_p.mean(axis=0) - ref_p.mean(axis=0)
+    rng = np.random.default_rng(random_state)
+    boot = np.empty((n_bootstrap, len(concept_names)))
+    for k in range(n_bootstrap):
+        boot[k] = (prod_p[rng.integers(0, len(prod_p), len(prod_p))].mean(axis=0)
+                   - ref_p[rng.integers(0, len(ref_p), len(ref_p))].mean(axis=0))
+    tail = 100.0 * alpha / (2 * len(concept_names))
+    lo, hi = np.percentile(boot, [tail, 100.0 - tail], axis=0)
+    return {
+        str(name): {"delta": float(delta[i]), "ci_low": float(lo[i]), "ci_high": float(hi[i]),
+                    "significant": bool(lo[i] > 0 or hi[i] < 0)}
+        for i, name in enumerate(concept_names)
+    }
 
 
 def validate_against_metadata(
     ranking: Sequence[Dict[str, Any]],
     autotag_shift: Dict[str, float],
     concept_to_tag: Optional[Dict[str, str]] = None,
+    n_permutations: int = 10000,
+    random_state: int = 0,
 ) -> Dict[str, Any]:
-    """Spearman correlation between concept ``delta`` and the matching auto-tag shift.
+    """Spearman correlation between concept mass shift and auto-tag shift, one pair per tag.
 
-    ``autotag_shift`` maps an ``AUTO_TAG_SCORES`` key -> (prod mean - ref mean).
+    Several phrases map to the same tag (for example "a night photo" and "low
+    light" both map to "night"). Their deltas are averaged so each tag counts
+    once and the pairs are independent units. Significance is a permutation test
+    of the pairing (two-sided), which is exact enough for the small number of
+    tags involved.
     """
     from scipy.stats import spearmanr
 
     mapping = concept_to_tag if concept_to_tag is not None else CONCEPT_TO_AUTOTAG
     by_concept = {row["concept"]: row["delta"] for row in ranking}
-
-    matched: List[Dict[str, Any]] = []
+    per_tag: Dict[str, List[float]] = {}
     for concept, tag in mapping.items():
         if concept in by_concept and tag in autotag_shift:
-            matched.append(
-                {
-                    "concept": concept,
-                    "tag": tag,
-                    "concept_delta": float(by_concept[concept]),
-                    "tag_shift": float(autotag_shift[tag]),
-                }
-            )
+            per_tag.setdefault(tag, []).append(float(by_concept[concept]))
+    matched = [
+        {"tag": tag, "concepts": [c for c, t in mapping.items() if t == tag and c in by_concept],
+         "concept_delta": float(np.mean(vals)), "tag_shift": float(autotag_shift[tag])}
+        for tag, vals in sorted(per_tag.items())
+    ]
+    if len(matched) < 4:
+        return {"spearman_rho": None, "p_value": None, "n_tags": len(matched), "matched": matched}
 
-    if len(matched) < 3:
-        return {"spearman_rho": None, "p_value": None, "n_matched": len(matched), "matched": matched}
-
-    rho, p = spearmanr(
-        [m["concept_delta"] for m in matched], [m["tag_shift"] for m in matched]
-    )
-    return {
-        "spearman_rho": float(rho),
-        "p_value": float(p),
-        "n_matched": len(matched),
-        "matched": matched,
-    }
+    x = np.array([m["concept_delta"] for m in matched])
+    y = np.array([m["tag_shift"] for m in matched])
+    rho = float(spearmanr(x, y).correlation)
+    rng = np.random.default_rng(random_state)
+    null = np.array([spearmanr(x, rng.permutation(y)).correlation for _ in range(n_permutations)])
+    p = float((1 + np.sum(np.abs(null) >= abs(rho))) / (1 + n_permutations))
+    return {"spearman_rho": rho, "p_value": p, "n_tags": len(matched), "matched": matched,
+            "n_permutations": n_permutations}

@@ -13,6 +13,11 @@ class Dataset:
     
     Provides a unified interface for different data sources and formats.
     Supports both pandas DataFrames and numpy arrays.
+
+    ``categorical_features`` names the nominal features (codes whose numeric
+    order means nothing, e.g. an occupation code). Detectors test them with
+    count-based statistics instead of distribution-shape statistics. When it is
+    ``None`` it is inferred from the column dtypes (object, category, bool).
     """
     
     data: Union[pd.DataFrame, np.ndarray]
@@ -22,6 +27,7 @@ class Dataset:
     predictions: Optional[np.ndarray] = None
     prediction_probabilities: Optional[np.ndarray] = None
     metadata: Optional[pd.DataFrame] = None
+    categorical_features: Optional[List[str]] = None
     
     def __post_init__(self):
         """Initialize and validate dataset."""
@@ -33,6 +39,28 @@ class Dataset:
                 # Generate default names for numpy arrays
                 n_features = self.data.shape[1] if len(self.data.shape) > 1 else 1
                 self.feature_names = [f"feature_{i}" for i in range(n_features)]
+
+        if self.categorical_features is None:
+            if isinstance(self.data, pd.DataFrame):
+                self.categorical_features = [
+                    c for c in self.data.columns
+                    if self.data[c].dtype == object
+                    or isinstance(self.data[c].dtype, pd.CategoricalDtype)
+                    or self.data[c].dtype == bool
+                ]
+            else:
+                self.categorical_features = []
+        else:
+            unknown = set(self.categorical_features) - set(self.feature_names)
+            if unknown:
+                raise ValueError(f"categorical_features not in feature_names: {sorted(unknown)}")
+            self.categorical_features = list(self.categorical_features)
+
+    @property
+    def numeric_features(self) -> List[str]:
+        """Features that are not categorical, in feature order."""
+        categorical = set(self.categorical_features or [])
+        return [f for f in self.feature_names if f not in categorical]
     
     @classmethod
     def from_pandas(
@@ -43,6 +71,7 @@ class Dataset:
         prediction_col: Optional[str] = None,
         prediction_proba_col: Optional[str] = None,
         metadata_cols: Optional[List[str]] = None,
+        categorical_features: Optional[List[str]] = None,
     ) -> "Dataset":
         """
         Create Dataset from pandas DataFrame.
@@ -54,6 +83,7 @@ class Dataset:
             prediction_col: Name of prediction column
             prediction_proba_col: Name of prediction probability column
             metadata_cols: Columns to treat as metadata (not features)
+            categorical_features: Nominal feature names (inferred from dtypes if None)
         
         Returns:
             Dataset instance
@@ -100,6 +130,7 @@ class Dataset:
             predictions=predictions,
             prediction_probabilities=prediction_probabilities,
             metadata=metadata,
+            categorical_features=categorical_features,
         )
     
     @classmethod
