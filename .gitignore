@@ -58,7 +58,9 @@ dmypy.json
 data/raw/
 data/processed/
 data/clear10/
+data/gas_sensor_drift/
 paper/
+agh-cs-paper/
 
 # Logs
 *.log

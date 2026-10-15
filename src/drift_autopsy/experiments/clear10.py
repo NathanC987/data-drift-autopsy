@@ -7,7 +7,8 @@ IMAGENET1K_V1, 224 x 224 input). The embeddings are extracted once by
 files, one row per image with the image metadata.
 
 Monitored model. A standardised multinomial logistic regression on the
-embeddings, i.e. a linear head on the frozen backbone.
+embeddings, i.e. a linear head on the frozen backbone; the second model
+family is gradient boosted trees on the same embeddings.
 
 Reference split. Bucket 1 is split, stratified on the class, into train /
 calibration / test exactly as for ACS (60 / 20 / 20). The calibration split is
@@ -20,16 +21,16 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 from drift_autopsy.core.dataset import Dataset
+from drift_autopsy.experiments.models import make_dense_model
 
 EMBEDDING_DIM = 512
 EMBEDDING_COLUMNS: List[str] = [f"feature_{i}" for i in range(EMBEDDING_DIM)]
@@ -54,11 +55,9 @@ def class_names(frame: pd.DataFrame) -> Dict[int, str]:
     return {int(k): str(v) for k, v in zip(pairs["y_true"], pairs["class_name"])}
 
 
-def make_clear_model(random_state: int = 42) -> Pipeline:
-    return Pipeline([
-        ("scale", StandardScaler()),
-        ("classifier", LogisticRegression(max_iter=5000, random_state=random_state)),
-    ])
+def make_clear_model(random_state: int = 42, kind: str = "lr") -> Pipeline:
+    """Linear head (standardised multinomial logistic regression) or boosted trees on the embeddings."""
+    return make_dense_model(kind, random_state=random_state)
 
 
 @dataclass
@@ -84,6 +83,40 @@ def split_reference(frame: pd.DataFrame, seed: int = 42,
 
 def embeddings(frame: pd.DataFrame) -> np.ndarray:
     return frame[EMBEDDING_COLUMNS].to_numpy(dtype=float)
+
+
+def pca_projection(train: pd.DataFrame, windows: Dict[str, pd.DataFrame], n_per_window: int = 250,
+                   seed: int = 42) -> Dict[str, object]:
+    """Three-component PCA view of the embeddings, for visual inspection only.
+
+    The embeddings are standardised with the bucket 1 training statistics and
+    PCA(3) is fitted on the bucket 1 training split, the same reference the PCA
+    reconstruction detector uses. Each window gets the centroid of all its
+    images and a seeded random sample of ``n_per_window`` points. The drift
+    tests use all 512 dimensions; three components keep only a small share of
+    the variance (``explained_variance_ratio``).
+    """
+    from sklearn.decomposition import PCA
+
+    scaler = StandardScaler().fit(embeddings(train))
+    pca = PCA(n_components=3, svd_solver="full", random_state=seed).fit(scaler.transform(embeddings(train)))
+    rng = np.random.default_rng(seed)
+    out: Dict[str, object] = {
+        "fitted_on": "bucket 1 training split (standardised)",
+        "explained_variance_ratio": pca.explained_variance_ratio_.tolist(),
+        "n_per_window": n_per_window,
+        "windows": {},
+    }
+    for key, frame in windows.items():
+        coords = pca.transform(scaler.transform(embeddings(frame)))
+        idx = np.sort(rng.choice(len(frame), size=min(n_per_window, len(frame)), replace=False))
+        out["windows"][key] = {
+            "n_images": int(len(frame)),
+            "centroid": coords.mean(axis=0).tolist(),
+            "points": coords[idx].round(4).tolist(),
+            "class_name": frame["class_name"].iloc[idx].astype(str).tolist(),
+        }
+    return out
 
 
 def to_dataset(frame: pd.DataFrame, model=None, with_target: bool = True) -> Dataset:

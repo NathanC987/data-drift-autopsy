@@ -13,6 +13,17 @@ calibration rows fall back to the overall calibration accuracy. The estimate
 is unbiased only while P(correct | confidence) is unchanged between the
 calibration data and production, so it cannot see concept drift or label
 noise, and it goes stale as the calibration data ages.
+
+Baselines (all fitted on the same calibration set, all label free):
+
+* AC  - average confidence: the mean top-class confidence (Hendrycks and
+  Gimpel, 2017); unbiased only for a perfectly calibrated model.
+* DoC - difference of confidences (Guillory et al., 2021): calibration accuracy
+  plus the change in mean confidence from calibration to production.
+* ATC - average thresholded confidence (Garg et al., 2022) with the negative
+  entropy score: the threshold t is chosen so that the share of calibration
+  rows scoring above t equals the calibration accuracy; the estimate is the
+  share of production rows above t.
 """
 
 from __future__ import annotations
@@ -78,6 +89,41 @@ class BinnedAccuracyCalibration:
 def _bin_index(confidence: np.ndarray, edges: np.ndarray) -> np.ndarray:
     n_bins = len(edges) - 1
     return np.clip(np.digitize(confidence, edges[1:-1], right=False), 0, n_bins - 1)
+
+
+def negative_entropy(probabilities: np.ndarray) -> np.ndarray:
+    """Negative Shannon entropy of each row of (n, k) or positive-class (n,) probabilities."""
+    proba = np.asarray(probabilities, dtype=float)
+    if proba.ndim == 1:
+        proba = np.column_stack([1.0 - proba, proba])
+    p = np.clip(proba, 1e-12, 1.0)
+    return (proba * np.log(p)).sum(axis=1)
+
+
+def atc_threshold(calibration_score: np.ndarray, calibration_correct: np.ndarray) -> float:
+    """Threshold t with mean(score > t) = calibration accuracy (Garg et al., 2022)."""
+    score = np.asarray(calibration_score, dtype=float)
+    accuracy = float(np.mean(calibration_correct))
+    return float(np.quantile(score, 1.0 - accuracy))
+
+
+def label_free_estimates(
+    calibration_probabilities: np.ndarray,
+    calibration_correct: np.ndarray,
+    production_probabilities: np.ndarray,
+    n_bins: int = 10,
+) -> Dict[str, float]:
+    """CBPE and the three baselines of the module docstring."""
+    cal_conf = top_class_confidence(calibration_probabilities)
+    prod_conf = top_class_confidence(production_probabilities)
+    correct = np.asarray(calibration_correct, dtype=float)
+    t = atc_threshold(negative_entropy(calibration_probabilities), correct)
+    return {
+        "cbpe": cbpe_accuracy_estimate(cal_conf, correct, prod_conf, n_bins),
+        "ac": float(prod_conf.mean()),
+        "doc": float(correct.mean() + prod_conf.mean() - cal_conf.mean()),
+        "atc": float(np.mean(negative_entropy(production_probabilities) > t)),
+    }
 
 
 def cbpe_accuracy_estimate(

@@ -6,6 +6,7 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
+from drift_autopsy import gpu
 from drift_autopsy.core.dataset import Dataset
 from drift_autopsy.core.detector import BaseDriftDetector
 from drift_autopsy.core.result import DetectionResult, DriftSeverity
@@ -29,6 +30,10 @@ class MMD(BaseDriftDetector):
     RBF bandwidth: gamma = 1 / (2 * median squared distance), the median
     heuristic, computed once on a seeded subsample of the pooled data and held
     fixed across permutations, as the test requires.
+
+    The kernel matrix and the permutation statistics run on the GPU when one is
+    available (see :mod:`drift_autopsy.gpu`); the permutations are the same
+    seeded draws either way.
 
     Args:
         threshold: Significance level of the permutation test (default: 0.05)
@@ -121,9 +126,10 @@ class MMD(BaseDriftDetector):
     # ------------------------------------------------------------------ #
     # kernel test
 
-    def _pooled_kernel(self, Z: np.ndarray, rng: np.random.RandomState) -> tuple:
+    def _bandwidth(self, Z: np.ndarray, rng: np.random.RandomState) -> Optional[float]:
+        """Median-heuristic gamma from a seeded subsample (None for the linear kernel)."""
         if self.kernel == "linear":
-            return Z @ Z.T, None
+            return None
         gamma = self.gamma
         if gamma is None:
             idx = rng.choice(len(Z), size=min(500, len(Z)), replace=False)
@@ -132,9 +138,44 @@ class MMD(BaseDriftDetector):
             d2 = sq[:, None] + sq[None, :] - 2 * S @ S.T
             med = float(np.median(d2[np.triu_indices(len(S), k=1)]))
             gamma = 1.0 / (2.0 * med) if med > 0 else 1.0
+        return float(gamma)
+
+    def _kernel(self, Z: np.ndarray, gamma: Optional[float]) -> np.ndarray:
+        if self.kernel == "linear":
+            return Z @ Z.T
         sq = np.sum(Z ** 2, axis=1)
         d2 = np.maximum(sq[:, None] + sq[None, :] - 2 * Z @ Z.T, 0.0)
-        return np.exp(-gamma * d2), float(gamma)
+        return np.exp(-gamma * d2)
+
+    def _pooled_kernel(self, Z: np.ndarray, rng: np.random.RandomState) -> tuple:
+        gamma = self._bandwidth(Z, rng)
+        return self._kernel(Z, gamma), gamma
+
+    def _permutation_gpu(self, Z: np.ndarray, gamma: Optional[float], masks: np.ndarray):
+        """Observed MMD^2 (row 0 of ``masks``) and the count of permuted values reaching it."""
+        torch = gpu.torch_module()
+        dev = torch.device("cuda")
+        Zt = torch.as_tensor(Z, dtype=torch.float64, device=dev)
+        K = Zt @ Zt.T
+        if self.kernel != "linear":
+            sq = (Zt * Zt).sum(dim=1)
+            K.mul_(-2.0).add_(sq[:, None]).add_(sq[None, :]).clamp_(min=0.0).mul_(-gamma).exp_()
+        del Zt
+        diag = K.diagonal().clone()
+        A = torch.as_tensor(masks, dtype=torch.float64, device=dev)       # (P + 1, N), 1 = reference
+        B = 1.0 - A
+        KA = K @ A.T
+        KB = K @ B.T
+        n, m = A.sum(dim=1), B.sum(dim=1)
+        s_xx = (A.T * KA).sum(dim=0) - A @ diag
+        s_yy = (B.T * KB).sum(dim=0) - B @ diag
+        s_xy = (B.T * KA).sum(dim=0)
+        stat = s_xx / (n * (n - 1)) + s_yy / (m * (m - 1)) - 2.0 * s_xy / (n * m)
+        observed = float(stat[0])
+        exceed = int((stat[1:] >= stat[0]).sum())
+        del K, KA, KB, A, B
+        gpu.release()
+        return observed, exceed
 
     @staticmethod
     def _mmd2_unbiased(K: np.ndarray, diag: np.ndarray, in_x: np.ndarray) -> float:
@@ -175,16 +216,35 @@ class MMD(BaseDriftDetector):
             Y = Y[rng.choice(len(Y), self.max_samples, replace=False)]
 
         Z = np.vstack([X, Y])
-        K, gamma = self._pooled_kernel(Z, rng)
-        diag = np.diag(K).copy()
         in_x = np.zeros(len(Z), dtype=bool)
         in_x[: len(X)] = True
-
-        observed = self._mmd2_unbiased(K, diag, in_x)
-        exceed = 0
-        for _ in range(self.n_permutations):
-            exceed += self._mmd2_unbiased(K, diag, rng.permutation(in_x)) >= observed
-        p_value = (1 + exceed) / (1 + self.n_permutations)
+        observed = exceed = None
+        device = "cpu"
+        if gpu.gpu_available():
+            gamma = self._bandwidth(Z, rng)
+            masks = np.vstack([in_x] + [rng.permutation(in_x) for _ in range(self.n_permutations)])
+            try:
+                with gpu.gpu_slot():
+                    observed, exceed = self._permutation_gpu(Z, gamma, masks)
+                device = "cuda"
+            except RuntimeError as error:          # out of GPU memory: same test on the CPU
+                if not gpu.is_oom(error):
+                    raise
+                gpu.release()
+                observed = None
+            if observed is None:
+                K = self._kernel(Z, gamma)
+                diag = np.diag(K).copy()
+                observed = self._mmd2_unbiased(K, diag, masks[0])
+                exceed = sum(self._mmd2_unbiased(K, diag, m) >= observed for m in masks[1:])
+        else:
+            K, gamma = self._pooled_kernel(Z, rng)
+            diag = np.diag(K).copy()
+            observed = self._mmd2_unbiased(K, diag, in_x)
+            exceed = 0
+            for _ in range(self.n_permutations):
+                exceed += self._mmd2_unbiased(K, diag, rng.permutation(in_x)) >= observed
+        p_value = (1 + int(exceed)) / (1 + self.n_permutations)
 
         drift_detected = p_value < self.threshold
         severity = severity_from_p_value(p_value, self.threshold)
@@ -213,5 +273,6 @@ class MMD(BaseDriftDetector):
                 "n_numeric_features": len(numeric_cols),
                 "n_categorical_features": len(categorical_cols),
                 "encoded_dimension": int(X.shape[1]),
+                "device": device,
             },
         )

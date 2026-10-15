@@ -138,13 +138,17 @@ def _weight_kwarg(model: Any, weights: np.ndarray) -> Dict[str, np.ndarray]:
 
 
 def _n_iter(model: Any) -> int:
+    """Optimiser iterations (logistic regression) or trees grown (boosting, one per class per iteration)."""
     clf = model.steps[-1][1] if hasattr(model, "steps") else model
     n_iter = getattr(clf, "n_iter_", None)
-    return 1 if n_iter is None else int(np.max(np.asarray(n_iter)))
+    if n_iter is None:
+        return 1
+    return int(np.max(np.asarray(n_iter))) * int(getattr(clf, "n_trees_per_iteration_", 1))
 
 
 def flops_proxy_linear(n_rows: int, n_features: int, n_iter: int) -> float:
-    """Rough cost of fitting a linear model: iterations x rows x features."""
+    """Rough fitting cost: iterations (or boosted trees) x rows x features. Each
+    optimiser iteration and each histogram tree touches every row and feature once."""
     return float(max(n_iter, 1) * n_rows * n_features)
 
 

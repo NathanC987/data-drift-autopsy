@@ -1,0 +1,50 @@
+{
+ "bucket": 10,
+ "k": 4,
+ "colormap": "turbo",
+ "alpha": 0.5,
+ "selection_rule": "the 4 images of bucket 10 with the highest unclipped OOD score",
+ "scaling": "each map scaled to [0, 1] within its own image",
+ "images": [
+  {
+   "rank": 1,
+   "source_image": "data/clear10/labeled_images/10/laptop/14043411333.jpg",
+   "predicted": "laptop",
+   "true": "laptop",
+   "ood_unclipped": 3.102595611980613,
+   "ood": 1.0,
+   "image_png": "cam_0_image.png",
+   "overlay_png": "cam_0_overlay.png"
+  },
+  {
+   "rank": 2,
+   "source_image": "data/clear10/labeled_images/10/camera/10828147985.jpg",
+   "predicted": "camera",
+   "true": "camera",
+   "ood_unclipped": 2.3162150638886088,
+   "ood": 1.0,
+   "image_png": "cam_1_image.png",
+   "overlay_png": "cam_1_overlay.png"
+  },
+  {
+   "rank": 3,
+   "source_image": "data/clear10/labeled_images/10/BACKGROUND/13582747423.jpg",
+   "predicted": "BACKGROUND",
+   "true": "BACKGROUND",
+   "ood_unclipped": 1.8150836942039001,
+   "ood": 1.0,
+   "image_png": "cam_2_image.png",
+   "overlay_png": "cam_2_overlay.png"
+  },
+  {
+   "rank": 4,
+   "source_image": "data/clear10/labeled_images/10/dress/12622303034.jpg",
+   "predicted": "dress",
+   "true": "dress",
+   "ood_unclipped": 1.7681627071376846,
+   "ood": 1.0,
+   "image_png": "cam_3_image.png",
+   "overlay_png": "cam_3_overlay.png"
+  }
+ ]
+}

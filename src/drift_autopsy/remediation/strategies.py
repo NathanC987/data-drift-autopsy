@@ -42,9 +42,11 @@ class NotApplicable(Exception):
     """The strategy needs data the context does not have."""
 
 
-def importance_weighted_retrain(ctx: RemediationContext) -> RemediationResult:
+def importance_weighted_retrain(ctx: RemediationContext, timing_repeats: int = 3) -> RemediationResult:
+    """``timing_repeats`` only sets how many identical fits are timed (the fit is deterministic)."""
     weights, diag = density_ratio_weights(ctx.reference_X, ctx.production_X, random_state=ctx.seed)
-    model, sec, n_iter = fit_model(ctx.model_factory, ctx.reference_X, ctx.reference_y, sample_weight=weights)
+    model, sec, n_iter = fit_model(ctx.model_factory, ctx.reference_X, ctx.reference_y, sample_weight=weights,
+                                   repeats=timing_repeats)
     rf = flops_proxy_forest(diag["n_estimators"] * diag["n_splits"], diag["n_rows_fit"], ctx.reference_X.shape[1])
     return grade(ctx, "importance_weighted_retrain", model, sec + diag["seconds"], n_iter,
                  len(ctx.reference_X), ctx.reference_X.shape[1], 0, extra_flops=rf,

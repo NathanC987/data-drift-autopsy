@@ -318,3 +318,50 @@ def permutation_test(
         exceed += statistic(Z[idx[:n]], Z[idx[n:]]) >= observed
     return {"statistic": observed, "p_value": (1 + exceed) / (1 + n_permutations),
             "n_permutations": int(n_permutations)}
+
+
+# --------------------------------------------------------------------------- #
+# paired comparison of two methods over replicates
+
+def sign_flip_test(
+    differences: Sequence[float],
+    n_flips: int = 10000,
+    random_state: int = 0,
+    n_bootstrap: int = 2000,
+    alpha: float = 0.05,
+) -> Dict[str, float]:
+    """Paired test of H0: mean difference = 0 over independent replicates.
+
+    ``differences`` holds one value per replicate (method A minus method B,
+    e.g. the difference in the share of correctly diagnosed windows). Under H0
+    each difference is symmetric about zero, so its sign is exchangeable: the
+    p-value is (1 + #{|mean of randomly sign-flipped values| >= |observed|}) /
+    (1 + n_flips), two-sided. The interval is a percentile bootstrap over
+    replicates. Replicates, not windows, are the unit, because windows of one
+    replicate share a model and a reference.
+    """
+    d = np.asarray(differences, dtype=float)
+    if d.size == 0:
+        raise ValueError("no replicates")
+    observed = float(d.mean())
+    rng = np.random.default_rng(random_state)
+    signs = rng.choice([-1.0, 1.0], size=(n_flips, d.size))
+    flipped = np.abs((signs * d).mean(axis=1))
+    p = float((1 + np.sum(flipped >= abs(observed) - 1e-12)) / (1 + n_flips))
+    boot = d[rng.integers(0, d.size, (n_bootstrap, d.size))].mean(axis=1)
+    lo, hi = np.percentile(boot, [100 * alpha / 2, 100 * (1 - alpha / 2)])
+    return {"mean_difference": observed, "ci_low": float(lo), "ci_high": float(hi),
+            "p_value": p, "n_replicates": int(d.size), "n_flips": int(n_flips)}
+
+
+def macro_f1(true_labels: Sequence[Any], predicted_labels: Sequence[Any], labels: Sequence[Any]) -> float:
+    """Unweighted mean of the per-class F1 scores over ``labels`` (0 for a class never predicted correctly)."""
+    t = np.asarray(true_labels, dtype=object)
+    p = np.asarray(predicted_labels, dtype=object)
+    scores = []
+    for c in labels:
+        tp = float(np.sum((t == c) & (p == c)))
+        fp = float(np.sum((t != c) & (p == c)))
+        fn = float(np.sum((t == c) & (p != c)))
+        scores.append(0.0 if tp == 0 else 2 * tp / (2 * tp + fp + fn))
+    return float(np.mean(scores))

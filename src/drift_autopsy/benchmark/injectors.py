@@ -13,12 +13,28 @@ injectors move different parts of the joint distribution:
 
 ``inject_none`` is the control: the window is returned unchanged and the
 pipeline is expected to report no drift.
+
+Held-out mechanisms (design B). The four injectors above partly match what the
+tests look for (a feature-wise shift, a region defined by one feature,
+uniform flips). Design B moves the same parts of the joint distribution in
+ways the tests were not built around:
+
+* ``inject_selection``       -- covariate shift by selection bias: each row is
+  kept with probability sigmoid(beta * s(x)) for a random score s over all
+  inputs. Values stay real rows and P(Y|X) is exactly unchanged.
+* ``inject_prior`` with a lower target -- the prior decreases instead.
+* ``inject_concept_oblique`` -- labels inverted in the top fraction of a second
+  random score: an oblique region no single feature defines.
+* ``inject_threshold``       -- the label rule itself changes (income threshold
+  raised); X untouched, P(Y|X) moves everywhere near the old boundary.
+* ``inject_class_noise``     -- class-conditional label noise: only positives
+  are flipped, so the noise depends on the true class.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Sequence
+from typing import Dict, Sequence
 
 import numpy as np
 import pandas as pd
@@ -253,5 +269,120 @@ def inject_label_noise(
         pygivenx_changed=True,
         p_y_reference=_positive_rate(y_ref),
         p_y_production=_positive_rate(y_new),
+    )
+    return InjectionResult(X=X, y=y_new, spec=spec)
+
+
+# --------------------------------------------------------------------------- #
+# design B: held-out mechanisms
+
+class RandomDirection:
+    """A seeded random score s(x) over every input, fixed per replicate.
+
+    Numeric features are standardised with the training statistics and get an
+    N(0, 1) weight each; every category of a nominal feature gets its own
+    N(0, 1) effect (categories are drawn in sorted order, unseen ones on first
+    use, so the score is a deterministic function of x). The sum is divided
+    by its training standard deviation and centred on the training mean, so
+    s has mean 0 and unit variance on the training data.
+    """
+
+    def __init__(self, train_X: pd.DataFrame, numeric: Sequence[str], categorical: Sequence[str], seed: int):
+        self.numeric, self.categorical = list(numeric), list(categorical)
+        self.rng = np.random.default_rng(seed)
+        self.mean = train_X[self.numeric].mean().to_numpy(dtype=float)
+        sd = train_X[self.numeric].std(ddof=0).to_numpy(dtype=float)
+        self.sd = np.where(sd > 0, sd, 1.0)
+        self.weights = self.rng.standard_normal(len(self.numeric))
+        self.effects: Dict[str, Dict[float, float]] = {}
+        for f in self.categorical:
+            codes = np.sort(train_X[f].unique())
+            self.effects[f] = dict(zip(codes.astype(float), self.rng.standard_normal(len(codes))))
+        raw = self._raw(train_X)
+        self.centre, self.scale = float(raw.mean()), float(raw.std() or 1.0)
+
+    def _raw(self, X: pd.DataFrame) -> np.ndarray:
+        z = (X[self.numeric].to_numpy(dtype=float) - self.mean) / self.sd
+        score = z @ self.weights
+        for f in self.categorical:
+            table = self.effects[f]
+            for code in np.sort(X[f].unique()).astype(float):
+                if code not in table:
+                    table[code] = float(self.rng.standard_normal())
+            score = score + X[f].astype(float).map(table).to_numpy()
+        return score
+
+    def score(self, X: pd.DataFrame) -> np.ndarray:
+        return (self._raw(X) - self.centre) / self.scale
+
+
+def inject_selection(X: pd.DataFrame, y: np.ndarray, direction: RandomDirection, beta: float,
+                     intensity_label: str, seed: int = 42) -> InjectionResult:
+    """Keep each row with probability sigmoid(beta * s(x)) (see module docstring)."""
+    X = X.reset_index(drop=True).copy()
+    y = np.asarray(y).astype(int)
+    rng = np.random.default_rng(seed)
+    keep_prob = 1.0 / (1.0 + np.exp(-beta * direction.score(X)))
+    keep = rng.random(len(X)) < keep_prob
+    X_new, y_new = X[keep].reset_index(drop=True), y[keep]
+    spec = InjectedDriftSpec(
+        drift_type="covariate", intensity_label=intensity_label,
+        params={"beta": beta, "kept_fraction": float(keep.mean())},
+        affected_features=[], px_changed=True, pxgiveny_changed=True, pygivenx_changed=False,
+        p_y_reference=_positive_rate(y), p_y_production=_positive_rate(y_new),
+    )
+    return InjectionResult(X=X_new, y=y_new, spec=spec)
+
+
+def inject_concept_oblique(X: pd.DataFrame, y: np.ndarray, direction: RandomDirection, region_fraction: float,
+                           intensity_label: str, seed: int = 42) -> InjectionResult:
+    """Invert the label in the top ``region_fraction`` of rows ranked by s(x); X untouched."""
+    X = X.reset_index(drop=True).copy()
+    y_ref = np.asarray(y).astype(int)
+    rng = np.random.default_rng(seed)
+    s = direction.score(X)
+    order = np.lexsort((rng.random(len(s)), -s))
+    region = np.zeros(len(s), dtype=bool)
+    region[order[: int(round(region_fraction * len(s)))]] = True
+    y_new = y_ref.copy()
+    y_new[region] = 1 - y_new[region]
+    spec = InjectedDriftSpec(
+        drift_type="concept", intensity_label=intensity_label,
+        params={"region_fraction": round(float(region.mean()), 4)},
+        affected_features=[], px_changed=False, pxgiveny_changed=True, pygivenx_changed=True,
+        p_y_reference=_positive_rate(y_ref), p_y_production=_positive_rate(y_new),
+    )
+    return InjectionResult(X=X, y=y_new, spec=spec)
+
+
+def inject_threshold(X: pd.DataFrame, y: np.ndarray, income: np.ndarray, threshold: float,
+                     intensity_label: str) -> InjectionResult:
+    """Relabel with a higher income threshold, y = income > threshold; X untouched."""
+    X = X.reset_index(drop=True).copy()
+    y_ref = np.asarray(y).astype(int)
+    y_new = (np.asarray(income, dtype=float) > threshold).astype(int)
+    spec = InjectedDriftSpec(
+        drift_type="concept", intensity_label=intensity_label,
+        params={"threshold": float(threshold), "relabelled_fraction": float(np.mean(y_new != y_ref))},
+        affected_features=[], px_changed=False, pxgiveny_changed=True, pygivenx_changed=True,
+        p_y_reference=_positive_rate(y_ref), p_y_production=_positive_rate(y_new),
+    )
+    return InjectionResult(X=X, y=y_new, spec=spec)
+
+
+def inject_class_noise(X: pd.DataFrame, y: np.ndarray, rate: float, intensity_label: str,
+                       seed: int = 42) -> InjectionResult:
+    """Flip each positive label to negative with probability ``rate``; X untouched."""
+    X = X.reset_index(drop=True).copy()
+    y_ref = np.asarray(y).astype(int)
+    rng = np.random.default_rng(seed)
+    flip = (y_ref == 1) & (rng.random(len(y_ref)) < rate)
+    y_new = y_ref.copy()
+    y_new[flip] = 0
+    spec = InjectedDriftSpec(
+        drift_type="label_noise", intensity_label=intensity_label,
+        params={"rate": rate, "observed_flip_fraction": float(np.mean(flip))},
+        affected_features=[], px_changed=False, pxgiveny_changed=True, pygivenx_changed=True,
+        p_y_reference=_positive_rate(y_ref), p_y_production=_positive_rate(y_new),
     )
     return InjectionResult(X=X, y=y_new, spec=spec)

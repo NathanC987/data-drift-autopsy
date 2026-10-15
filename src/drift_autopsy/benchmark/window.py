@@ -15,12 +15,17 @@ import numpy as np
 import pandas as pd
 
 from drift_autopsy.core.dataset import Dataset
-from drift_autopsy.detectors import CBPE, KSTest, MMD, PSI
+from drift_autopsy.detectors import BBSD, CBPE, DomainClassifier, KSTest, MMD, PSI
 from drift_autopsy.diagnosis import audit_diagnosis, combine, label_free_diagnosis
+from drift_autopsy.diagnosis_baselines import all_rule_verdicts, window_tests
+from drift_autopsy.estimation import label_free_estimates
 from drift_autopsy.remediation import RemediationContext, remediation_triage
 from drift_autopsy.remediation import strategies as S
 from drift_autopsy.reliability import ReliabilityAnalyzer
 from drift_autopsy.benchmark.spec import DRIFT_TYPES
+
+# design B mechanism names (fixed order: it seeds the audit sample)
+MECHANISMS_B = ("selection", "prior_decrease", "concept_oblique", "concept_threshold", "class_noise")
 
 
 @dataclass
@@ -29,6 +34,8 @@ class ReplicateContext:
 
     state: str
     seed: int
+    dataset: str
+    model_kind: str
     model: Any
     model_factory: Any
     feature_names: List[str]
@@ -63,6 +70,9 @@ def _detectors(rc: ReplicateContext, prod: Dataset) -> Dict[str, Any]:
         "MMD": MMD(threshold=rc.alpha, n_permutations=rc.mmd_permutations, max_samples=rc.mmd_max_samples,
                    standardize=True, random_state=rc.seed),
         "CBPE": CBPE(threshold=rc.alpha),
+        "BBSD": BBSD(threshold=rc.alpha),
+        "Domain classifier": DomainClassifier(threshold=rc.alpha, max_samples=rc.mmd_max_samples,
+                                              random_state=rc.seed),
     }
     out = {}
     for name, det in detectors.items():
@@ -103,6 +113,8 @@ def _compact_audit(au: Dict[str, Any]) -> Dict[str, Any]:
 
 def evaluate_window(
     rc: ReplicateContext,
+    design: str,
+    mechanism: str,
     drift_type: str,
     intensity_label: str,
     intensity_order: int,
@@ -119,9 +131,15 @@ def evaluate_window(
 
     # ---- diagnosis -------------------------------------------------------
     t0 = time.perf_counter()
+    # the MMD detector above ran with the same settings and seed on the same pair: reuse it
+    mmd = {"statistic": detection["MMD"]["score"], "p_value": detection["MMD"]["p_value"]}
     lf = label_free_diagnosis(rc.reference, prod, alpha=rc.alpha, mmd_permutations=rc.mmd_permutations,
-                              mmd_max_samples=rc.mmd_max_samples, random_state=rc.seed)
-    rng = np.random.default_rng([rc.seed, DRIFT_TYPES.index(drift_type), intensity_order])
+                              mmd_max_samples=rc.mmd_max_samples, random_state=rc.seed, precomputed_mmd=mmd)
+    # design A keeps the original audit seeding; design B adds the mechanism
+    seed_key = [rc.seed, DRIFT_TYPES.index(drift_type), intensity_order]
+    if design == "B":
+        seed_key.append(1 + MECHANISMS_B.index(mechanism))
+    rng = np.random.default_rng(seed_key)
     order = rng.permutation(len(prod_X))
     audits = {}
     for n in rc.audit_sizes:
@@ -129,11 +147,24 @@ def evaluate_window(
         au = audit_diagnosis(rc.model, rc.reference, prod_X.iloc[idx], np.asarray(prod_y)[idx], alpha=rc.alpha)
         audits[n] = (au, combine(lf, au))
     primary_audit, primary = audits[rc.primary_audit_size]
+    idx = order[: min(rc.primary_audit_size, len(order))]
+    variants = {k: audit_diagnosis(rc.model, rc.reference, prod_X.iloc[idx], np.asarray(prod_y)[idx],
+                                   alpha=rc.alpha, null=k)
+                for k in ("none", "class_confidence")}
     timings["diagnosis"] = time.perf_counter() - t0
 
     # ---- label-free accuracy estimate --------------------------------------
     true_acc = float(np.mean(prod.predictions == np.asarray(prod_y)))
     est_acc = detection["CBPE"]["estimated_accuracy"]
+    cal_correct = (rc.reference.predictions == np.asarray(rc.reference.target)).astype(float)
+    estimates = label_free_estimates(rc.reference.prediction_probabilities, cal_correct,
+                                     prod.prediction_probabilities)
+    tests = window_tests(lf, primary_audit, est_acc - rc.reference_accuracy,
+                         audit_variants={"no_confidence": variants["none"],
+                                         "class_confidence": variants["class_confidence"]})
+    verdicts = all_rule_verdicts(tests, rc.alpha)
+    if verdicts["ours"] != primary.drift_type:
+        raise AssertionError(f"recomputed verdict {verdicts['ours']} != {primary.drift_type}")
 
     # ---- reliability --------------------------------------------------------
     t0 = time.perf_counter()
@@ -152,12 +183,11 @@ def evaluate_window(
         model_factory=rc.model_factory, reference_accuracy=rc.reference_accuracy, seed=rc.seed,
     )
     triage = remediation_triage(ctx, alpha=rc.alpha)
-    actual = S.importance_weighted_retrain(ctx)
+    actual = S.importance_weighted_retrain(ctx, timing_repeats=1)
     timings["triage"] = time.perf_counter() - t0
 
     # ---- grading ------------------------------------------------------------
-    expected = {"none": "none", "covariate": "covariate", "prior": "prior",
-                "concept": "concept", "label_noise": "label_noise"}[drift_type]
+    expected = drift_type
     injected = set(spec.get("affected_features", []))
     localized = set(primary.localized_features)
     loc = None
@@ -167,6 +197,10 @@ def evaluate_window(
                "localized": sorted(localized), "injected": sorted(injected)}
 
     return {
+        "dataset": rc.dataset,
+        "model": rc.model_kind,
+        "design": design,
+        "mechanism": mechanism,
         "state": rc.state,
         "seed": rc.seed,
         "drift_type": drift_type,
@@ -184,7 +218,10 @@ def evaluate_window(
         "diagnosis_correct": primary.drift_type == expected,
         "diagnosis_by_audit_size": {str(n): d.drift_type for n, (_, d) in audits.items()},
         "localization": loc,
-        "estimator": {"estimated_accuracy": est_acc, "true_accuracy": true_acc, "error": est_acc - true_acc},
+        "estimator": {"estimated_accuracy": est_acc, "true_accuracy": true_acc, "error": est_acc - true_acc,
+                      "estimates": estimates, "errors": {k: v - true_acc for k, v in estimates.items()}},
+        "tests": tests,
+        "verdicts": verdicts,
         "reliability": reliability,
         "triage": {
             "will_retraining_help": triage["will_retraining_help"],

@@ -1,5 +1,5 @@
 """
-ACS Income drift study (temporal and geographic).
+ACS drift study (temporal and geographic) for one Folktables task and one model family.
 
 Monitored model: the shared ACS model (drift_autopsy.experiments.acs), trained
 on 60% of California 2014. The other 40% is split into a calibration set (the
@@ -8,20 +8,28 @@ reference window for every detector and the CBPE accuracy map) and a test set
 
 * control    - the California 2014 test split (same distribution; nothing
                should fire, which checks the false alarm behaviour);
-* temporal   - California 2015, 2016, 2017 and 2018 (full years);
+* temporal   - California 2015 to 2019 and 2021 to 2023 (full years; there is
+               no standard 2020 one-year release);
 * geographic - Texas, New York, Florida and Washington 2014 (full years).
 
-For each window the script records the detector decisions, the feature
-localisation, the SHAP attribution changes with bootstrap intervals, the CBPE
-accuracy estimate, the drift-type diagnosis (label-free stage plus a
-delayed-label audit of AUDIT_LABELS rows), per-prediction reliability over the
-whole window and, for evaluation only, the true accuracy. Output: outputs/folktables_drift_results.json.
+For each window the script records the detector decisions (including the
+detection baselines BBSD and the domain classifier), the feature localisation,
+the SHAP attribution changes with bootstrap intervals, the CBPE accuracy
+estimate and its baselines, the drift-type diagnosis (label-free stage plus a
+delayed-label audit of AUDIT_LABELS rows) with the baseline and ablation
+verdicts, per-prediction reliability over the whole window and, for
+evaluation only, the true accuracy. Each window draws its audit and stored
+records from its own random stream.
+
+Run:  python examples/quickstart/folktables_demo.py --task income --model lr
+Output: outputs/folktables_drift_results.json for (income, lr); otherwise
+outputs/folktables_{task}_drift_results_{model}.json.
 """
 
 from __future__ import annotations
 
+import argparse
 import json
-import logging
 import time
 from pathlib import Path
 from typing import Any, Dict
@@ -32,15 +40,15 @@ from drift_autopsy import DriftPipeline
 from drift_autopsy.detectors import CBPE, KSTest, MMD, PSI
 from drift_autopsy.diagnosis import audit_diagnosis, combine, label_free_diagnosis
 from drift_autopsy.experiments.acs import (
-    ACS_CATEGORICAL,
-    ACS_FEATURES,
-    ACS_NUMERIC,
+    ACS_TASKS,
     SPLIT_FRACTIONS,
-    load_acs,
+    load_acs_task,
     make_acs_model,
     split_reference,
     to_dataset,
 )
+from drift_autopsy.experiments.common import baseline_detectors, comparison_block, json_default, window_rng
+from drift_autopsy.experiments.models import MODEL_DESCRIPTIONS
 from drift_autopsy.localizers import UnivariateLocalizer
 from drift_autopsy.rca import SHAPAnalyzer
 from drift_autopsy.reliability import ReliabilityAnalyzer
@@ -58,13 +66,24 @@ RELIABILITY_RECORDS_KEPT = 1000   # per-prediction rows stored for the dashboard
 AUDIT_LABELS = 600                # delayed labels for the audit stage of the diagnosis
 
 BASE_STATE, BASE_YEAR = "CA", 2014
-TEMPORAL_YEARS = [2015, 2016, 2017, 2018]
+TEMPORAL_YEARS = [2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023]
 GEO_STATES = ["TX", "NY", "FL", "WA"]
-OUTPUT = Path("outputs/folktables_drift_results.json")
 
 
-def make_pipelines(model) -> Dict[str, DriftPipeline]:
-    """KS carries localisation and SHAP root cause analysis; the others detect only."""
+def output_path(task: str, model: str) -> Path:
+    if task == "income" and model == "lr":
+        return Path("outputs/folktables_drift_results.json")
+    return Path(f"outputs/folktables_{task}_drift_results_{model}.json")
+
+
+def make_pipelines(model, with_shap: bool = True) -> Dict[str, DriftPipeline]:
+    """KS carries localisation and SHAP root cause analysis; the others detect only.
+
+    SHAP runs for the logistic model only: the exact explainer over 10 inputs
+    evaluates 1,024 coalitions per explained row, which the boosted model's
+    slower predictions turn into hours per window."""
+    extra = {name: DriftPipeline(detector=det) for name, det in
+             baseline_detectors(ALPHA, SEED, max_samples=MMD_MAX_SAMPLES).items()}
     return {
         "KS Test": DriftPipeline(
             detector=KSTest(threshold=ALPHA, correction="bonferroni"),
@@ -75,7 +94,7 @@ def make_pipelines(model) -> Dict[str, DriftPipeline]:
             ),
             model=model,
             enable_localization=True,
-            enable_rca=True,
+            enable_rca=with_shap,
         ),
         "PSI": DriftPipeline(detector=PSI(threshold=PSI_THRESHOLD, n_bins=10)),
         "MMD": DriftPipeline(
@@ -85,6 +104,7 @@ def make_pipelines(model) -> Dict[str, DriftPipeline]:
             )
         ),
         "CBPE": DriftPipeline(detector=CBPE(threshold=ALPHA, n_bins=10)),
+        **extra,
     }
 
 
@@ -100,11 +120,13 @@ def explanation_shift(rca: Dict[str, Any]) -> Dict[str, float]:
 
 
 def analyse_window(
-    key: str, analysis_type: str, X, y, *, model, pipelines, reference_ds, reliability,
-    reference_accuracy: float, reference_test_correct: np.ndarray, rng: np.random.Generator,
+    key: str, analysis_type: str, X, y, *, task, model, pipelines, reference_ds, reliability,
+    reference_accuracy: float, reference_test_correct: np.ndarray,
 ) -> Dict[str, Any]:
     print(f"\n=== {key} ({analysis_type}, {len(X)} rows)")
-    window_ds = to_dataset(X, y, model=model)
+    features = list(ACS_TASKS[task].features)
+    rng = window_rng(SEED, key)
+    window_ds = to_dataset(X, y, model=model, task=task)
     timings: Dict[str, float] = {}
 
     pipelines_out = {}
@@ -127,7 +149,7 @@ def analyse_window(
     estimated = float(pipelines_out["CBPE"]["detection"]["metadata"]["estimated_accuracy"])
 
     start = time.perf_counter()
-    frame = reliability.analyze(X[ACS_FEATURES].to_numpy(dtype=float))
+    frame = reliability.analyze(X[features].to_numpy(dtype=float))
     timings["reliability"] = round(time.perf_counter() - start, 3)
     summary = ReliabilityAnalyzer.summarize(frame, y)
     keep = np.sort(rng.choice(len(frame), min(RELIABILITY_RECORDS_KEPT, len(frame)), replace=False))
@@ -141,6 +163,14 @@ def analyse_window(
     au = audit_diagnosis(model, reference_ds, X.iloc[audit_idx], np.asarray(y)[audit_idx], alpha=ALPHA)
     diagnosis = combine(lf, au)
     timings["diagnosis"] = round(time.perf_counter() - start, 3)
+    comparison = comparison_block(
+        lf=lf, audit=au, model=model, reference_ds=reference_ds, audit_X=X.iloc[audit_idx],
+        audit_y=np.asarray(y)[audit_idx], alpha=ALPHA, cbpe_estimate=estimated,
+        reference_accuracy=reference_accuracy, production_probabilities=window_ds.prediction_probabilities,
+        actual_accuracy=accuracy,
+    )
+    if comparison["verdicts"]["ours"] != diagnosis.drift_type:
+        raise AssertionError("recomputed verdict differs from the diagnosis")
     print(f"  diagnosis: {diagnosis.drift_type} [{diagnosis.stage}] {diagnosis.rationale}")
 
     print(f"  accuracy {accuracy:.4f} (change {accuracy - reference_accuracy:+.4f}, "
@@ -173,39 +203,48 @@ def analyse_window(
             "audit_accuracy_drop_p_value": au["accuracy_drop_test"]["p_value"],
             "audit_prior_p_value": au["prior_test"]["p_value"],
         },
+        "comparison": comparison,
         "reliability": {"summary": summary, "records": records.to_dict(orient="records")},
         "timings_seconds": timings,
     }
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--task", choices=sorted(ACS_TASKS), default="income")
+    ap.add_argument("--model", choices=sorted(MODEL_DESCRIPTIONS), default="lr")
+    args = ap.parse_args()
     setup_logging(level="WARNING")
-    rng = np.random.default_rng(SEED)
+    task, spec = args.task, ACS_TASKS[args.task]
+    features = list(spec.features)
 
-    X_base, y_base = load_acs(BASE_YEAR, BASE_STATE)
+    X_base, y_base = load_acs_task(task, BASE_YEAR, BASE_STATE)
     split = split_reference(X_base, y_base, seed=SEED)
-    model = make_acs_model(random_state=SEED).fit(split.train_X.to_numpy(dtype=float), split.train_y)
+    model = make_acs_model(random_state=SEED, kind=args.model, task=task).fit(
+        split.train_X.to_numpy(dtype=float), split.train_y)
 
-    reference_ds = to_dataset(split.calibration_X, split.calibration_y, model=model)
+    reference_ds = to_dataset(split.calibration_X, split.calibration_y, model=model, task=task)
     test_pred = model.predict(split.test_X.to_numpy(dtype=float))
     reference_test_correct = (test_pred == split.test_y).astype(int)
     reference_accuracy = float(reference_test_correct.mean())
-    print(f"split {split.sizes()}; reference (held-out test) accuracy {reference_accuracy:.4f}")
+    print(f"{spec.title} / {args.model}: split {split.sizes()}; reference (held-out test) accuracy "
+          f"{reference_accuracy:.4f}")
 
     reliability = ReliabilityAnalyzer(
         model,
         reference_X=split.train_X.to_numpy(dtype=float),
         calibration_X=split.calibration_X.to_numpy(dtype=float),
         calibration_y=split.calibration_y,
-        categorical_indices=[ACS_FEATURES.index(f) for f in ACS_CATEGORICAL],
+        categorical_indices=[features.index(f) for f in spec.categorical],
         random_state=SEED,
     )
     print(f"reliability fusion: {reliability.describe()['fusion']}")
 
-    pipelines = make_pipelines(model)
+    with_shap = args.model == "lr"
+    pipelines = make_pipelines(model, with_shap=with_shap)
     common = dict(
-        model=model, pipelines=pipelines, reference_ds=reference_ds, reliability=reliability,
-        reference_accuracy=reference_accuracy, reference_test_correct=reference_test_correct, rng=rng,
+        task=task, model=model, pipelines=pipelines, reference_ds=reference_ds, reliability=reliability,
+        reference_accuracy=reference_accuracy, reference_test_correct=reference_test_correct,
     )
 
     windows: Dict[str, Any] = {}
@@ -213,29 +252,35 @@ def main() -> None:
     windows[key] = {"state": BASE_STATE, "year": BASE_YEAR,
                     **analyse_window(key, "control", split.test_X, split.test_y, **common)}
     for year in TEMPORAL_YEARS:
-        X, y = load_acs(year, BASE_STATE)
+        X, y = load_acs_task(task, year, BASE_STATE)
         key = f"{BASE_STATE} {year}"
         windows[key] = {"state": BASE_STATE, "year": year, **analyse_window(key, "temporal", X, y, **common)}
     for state in GEO_STATES:
-        X, y = load_acs(BASE_YEAR, state)
+        X, y = load_acs_task(task, BASE_YEAR, state)
         key = f"{state} {BASE_YEAR}"
         windows[key] = {"state": state, "year": BASE_YEAR, **analyse_window(key, "geographic", X, y, **common)}
 
     result = {
         "config": {
+            "task": task,
+            "task_title": spec.title,
+            "label": spec.label_description,
+            "model_kind": args.model,
             "seed": SEED,
             "alpha": ALPHA,
             "psi_threshold": PSI_THRESHOLD,
             "mmd": {"n_permutations": MMD_PERMUTATIONS, "max_samples": MMD_MAX_SAMPLES, "standardize": True},
-            "shap": {"n_background": SHAP_BACKGROUND, "n_explained_per_sample": SHAP_EXPLAINED},
+            "shap": ({"n_background": SHAP_BACKGROUND, "n_explained_per_sample": SHAP_EXPLAINED} if with_shap
+                     else None),
             "audit_labels": AUDIT_LABELS,
             "ks_correction": "bonferroni",
             "localization_correction": "holm",
             "reference": f"{BASE_STATE} {BASE_YEAR}",
+            "temporal_years": TEMPORAL_YEARS,
             "split_fractions": dict(zip(("train", "calibration", "test"), SPLIT_FRACTIONS)),
             "split_sizes": split.sizes(),
-            "features": {"numeric": ACS_NUMERIC, "categorical": ACS_CATEGORICAL},
-            "model": "one-hot nominal + standardised numeric, L2 logistic regression (C=1)",
+            "features": {"numeric": list(spec.numeric), "categorical": spec.categorical},
+            "model": MODEL_DESCRIPTIONS[args.model],
         },
         "reference": {
             "test_accuracy": reference_accuracy,
@@ -248,17 +293,10 @@ def main() -> None:
         "reliability_model": reliability.describe(),
         "windows": windows,
     }
-    OUTPUT.parent.mkdir(exist_ok=True)
-    OUTPUT.write_text(json.dumps(result, indent=1, allow_nan=False, default=_json_default))
-    print(f"\nwrote {OUTPUT}")
-
-
-def _json_default(value):
-    if isinstance(value, np.generic):
-        return value.item()
-    if isinstance(value, np.ndarray):
-        return value.tolist()
-    raise TypeError(f"not JSON serialisable: {type(value)}")
+    out = output_path(task, args.model)
+    out.parent.mkdir(exist_ok=True)
+    out.write_text(json.dumps(result, indent=1, allow_nan=False, default=json_default))
+    print(f"\nwrote {out}")
 
 
 if __name__ == "__main__":

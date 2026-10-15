@@ -1,5 +1,7 @@
 {
  "config": {
+  "model_kind": "lr",
+  "model": "L2 logistic regression (C=1); standardised numeric, one-hot nominal",
   "seed": 42,
   "alpha": 0.05,
   "n_labels_bought": 2000,
@@ -20,7 +22,7 @@
  "settings": [
   {
    "group": "acs_temporal",
-   "shift_name": "ACS temporal CA 2015",
+   "shift_name": "ACS Income temporal CA 2015",
    "reference_accuracy": 0.8260893201772269,
    "accuracy_before": 0.8239988051803965,
    "gap": 0.0020905149968304393,
@@ -50,7 +52,7 @@
    "results": [
     {
      "strategy": "importance_weighted_retrain",
-     "shift_name": "ACS temporal CA 2015",
+     "shift_name": "ACS Income temporal CA 2015",
      "accuracy_before": 0.8239988051803965,
      "accuracy_after": 0.8238281166655999,
      "accuracy_recovered": -0.00017068851479662417,
@@ -65,7 +67,7 @@
      "gap": 0.0020905149968304393,
      "fraction_of_gap_recovered": -0.08164902670175327,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 8.493234399000357,
+     "wall_clock_seconds": 2.35155475299689,
      "train_samples": 110364,
      "n_features_used": 10,
      "n_production_labels_required": 0,
@@ -77,7 +79,7 @@
     },
     {
      "strategy": "feature_drop_retrain",
-     "shift_name": "ACS temporal CA 2015",
+     "shift_name": "ACS Income temporal CA 2015",
      "accuracy_before": 0.8239988051803965,
      "accuracy_after": 0.7931468561309181,
      "accuracy_recovered": -0.03085194904947841,
@@ -92,7 +94,7 @@
      "gap": 0.0020905149968304393,
      "fraction_of_gap_recovered": -14.758061576336445,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 2.6343883389999974,
+     "wall_clock_seconds": 0.3522148609990836,
      "train_samples": 110364,
      "n_features_used": 9,
      "n_production_labels_required": 0,
@@ -105,7 +107,7 @@
     },
     {
      "strategy": "label_retrain",
-     "shift_name": "ACS temporal CA 2015",
+     "shift_name": "ACS Income temporal CA 2015",
      "accuracy_before": 0.8239988051803965,
      "accuracy_after": 0.8239134609229981,
      "accuracy_recovered": -8.53442573983676e-05,
@@ -120,7 +122,7 @@
      "gap": 0.0020905149968304393,
      "fraction_of_gap_recovered": -0.04082451335090318,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 2.4873702799995954,
+     "wall_clock_seconds": 0.4690047659969423,
      "train_samples": 112364,
      "n_features_used": 10,
      "n_production_labels_required": 2000,
@@ -129,7 +131,7 @@
     },
     {
      "strategy": "recalibrate",
-     "shift_name": "ACS temporal CA 2015",
+     "shift_name": "ACS Income temporal CA 2015",
      "accuracy_before": 0.8239988051803965,
      "accuracy_after": 0.8238921248586486,
      "accuracy_recovered": -0.00010668032174787623,
@@ -144,7 +146,7 @@
      "gap": 0.0020905149968304393,
      "fraction_of_gap_recovered": -0.051030641688589146,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 0.0021065150012873346,
+     "wall_clock_seconds": 0.0004564529954222962,
      "train_samples": 2000,
      "n_features_used": 1,
      "n_production_labels_required": 2000,
@@ -161,7 +163,7 @@
   },
   {
    "group": "acs_temporal",
-   "shift_name": "ACS temporal CA 2016",
+   "shift_name": "ACS Income temporal CA 2016",
    "reference_accuracy": 0.8260893201772269,
    "accuracy_before": 0.8195574904831009,
    "gap": 0.006531829694126023,
@@ -202,7 +204,7 @@
    "results": [
     {
      "strategy": "importance_weighted_retrain",
-     "shift_name": "ACS temporal CA 2016",
+     "shift_name": "ACS Income temporal CA 2016",
      "accuracy_before": 0.8195574904831009,
      "accuracy_after": 0.8199886428165815,
      "accuracy_recovered": 0.0004311523334805667,
@@ -217,7 +219,7 @@
      "gap": 0.006531829694126023,
      "fraction_of_gap_recovered": 0.06600789574601057,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 3.5794336030012346,
+     "wall_clock_seconds": 2.3678780770060257,
      "train_samples": 110364,
      "n_features_used": 10,
      "n_production_labels_required": 0,
@@ -229,7 +231,7 @@
     },
     {
      "strategy": "retrain_on_recent",
-     "shift_name": "ACS temporal CA 2016",
+     "shift_name": "ACS Income temporal CA 2016",
      "accuracy_before": 0.8195574904831009,
      "accuracy_after": 0.8215765453130587,
      "accuracy_recovered": 0.0020190548299577893,
@@ -244,7 +246,7 @@
      "gap": 0.006531829694126023,
      "fraction_of_gap_recovered": 0.3091101459325394,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 2.3858889790008107,
+     "wall_clock_seconds": 1.316712945998006,
      "train_samples": 297839,
      "n_features_used": 10,
      "n_production_labels_required": 0,
@@ -253,7 +255,7 @@
     },
     {
      "strategy": "feature_drop_retrain",
-     "shift_name": "ACS temporal CA 2016",
+     "shift_name": "ACS Income temporal CA 2016",
      "accuracy_before": 0.8195574904831009,
      "accuracy_after": 0.6675394872442004,
      "accuracy_recovered": -0.15201800323890047,
@@ -268,7 +270,7 @@
      "gap": 0.006531829694126023,
      "fraction_of_gap_recovered": -23.27341807083672,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 0.2783318109995889,
+     "wall_clock_seconds": 0.19766368900309317,
      "train_samples": 297839,
      "n_features_used": 2,
      "n_production_labels_required": 0,
@@ -288,7 +290,7 @@
     },
     {
      "strategy": "label_retrain",
-     "shift_name": "ACS temporal CA 2016",
+     "shift_name": "ACS Income temporal CA 2016",
      "accuracy_before": 0.8195574904831009,
      "accuracy_after": 0.8197467768734095,
      "accuracy_recovered": 0.00018928639030857397,
@@ -303,7 +305,7 @@
      "gap": 0.006531829694126023,
      "fraction_of_gap_recovered": 0.028979076181180348,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 0.851489157999822,
+     "wall_clock_seconds": 0.43392873899574624,
      "train_samples": 112364,
      "n_features_used": 10,
      "n_production_labels_required": 2000,
@@ -312,7 +314,7 @@
     },
     {
      "strategy": "recalibrate",
-     "shift_name": "ACS temporal CA 2016",
+     "shift_name": "ACS Income temporal CA 2016",
      "accuracy_before": 0.8195574904831009,
      "accuracy_after": 0.8155404126443309,
      "accuracy_recovered": -0.0040170778387700334,
@@ -327,7 +329,7 @@
      "gap": 0.006531829694126023,
      "fraction_of_gap_recovered": -0.6150003945115916,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 0.0006892820001667133,
+     "wall_clock_seconds": 0.00043063199700554833,
      "train_samples": 2000,
      "n_features_used": 1,
      "n_production_labels_required": 2000,
@@ -343,7 +345,7 @@
   },
   {
    "group": "acs_temporal",
-   "shift_name": "ACS temporal CA 2017",
+   "shift_name": "ACS Income temporal CA 2017",
    "reference_accuracy": 0.8260893201772269,
    "accuracy_before": 0.8170942829005339,
    "gap": 0.008995037276693041,
@@ -384,7 +386,7 @@
    "results": [
     {
      "strategy": "importance_weighted_retrain",
-     "shift_name": "ACS temporal CA 2017",
+     "shift_name": "ACS Income temporal CA 2017",
      "accuracy_before": 0.8170942829005339,
      "accuracy_after": 0.8174571087959364,
      "accuracy_recovered": 0.00036282589540248544,
@@ -399,7 +401,7 @@
      "gap": 0.008995037276693041,
      "fraction_of_gap_recovered": 0.04033623032809439,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 6.843797153998821,
+     "wall_clock_seconds": 2.3871020059959847,
      "train_samples": 110364,
      "n_features_used": 10,
      "n_production_labels_required": 0,
@@ -411,7 +413,7 @@
     },
     {
      "strategy": "retrain_on_recent",
-     "shift_name": "ACS temporal CA 2017",
+     "shift_name": "ACS Income temporal CA 2017",
      "accuracy_before": 0.8170942829005339,
      "accuracy_after": 0.8196651635308143,
      "accuracy_recovered": 0.0025708806302804366,
@@ -426,7 +428,7 @@
      "gap": 0.008995037276693041,
      "fraction_of_gap_recovered": 0.28581100346763677,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 6.041065953000725,
+     "wall_clock_seconds": 1.1145794920012122,
      "train_samples": 300551,
      "n_features_used": 10,
      "n_production_labels_required": 0,
@@ -435,7 +437,7 @@
     },
     {
      "strategy": "full_retrain",
-     "shift_name": "ACS temporal CA 2017",
+     "shift_name": "ACS Income temporal CA 2017",
      "accuracy_before": 0.8170942829005339,
      "accuracy_after": 0.8196444306225056,
      "accuracy_recovered": 0.0025501477219717072,
@@ -450,7 +452,7 @@
      "gap": 0.008995037276693041,
      "fraction_of_gap_recovered": 0.2835060760203153,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 4.494280172999424,
+     "wall_clock_seconds": 2.520790971000679,
      "train_samples": 488026,
      "n_features_used": 10,
      "n_production_labels_required": 0,
@@ -461,7 +463,7 @@
     },
     {
      "strategy": "feature_drop_retrain",
-     "shift_name": "ACS temporal CA 2017",
+     "shift_name": "ACS Income temporal CA 2017",
      "accuracy_before": 0.8170942829005339,
      "accuracy_after": 0.6036386254081791,
      "accuracy_recovered": -0.21345565749235473,
@@ -476,7 +478,7 @@
      "gap": 0.008995037276693041,
      "fraction_of_gap_recovered": -23.73038053387925,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 0.09511408599973947,
+     "wall_clock_seconds": 0.055718445997626986,
      "train_samples": 488026,
      "n_features_used": 1,
      "n_production_labels_required": 0,
@@ -497,7 +499,7 @@
     },
     {
      "strategy": "label_retrain",
-     "shift_name": "ACS temporal CA 2017",
+     "shift_name": "ACS Income temporal CA 2017",
      "accuracy_before": 0.8170942829005339,
      "accuracy_after": 0.8173016119836211,
      "accuracy_recovered": 0.00020732908308718212,
@@ -512,7 +514,7 @@
      "gap": 0.008995037276693041,
      "fraction_of_gap_recovered": 0.023049274473202087,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 0.8386712060000718,
+     "wall_clock_seconds": 0.4316132189997006,
      "train_samples": 112364,
      "n_features_used": 10,
      "n_production_labels_required": 2000,
@@ -521,7 +523,7 @@
     },
     {
      "strategy": "recalibrate",
-     "shift_name": "ACS temporal CA 2017",
+     "shift_name": "ACS Income temporal CA 2017",
      "accuracy_before": 0.8170942829005339,
      "accuracy_after": 0.8174363758876276,
      "accuracy_recovered": 0.00034209298709375613,
@@ -536,7 +538,7 @@
      "gap": 0.008995037276693041,
      "fraction_of_gap_recovered": 0.03803130288077295,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 0.0007664340009796433,
+     "wall_clock_seconds": 0.00040442799945594743,
      "train_samples": 2000,
      "n_features_used": 1,
      "n_production_labels_required": 2000,
@@ -550,7 +552,7 @@
   },
   {
    "group": "acs_temporal",
-   "shift_name": "ACS temporal CA 2018",
+   "shift_name": "ACS Income temporal CA 2018",
    "reference_accuracy": 0.8260893201772269,
    "accuracy_before": 0.7962752854353848,
    "gap": 0.029814034741842077,
@@ -591,7 +593,7 @@
    "results": [
     {
      "strategy": "importance_weighted_retrain",
-     "shift_name": "ACS temporal CA 2018",
+     "shift_name": "ACS Income temporal CA 2018",
      "accuracy_before": 0.7962752854353848,
      "accuracy_after": 0.7964388294338312,
      "accuracy_recovered": 0.00016354399844631384,
@@ -606,7 +608,7 @@
      "gap": 0.029814034741842077,
      "fraction_of_gap_recovered": 0.0054854701774661304,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 3.736326979998921,
+     "wall_clock_seconds": 2.4684872529978747,
      "train_samples": 110364,
      "n_features_used": 10,
      "n_production_labels_required": 0,
@@ -618,7 +620,7 @@
     },
     {
      "strategy": "retrain_on_recent",
-     "shift_name": "ACS temporal CA 2018",
+     "shift_name": "ACS Income temporal CA 2018",
      "accuracy_before": 0.7962752854353848,
      "accuracy_after": 0.8038494168634306,
      "accuracy_recovered": 0.0075741314280457495,
@@ -633,7 +635,7 @@
      "gap": 0.029814034741842077,
      "fraction_of_gap_recovered": 0.25404583759392835,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 2.5832803639987105,
+     "wall_clock_seconds": 1.4022476480022306,
      "train_samples": 303293,
      "n_features_used": 10,
      "n_production_labels_required": 0,
@@ -642,7 +644,7 @@
     },
     {
      "strategy": "full_retrain",
-     "shift_name": "ACS temporal CA 2018",
+     "shift_name": "ACS Income temporal CA 2018",
      "accuracy_before": 0.7962752854353848,
      "accuracy_after": 0.8026943873744034,
      "accuracy_recovered": 0.006419101939018512,
@@ -657,7 +659,7 @@
      "gap": 0.029814034741842077,
      "fraction_of_gap_recovered": 0.2153047044655689,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 7.1106929239995225,
+     "wall_clock_seconds": 3.571221288999368,
      "train_samples": 680955,
      "n_features_used": 10,
      "n_production_labels_required": 0,
@@ -668,7 +670,7 @@
     },
     {
      "strategy": "label_retrain",
-     "shift_name": "ACS temporal CA 2018",
+     "shift_name": "ACS Income temporal CA 2018",
      "accuracy_before": 0.7962752854353848,
      "accuracy_after": 0.8085819713184713,
      "accuracy_recovered": 0.012306685883086477,
@@ -683,7 +685,7 @@
      "gap": 0.029814034741842077,
      "fraction_of_gap_recovered": 0.412781630854372,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 2.819511236000835,
+     "wall_clock_seconds": 0.4380275500006974,
      "train_samples": 112364,
      "n_features_used": 10,
      "n_production_labels_required": 2000,
@@ -692,7 +694,7 @@
     },
     {
      "strategy": "recalibrate",
-     "shift_name": "ACS temporal CA 2018",
+     "shift_name": "ACS Income temporal CA 2018",
      "accuracy_before": 0.7962752854353848,
      "accuracy_after": 0.8036245438655668,
      "accuracy_recovered": 0.007349258430181971,
@@ -707,7 +709,767 @@
      "gap": 0.029814034741842077,
      "fraction_of_gap_recovered": 0.24650331609990914,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 0.0018095449995598756,
+     "wall_clock_seconds": 0.0004110930021852255,
+     "train_samples": 2000,
+     "n_features_used": 1,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 2000.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {
+    "feature_drop_retrain": "every feature is localised"
+   },
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "acs_temporal",
+   "shift_name": "ACS Income temporal CA 2019",
+   "reference_accuracy": 0.8260893201772269,
+   "accuracy_before": 0.783786524944978,
+   "gap": 0.04230279523224889,
+   "n_holdout": 98597,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.0229 (95% CI +0.0206 to +0.0251); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.8304096193130871,
+      "difference": -5.582048574364701e-05,
+      "ci_low": -0.0008576113956924266,
+      "ci_high": 0.0007384112042278817,
+      "p_value_greater": 0.544727636181909,
+      "n": 33110,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.79587734241908,
+      "difference": 0.022913117546848383,
+      "ci_low": 0.020647359454855196,
+      "ci_high": 0.02514480408858603,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 58700,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.5782233446626385,
+     "effective_sample_fraction": 0.9686756591393434
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "ACS Income temporal CA 2019",
+     "accuracy_before": 0.783786524944978,
+     "accuracy_after": 0.7845776240656409,
+     "accuracy_recovered": 0.0007910991206628859,
+     "recovery_test": {
+      "difference": 0.0007910991206629005,
+      "ci_low": 0.00031441118898140914,
+      "ci_high": 0.0012475024595068815,
+      "p_value_greater": 0.0009995002498750624,
+      "n": 98597
+     },
+     "recovery_significant": true,
+     "gap": 0.04230279523224889,
+     "fraction_of_gap_recovered": 0.01870087109657008,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 2.5193735500070034,
+     "train_samples": 110364,
+     "n_features_used": 10,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 351002671.76211834,
+     "extra": {
+      "domain_classifier_auc": 0.5830519471761515,
+      "effective_sample_fraction": 0.96364296174449
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "ACS Income temporal CA 2019",
+     "accuracy_before": 0.783786524944978,
+     "accuracy_after": 0.8129456271488991,
+     "accuracy_recovered": 0.02915910220392104,
+     "recovery_test": {
+      "difference": 0.02915910220392101,
+      "ci_low": 0.02727238151262209,
+      "ci_high": 0.030914226599186585,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 98597
+     },
+     "recovery_significant": true,
+     "gap": 0.04230279523224889,
+     "fraction_of_gap_recovered": 0.6892949282389746,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 1.5740019860022585,
+     "train_samples": 306029,
+     "n_features_used": 10,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 486586110.0,
+     "extra": {}
+    },
+    {
+     "strategy": "full_retrain",
+     "shift_name": "ACS Income temporal CA 2019",
+     "accuracy_before": 0.783786524944978,
+     "accuracy_after": 0.8121443857318174,
+     "accuracy_recovered": 0.02835786078683933,
+     "recovery_test": {
+      "difference": 0.028357860786839356,
+      "ci_low": 0.026572816617138454,
+      "ci_high": 0.030072162439019442,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 98597
+     },
+     "recovery_significant": true,
+     "gap": 0.04230279523224889,
+     "fraction_of_gap_recovered": 0.6703543023847546,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 4.966450888001418,
+     "train_samples": 876620,
+     "n_features_used": 10,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 1604214600.0,
+     "extra": {
+      "windows_used": 4
+     }
+    },
+    {
+     "strategy": "feature_drop_retrain",
+     "shift_name": "ACS Income temporal CA 2019",
+     "accuracy_before": 0.783786524944978,
+     "accuracy_after": 0.5613558221852591,
+     "accuracy_recovered": -0.22243070275971888,
+     "recovery_test": {
+      "difference": -0.22243070275971885,
+      "ci_low": -0.22599090236011238,
+      "ci_high": -0.21911417183078594,
+      "p_value_greater": 1.0,
+      "n": 98597
+     },
+     "recovery_significant": false,
+     "gap": 0.04230279523224889,
+     "fraction_of_gap_recovered": -5.258061589985719,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 0.09764498699951218,
+     "train_samples": 876620,
+     "n_features_used": 1,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 3506480.0,
+     "extra": {
+      "dropped_features": [
+       "OCCP",
+       "RELP",
+       "SCHL",
+       "POBP",
+       "RAC1P",
+       "AGEP",
+       "COW",
+       "MAR",
+       "WKHP"
+      ]
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "ACS Income temporal CA 2019",
+     "accuracy_before": 0.783786524944978,
+     "accuracy_after": 0.8017586741990121,
+     "accuracy_recovered": 0.01797214925403412,
+     "recovery_test": {
+      "difference": 0.0179721492540341,
+      "ci_low": 0.016724646794527218,
+      "ci_high": 0.019260220899216002,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 98597
+     },
+     "recovery_significant": true,
+     "gap": 0.04230279523224889,
+     "fraction_of_gap_recovered": 0.42484543055285684,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 0.4562971790001029,
+     "train_samples": 112364,
+     "n_features_used": 10,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 157309600.0,
+     "extra": {}
+    },
+    {
+     "strategy": "recalibrate",
+     "shift_name": "ACS Income temporal CA 2019",
+     "accuracy_before": 0.783786524944978,
+     "accuracy_after": 0.7978437477813727,
+     "accuracy_recovered": 0.014057222836394656,
+     "recovery_test": {
+      "difference": 0.014057222836394616,
+      "ci_low": 0.01204879458807063,
+      "ci_high": 0.015933801231274785,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 98597
+     },
+     "recovery_significant": true,
+     "gap": 0.04230279523224889,
+     "fraction_of_gap_recovered": 0.3323000941005985,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 0.00040937599987955764,
+     "train_samples": 2000,
+     "n_features_used": 1,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 2000.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {},
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "acs_temporal",
+   "shift_name": "ACS Income temporal CA 2021",
+   "reference_accuracy": 0.8260893201772269,
+   "accuracy_before": 0.7683535874812718,
+   "gap": 0.05773573269595511,
+   "n_holdout": 96112,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.0301 (95% CI +0.0277 to +0.0325); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.8251923608483308,
+      "difference": 0.000436657999456688,
+      "ci_low": -0.0009418268008555267,
+      "ci_high": 0.0017276168277826495,
+      "p_value_greater": 0.2723638180909545,
+      "n": 33110,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.784729030731262,
+      "difference": 0.030105818317049258,
+      "ci_low": 0.027671658947226074,
+      "ci_high": 0.03250659251495994,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 59158,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.6882350090877352,
+     "effective_sample_fraction": 0.7878623965366579
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "ACS Income temporal CA 2021",
+     "accuracy_before": 0.7683535874812718,
+     "accuracy_after": 0.7693836357582821,
+     "accuracy_recovered": 0.0010300482770102537,
+     "recovery_test": {
+      "difference": 0.0010300482770101548,
+      "ci_low": 0.0002601132012651906,
+      "ci_high": 0.001747960712502081,
+      "p_value_greater": 0.00399800099950025,
+      "n": 96112
+     },
+     "recovery_significant": true,
+     "gap": 0.05773573269595511,
+     "fraction_of_gap_recovered": 0.017840741407658928,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 2.485951169008331,
+     "train_samples": 110364,
+     "n_features_used": 10,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 332240791.76211834,
+     "extra": {
+      "domain_classifier_auc": 0.6850815778259263,
+      "effective_sample_fraction": 0.7363715219867534
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "ACS Income temporal CA 2021",
+     "accuracy_before": 0.7683535874812718,
+     "accuracy_after": 0.8068191276843683,
+     "accuracy_recovered": 0.03846554020309645,
+     "recovery_test": {
+      "difference": 0.038465540203096386,
+      "ci_low": 0.03655110704178458,
+      "ci_high": 0.04054644581321791,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 96112
+     },
+     "recovery_significant": true,
+     "gap": 0.05773573269595511,
+     "fraction_of_gap_recovered": 0.6662345553950386,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 1.5046543130010832,
+     "train_samples": 307557,
+     "n_features_used": 10,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 461335500.0,
+     "extra": {}
+    },
+    {
+     "strategy": "full_retrain",
+     "shift_name": "ACS Income temporal CA 2021",
+     "accuracy_before": 0.7683535874812718,
+     "accuracy_after": 0.8047694356583985,
+     "accuracy_recovered": 0.03641584817712673,
+     "recovery_test": {
+      "difference": 0.03641584817712669,
+      "ci_low": 0.03457424671216914,
+      "ci_high": 0.03841351756284335,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 96112
+     },
+     "recovery_significant": true,
+     "gap": 0.05773573269595511,
+     "fraction_of_gap_recovered": 0.6307332820888922,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 5.44951630399737,
+     "train_samples": 1073813,
+     "n_features_used": 10,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 1632195760.0,
+     "extra": {
+      "windows_used": 5
+     }
+    },
+    {
+     "strategy": "feature_drop_retrain",
+     "shift_name": "ACS Income temporal CA 2021",
+     "accuracy_before": 0.7683535874812718,
+     "accuracy_after": 0.5423048110537706,
+     "accuracy_recovered": -0.2260487764275012,
+     "recovery_test": {
+      "difference": -0.22604877642750124,
+      "ci_low": -0.22936782087564508,
+      "ci_high": -0.22272817130014982,
+      "p_value_greater": 1.0,
+      "n": 96112
+     },
+     "recovery_significant": false,
+     "gap": 0.05773573269595511,
+     "fraction_of_gap_recovered": -3.9152317961895005,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 0.11567885800468503,
+     "train_samples": 1073813,
+     "n_features_used": 1,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 4295252.0,
+     "extra": {
+      "dropped_features": [
+       "OCCP",
+       "RELP",
+       "RAC1P",
+       "SCHL",
+       "POBP",
+       "MAR",
+       "WKHP",
+       "COW",
+       "AGEP"
+      ]
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "ACS Income temporal CA 2021",
+     "accuracy_before": 0.7683535874812718,
+     "accuracy_after": 0.790015814882637,
+     "accuracy_recovered": 0.02166222740136514,
+     "recovery_test": {
+      "difference": 0.021662227401365076,
+      "ci_low": 0.020288569585483602,
+      "ci_high": 0.02300467163309472,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 96112
+     },
+     "recovery_significant": true,
+     "gap": 0.05773573269595511,
+     "fraction_of_gap_recovered": 0.37519619808830745,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 0.4488969989979523,
+     "train_samples": 112364,
+     "n_features_used": 10,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 149444120.0,
+     "extra": {}
+    },
+    {
+     "strategy": "recalibrate",
+     "shift_name": "ACS Income temporal CA 2021",
+     "accuracy_before": 0.7683535874812718,
+     "accuracy_after": 0.7912123356084568,
+     "accuracy_recovered": 0.022858748127185025,
+     "recovery_test": {
+      "difference": 0.02285874812718495,
+      "ci_low": 0.020527873730647576,
+      "ci_high": 0.025251789578824704,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 96112
+     },
+     "recovery_significant": true,
+     "gap": 0.05773573269595511,
+     "fraction_of_gap_recovered": 0.3959202916426568,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 0.0004009500044048764,
+     "train_samples": 2000,
+     "n_features_used": 1,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 2000.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {},
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "acs_temporal",
+   "shift_name": "ACS Income temporal CA 2022",
+   "reference_accuracy": 0.8260893201772269,
+   "accuracy_before": 0.7590463560310702,
+   "gap": 0.06704296414615674,
+   "n_holdout": 100289,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.0397 (95% CI +0.0370 to +0.0425); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.8321312575341777,
+      "difference": -3.650039457881875e-05,
+      "ci_low": -0.001301237044057363,
+      "ci_high": 0.0011967491989957784,
+      "p_value_greater": 0.5152423788105946,
+      "n": 33110,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.7691747446546552,
+      "difference": 0.03974543499748556,
+      "ci_low": 0.03704024832226403,
+      "ci_high": 0.04253732637383599,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 57667,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.6913043652575533,
+     "effective_sample_fraction": 0.783607346361437
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "ACS Income temporal CA 2022",
+     "accuracy_before": 0.7590463560310702,
+     "accuracy_after": 0.7592657220632373,
+     "accuracy_recovered": 0.00021936603216710093,
+     "recovery_test": {
+      "difference": 0.00021936603216703726,
+      "ci_low": -0.00041878969777343477,
+      "ci_high": 0.0008475505788271894,
+      "p_value_greater": 0.2708645677161419,
+      "n": 100289
+     },
+     "recovery_significant": false,
+     "gap": 0.06704296414615674,
+     "fraction_of_gap_recovered": 0.0032720216798420923,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 2.5363444929971593,
+     "train_samples": 110364,
+     "n_features_used": 10,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 353209951.76211834,
+     "extra": {
+      "domain_classifier_auc": 0.6796596157546988,
+      "effective_sample_fraction": 0.8294413862564696
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "ACS Income temporal CA 2022",
+     "accuracy_before": 0.7590463560310702,
+     "accuracy_after": 0.8050733380530267,
+     "accuracy_recovered": 0.04602698202195654,
+     "recovery_test": {
+      "difference": 0.04602698202195655,
+      "ci_low": 0.04396269780334832,
+      "ci_high": 0.0481109593275434,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 100289
+     },
+     "recovery_significant": true,
+     "gap": 0.06704296414615674,
+     "fraction_of_gap_recovered": 0.6865296397339415,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 1.4270981310037314,
+     "train_samples": 302587,
+     "n_features_used": 10,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 435725280.0,
+     "extra": {}
+    },
+    {
+     "strategy": "full_retrain",
+     "shift_name": "ACS Income temporal CA 2022",
+     "accuracy_before": 0.7590463560310702,
+     "accuracy_after": 0.802181694901734,
+     "accuracy_recovered": 0.043135338870663786,
+     "recovery_test": {
+      "difference": 0.04313533887066378,
+      "ci_low": 0.041180737668139074,
+      "ci_high": 0.04512982480630976,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 100289
+     },
+     "recovery_significant": true,
+     "gap": 0.06704296414615674,
+     "fraction_of_gap_recovered": 0.6433984448633084,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 6.703966954002681,
+     "train_samples": 1266036,
+     "n_features_used": 10,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 2139600840.0,
+     "extra": {
+      "windows_used": 6
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "ACS Income temporal CA 2022",
+     "accuracy_before": 0.7590463560310702,
+     "accuracy_after": 0.7844728733958859,
+     "accuracy_recovered": 0.025426517364815715,
+     "recovery_test": {
+      "difference": 0.025426517364815684,
+      "ci_low": 0.0240305517055709,
+      "ci_high": 0.026862617036763754,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 100289
+     },
+     "recovery_significant": true,
+     "gap": 0.06704296414615674,
+     "fraction_of_gap_recovered": 0.37925705834522383,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 0.44783971599827055,
+     "train_samples": 112364,
+     "n_features_used": 10,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 155062320.0,
+     "extra": {}
+    },
+    {
+     "strategy": "recalibrate",
+     "shift_name": "ACS Income temporal CA 2022",
+     "accuracy_before": 0.7590463560310702,
+     "accuracy_after": 0.7890297041549921,
+     "accuracy_recovered": 0.029983348123921894,
+     "recovery_test": {
+      "difference": 0.029983348123921866,
+      "ci_low": 0.02724102344225189,
+      "ci_high": 0.032576105056387035,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 100289
+     },
+     "recovery_significant": true,
+     "gap": 0.06704296414615674,
+     "fraction_of_gap_recovered": 0.4472258723310148,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 0.0003910310042556375,
+     "train_samples": 2000,
+     "n_features_used": 1,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 2000.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {
+    "feature_drop_retrain": "every feature is localised"
+   },
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "acs_temporal",
+   "shift_name": "ACS Income temporal CA 2023",
+   "reference_accuracy": 0.8260893201772269,
+   "accuracy_before": 0.7495744743651551,
+   "gap": 0.0765148458120718,
+   "n_holdout": 101639,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.0473 (95% CI +0.0445 to +0.0501); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.8286877156296963,
+      "difference": -0.0002495873411307032,
+      "ci_low": -0.001707651429147156,
+      "ci_high": 0.0011317266150698588,
+      "p_value_greater": 0.6441779110444777,
+      "n": 33110,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.758068268687473,
+      "difference": 0.04732941137368299,
+      "ci_low": 0.04453667697011998,
+      "ci_high": 0.05012131485359125,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 60174,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.699554426280163,
+     "effective_sample_fraction": 0.7802251051647289
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "ACS Income temporal CA 2023",
+     "accuracy_before": 0.7495744743651551,
+     "accuracy_after": 0.7512765769045346,
+     "accuracy_recovered": 0.0017021025393795242,
+     "recovery_test": {
+      "difference": 0.0017021025393795688,
+      "ci_low": 0.0009740355572172099,
+      "ci_high": 0.0024203307785397336,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 101639
+     },
+     "recovery_significant": true,
+     "gap": 0.0765148458120718,
+     "fraction_of_gap_recovered": 0.022245389392276372,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 2.5016027000019676,
+     "train_samples": 110364,
+     "n_features_used": 10,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 322308031.76211834,
+     "extra": {
+      "domain_classifier_auc": 0.695907795953456,
+      "effective_sample_fraction": 0.7601069737101691
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "ACS Income temporal CA 2023",
+     "accuracy_before": 0.7495744743651551,
+     "accuracy_after": 0.8055864382766458,
+     "accuracy_recovered": 0.05601196391149066,
+     "recovery_test": {
+      "difference": 0.056011963911490666,
+      "ci_low": 0.05374905302098604,
+      "ci_high": 0.058196164857977746,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 101639
+     },
+     "recovery_significant": true,
+     "gap": 0.0765148458120718,
+     "fraction_of_gap_recovered": 0.7320404728915184,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 1.58669185799954,
+     "train_samples": 310941,
+     "n_features_used": 10,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 497505600.0,
+     "extra": {}
+    },
+    {
+     "strategy": "full_retrain",
+     "shift_name": "ACS Income temporal CA 2023",
+     "accuracy_before": 0.7495744743651551,
+     "accuracy_after": 0.8021723944548844,
+     "accuracy_recovered": 0.0525979200897293,
+     "recovery_test": {
+      "difference": 0.052597920089729334,
+      "ci_low": 0.05054162280227078,
+      "ci_high": 0.054634539891183505,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 101639
+     },
+     "recovery_significant": true,
+     "gap": 0.0765148458120718,
+     "fraction_of_gap_recovered": 0.6874211080411129,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 7.638384395002504,
+     "train_samples": 1466613,
+     "n_features_used": 10,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 2331914670.0,
+     "extra": {
+      "windows_used": 7
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "ACS Income temporal CA 2023",
+     "accuracy_before": 0.7495744743651551,
+     "accuracy_after": 0.7775853756924015,
+     "accuracy_recovered": 0.028010901327246374,
+     "recovery_test": {
+      "difference": 0.028010901327246433,
+      "ci_low": 0.026514920453762827,
+      "ci_high": 0.029427680319562374,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 101639
+     },
+     "recovery_significant": true,
+     "gap": 0.0765148458120718,
+     "fraction_of_gap_recovered": 0.3660845294786842,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 0.49405820699757896,
+     "train_samples": 112364,
+     "n_features_used": 10,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 150567760.0,
+     "extra": {}
+    },
+    {
+     "strategy": "recalibrate",
+     "shift_name": "ACS Income temporal CA 2023",
+     "accuracy_before": 0.7495744743651551,
+     "accuracy_after": 0.7934552681549405,
+     "accuracy_recovered": 0.04388079378978538,
+     "recovery_test": {
+      "difference": 0.04388079378978542,
+      "ci_low": 0.041263442182626744,
+      "ci_high": 0.04642927419592873,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 101639
+     },
+     "recovery_significant": true,
+     "gap": 0.0765148458120718,
+     "fraction_of_gap_recovered": 0.5734938536968505,
+     "reference_accuracy": 0.8260893201772269,
+     "wall_clock_seconds": 0.0004163249977864325,
      "train_samples": 2000,
      "n_features_used": 1,
      "n_production_labels_required": 2000,
@@ -723,7 +1485,7 @@
   },
   {
    "group": "acs_geographic",
-   "shift_name": "ACS geographic TX 2014",
+   "shift_name": "ACS Income geographic TX 2014",
    "reference_accuracy": 0.8260893201772269,
    "accuracy_before": 0.8038413098236776,
    "gap": 0.022248010353549286,
@@ -753,7 +1515,7 @@
    "results": [
     {
      "strategy": "importance_weighted_retrain",
-     "shift_name": "ACS geographic TX 2014",
+     "shift_name": "ACS Income geographic TX 2014",
      "accuracy_before": 0.8038413098236776,
      "accuracy_after": 0.8024874055415617,
      "accuracy_recovered": -0.001353904282115903,
@@ -768,7 +1530,7 @@
      "gap": 0.022248010353549286,
      "fraction_of_gap_recovered": -0.06085507245819449,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 8.681980629999089,
+     "wall_clock_seconds": 2.381085911001719,
      "train_samples": 110364,
      "n_features_used": 10,
      "n_production_labels_required": 0,
@@ -780,7 +1542,7 @@
     },
     {
      "strategy": "feature_drop_retrain",
-     "shift_name": "ACS geographic TX 2014",
+     "shift_name": "ACS Income geographic TX 2014",
      "accuracy_before": 0.8038413098236776,
      "accuracy_after": 0.6836429471032746,
      "accuracy_recovered": -0.12019836272040307,
@@ -795,7 +1557,7 @@
      "gap": 0.022248010353549286,
      "fraction_of_gap_recovered": -5.402656723468645,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 0.054531009000129416,
+     "wall_clock_seconds": 0.012602438997419085,
      "train_samples": 110364,
      "n_features_used": 1,
      "n_production_labels_required": 0,
@@ -816,7 +1578,7 @@
     },
     {
      "strategy": "label_retrain",
-     "shift_name": "ACS geographic TX 2014",
+     "shift_name": "ACS Income geographic TX 2014",
      "accuracy_before": 0.8038413098236776,
      "accuracy_after": 0.8077770780856424,
      "accuracy_recovered": 0.003935768261964734,
@@ -831,7 +1593,7 @@
      "gap": 0.022248010353549286,
      "fraction_of_gap_recovered": 0.17690428040172365,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 2.315388674998758,
+     "wall_clock_seconds": 0.4322933329967782,
      "train_samples": 112364,
      "n_features_used": 10,
      "n_production_labels_required": 2000,
@@ -840,7 +1602,7 @@
     },
     {
      "strategy": "recalibrate",
-     "shift_name": "ACS geographic TX 2014",
+     "shift_name": "ACS Income geographic TX 2014",
      "accuracy_before": 0.8038413098236776,
      "accuracy_after": 0.8125787153652393,
      "accuracy_recovered": 0.00873740554156166,
@@ -855,7 +1617,7 @@
      "gap": 0.022248010353549286,
      "fraction_of_gap_recovered": 0.3927275024918243,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 0.0009136259996012086,
+     "wall_clock_seconds": 0.00040359800186706707,
      "train_samples": 2000,
      "n_features_used": 1,
      "n_production_labels_required": 2000,
@@ -872,7 +1634,7 @@
   },
   {
    "group": "acs_geographic",
-   "shift_name": "ACS geographic NY 2014",
+   "shift_name": "ACS Income geographic NY 2014",
    "reference_accuracy": 0.8260893201772269,
    "accuracy_before": 0.8052211632210439,
    "gap": 0.020868156956183048,
@@ -902,7 +1664,7 @@
    "results": [
     {
      "strategy": "importance_weighted_retrain",
-     "shift_name": "ACS geographic NY 2014",
+     "shift_name": "ACS Income geographic NY 2014",
      "accuracy_before": 0.8052211632210439,
      "accuracy_after": 0.8028732315896293,
      "accuracy_recovered": -0.002347931631414557,
@@ -917,7 +1679,7 @@
      "gap": 0.020868156956183048,
      "fraction_of_gap_recovered": -0.11251264960027464,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 6.686099289001504,
+     "wall_clock_seconds": 2.3481272609933512,
      "train_samples": 110364,
      "n_features_used": 10,
      "n_production_labels_required": 0,
@@ -929,7 +1691,7 @@
     },
     {
      "strategy": "label_retrain",
-     "shift_name": "ACS geographic NY 2014",
+     "shift_name": "ACS Income geographic NY 2014",
      "accuracy_before": 0.8052211632210439,
      "accuracy_after": 0.8065543108422707,
      "accuracy_recovered": 0.0013331476212268267,
@@ -944,7 +1706,7 @@
      "gap": 0.020868156956183048,
      "fraction_of_gap_recovered": 0.06388430104421977,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 2.6229433999997127,
+     "wall_clock_seconds": 0.46952100299677113,
      "train_samples": 112364,
      "n_features_used": 10,
      "n_production_labels_required": 2000,
@@ -953,7 +1715,7 @@
     },
     {
      "strategy": "recalibrate",
-     "shift_name": "ACS geographic NY 2014",
+     "shift_name": "ACS Income geographic NY 2014",
      "accuracy_before": 0.8052211632210439,
      "accuracy_after": 0.8046640269017251,
      "accuracy_recovered": -0.0005571363193187517,
@@ -968,7 +1730,7 @@
      "gap": 0.020868156956183048,
      "fraction_of_gap_recovered": -0.026697916854304532,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 0.0011939369996980531,
+     "wall_clock_seconds": 0.00039632400148548186,
      "train_samples": 2000,
      "n_features_used": 1,
      "n_production_labels_required": 2000,
@@ -986,7 +1748,7 @@
   },
   {
    "group": "acs_geographic",
-   "shift_name": "ACS geographic FL 2014",
+   "shift_name": "ACS Income geographic FL 2014",
    "reference_accuracy": 0.8260893201772269,
    "accuracy_before": 0.7859314508191343,
    "gap": 0.040157869358092624,
@@ -1016,7 +1778,7 @@
    "results": [
     {
      "strategy": "importance_weighted_retrain",
-     "shift_name": "ACS geographic FL 2014",
+     "shift_name": "ACS Income geographic FL 2014",
      "accuracy_before": 0.7859314508191343,
      "accuracy_after": 0.7866751241278244,
      "accuracy_recovered": 0.0007436733086900738,
@@ -1031,7 +1793,7 @@
      "gap": 0.040157869358092624,
      "fraction_of_gap_recovered": 0.018518744160917703,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 7.896070369000881,
+     "wall_clock_seconds": 2.2801172450053855,
      "train_samples": 110364,
      "n_features_used": 10,
      "n_production_labels_required": 0,
@@ -1043,7 +1805,7 @@
     },
     {
      "strategy": "label_retrain",
-     "shift_name": "ACS geographic FL 2014",
+     "shift_name": "ACS Income geographic FL 2014",
      "accuracy_before": 0.7859314508191343,
      "accuracy_after": 0.8003893348498436,
      "accuracy_recovered": 0.014457884030709356,
@@ -1058,7 +1820,7 @@
      "gap": 0.040157869358092624,
      "fraction_of_gap_recovered": 0.3600261732460614,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 2.255131858000823,
+     "wall_clock_seconds": 0.45901166000112426,
      "train_samples": 112364,
      "n_features_used": 10,
      "n_production_labels_required": 2000,
@@ -1067,7 +1829,7 @@
     },
     {
      "strategy": "recalibrate",
-     "shift_name": "ACS geographic FL 2014",
+     "shift_name": "ACS Income geographic FL 2014",
      "accuracy_before": 0.7859314508191343,
      "accuracy_after": 0.8178219121153131,
      "accuracy_recovered": 0.031890461296178785,
@@ -1082,7 +1844,7 @@
      "gap": 0.040157869358092624,
      "fraction_of_gap_recovered": 0.7941273231357882,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 0.0011557060006452957,
+     "wall_clock_seconds": 0.0004986950007150881,
      "train_samples": 2000,
      "n_features_used": 1,
      "n_production_labels_required": 2000,
@@ -1100,7 +1862,7 @@
   },
   {
    "group": "acs_geographic",
-   "shift_name": "ACS geographic WA 2014",
+   "shift_name": "ACS Income geographic WA 2014",
    "reference_accuracy": 0.8260893201772269,
    "accuracy_before": 0.7981306343675681,
    "gap": 0.027958685809658768,
@@ -1130,7 +1892,7 @@
    "results": [
     {
      "strategy": "importance_weighted_retrain",
-     "shift_name": "ACS geographic WA 2014",
+     "shift_name": "ACS Income geographic WA 2014",
      "accuracy_before": 0.7981306343675681,
      "accuracy_after": 0.8000663680106189,
      "accuracy_recovered": 0.0019357336430507743,
@@ -1145,7 +1907,7 @@
      "gap": 0.027958685809658768,
      "fraction_of_gap_recovered": 0.06923550184830378,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 7.656118367998715,
+     "wall_clock_seconds": 2.435484256995551,
      "train_samples": 110364,
      "n_features_used": 10,
      "n_production_labels_required": 0,
@@ -1157,7 +1919,7 @@
     },
     {
      "strategy": "label_retrain",
-     "shift_name": "ACS geographic WA 2014",
+     "shift_name": "ACS Income geographic WA 2014",
      "accuracy_before": 0.7981306343675681,
      "accuracy_after": 0.8008406614678392,
      "accuracy_recovered": 0.0027100271002710175,
@@ -1172,7 +1934,7 @@
      "gap": 0.027958685809658768,
      "fraction_of_gap_recovered": 0.09692970258762292,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 2.2818567869999242,
+     "wall_clock_seconds": 0.4688818779977737,
      "train_samples": 112364,
      "n_features_used": 10,
      "n_production_labels_required": 2000,
@@ -1181,7 +1943,7 @@
     },
     {
      "strategy": "recalibrate",
-     "shift_name": "ACS geographic WA 2014",
+     "shift_name": "ACS Income geographic WA 2014",
      "accuracy_before": 0.7981306343675681,
      "accuracy_after": 0.8038272219456889,
      "accuracy_recovered": 0.005696587578120749,
@@ -1196,7 +1958,7 @@
      "gap": 0.027958685809658768,
      "fraction_of_gap_recovered": 0.20375019115357607,
      "reference_accuracy": 0.8260893201772269,
-     "wall_clock_seconds": 0.0012330919998930767,
+     "wall_clock_seconds": 0.000401170997065492,
      "train_samples": 2000,
      "n_features_used": 1,
      "n_production_labels_required": 2000,
@@ -1211,6 +1973,2164 @@
    },
    "probe_truth_helps": false,
    "triage_correct": true
+  },
+  {
+   "group": "acs_employment_temporal",
+   "shift_name": "ACS Employment temporal CA 2015",
+   "reference_accuracy": 0.7290188729755053,
+   "accuracy_before": 0.7330637743115987,
+   "gap": -0.004044901336093476,
+   "n_holdout": 151111,
+   "triage": {
+    "will_retraining_help": false,
+    "rationale": "no cheap probe is predicted to raise accuracy significantly; if accuracy is falling the change is likely in P(Y|X), so collect fresh labels before retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.731171924071369,
+      "difference": -0.00013614608142280664,
+      "ci_low": -0.0006449536630552301,
+      "ci_high": 0.0003773111448048656,
+      "p_value_greater": 0.6986506746626686,
+      "n": 53791,
+      "predicted_gain_significant": false
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.49456230682038627,
+     "effective_sample_fraction": 0.9932263003375059
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "ACS Employment temporal CA 2015",
+     "accuracy_before": 0.7330637743115987,
+     "accuracy_after": 0.7332953921289648,
+     "accuracy_recovered": 0.0002316178173660255,
+     "recovery_test": {
+      "difference": 0.0002316178173660422,
+      "ci_low": -0.00015220599426911342,
+      "ci_high": 0.00063529458477543,
+      "p_value_greater": 0.1344327836081959,
+      "n": 151111
+     },
+     "recovery_significant": false,
+     "gap": -0.004044901336093476,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.87129098999867,
+     "train_samples": 179302,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 524030951.590989,
+     "extra": {
+      "domain_classifier_auc": 0.5206860523976244,
+      "effective_sample_fraction": 0.9835791711532487
+     }
+    },
+    {
+     "strategy": "feature_drop_retrain",
+     "shift_name": "ACS Employment temporal CA 2015",
+     "accuracy_before": 0.7330637743115987,
+     "accuracy_after": 0.7102593457789307,
+     "accuracy_recovered": -0.022804428532668064,
+     "recovery_test": {
+      "difference": -0.02280442853266804,
+      "ci_low": -0.024478694469628286,
+      "ci_high": -0.02100409632654142,
+      "p_value_greater": 1.0,
+      "n": 151111
+     },
+     "recovery_significant": false,
+     "gap": -0.004044901336093476,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.5091084870000486,
+     "train_samples": 179302,
+     "n_features_used": 13,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 172488524.0,
+     "extra": {
+      "dropped_features": [
+       "ANC",
+       "SCHL",
+       "RELP"
+      ]
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "ACS Employment temporal CA 2015",
+     "accuracy_before": 0.7330637743115987,
+     "accuracy_after": 0.7329181859692544,
+     "accuracy_recovered": -0.00014558834234434936,
+     "recovery_test": {
+      "difference": -0.00014558834234436937,
+      "ci_low": -0.00033750024816194717,
+      "ci_high": 4.632356347320844e-05,
+      "p_value_greater": 0.936031984007996,
+      "n": 151111
+     },
+     "recovery_significant": false,
+     "gap": -0.004044901336093476,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.7443066909982008,
+     "train_samples": 181302,
+     "n_features_used": 16,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 281380704.0,
+     "extra": {}
+    },
+    {
+     "strategy": "recalibrate",
+     "shift_name": "ACS Employment temporal CA 2015",
+     "accuracy_before": 0.7330637743115987,
+     "accuracy_after": 0.7312108317726704,
+     "accuracy_recovered": -0.001852942538928315,
+     "recovery_test": {
+      "difference": -0.0018529425389283375,
+      "ci_low": -0.003183090575801894,
+      "ci_high": -0.0005424820165308954,
+      "p_value_greater": 0.9970014992503748,
+      "n": 151111
+     },
+     "recovery_significant": false,
+     "gap": -0.004044901336093476,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.00039924999873619527,
+     "train_samples": 2000,
+     "n_features_used": 1,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 2000.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {
+    "retrain_on_recent": "no delayed-label window",
+    "full_retrain": "needs two or more delayed-label windows (else it equals retrain_on_recent)"
+   },
+   "probe_truth_helps": false,
+   "triage_correct": true
+  },
+  {
+   "group": "acs_employment_temporal",
+   "shift_name": "ACS Employment temporal CA 2016",
+   "reference_accuracy": 0.7290188729755053,
+   "accuracy_before": 0.7346433136968068,
+   "gap": -0.005624440721301527,
+   "n_holdout": 151758,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.0015 (95% CI +0.0008 to +0.0022); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.7288581698641273,
+      "difference": -0.00014899656608707192,
+      "ci_low": -0.0007057111468138078,
+      "ci_high": 0.00043444135974304697,
+      "p_value_greater": 0.6881559220389805,
+      "n": 53791,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.7327252473336495,
+      "difference": 0.0014669063716677513,
+      "ci_low": 0.0007610266138727432,
+      "ci_high": 0.0021510031213120523,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 90667,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.5154800272518819,
+     "effective_sample_fraction": 0.9881710134599031
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "ACS Employment temporal CA 2016",
+     "accuracy_before": 0.7346433136968068,
+     "accuracy_after": 0.7354604040643656,
+     "accuracy_recovered": 0.000817090367558837,
+     "recovery_test": {
+      "difference": 0.0008170903675588766,
+      "ci_low": 0.0004479170785065697,
+      "ci_high": 0.0011796742181631272,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 151758
+     },
+     "recovery_significant": true,
+     "gap": -0.005624440721301527,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.847637749000569,
+     "train_samples": 179302,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 529768615.590989,
+     "extra": {
+      "domain_classifier_auc": 0.5140012754758392,
+      "effective_sample_fraction": 0.9884606625829565
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "ACS Employment temporal CA 2016",
+     "accuracy_before": 0.7346433136968068,
+     "accuracy_after": 0.73693643827673,
+     "accuracy_recovered": 0.002293124579923256,
+     "recovery_test": {
+      "difference": 0.0022931245799232987,
+      "ci_low": 0.0018252744501113616,
+      "ci_high": 0.002787332463527458,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 151758
+     },
+     "recovery_significant": true,
+     "gap": -0.005624440721301527,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.106089578999672,
+     "train_samples": 481523,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 847480480.0,
+     "extra": {}
+    },
+    {
+     "strategy": "feature_drop_retrain",
+     "shift_name": "ACS Employment temporal CA 2016",
+     "accuracy_before": 0.7346433136968068,
+     "accuracy_after": 0.6955284070691495,
+     "accuracy_recovered": -0.039114906627657264,
+     "recovery_test": {
+      "difference": -0.03911490662765719,
+      "ci_low": -0.041105081774931135,
+      "ci_high": -0.03711138786752593,
+      "p_value_greater": 1.0,
+      "n": 151758
+     },
+     "recovery_significant": false,
+     "gap": -0.005624440721301527,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.8424335879972205,
+     "train_samples": 481523,
+     "n_features_used": 9,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 242687592.0,
+     "extra": {
+      "dropped_features": [
+       "ANC",
+       "SCHL",
+       "AGEP",
+       "RAC1P",
+       "MIG",
+       "CIT",
+       "MIL"
+      ]
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "ACS Employment temporal CA 2016",
+     "accuracy_before": 0.7346433136968068,
+     "accuracy_after": 0.7346630820121509,
+     "accuracy_recovered": 1.9768315344115273e-05,
+     "recovery_test": {
+      "difference": 1.976831534416637e-05,
+      "ci_low": -0.00017791483809749734,
+      "ci_high": 0.00023738452009119693,
+      "p_value_greater": 0.4332833583208396,
+      "n": 151758
+     },
+     "recovery_significant": false,
+     "gap": -0.005624440721301527,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.591151118002017,
+     "train_samples": 181302,
+     "n_features_used": 16,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 223364064.0,
+     "extra": {}
+    },
+    {
+     "strategy": "recalibrate",
+     "shift_name": "ACS Employment temporal CA 2016",
+     "accuracy_before": 0.7346433136968068,
+     "accuracy_after": 0.7336548979295985,
+     "accuracy_recovered": -0.0009884157672083171,
+     "recovery_test": {
+      "difference": -0.0009884157672083184,
+      "ci_low": -0.0014958025277085887,
+      "ci_high": -0.00048728897323370283,
+      "p_value_greater": 1.0,
+      "n": 151758
+     },
+     "recovery_significant": false,
+     "gap": -0.005624440721301527,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.0004162170007475652,
+     "train_samples": 2000,
+     "n_features_used": 1,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 2000.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {
+    "full_retrain": "needs two or more delayed-label windows (else it equals retrain_on_recent)"
+   },
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "acs_employment_temporal",
+   "shift_name": "ACS Employment temporal CA 2017",
+   "reference_accuracy": 0.7290188729755053,
+   "accuracy_before": 0.737319160919766,
+   "gap": -0.008300287944260742,
+   "n_holdout": 152691,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.0037 (95% CI +0.0029 to +0.0045); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.7322903968667782,
+      "difference": -0.00014670829558112742,
+      "ci_low": -0.0010609947357729341,
+      "ci_high": 0.0007688092517306479,
+      "p_value_greater": 0.6191904047976012,
+      "n": 53791,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.7359288342210751,
+      "difference": 0.0036681126791499644,
+      "ci_low": 0.0028880896161660534,
+      "ci_high": 0.004459118115424742,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 91055,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.5378683285890464,
+     "effective_sample_fraction": 0.973943295120239
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "ACS Employment temporal CA 2017",
+     "accuracy_before": 0.737319160919766,
+     "accuracy_after": 0.7375614803753987,
+     "accuracy_recovered": 0.00024231945563268908,
+     "recovery_test": {
+      "difference": 0.0002423194556326175,
+      "ci_low": -0.00011788514057803013,
+      "ci_high": 0.0006156224007963796,
+      "p_value_greater": 0.10194902548725637,
+      "n": 152691
+     },
+     "recovery_significant": false,
+     "gap": -0.008300287944260742,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.6702598949996172,
+     "train_samples": 179302,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 475260807.590989,
+     "extra": {
+      "domain_classifier_auc": 0.5189993659202494,
+      "effective_sample_fraction": 0.9828288536083457
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "ACS Employment temporal CA 2017",
+     "accuracy_before": 0.737319160919766,
+     "accuracy_after": 0.741150427988552,
+     "accuracy_recovered": 0.003831267068786004,
+     "recovery_test": {
+      "difference": 0.0038312670687859797,
+      "ci_low": 0.0032025463190364853,
+      "ci_high": 0.004427241946152688,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 152691
+     },
+     "recovery_significant": true,
+     "gap": -0.008300287944260742,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.1561543659991003,
+     "train_samples": 482817,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 842032848.0,
+     "extra": {}
+    },
+    {
+     "strategy": "full_retrain",
+     "shift_name": "ACS Employment temporal CA 2017",
+     "accuracy_before": 0.737319160919766,
+     "accuracy_after": 0.7407378299965289,
+     "accuracy_recovered": 0.0034186690767629146,
+     "recovery_test": {
+      "difference": 0.003418669076762874,
+      "ci_low": 0.0028030466759664946,
+      "ci_high": 0.004047553555874281,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 152691
+     },
+     "recovery_significant": true,
+     "gap": -0.008300287944260742,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 3.0594465949980076,
+     "train_samples": 785038,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 1180697152.0,
+     "extra": {
+      "windows_used": 2
+     }
+    },
+    {
+     "strategy": "feature_drop_retrain",
+     "shift_name": "ACS Employment temporal CA 2017",
+     "accuracy_before": 0.737319160919766,
+     "accuracy_after": 0.6639291117354658,
+     "accuracy_recovered": -0.07339004918430025,
+     "recovery_test": {
+      "difference": -0.07339004918430032,
+      "ci_low": -0.07580096403848294,
+      "ci_high": -0.07091446123216169,
+      "p_value_greater": 1.0,
+      "n": 152691
+     },
+     "recovery_significant": false,
+     "gap": -0.008300287944260742,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 1.0283526789935422,
+     "train_samples": 785038,
+     "n_features_used": 7,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 186839044.0,
+     "extra": {
+      "dropped_features": [
+       "ANC",
+       "SCHL",
+       "RAC1P",
+       "AGEP",
+       "CIT",
+       "MIL",
+       "RELP",
+       "MIG",
+       "MAR"
+      ]
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "ACS Employment temporal CA 2017",
+     "accuracy_before": 0.737319160919766,
+     "accuracy_after": 0.7374173985369145,
+     "accuracy_recovered": 9.823761714844448e-05,
+     "recovery_test": {
+      "difference": 9.823761714835845e-05,
+      "ci_low": -9.168844267180121e-05,
+      "ci_high": 0.00029471285144507534,
+      "p_value_greater": 0.18340829585207397,
+      "n": 152691
+     },
+     "recovery_significant": false,
+     "gap": -0.008300287944260742,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.6152647300041281,
+     "train_samples": 181302,
+     "n_features_used": 16,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 226264896.0,
+     "extra": {}
+    },
+    {
+     "strategy": "recalibrate",
+     "shift_name": "ACS Employment temporal CA 2017",
+     "accuracy_before": 0.737319160919766,
+     "accuracy_after": 0.7353020151809865,
+     "accuracy_recovered": -0.0020171457387795355,
+     "recovery_test": {
+      "difference": -0.002017145738779627,
+      "ci_low": -0.0026589648374822352,
+      "ci_high": -0.001421007132051006,
+      "p_value_greater": 1.0,
+      "n": 152691
+     },
+     "recovery_significant": false,
+     "gap": -0.008300287944260742,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.000403062003897503,
+     "train_samples": 2000,
+     "n_features_used": 1,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 2000.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {},
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "acs_employment_temporal",
+   "shift_name": "ACS Employment temporal CA 2018",
+   "reference_accuracy": 0.7290188729755053,
+   "accuracy_before": 0.7385790263193781,
+   "gap": -0.009560153343872835,
+   "n_holdout": 153993,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.0040 (95% CI +0.0031 to +0.0049); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.7349683706769244,
+      "difference": -1.4493322167651226e-05,
+      "ci_low": -0.0007745338864436036,
+      "ci_high": 0.0007854977901215906,
+      "p_value_greater": 0.5187406296851574,
+      "n": 53791,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.7376739616874965,
+      "difference": 0.003962233258745839,
+      "ci_low": 0.0030996561698411833,
+      "ci_high": 0.004857556077061615,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 91615,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.5270164331618209,
+     "effective_sample_fraction": 0.9848929028648867
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "ACS Employment temporal CA 2018",
+     "accuracy_before": 0.7385790263193781,
+     "accuracy_after": 0.7388128031793653,
+     "accuracy_recovered": 0.00023377685998715592,
+     "recovery_test": {
+      "difference": 0.00023377685998714228,
+      "ci_low": -0.0003376776866480944,
+      "ci_high": 0.0007792561999571409,
+      "p_value_greater": 0.21339330334832585,
+      "n": 153993
+     },
+     "recovery_significant": false,
+     "gap": -0.009560153343872835,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.856230449004215,
+     "train_samples": 179302,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 535506279.590989,
+     "extra": {
+      "domain_classifier_auc": 0.5463461270225032,
+      "effective_sample_fraction": 0.9784773136041472
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "ACS Employment temporal CA 2018",
+     "accuracy_before": 0.7385790263193781,
+     "accuracy_after": 0.7436247102141006,
+     "accuracy_recovered": 0.005045683894722486,
+     "recovery_test": {
+      "difference": 0.0050456838947224875,
+      "ci_low": 0.0043963037280915366,
+      "ci_high": 0.005714545466352367,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 153993
+     },
+     "recovery_significant": true,
+     "gap": -0.009560153343872835,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.1716356510005426,
+     "train_samples": 484684,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 806514176.0,
+     "extra": {}
+    },
+    {
+     "strategy": "full_retrain",
+     "shift_name": "ACS Employment temporal CA 2018",
+     "accuracy_before": 0.7385790263193781,
+     "accuracy_after": 0.7437805614540921,
+     "accuracy_recovered": 0.005201535134713997,
+     "recovery_test": {
+      "difference": 0.0052015351347139156,
+      "ci_low": 0.004552154968082965,
+      "ci_high": 0.0059028657146753425,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 153993
+     },
+     "recovery_significant": true,
+     "gap": -0.009560153343872835,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 4.974063796995324,
+     "train_samples": 1090420,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 1831905600.0,
+     "extra": {
+      "windows_used": 3
+     }
+    },
+    {
+     "strategy": "feature_drop_retrain",
+     "shift_name": "ACS Employment temporal CA 2018",
+     "accuracy_before": 0.7385790263193781,
+     "accuracy_after": 0.6444643587695544,
+     "accuracy_recovered": -0.09411466754982367,
+     "recovery_test": {
+      "difference": -0.0941146675498237,
+      "ci_low": -0.09659562447643724,
+      "ci_high": -0.09160806010662823,
+      "p_value_greater": 1.0,
+      "n": 153993
+     },
+     "recovery_significant": false,
+     "gap": -0.009560153343872835,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.5021678890043404,
+     "train_samples": 1090420,
+     "n_features_used": 6,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 98137800.0,
+     "extra": {
+      "dropped_features": [
+       "ANC",
+       "SCHL",
+       "AGEP",
+       "CIT",
+       "RAC1P",
+       "MIL",
+       "RELP",
+       "MIG",
+       "ESP",
+       "MAR"
+      ]
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "ACS Employment temporal CA 2018",
+     "accuracy_before": 0.7385790263193781,
+     "accuracy_after": 0.738514088302715,
+     "accuracy_recovered": -6.49380166630742e-05,
+     "recovery_test": {
+      "difference": -6.493801666309508e-05,
+      "ci_low": -0.0002662458683186898,
+      "ci_high": 0.00012987603332619016,
+      "p_value_greater": 0.7481259370314842,
+      "n": 153993
+     },
+     "recovery_significant": false,
+     "gap": -0.009560153343872835,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.6911359040022944,
+     "train_samples": 181302,
+     "n_features_used": 16,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 252372384.0,
+     "extra": {}
+    },
+    {
+     "strategy": "recalibrate",
+     "shift_name": "ACS Employment temporal CA 2018",
+     "accuracy_before": 0.7385790263193781,
+     "accuracy_after": 0.7388842349976947,
+     "accuracy_recovered": 0.00030520867831662635,
+     "recovery_test": {
+      "difference": 0.0003052086783165469,
+      "ci_low": 1.9319059957270796e-05,
+      "ci_high": 0.0006040859000084411,
+      "p_value_greater": 0.021989005497251374,
+      "n": 153993
+     },
+     "recovery_significant": true,
+     "gap": -0.009560153343872835,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.00040946499939309433,
+     "train_samples": 2000,
+     "n_features_used": 1,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 2000.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {},
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "acs_employment_temporal",
+   "shift_name": "ACS Employment temporal CA 2019",
+   "reference_accuracy": 0.7290188729755053,
+   "accuracy_before": 0.7422158695820135,
+   "gap": -0.013196996606508193,
+   "n_holdout": 155316,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.0070 (95% CI +0.0060 to +0.0080); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.728535130664758,
+      "difference": -0.0003633137262282687,
+      "ci_low": -0.0012872222315950708,
+      "ci_high": 0.0005429611067008806,
+      "p_value_greater": 0.7901049475262368,
+      "n": 53791,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.7394043032165895,
+      "difference": 0.007002467639291745,
+      "ci_low": 0.006006753539114247,
+      "ci_high": 0.00797653578076973,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 92396,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.5558189655172414,
+     "effective_sample_fraction": 0.9720451418575798
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "ACS Employment temporal CA 2019",
+     "accuracy_before": 0.7422158695820135,
+     "accuracy_after": 0.7424927245100311,
+     "accuracy_recovered": 0.00027685492801765577,
+     "recovery_test": {
+      "difference": 0.0002768549280177187,
+      "ci_low": -0.00028345437688325734,
+      "ci_high": 0.0008112493239588967,
+      "p_value_greater": 0.15792103948025987,
+      "n": 155316
+     },
+     "recovery_significant": false,
+     "gap": -0.013196996606508193,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.8130816780030727,
+     "train_samples": 179302,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 498211463.590989,
+     "extra": {
+      "domain_classifier_auc": 0.5525870914822439,
+      "effective_sample_fraction": 0.9724990791119204
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "ACS Employment temporal CA 2019",
+     "accuracy_before": 0.7422158695820135,
+     "accuracy_after": 0.7497488990187746,
+     "accuracy_recovered": 0.007533029436761152,
+     "recovery_test": {
+      "difference": 0.007533029436761184,
+      "ci_low": 0.0068054804398774114,
+      "ci_high": 0.008299209353833475,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 155316
+     },
+     "recovery_significant": true,
+     "gap": -0.013196996606508193,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 1.845401092999964,
+     "train_samples": 487288,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 686101504.0,
+     "extra": {}
+    },
+    {
+     "strategy": "full_retrain",
+     "shift_name": "ACS Employment temporal CA 2019",
+     "accuracy_before": 0.7422158695820135,
+     "accuracy_after": 0.7493368358700971,
+     "accuracy_recovered": 0.007120966288083674,
+     "recovery_test": {
+      "difference": 0.007120966288083649,
+      "ci_low": 0.006386817842334337,
+      "ci_high": 0.007835960235906152,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 155316
+     },
+     "recovery_significant": true,
+     "gap": -0.013196996606508193,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 5.604309404996457,
+     "train_samples": 1398406,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 2058453632.0,
+     "extra": {
+      "windows_used": 4
+     }
+    },
+    {
+     "strategy": "feature_drop_retrain",
+     "shift_name": "ACS Employment temporal CA 2019",
+     "accuracy_before": 0.7422158695820135,
+     "accuracy_after": 0.6502485255865461,
+     "accuracy_recovered": -0.09196734399546735,
+     "recovery_test": {
+      "difference": -0.0919673439954673,
+      "ci_low": -0.09451698472790955,
+      "ci_high": -0.08952667465039017,
+      "p_value_greater": 1.0,
+      "n": 155316
+     },
+     "recovery_significant": false,
+     "gap": -0.013196996606508193,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.4145235629985109,
+     "train_samples": 1398406,
+     "n_features_used": 4,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 50342616.0,
+     "extra": {
+      "dropped_features": [
+       "RELP",
+       "ANC",
+       "SCHL",
+       "AGEP",
+       "CIT",
+       "RAC1P",
+       "MIG",
+       "MIL",
+       "MAR",
+       "ESP",
+       "NATIVITY",
+       "DEYE"
+      ]
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "ACS Employment temporal CA 2019",
+     "accuracy_before": 0.7422158695820135,
+     "accuracy_after": 0.7424154626696541,
+     "accuracy_recovered": 0.0001995930876406149,
+     "recovery_test": {
+      "difference": 0.00019959308764068092,
+      "ci_low": 4.506940688660537e-05,
+      "ci_high": 0.000360555255092843,
+      "p_value_greater": 0.009495252373813094,
+      "n": 155316
+     },
+     "recovery_significant": true,
+     "gap": -0.013196996606508193,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.7413143509984366,
+     "train_samples": 181302,
+     "n_features_used": 16,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 266876544.0,
+     "extra": {}
+    },
+    {
+     "strategy": "recalibrate",
+     "shift_name": "ACS Employment temporal CA 2019",
+     "accuracy_before": 0.7422158695820135,
+     "accuracy_after": 0.7438834376368179,
+     "accuracy_recovered": 0.0016675680548043914,
+     "recovery_test": {
+      "difference": 0.0016675680548043988,
+      "ci_low": 0.0009656120425455201,
+      "ci_high": 0.0024145934739498815,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 155316
+     },
+     "recovery_significant": true,
+     "gap": -0.013196996606508193,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.00042875399958575144,
+     "train_samples": 2000,
+     "n_features_used": 1,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 2000.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {},
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "acs_employment_temporal",
+   "shift_name": "ACS Employment temporal CA 2021",
+   "reference_accuracy": 0.7290188729755053,
+   "accuracy_before": 0.727026415379006,
+   "gap": 0.001992457596499242,
+   "n_holdout": 159074,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.0085 (95% CI +0.0075 to +0.0095); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.7341011462290051,
+      "difference": -0.0003499863587998839,
+      "ci_low": -0.0013133170317822067,
+      "ci_high": 0.000577070254271564,
+      "p_value_greater": 0.768615692153923,
+      "n": 53791,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.7426869835819294,
+      "difference": 0.008466573666702436,
+      "ci_low": 0.007468612512072111,
+      "ci_high": 0.009496727116643417,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 93190,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.6714332096445089,
+     "effective_sample_fraction": 0.8729133062947968
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "ACS Employment temporal CA 2021",
+     "accuracy_before": 0.727026415379006,
+     "accuracy_after": 0.728780316079309,
+     "accuracy_recovered": 0.0017539007003030127,
+     "recovery_test": {
+      "difference": 0.0017539007003030036,
+      "ci_low": 0.0012005418861661867,
+      "ci_high": 0.0023071023548788612,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 159074
+     },
+     "recovery_significant": true,
+     "gap": 0.001992457596499242,
+     "fraction_of_gap_recovered": 0.8802700260144182,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.8467916440058616,
+     "train_samples": 179302,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 483867303.590989,
+     "extra": {
+      "domain_classifier_auc": 0.6822319168677173,
+      "effective_sample_fraction": 0.8599196206183034
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "ACS Employment temporal CA 2021",
+     "accuracy_before": 0.727026415379006,
+     "accuracy_after": 0.7339917271207111,
+     "accuracy_recovered": 0.006965311741705116,
+     "recovery_test": {
+      "difference": 0.006965311741705118,
+      "ci_low": 0.006166941172033142,
+      "ci_high": 0.007814130530444949,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 159074
+     },
+     "recovery_significant": true,
+     "gap": 0.001992457596499242,
+     "fraction_of_gap_recovered": 3.4958393864658417,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.1494170000005397,
+     "train_samples": 489933,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 783892800.0,
+     "extra": {}
+    },
+    {
+     "strategy": "full_retrain",
+     "shift_name": "ACS Employment temporal CA 2021",
+     "accuracy_before": 0.727026415379006,
+     "accuracy_after": 0.7335076756729573,
+     "accuracy_recovered": 0.006481260293951241,
+     "recovery_test": {
+      "difference": 0.006481260293951243,
+      "ci_low": 0.005701748871594353,
+      "ci_high": 0.007304776393376668,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 159074
+     },
+     "recovery_significant": true,
+     "gap": 0.001992457596499242,
+     "fraction_of_gap_recovered": 3.25289747964466,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 7.3508703660045285,
+     "train_samples": 1709037,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 2789148384.0,
+     "extra": {
+      "windows_used": 5
+     }
+    },
+    {
+     "strategy": "feature_drop_retrain",
+     "shift_name": "ACS Employment temporal CA 2021",
+     "accuracy_before": 0.727026415379006,
+     "accuracy_after": 0.5611287828306323,
+     "accuracy_recovered": -0.16589763254837375,
+     "recovery_test": {
+      "difference": -0.16589763254837372,
+      "ci_low": -0.16866395514037494,
+      "ci_high": -0.16308746243886493,
+      "p_value_greater": 1.0,
+      "n": 159074
+     },
+     "recovery_significant": false,
+     "gap": 0.001992457596499242,
+     "fraction_of_gap_recovered": -83.26281715598702,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.5895662449984229,
+     "train_samples": 1709037,
+     "n_features_used": 4,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 82033776.0,
+     "extra": {
+      "dropped_features": [
+       "RELP",
+       "ANC",
+       "RAC1P",
+       "SCHL",
+       "AGEP",
+       "MIG",
+       "MIL",
+       "CIT",
+       "MAR",
+       "ESP",
+       "DIS",
+       "DREM"
+      ]
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "ACS Employment temporal CA 2021",
+     "accuracy_before": 0.727026415379006,
+     "accuracy_after": 0.7271081383507048,
+     "accuracy_recovered": 8.172297169872778e-05,
+     "recovery_test": {
+      "difference": 8.172297169870627e-05,
+      "ci_low": -0.00013830041364396443,
+      "ci_high": 0.00030174635704137697,
+      "p_value_greater": 0.22338830584707647,
+      "n": 159074
+     },
+     "recovery_significant": false,
+     "gap": 0.001992457596499242,
+     "fraction_of_gap_recovered": 0.0410161660867039,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.7950091039965628,
+     "train_samples": 181302,
+     "n_features_used": 16,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 290083200.0,
+     "extra": {}
+    },
+    {
+     "strategy": "recalibrate",
+     "shift_name": "ACS Employment temporal CA 2021",
+     "accuracy_before": 0.727026415379006,
+     "accuracy_after": 0.7266178005205125,
+     "accuracy_recovered": -0.00040861485849352785,
+     "recovery_test": {
+      "difference": -0.0004086148584935313,
+      "ci_low": -0.0011631379106579328,
+      "ci_high": 0.0003836264883010414,
+      "p_value_greater": 0.8405797101449275,
+      "n": 159074
+     },
+     "recovery_significant": false,
+     "gap": 0.001992457596499242,
+     "fraction_of_gap_recovered": -0.20508083043346378,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.000411354994866997,
+     "train_samples": 2000,
+     "n_features_used": 1,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 2000.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {},
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "acs_employment_temporal",
+   "shift_name": "ACS Employment temporal CA 2022",
+   "reference_accuracy": 0.7290188729755053,
+   "accuracy_before": 0.7339924932445384,
+   "gap": -0.004973620269033141,
+   "n_holdout": 161721,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.0065 (95% CI +0.0054 to +0.0077); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.735739571896923,
+      "difference": 0.0006617453116244379,
+      "ci_low": -0.0004172395275540587,
+      "ci_high": 0.0017354240591967109,
+      "p_value_greater": 0.12843578210894552,
+      "n": 53791,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.7273822620357274,
+      "difference": 0.006516842160406517,
+      "ci_low": 0.005353606789250354,
+      "ci_high": 0.007690816700717688,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 95445,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.6799536541820896,
+     "effective_sample_fraction": 0.8568569671538334
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "ACS Employment temporal CA 2022",
+     "accuracy_before": 0.7339924932445384,
+     "accuracy_after": 0.735624934300431,
+     "accuracy_recovered": 0.0016324410558925528,
+     "recovery_test": {
+      "difference": 0.0016324410558925557,
+      "ci_low": 0.0011439454368944045,
+      "ci_high": 0.0021394871414349404,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 161721
+     },
+     "recovery_significant": true,
+     "gap": -0.004973620269033141,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.9044522879921715,
+     "train_samples": 179302,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 501080295.590989,
+     "extra": {
+      "domain_classifier_auc": 0.6802364617882675,
+      "effective_sample_fraction": 0.8461469680627373
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "ACS Employment temporal CA 2022",
+     "accuracy_before": 0.7339924932445384,
+     "accuracy_after": 0.74174040477118,
+     "accuracy_recovered": 0.00774791152664156,
+     "recovery_test": {
+      "difference": 0.007747911526641562,
+      "ci_low": 0.0068884065767587386,
+      "ci_high": 0.008669251365005163,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 161721
+     },
+     "recovery_significant": true,
+     "gap": -0.004973620269033141,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.2097941050014924,
+     "train_samples": 497450,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 851634400.0,
+     "extra": {}
+    },
+    {
+     "strategy": "full_retrain",
+     "shift_name": "ACS Employment temporal CA 2022",
+     "accuracy_before": 0.7339924932445384,
+     "accuracy_after": 0.7428286988084417,
+     "accuracy_recovered": 0.008836205563903299,
+     "recovery_test": {
+      "difference": 0.008836205563903266,
+      "ci_low": 0.008007463471039629,
+      "ci_high": 0.009695865101007289,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 161721
+     },
+     "recovery_significant": true,
+     "gap": -0.004973620269033141,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 8.594784962006088,
+     "train_samples": 2027185,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 3178626080.0,
+     "extra": {
+      "windows_used": 6
+     }
+    },
+    {
+     "strategy": "feature_drop_retrain",
+     "shift_name": "ACS Employment temporal CA 2022",
+     "accuracy_before": 0.7339924932445384,
+     "accuracy_after": 0.5730300950402236,
+     "accuracy_recovered": -0.1609623982043148,
+     "recovery_test": {
+      "difference": -0.16096239820431485,
+      "ci_low": -0.1636839062335751,
+      "ci_high": -0.15795660427526417,
+      "p_value_greater": 1.0,
+      "n": 161721
+     },
+     "recovery_significant": false,
+     "gap": -0.004973620269033141,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.5748370370056364,
+     "train_samples": 2027185,
+     "n_features_used": 3,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 48652440.0,
+     "extra": {
+      "dropped_features": [
+       "RELP",
+       "ANC",
+       "RAC1P",
+       "SCHL",
+       "AGEP",
+       "MIL",
+       "MIG",
+       "CIT",
+       "MAR",
+       "DREM",
+       "DIS",
+       "ESP",
+       "DEYE"
+      ]
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "ACS Employment temporal CA 2022",
+     "accuracy_before": 0.7339924932445384,
+     "accuracy_after": 0.7343882365308154,
+     "accuracy_recovered": 0.00039574328627700606,
+     "recovery_test": {
+      "difference": 0.0003957432862769832,
+      "ci_low": 0.00013603675465771297,
+      "ci_high": 0.0006616333067443313,
+      "p_value_greater": 0.0014992503748125937,
+      "n": 161721
+     },
+     "recovery_significant": true,
+     "gap": -0.004973620269033141,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.7604308989975834,
+     "train_samples": 181302,
+     "n_features_used": 16,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 272678208.0,
+     "extra": {}
+    },
+    {
+     "strategy": "recalibrate",
+     "shift_name": "ACS Employment temporal CA 2022",
+     "accuracy_before": 0.7339924932445384,
+     "accuracy_after": 0.7352786589249386,
+     "accuracy_recovered": 0.0012861656804001864,
+     "recovery_test": {
+      "difference": 0.0012861656804001953,
+      "ci_low": 0.0007480475633962194,
+      "ci_high": 0.0018241292101829694,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 161721
+     },
+     "recovery_significant": true,
+     "gap": -0.004973620269033141,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.00042201700125588104,
+     "train_samples": 2000,
+     "n_features_used": 1,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 2000.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {},
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "acs_employment_temporal",
+   "shift_name": "ACS Employment temporal CA 2023",
+   "reference_accuracy": 0.7290188729755053,
+   "accuracy_before": 0.7366985244082613,
+   "gap": -0.007679651432756063,
+   "n_holdout": 163121,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.0112 (95% CI +0.0099 to +0.0125); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.7357578933966367,
+      "difference": -0.0004930780703655417,
+      "ci_low": -0.0015908538113974385,
+      "ci_high": 0.0005991148509738437,
+      "p_value_greater": 0.8200899550224887,
+      "n": 53791,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.7327507136747292,
+      "difference": 0.011243597538981584,
+      "ci_low": 0.009903589500479218,
+      "ci_high": 0.012542124844125195,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 97033,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.6859282898970979,
+     "effective_sample_fraction": 0.8503663473158444
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "ACS Employment temporal CA 2023",
+     "accuracy_before": 0.7366985244082613,
+     "accuracy_after": 0.7390893876324937,
+     "accuracy_recovered": 0.0023908632242323202,
+     "recovery_test": {
+      "difference": 0.0023908632242323185,
+      "ci_low": 0.0017165171866283311,
+      "ci_high": 0.003077470098883651,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 163121
+     },
+     "recovery_significant": true,
+     "gap": -0.007679651432756063,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.871522367997386,
+     "train_samples": 179302,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 478129639.590989,
+     "extra": {
+      "domain_classifier_auc": 0.6849542593997345,
+      "effective_sample_fraction": 0.8376940890864775
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "ACS Employment temporal CA 2023",
+     "accuracy_before": 0.7366985244082613,
+     "accuracy_after": 0.7491064915001747,
+     "accuracy_recovered": 0.012407967091913386,
+     "recovery_test": {
+      "difference": 0.012407967091913365,
+      "ci_low": 0.011469859797328364,
+      "ci_high": 0.013370596060593057,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 163121
+     },
+     "recovery_significant": true,
+     "gap": -0.007679651432756063,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.0929673859936884,
+     "train_samples": 502743,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 756125472.0,
+     "extra": {}
+    },
+    {
+     "strategy": "full_retrain",
+     "shift_name": "ACS Employment temporal CA 2023",
+     "accuracy_before": 0.7366985244082613,
+     "accuracy_after": 0.747604538961875,
+     "accuracy_recovered": 0.010906014553613619,
+     "recovery_test": {
+      "difference": 0.010906014553613575,
+      "ci_low": 0.010065993955407335,
+      "ci_high": 0.011770556825914505,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 163121
+     },
+     "recovery_significant": true,
+     "gap": -0.007679651432756063,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 11.317483949002053,
+     "train_samples": 2350626,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 4362761856.0,
+     "extra": {
+      "windows_used": 7
+     }
+    },
+    {
+     "strategy": "feature_drop_retrain",
+     "shift_name": "ACS Employment temporal CA 2023",
+     "accuracy_before": 0.7366985244082613,
+     "accuracy_after": 0.5813966319480631,
+     "accuracy_recovered": -0.1553018924601982,
+     "recovery_test": {
+      "difference": -0.15530189246019827,
+      "ci_low": -0.1581097774045034,
+      "ci_high": -0.15274535467536368,
+      "p_value_greater": 1.0,
+      "n": 163121
+     },
+     "recovery_significant": false,
+     "gap": -0.007679651432756063,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.8136353509980836,
+     "train_samples": 2350626,
+     "n_features_used": 4,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 112830048.0,
+     "extra": {
+      "dropped_features": [
+       "RELP",
+       "ANC",
+       "RAC1P",
+       "SCHL",
+       "AGEP",
+       "MIG",
+       "MIL",
+       "CIT",
+       "MAR",
+       "DREM",
+       "DIS",
+       "ESP"
+      ]
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "ACS Employment temporal CA 2023",
+     "accuracy_before": 0.7366985244082613,
+     "accuracy_after": 0.7366985244082613,
+     "accuracy_recovered": 0.0,
+     "recovery_test": {
+      "difference": 0.0,
+      "ci_low": -0.00020843422980486878,
+      "ci_high": 0.00020230381128119617,
+      "p_value_greater": 0.5217391304347826,
+      "n": 163121
+     },
+     "recovery_significant": false,
+     "gap": -0.007679651432756063,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.7754236699984176,
+     "train_samples": 181302,
+     "n_features_used": 16,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 290083200.0,
+     "extra": {}
+    },
+    {
+     "strategy": "recalibrate",
+     "shift_name": "ACS Employment temporal CA 2023",
+     "accuracy_before": 0.7366985244082613,
+     "accuracy_after": 0.7379613906241379,
+     "accuracy_recovered": 0.001262866215876568,
+     "recovery_test": {
+      "difference": 0.0012628662158765578,
+      "ci_low": -7.984870127083575e-05,
+      "ci_high": 0.002537993268800461,
+      "p_value_greater": 0.031984007996002,
+      "n": 163121
+     },
+     "recovery_significant": false,
+     "gap": -0.007679651432756063,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.0004068710040883161,
+     "train_samples": 2000,
+     "n_features_used": 1,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 2000.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {},
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "acs_employment_geographic",
+   "shift_name": "ACS Employment geographic TX 2014",
+   "reference_accuracy": 0.7290188729755053,
+   "accuracy_before": 0.7456710718054369,
+   "gap": -0.01665219882993163,
+   "n_holdout": 99505,
+   "triage": {
+    "will_retraining_help": false,
+    "rationale": "no cheap probe is predicted to raise accuracy significantly; if accuracy is falling the change is likely in P(Y|X), so collect fresh labels before retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.7365966358524297,
+      "difference": 0.00010952563058071223,
+      "ci_low": -0.0009319879365399744,
+      "ci_high": 0.0012078256530790826,
+      "p_value_greater": 0.4052973513243378,
+      "n": 53791,
+      "predicted_gain_significant": false
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.658173595805047,
+     "effective_sample_fraction": 0.8453588408828385
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "ACS Employment geographic TX 2014",
+     "accuracy_before": 0.7456710718054369,
+     "accuracy_after": 0.746093161147681,
+     "accuracy_recovered": 0.0004220893422440808,
+     "recovery_test": {
+      "difference": 0.00042208934224410833,
+      "ci_low": -0.0002916938847294106,
+      "ci_high": 0.0010956735842419965,
+      "p_value_greater": 0.12843578210894552,
+      "n": 99505
+     },
+     "recovery_significant": false,
+     "gap": -0.01665219882993163,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.530955691996496,
+     "train_samples": 179302,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 475260807.590989,
+     "extra": {
+      "domain_classifier_auc": 0.6576307193319003,
+      "effective_sample_fraction": 0.8421205406581859
+     }
+    },
+    {
+     "strategy": "feature_drop_retrain",
+     "shift_name": "ACS Employment geographic TX 2014",
+     "accuracy_before": 0.7456710718054369,
+     "accuracy_after": 0.5567860911511985,
+     "accuracy_recovered": -0.18888498065423842,
+     "recovery_test": {
+      "difference": -0.18888498065423848,
+      "ci_low": -0.19286468016682579,
+      "ci_high": -0.1848042811918999,
+      "p_value_greater": 1.0,
+      "n": 99505
+     },
+     "recovery_significant": false,
+     "gap": -0.01665219882993163,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.01652297699911287,
+     "train_samples": 179302,
+     "n_features_used": 1,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 537906.0,
+     "extra": {
+      "dropped_features": [
+       "RELP",
+       "CIT",
+       "NATIVITY",
+       "RAC1P",
+       "MAR",
+       "ANC",
+       "SCHL",
+       "MIL",
+       "DIS",
+       "MIG",
+       "DEYE",
+       "DEAR",
+       "DREM",
+       "AGEP",
+       "ESP"
+      ]
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "ACS Employment geographic TX 2014",
+     "accuracy_before": 0.7456710718054369,
+     "accuracy_after": 0.7458117682528517,
+     "accuracy_recovered": 0.0001406964474147676,
+     "recovery_test": {
+      "difference": 0.00014069644741470278,
+      "ci_low": -0.00013064670117079544,
+      "ci_high": 0.000412039596000201,
+      "p_value_greater": 0.1619190404797601,
+      "n": 99505
+     },
+     "recovery_significant": false,
+     "gap": -0.01665219882993163,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.71601992000069,
+     "train_samples": 181302,
+     "n_features_used": 16,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 278479872.0,
+     "extra": {}
+    },
+    {
+     "strategy": "recalibrate",
+     "shift_name": "ACS Employment geographic TX 2014",
+     "accuracy_before": 0.7456710718054369,
+     "accuracy_after": 0.7476508718154866,
+     "accuracy_recovered": 0.001979800010049715,
+     "recovery_test": {
+      "difference": 0.001979800010049746,
+      "ci_low": 0.00034118888498065427,
+      "ci_high": 0.00362795839405055,
+      "p_value_greater": 0.01199400299850075,
+      "n": 99505
+     },
+     "recovery_significant": true,
+     "gap": -0.01665219882993163,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.0004120230005355552,
+     "train_samples": 2000,
+     "n_features_used": 1,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 2000.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {
+    "retrain_on_recent": "no delayed-label window",
+    "full_retrain": "needs two or more delayed-label windows (else it equals retrain_on_recent)"
+   },
+   "probe_truth_helps": false,
+   "triage_correct": true
+  },
+  {
+   "group": "acs_employment_geographic",
+   "shift_name": "ACS Employment geographic NY 2014",
+   "reference_accuracy": 0.7290188729755053,
+   "accuracy_before": 0.7399698002071556,
+   "gap": -0.010950927231650365,
+   "n_holdout": 80133,
+   "triage": {
+    "will_retraining_help": false,
+    "rationale": "no cheap probe is predicted to raise accuracy significantly; if accuracy is falling the change is likely in P(Y|X), so collect fresh labels before retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.7334307322188494,
+      "difference": -0.00027796823361643026,
+      "ci_low": -0.001366269766911435,
+      "ci_high": 0.0008590020279780283,
+      "p_value_greater": 0.6796601699150425,
+      "n": 53791,
+      "predicted_gain_significant": false
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.6409831004772354,
+     "effective_sample_fraction": 0.8985494020539422
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "ACS Employment geographic NY 2014",
+     "accuracy_before": 0.7399698002071556,
+     "accuracy_after": 0.7407684724146107,
+     "accuracy_recovered": 0.0007986722074551089,
+     "recovery_test": {
+      "difference": 0.0007986722074551059,
+      "ci_low": -0.00017470954538080443,
+      "ci_high": 0.0017224489286561076,
+      "p_value_greater": 0.04697651174412794,
+      "n": 80133
+     },
+     "recovery_significant": false,
+     "gap": -0.010950927231650365,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.427530367000145,
+     "train_samples": 179302,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 455178983.590989,
+     "extra": {
+      "domain_classifier_auc": 0.6481029051593568,
+      "effective_sample_fraction": 0.8826491855535916
+     }
+    },
+    {
+     "strategy": "feature_drop_retrain",
+     "shift_name": "ACS Employment geographic NY 2014",
+     "accuracy_before": 0.7399698002071556,
+     "accuracy_after": 0.5807969251120013,
+     "accuracy_recovered": -0.15917287509515432,
+     "recovery_test": {
+      "difference": -0.1591728750951543,
+      "ci_low": -0.16297967129646962,
+      "ci_high": -0.1553788701284115,
+      "p_value_greater": 1.0,
+      "n": 80133
+     },
+     "recovery_significant": false,
+     "gap": -0.010950927231650365,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.04011828099464765,
+     "train_samples": 179302,
+     "n_features_used": 2,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 3944644.0,
+     "extra": {
+      "dropped_features": [
+       "CIT",
+       "NATIVITY",
+       "RAC1P",
+       "ANC",
+       "RELP",
+       "MIG",
+       "SCHL",
+       "AGEP",
+       "MIL",
+       "MAR",
+       "DIS",
+       "ESP",
+       "SEX",
+       "DREM"
+      ]
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "ACS Employment geographic NY 2014",
+     "accuracy_before": 0.7399698002071556,
+     "accuracy_after": 0.7402693022849512,
+     "accuracy_recovered": 0.00029950207779561033,
+     "recovery_test": {
+      "difference": 0.0002995020777956647,
+      "ci_low": 2.495850648297206e-05,
+      "ci_high": 0.0005615663958668713,
+      "p_value_greater": 0.019490254872563718,
+      "n": 80133
+     },
+     "recovery_significant": true,
+     "gap": -0.010950927231650365,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.6523962389983353,
+     "train_samples": 181302,
+     "n_features_used": 16,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 226264896.0,
+     "extra": {}
+    },
+    {
+     "strategy": "recalibrate",
+     "shift_name": "ACS Employment geographic NY 2014",
+     "accuracy_before": 0.7399698002071556,
+     "accuracy_after": 0.7365754433254714,
+     "accuracy_recovered": -0.003394356881684213,
+     "recovery_test": {
+      "difference": -0.0033943568816842,
+      "ci_low": -0.0045299689266594285,
+      "ci_high": -0.002246265583467485,
+      "p_value_greater": 1.0,
+      "n": 80133
+     },
+     "recovery_significant": false,
+     "gap": -0.010950927231650365,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.00042302600195398554,
+     "train_samples": 2000,
+     "n_features_used": 1,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 2000.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {
+    "retrain_on_recent": "no delayed-label window",
+    "full_retrain": "needs two or more delayed-label windows (else it equals retrain_on_recent)"
+   },
+   "probe_truth_helps": false,
+   "triage_correct": true
+  },
+  {
+   "group": "acs_employment_geographic",
+   "shift_name": "ACS Employment geographic FL 2014",
+   "reference_accuracy": 0.7290188729755053,
+   "accuracy_before": 0.7498443066038911,
+   "gap": -0.020825433628385848,
+   "n_holdout": 80286,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'importance_weighted_retrain' is predicted to raise accuracy by +0.0023 (95% CI +0.0005 to +0.0040); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.7403592108571105,
+      "difference": 0.0022961157758223678,
+      "ci_low": 0.0005426773655672995,
+      "ci_high": 0.003986620260203012,
+      "p_value_greater": 0.006496751624187906,
+      "n": 53791,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.700531200822173,
+     "effective_sample_fraction": 0.7778317188127362
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "ACS Employment geographic FL 2014",
+     "accuracy_before": 0.7498443066038911,
+     "accuracy_after": 0.7541663552798744,
+     "accuracy_recovered": 0.004322048675983292,
+     "recovery_test": {
+      "difference": 0.00432204867598336,
+      "ci_low": 0.0030886455920085694,
+      "ci_high": 0.005567595844854644,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 80286
+     },
+     "recovery_significant": true,
+     "gap": -0.020825433628385848,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.4348322030054987,
+     "train_samples": 179302,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 406408839.590989,
+     "extra": {
+      "domain_classifier_auc": 0.6868228428282384,
+      "effective_sample_fraction": 0.796670254359835
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "ACS Employment geographic FL 2014",
+     "accuracy_before": 0.7498443066038911,
+     "accuracy_after": 0.7500809605659766,
+     "accuracy_recovered": 0.00023665396208549794,
+     "recovery_test": {
+      "difference": 0.00023665396208554418,
+      "ci_low": -7.47328301322771e-05,
+      "ci_high": 0.0005355852826146526,
+      "p_value_greater": 0.06646676661669165,
+      "n": 80286
+     },
+     "recovery_significant": false,
+     "gap": -0.020825433628385848,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.7087110800057417,
+     "train_samples": 181302,
+     "n_features_used": 16,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 258174048.0,
+     "extra": {}
+    },
+    {
+     "strategy": "recalibrate",
+     "shift_name": "ACS Employment geographic FL 2014",
+     "accuracy_before": 0.7498443066038911,
+     "accuracy_after": 0.7509652990558753,
+     "accuracy_recovered": 0.0011209924519841596,
+     "recovery_test": {
+      "difference": 0.0011209924519841566,
+      "ci_low": 0.0001491542734723364,
+      "ci_high": 0.002130197045562114,
+      "p_value_greater": 0.010994502748625687,
+      "n": 80286
+     },
+     "recovery_significant": true,
+     "gap": -0.020825433628385848,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.00041347699880134314,
+     "train_samples": 2000,
+     "n_features_used": 1,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 2000.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {
+    "retrain_on_recent": "no delayed-label window",
+    "full_retrain": "needs two or more delayed-label windows (else it equals retrain_on_recent)",
+    "feature_drop_retrain": "every feature is localised"
+   },
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "acs_employment_geographic",
+   "shift_name": "ACS Employment geographic WA 2014",
+   "reference_accuracy": 0.7290188729755053,
+   "accuracy_before": 0.7479143099547512,
+   "gap": -0.018895436979245894,
+   "n_holdout": 28288,
+   "triage": {
+    "will_retraining_help": false,
+    "rationale": "no cheap probe is predicted to raise accuracy significantly; if accuracy is falling the change is likely in P(Y|X), so collect fresh labels before retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.7402427469732236,
+      "difference": 0.0006375154438096877,
+      "ci_low": -0.0007174359464080139,
+      "ci_high": 0.0020922264175000853,
+      "p_value_greater": 0.1889055472263868,
+      "n": 53791,
+      "predicted_gain_significant": false
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.6654025466710042,
+     "effective_sample_fraction": 0.7886729127221775
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "ACS Employment geographic WA 2014",
+     "accuracy_before": 0.7479143099547512,
+     "accuracy_after": 0.7500353506787331,
+     "accuracy_recovered": 0.002121040723981893,
+     "recovery_test": {
+      "difference": 0.0021210407239819003,
+      "ci_low": 0.0004242081447963801,
+      "ci_high": 0.0038178733031674207,
+      "p_value_greater": 0.011494252873563218,
+      "n": 28288
+     },
+     "recovery_significant": true,
+     "gap": -0.018895436979245894,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 2.4023538649926195,
+     "train_samples": 179302,
+     "n_features_used": 16,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 443703655.590989,
+     "extra": {
+      "domain_classifier_auc": 0.6723079893881652,
+      "effective_sample_fraction": 0.7756816300258643
+     }
+    },
+    {
+     "strategy": "feature_drop_retrain",
+     "shift_name": "ACS Employment geographic WA 2014",
+     "accuracy_before": 0.7479143099547512,
+     "accuracy_after": 0.5411481900452488,
+     "accuracy_recovered": -0.20676611990950233,
+     "recovery_test": {
+      "difference": -0.20676611990950225,
+      "ci_low": -0.21383713942307692,
+      "ci_high": -0.19948299632352942,
+      "p_value_greater": 1.0,
+      "n": 28288
+     },
+     "recovery_significant": false,
+     "gap": -0.018895436979245894,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.017133414003183134,
+     "train_samples": 179302,
+     "n_features_used": 1,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 537906.0,
+     "extra": {
+      "dropped_features": [
+       "RELP",
+       "CIT",
+       "ANC",
+       "NATIVITY",
+       "RAC1P",
+       "MIL",
+       "MAR",
+       "SCHL",
+       "DEAR",
+       "DIS",
+       "AGEP",
+       "DREM",
+       "MIG",
+       "ESP",
+       "DEYE"
+      ]
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "ACS Employment geographic WA 2014",
+     "accuracy_before": 0.7479143099547512,
+     "accuracy_after": 0.7479496606334841,
+     "accuracy_recovered": 3.535067873294828e-05,
+     "recovery_test": {
+      "difference": 3.535067873303168e-05,
+      "ci_low": -0.0004242081447963801,
+      "ci_high": 0.0004949095022624434,
+      "p_value_greater": 0.4847576211894053,
+      "n": 28288
+     },
+     "recovery_significant": false,
+     "gap": -0.018895436979245894,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.7055008000024827,
+     "train_samples": 181302,
+     "n_features_used": 16,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 246570720.0,
+     "extra": {}
+    },
+    {
+     "strategy": "recalibrate",
+     "shift_name": "ACS Employment geographic WA 2014",
+     "accuracy_before": 0.7479143099547512,
+     "accuracy_after": 0.7493283371040724,
+     "accuracy_recovered": 0.001414027149321262,
+     "recovery_test": {
+      "difference": 0.001414027149321267,
+      "ci_low": -0.00010605203619909503,
+      "ci_high": 0.002934106334841629,
+      "p_value_greater": 0.035982008995502246,
+      "n": 28288
+     },
+     "recovery_significant": false,
+     "gap": -0.018895436979245894,
+     "fraction_of_gap_recovered": null,
+     "reference_accuracy": 0.7290188729755053,
+     "wall_clock_seconds": 0.0004155100032221526,
+     "train_samples": 2000,
+     "n_features_used": 1,
+     "n_production_labels_required": 2000,
+     "fit_flops_proxy": 2000.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {
+    "retrain_on_recent": "no delayed-label window",
+    "full_retrain": "needs two or more delayed-label windows (else it equals retrain_on_recent)"
+   },
+   "probe_truth_helps": true,
+   "triage_correct": false
   },
   {
    "group": "clear10",
@@ -1259,7 +4179,7 @@
      "gap": 0.009452009482330936,
      "fraction_of_gap_recovered": -0.19247594050743494,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 20.521666452999852,
+     "wall_clock_seconds": 12.639398404004169,
      "train_samples": 1978,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -1286,7 +4206,7 @@
      "gap": 0.009452009482330936,
      "fraction_of_gap_recovered": 1.1548556430446095,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 0.6859924660002434,
+     "wall_clock_seconds": 0.1253988759999629,
      "train_samples": 3626,
      "n_features_used": 512,
      "n_production_labels_required": 1648,
@@ -1361,7 +4281,7 @@
      "gap": 0.008845581344065323,
      "fraction_of_gap_recovered": -0.06855718292302836,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 20.781100296999284,
+     "wall_clock_seconds": 12.498920943995472,
      "train_samples": 1978,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -1388,7 +4308,7 @@
      "gap": 0.008845581344065323,
      "fraction_of_gap_recovered": -0.06855718292302836,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 1.046986644001663,
+     "wall_clock_seconds": 0.20810436499596108,
      "train_samples": 5275,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -1412,7 +4332,7 @@
      "gap": 0.008845581344065323,
      "fraction_of_gap_recovered": 0.6855718292302836,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 0.6290665680007805,
+     "wall_clock_seconds": 0.11531186100182822,
      "train_samples": 3627,
      "n_features_used": 512,
      "n_production_labels_required": 1649,
@@ -1486,7 +4406,7 @@
      "gap": 0.0027812999614091893,
      "fraction_of_gap_recovered": -0.21803766105053876,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 20.046182424999643,
+     "wall_clock_seconds": 12.339381325997238,
      "train_samples": 1978,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -1513,7 +4433,7 @@
      "gap": 0.0027812999614091893,
      "fraction_of_gap_recovered": 4.796828543111893,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 0.9747185129999707,
+     "wall_clock_seconds": 0.185727054005838,
      "train_samples": 5276,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -1537,7 +4457,7 @@
      "gap": 0.0027812999614091893,
      "fraction_of_gap_recovered": 5.668979187314048,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 2.4292526110002655,
+     "wall_clock_seconds": 0.4497980419982923,
      "train_samples": 8573,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -1563,7 +4483,7 @@
      "gap": 0.0027812999614091893,
      "fraction_of_gap_recovered": 5.668979187314048,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 0.7078956349996588,
+     "wall_clock_seconds": 0.12982775900309207,
      "train_samples": 3627,
      "n_features_used": 512,
      "n_production_labels_required": 1649,
@@ -1636,7 +4556,7 @@
      "gap": -0.0015151515151514694,
      "fraction_of_gap_recovered": null,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 20.37645319999865,
+     "wall_clock_seconds": 12.593883350993565,
      "train_samples": 1978,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -1663,7 +4583,7 @@
      "gap": -0.0015151515151514694,
      "fraction_of_gap_recovered": null,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 0.5106454430006124,
+     "wall_clock_seconds": 0.18285236899828305,
      "train_samples": 5276,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -1687,7 +4607,7 @@
      "gap": -0.0015151515151514694,
      "fraction_of_gap_recovered": null,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 1.9169421789993066,
+     "wall_clock_seconds": 0.6981486970034894,
      "train_samples": 11871,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -1713,7 +4633,7 @@
      "gap": -0.0015151515151514694,
      "fraction_of_gap_recovered": null,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 0.3657475140007591,
+     "wall_clock_seconds": 0.12115536400233395,
      "train_samples": 3627,
      "n_features_used": 512,
      "n_production_labels_required": 1649,
@@ -1786,7 +4706,7 @@
      "gap": 0.01727272727272733,
      "fraction_of_gap_recovered": -0.03508771929824573,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 21.133512220998455,
+     "wall_clock_seconds": 12.486720777997107,
      "train_samples": 1978,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -1813,7 +4733,7 @@
      "gap": 0.01727272727272733,
      "fraction_of_gap_recovered": 0.5614035087719252,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 1.1522582830002648,
+     "wall_clock_seconds": 0.1889071059995331,
      "train_samples": 5277,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -1837,7 +4757,7 @@
      "gap": 0.01727272727272733,
      "fraction_of_gap_recovered": 1.0526315789473655,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 4.772394423000151,
+     "wall_clock_seconds": 1.04805086000124,
      "train_samples": 15170,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -1863,7 +4783,7 @@
      "gap": 0.01727272727272733,
      "fraction_of_gap_recovered": 1.2982456140350855,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 0.6813735590003489,
+     "wall_clock_seconds": 0.12077781400148524,
      "train_samples": 3628,
      "n_features_used": 512,
      "n_production_labels_required": 1650,
@@ -1936,7 +4856,7 @@
      "gap": 0.01551629086498707,
      "fraction_of_gap_recovered": 0.0,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 15.998418891000256,
+     "wall_clock_seconds": 12.141941619993304,
      "train_samples": 1978,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -1963,7 +4883,7 @@
      "gap": 0.01551629086498707,
      "fraction_of_gap_recovered": 0.8989163261680536,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 0.43368042100155435,
+     "wall_clock_seconds": 0.2098009409965016,
      "train_samples": 5278,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -1987,7 +4907,7 @@
      "gap": 0.01551629086498707,
      "fraction_of_gap_recovered": 0.7034997335228246,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 3.575473234999663,
+     "wall_clock_seconds": 1.6492872399976477,
      "train_samples": 18470,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -2013,7 +4933,7 @@
      "gap": 0.01551629086498707,
      "fraction_of_gap_recovered": 0.5471664594066413,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 0.6800414110002748,
+     "wall_clock_seconds": 0.12247357000160264,
      "train_samples": 3626,
      "n_features_used": 512,
      "n_production_labels_required": 1648,
@@ -2086,7 +5006,7 @@
      "gap": 0.009452009482330936,
      "fraction_of_gap_recovered": 0.19247594050743494,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 23.31783113900019,
+     "wall_clock_seconds": 12.502402571997663,
      "train_samples": 1978,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -2113,7 +5033,7 @@
      "gap": 0.009452009482330936,
      "fraction_of_gap_recovered": 1.0265383493729863,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 1.273859431999881,
+     "wall_clock_seconds": 0.2038746739999624,
      "train_samples": 5275,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -2137,7 +5057,7 @@
      "gap": 0.009452009482330936,
      "fraction_of_gap_recovered": 0.9623797025371746,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 10.954099696000412,
+     "wall_clock_seconds": 2.0933897599970805,
      "train_samples": 21767,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -2163,7 +5083,7 @@
      "gap": 0.009452009482330936,
      "fraction_of_gap_recovered": 0.5774278215223048,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 0.78128717799882,
+     "wall_clock_seconds": 0.1202719770008116,
      "train_samples": 3626,
      "n_features_used": 512,
      "n_production_labels_required": 1648,
@@ -2236,7 +5156,7 @@
      "gap": 0.01551629086498707,
      "fraction_of_gap_recovered": 0.11724995558713742,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 23.03979359100049,
+     "wall_clock_seconds": 12.533809580003435,
      "train_samples": 1978,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -2263,7 +5183,7 @@
      "gap": 0.01551629086498707,
      "fraction_of_gap_recovered": 0.8989163261680536,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 1.2800689180003246,
+     "wall_clock_seconds": 0.19139116799487965,
      "train_samples": 5275,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -2287,7 +5207,7 @@
      "gap": 0.01551629086498707,
      "fraction_of_gap_recovered": 0.8989163261680536,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 6.94611234399963,
+     "wall_clock_seconds": 2.5744935179973254,
      "train_samples": 25064,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -2313,7 +5233,7 @@
      "gap": 0.01551629086498707,
      "fraction_of_gap_recovered": 1.6414993782199312,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 0.3070726370006014,
+     "wall_clock_seconds": 0.13841241800400894,
      "train_samples": 3627,
      "n_features_used": 512,
      "n_production_labels_required": 1649,
@@ -2386,7 +5306,7 @@
      "gap": 0.029393939393939417,
      "fraction_of_gap_recovered": 0.0,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 20.627323341999727,
+     "wall_clock_seconds": 12.62983519899717,
      "train_samples": 1978,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -2413,7 +5333,7 @@
      "gap": 0.029393939393939417,
      "fraction_of_gap_recovered": 0.8865979381443274,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 1.1799635899988061,
+     "wall_clock_seconds": 0.22869604200241156,
      "train_samples": 5276,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -2437,7 +5357,7 @@
      "gap": 0.029393939393939417,
      "fraction_of_gap_recovered": 0.721649484536079,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 15.21651048899912,
+     "wall_clock_seconds": 2.900018344997079,
      "train_samples": 28362,
      "n_features_used": 512,
      "n_production_labels_required": 0,
@@ -2463,7 +5383,7 @@
      "gap": 0.029393939393939417,
      "fraction_of_gap_recovered": 1.4432989690721618,
      "reference_accuracy": 0.9136363636363637,
-     "wall_clock_seconds": 0.7305359300007694,
+     "wall_clock_seconds": 0.12109644299926003,
      "train_samples": 3628,
      "n_features_used": 512,
      "n_production_labels_required": 1650,
@@ -2477,10 +5397,1408 @@
    },
    "probe_truth_helps": true,
    "triage_correct": true
+  },
+  {
+   "group": "gas",
+   "shift_name": "Gas sensor batch 3",
+   "reference_accuracy": 0.9822485207100592,
+   "accuracy_before": 0.8108448928121059,
+   "gap": 0.17140362789795327,
+   "n_holdout": 793,
+   "triage": {
+    "will_retraining_help": false,
+    "rationale": "no cheap probe is predicted to raise accuracy significantly; if accuracy is falling the change is likely in P(Y|X), so collect fresh labels before retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.9497980168549326,
+      "difference": -0.005118295772071993,
+      "ci_low": -0.013945819323365366,
+      "ci_high": 0.0,
+      "p_value_greater": 1.0,
+      "n": 304,
+      "predicted_gain_significant": false
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.9961110855225075,
+     "effective_sample_fraction": 0.2714865117944771
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "Gas sensor batch 3",
+     "accuracy_before": 0.8108448928121059,
+     "accuracy_after": 0.8058007566204287,
+     "accuracy_recovered": -0.0050441361916772065,
+     "recovery_test": {
+      "difference": -0.005044136191677175,
+      "ci_low": -0.013871374527112233,
+      "ci_high": 0.0037831021437578815,
+      "p_value_greater": 0.9175412293853074,
+      "n": 793
+     },
+     "recovery_significant": false,
+     "gap": 0.17140362789795327,
+     "fraction_of_gap_recovered": -0.029428409734012628,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 2.873033885996847,
+     "train_samples": 1013,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 242445862.9417644,
+     "extra": {
+      "domain_classifier_auc": 0.9958795432392766,
+      "effective_sample_fraction": 0.24907352238703803
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "Gas sensor batch 3",
+     "accuracy_before": 0.8108448928121059,
+     "accuracy_after": 0.9936948297604036,
+     "accuracy_recovered": 0.18284993694829765,
+     "recovery_test": {
+      "difference": 0.1828499369482976,
+      "ci_low": 0.15636822194199243,
+      "ci_high": 0.21059268600252207,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 793
+     },
+     "recovery_significant": true,
+     "gap": 0.17140362789795327,
+     "fraction_of_gap_recovered": 1.0667798528579515,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.06886499000393087,
+     "train_samples": 1806,
+     "n_features_used": 128,
+     "n_production_labels_required": 793,
+     "fit_flops_proxy": 39760896.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {
+    "retrain_on_recent": "no delayed-label window",
+    "full_retrain": "needs two or more delayed-label windows (else it equals retrain_on_recent)",
+    "feature_drop_retrain": "every feature is localised",
+    "recalibrate": "isotonic recalibration here is for binary models"
+   },
+   "probe_truth_helps": false,
+   "triage_correct": true
+  },
+  {
+   "group": "gas",
+   "shift_name": "Gas sensor batch 4",
+   "reference_accuracy": 0.9822485207100592,
+   "accuracy_before": 0.6296296296296297,
+   "gap": 0.35261889108042954,
+   "n_holdout": 81,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.1996 (95% CI +0.1639 to +0.2374); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.923301377095537,
+      "difference": -0.008947659343467817,
+      "ci_low": -0.02942027340441026,
+      "ci_high": 0.0,
+      "p_value_greater": 1.0,
+      "n": 304,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.7962184873949579,
+      "difference": 0.19957983193277312,
+      "ci_low": 0.1638655462184874,
+      "ci_high": 0.23739495798319327,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 476,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.9968287265547877,
+     "effective_sample_fraction": 0.10767252226169656
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "Gas sensor batch 4",
+     "accuracy_before": 0.6296296296296297,
+     "accuracy_after": 0.654320987654321,
+     "accuracy_recovered": 0.024691358024691357,
+     "recovery_test": {
+      "difference": 0.024691358024691357,
+      "ci_low": -0.012345679012345678,
+      "ci_high": 0.07407407407407407,
+      "p_value_greater": 0.20189905047476261,
+      "n": 81
+     },
+     "recovery_significant": false,
+     "gap": 0.35261889108042954,
+     "fraction_of_gap_recovered": 0.07002278848145846,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 1.9553820350047317,
+     "train_samples": 1013,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 145957419.58446592,
+     "extra": {
+      "domain_classifier_auc": 0.996594274432379,
+      "effective_sample_fraction": 0.11230814169389715
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "Gas sensor batch 4",
+     "accuracy_before": 0.6296296296296297,
+     "accuracy_after": 0.7530864197530864,
+     "accuracy_recovered": 0.12345679012345678,
+     "recovery_test": {
+      "difference": 0.12345679012345678,
+      "ci_low": 0.06172839506172839,
+      "ci_high": 0.19753086419753085,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 81
+     },
+     "recovery_significant": true,
+     "gap": 0.35261889108042954,
+     "fraction_of_gap_recovered": 0.3501139424072923,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.09845259199937573,
+     "train_samples": 2599,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 58217600.0,
+     "extra": {}
+    },
+    {
+     "strategy": "feature_drop_retrain",
+     "shift_name": "Gas sensor batch 4",
+     "accuracy_before": 0.6296296296296297,
+     "accuracy_after": 0.7283950617283951,
+     "accuracy_recovered": 0.09876543209876543,
+     "recovery_test": {
+      "difference": 0.09876543209876543,
+      "ci_low": 0.012345679012345678,
+      "ci_high": 0.18518518518518517,
+      "p_value_greater": 0.019490254872563718,
+      "n": 81
+     },
+     "recovery_significant": true,
+     "gap": 0.35261889108042954,
+     "fraction_of_gap_recovered": 0.28009115392583384,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.011065888000302948,
+     "train_samples": 2599,
+     "n_features_used": 8,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 1268312.0,
+     "extra": {
+      "dropped_features": [
+       "S13_F5",
+       "S13_F4",
+       "S14_F5",
+       "S14_F4",
+       "S08_F4",
+       "S08_F5",
+       "S16_F4",
+       "S07_F5",
+       "S15_F4",
+       "S15_F5",
+       "S07_F4",
+       "S16_F5",
+       "S05_F5",
+       "S11_F5",
+       "S12_F5",
+       "S11_F4",
+       "S06_F5",
+       "S14_F3",
+       "S16_F3",
+       "S12_F4",
+       "S03_F5",
+       "S12_F8",
+       "S11_F8",
+       "S15_F3",
+       "S03_F4",
+       "S13_F8",
+       "S16_F8",
+       "S04_F4",
+       "S04_F5",
+       "S14_F8",
+       "S08_F3",
+       "S15_F8",
+       "S13_F3",
+       "S06_F4",
+       "S11_F7",
+       "S15_F7",
+       "S12_F7",
+       "S03_F8",
+       "S08_F7",
+       "S04_F7",
+       "S16_F7",
+       "S04_F8",
+       "S03_F7",
+       "S07_F3",
+       "S08_F8",
+       "S07_F7",
+       "S05_F4",
+       "S07_F8",
+       "S05_F8",
+       "S14_F7",
+       "S09_F1",
+       "S10_F1",
+       "S13_F7",
+       "S01_F1",
+       "S12_F3",
+       "S02_F1",
+       "S11_F3",
+       "S05_F2",
+       "S06_F8",
+       "S06_F2",
+       "S04_F3",
+       "S03_F3",
+       "S05_F1",
+       "S05_F6",
+       "S09_F3",
+       "S10_F6",
+       "S12_F2",
+       "S06_F1",
+       "S06_F3",
+       "S10_F3",
+       "S02_F2",
+       "S16_F6",
+       "S09_F6",
+       "S15_F6",
+       "S04_F6",
+       "S08_F6",
+       "S11_F2",
+       "S12_F1",
+       "S03_F2",
+       "S10_F5",
+       "S11_F1",
+       "S01_F2",
+       "S04_F1",
+       "S12_F6",
+       "S02_F6",
+       "S16_F1",
+       "S05_F3",
+       "S01_F3",
+       "S04_F2",
+       "S01_F6",
+       "S01_F4",
+       "S11_F6",
+       "S10_F4",
+       "S03_F6",
+       "S06_F6",
+       "S15_F1",
+       "S09_F5",
+       "S10_F7",
+       "S02_F3",
+       "S01_F5",
+       "S09_F2",
+       "S03_F1",
+       "S07_F6",
+       "S02_F5",
+       "S10_F2",
+       "S14_F1",
+       "S14_F2",
+       "S13_F1",
+       "S08_F1",
+       "S09_F4",
+       "S14_F6",
+       "S13_F2",
+       "S09_F7",
+       "S07_F2",
+       "S08_F2",
+       "S05_F7",
+       "S06_F7",
+       "S07_F1",
+       "S13_F6",
+       "S02_F4"
+      ]
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "Gas sensor batch 4",
+     "accuracy_before": 0.6296296296296297,
+     "accuracy_after": 1.0,
+     "accuracy_recovered": 0.37037037037037035,
+     "recovery_test": {
+      "difference": 0.37037037037037035,
+      "ci_low": 0.25925925925925924,
+      "ci_high": 0.48148148148148145,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 81
+     },
+     "recovery_significant": true,
+     "gap": 0.35261889108042954,
+     "fraction_of_gap_recovered": 1.050341827221877,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.046570555998187046,
+     "train_samples": 1093,
+     "n_features_used": 128,
+     "n_production_labels_required": 80,
+     "fit_flops_proxy": 25322624.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {
+    "full_retrain": "needs two or more delayed-label windows (else it equals retrain_on_recent)",
+    "recalibrate": "isotonic recalibration here is for binary models"
+   },
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "gas",
+   "shift_name": "Gas sensor batch 5",
+   "reference_accuracy": 0.9822485207100592,
+   "accuracy_before": 0.8484848484848485,
+   "gap": 0.13376367222521068,
+   "n_holdout": 99,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.3878 (95% CI +0.2449 to +0.5306); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.9312786711594195,
+      "difference": 0.00236625001832476,
+      "ci_low": -0.0018117505336830934,
+      "ci_high": 0.010751064666356419,
+      "p_value_greater": 0.3798100949525237,
+      "n": 304,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.6122448979591837,
+      "difference": 0.3877551020408163,
+      "ci_low": 0.24489795918367346,
+      "ci_high": 0.5306122448979592,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 49,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.9994661240606806,
+     "effective_sample_fraction": 0.0866234708835338
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "Gas sensor batch 5",
+     "accuracy_before": 0.8484848484848485,
+     "accuracy_after": 0.7474747474747475,
+     "accuracy_recovered": -0.101010101010101,
+     "recovery_test": {
+      "difference": -0.10101010101010101,
+      "ci_low": -0.1717171717171717,
+      "ci_high": -0.020202020202020204,
+      "p_value_greater": 0.9975012493753124,
+      "n": 99
+     },
+     "recovery_significant": false,
+     "gap": 0.13376367222521068,
+     "fraction_of_gap_recovered": -0.7551385165326183,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 1.574439568001253,
+     "train_samples": 1013,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 139492099.93267304,
+     "extra": {
+      "domain_classifier_auc": 0.999546709108125,
+      "effective_sample_fraction": 0.08699028167359642
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "Gas sensor batch 5",
+     "accuracy_before": 0.8484848484848485,
+     "accuracy_after": 0.98989898989899,
+     "accuracy_recovered": 0.14141414141414144,
+     "recovery_test": {
+      "difference": 0.1414141414141414,
+      "ci_low": 0.08080808080808081,
+      "ci_high": 0.21212121212121213,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 99
+     },
+     "recovery_significant": true,
+     "gap": 0.13376367222521068,
+     "fraction_of_gap_recovered": 1.057193923145666,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.058615706002456136,
+     "train_samples": 1174,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 31707392.0,
+     "extra": {}
+    },
+    {
+     "strategy": "full_retrain",
+     "shift_name": "Gas sensor batch 5",
+     "accuracy_before": 0.8484848484848485,
+     "accuracy_after": 0.98989898989899,
+     "accuracy_recovered": 0.14141414141414144,
+     "recovery_test": {
+      "difference": 0.1414141414141414,
+      "ci_low": 0.08080808080808081,
+      "ci_high": 0.21212121212121213,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 99
+     },
+     "recovery_significant": true,
+     "gap": 0.13376367222521068,
+     "fraction_of_gap_recovered": 1.057193923145666,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.1051777220054646,
+     "train_samples": 2760,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 63590400.0,
+     "extra": {
+      "windows_used": 2
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "Gas sensor batch 5",
+     "accuracy_before": 0.8484848484848485,
+     "accuracy_after": 0.98989898989899,
+     "accuracy_recovered": 0.14141414141414144,
+     "recovery_test": {
+      "difference": 0.1414141414141414,
+      "ci_low": 0.0707070707070707,
+      "ci_high": 0.2222222222222222,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 99
+     },
+     "recovery_significant": true,
+     "gap": 0.13376367222521068,
+     "fraction_of_gap_recovered": 1.057193923145666,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.04672708600264741,
+     "train_samples": 1111,
+     "n_features_used": 128,
+     "n_production_labels_required": 98,
+     "fit_flops_proxy": 25739648.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {
+    "feature_drop_retrain": "every feature is localised",
+    "recalibrate": "isotonic recalibration here is for binary models"
+   },
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "gas",
+   "shift_name": "Gas sensor batch 6",
+   "reference_accuracy": 0.9822485207100592,
+   "accuracy_before": 0.6260869565217392,
+   "gap": 0.35616156418832,
+   "n_holdout": 1150,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.1500 (95% CI +0.0667 to +0.2500); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.9296853991762056,
+      "difference": 0.0034787944572810332,
+      "ci_low": -0.0011284831336561103,
+      "ci_high": 0.01167805146310301,
+      "p_value_greater": 0.18590704647676162,
+      "n": 304,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.85,
+      "difference": 0.15,
+      "ci_low": 0.06666666666666667,
+      "ci_high": 0.25,
+      "p_value_greater": 0.0009995002498750624,
+      "n": 60,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 1.0,
+     "effective_sample_fraction": 0.16984657919343313
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "Gas sensor batch 6",
+     "accuracy_before": 0.6260869565217392,
+     "accuracy_after": 0.628695652173913,
+     "accuracy_recovered": 0.002608695652173809,
+     "recovery_test": {
+      "difference": 0.0026086956521739132,
+      "ci_low": -0.006956521739130435,
+      "ci_high": 0.013065217391304229,
+      "p_value_greater": 0.32533733133433285,
+      "n": 1150
+     },
+     "recovery_significant": false,
+     "gap": 0.35616156418832,
+     "fraction_of_gap_recovered": 0.007324472695752381,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 3.0817603149989736,
+     "train_samples": 1013,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 293029079.83664745,
+     "extra": {
+      "domain_classifier_auc": 1.0,
+      "effective_sample_fraction": 0.17002616112130378
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "Gas sensor batch 6",
+     "accuracy_before": 0.6260869565217392,
+     "accuracy_after": 0.7156521739130435,
+     "accuracy_recovered": 0.0895652173913043,
+     "recovery_test": {
+      "difference": 0.08956521739130435,
+      "ci_low": 0.07130434782608695,
+      "ci_high": 0.10956521739130434,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 1150
+     },
+     "recovery_significant": true,
+     "gap": 0.35616156418832,
+     "fraction_of_gap_recovered": 0.25147356255417497,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.04594584099686472,
+     "train_samples": 1210,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 26329600.0,
+     "extra": {}
+    },
+    {
+     "strategy": "full_retrain",
+     "shift_name": "Gas sensor batch 6",
+     "accuracy_before": 0.6260869565217392,
+     "accuracy_after": 0.78,
+     "accuracy_recovered": 0.15391304347826085,
+     "recovery_test": {
+      "difference": 0.15391304347826087,
+      "ci_low": 0.13217391304347825,
+      "ci_high": 0.17565217391304347,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 1150
+     },
+     "recovery_significant": true,
+     "gap": 0.35616156418832,
+     "fraction_of_gap_recovered": 0.43214388904940765,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.10671609199926024,
+     "train_samples": 2957,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 66615296.0,
+     "extra": {
+      "windows_used": 3
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "Gas sensor batch 6",
+     "accuracy_before": 0.6260869565217392,
+     "accuracy_after": 0.9930434782608696,
+     "accuracy_recovered": 0.3669565217391304,
+     "recovery_test": {
+      "difference": 0.36695652173913046,
+      "ci_low": 0.34,
+      "ci_high": 0.39565217391304347,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 1150
+     },
+     "recovery_significant": true,
+     "gap": 0.35616156418832,
+     "fraction_of_gap_recovered": 1.0303091592025426,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.05876898000133224,
+     "train_samples": 2163,
+     "n_features_used": 128,
+     "n_production_labels_required": 1150,
+     "fit_flops_proxy": 34884864.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {
+    "feature_drop_retrain": "every feature is localised",
+    "recalibrate": "isotonic recalibration here is for binary models"
+   },
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "gas",
+   "shift_name": "Gas sensor batch 7",
+   "reference_accuracy": 0.9822485207100592,
+   "accuracy_before": 0.630879911455451,
+   "gap": 0.3513686092546082,
+   "n_holdout": 1807,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.5246 (95% CI +0.4898 to +0.5623); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.960728181608104,
+      "difference": -0.0018137196509420347,
+      "ci_low": -0.0060267437534055985,
+      "ci_high": -6.43501808507395e-05,
+      "p_value_greater": 1.0,
+      "n": 304,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.46956521739130436,
+      "difference": 0.5246376811594203,
+      "ci_low": 0.48981884057971015,
+      "ci_high": 0.5623188405797102,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 690,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 1.0,
+     "effective_sample_fraction": 0.19126941436372596
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "Gas sensor batch 7",
+     "accuracy_before": 0.630879911455451,
+     "accuracy_after": 0.5340343110127282,
+     "accuracy_recovered": -0.09684560044272272,
+     "recovery_test": {
+      "difference": -0.09684560044272275,
+      "ci_low": -0.11234089651355839,
+      "ci_high": -0.08024349750968456,
+      "p_value_greater": 1.0,
+      "n": 1807
+     },
+     "recovery_significant": false,
+     "gap": 0.3513686092546082,
+     "fraction_of_gap_recovered": -0.27562393990792333,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 4.242866673004755,
+     "train_samples": 1013,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 382903566.38881105,
+     "extra": {
+      "domain_classifier_auc": 1.0,
+      "effective_sample_fraction": 0.1875220243077024
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "Gas sensor batch 7",
+     "accuracy_before": 0.630879911455451,
+     "accuracy_after": 0.8046485888212507,
+     "accuracy_recovered": 0.1737686773657997,
+     "recovery_test": {
+      "difference": 0.17376867736579968,
+      "ci_low": 0.13999723298284447,
+      "ci_high": 0.20531267293857222,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 1807
+     },
+     "recovery_significant": true,
+     "gap": 0.3513686092546082,
+     "fraction_of_gap_recovered": 0.4945480978919312,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.08344970300095156,
+     "train_samples": 3313,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 51311744.0,
+     "extra": {}
+    },
+    {
+     "strategy": "full_retrain",
+     "shift_name": "Gas sensor batch 7",
+     "accuracy_before": 0.630879911455451,
+     "accuracy_after": 0.8223574986164914,
+     "accuracy_recovered": 0.19147758716104046,
+     "recovery_test": {
+      "difference": 0.1914775871610404,
+      "ci_low": 0.1588267847260653,
+      "ci_high": 0.22246817930271168,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 1807
+     },
+     "recovery_significant": true,
+     "gap": 0.3513686092546082,
+     "fraction_of_gap_recovered": 0.5449479040465229,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.13269798600231297,
+     "train_samples": 5257,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 83439104.0,
+     "extra": {
+      "windows_used": 4
+     }
+    },
+    {
+     "strategy": "feature_drop_retrain",
+     "shift_name": "Gas sensor batch 7",
+     "accuracy_before": 0.630879911455451,
+     "accuracy_after": 0.7531820697288323,
+     "accuracy_recovered": 0.12230215827338131,
+     "recovery_test": {
+      "difference": 0.1223021582733813,
+      "ci_low": 0.08799114554510237,
+      "ci_high": 0.15550636413945768,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 1807
+     },
+     "recovery_significant": true,
+     "gap": 0.3513686092546082,
+     "fraction_of_gap_recovered": 0.348073661255149,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.054443813001853414,
+     "train_samples": 5257,
+     "n_features_used": 18,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 14004648.0,
+     "extra": {
+      "dropped_features": [
+       "S05_F8",
+       "S06_F8",
+       "S06_F1",
+       "S06_F6",
+       "S01_F1",
+       "S01_F6",
+       "S10_F1",
+       "S05_F1",
+       "S01_F3",
+       "S01_F4",
+       "S01_F7",
+       "S10_F6",
+       "S05_F5",
+       "S10_F3",
+       "S10_F7",
+       "S05_F6",
+       "S03_F8",
+       "S10_F4",
+       "S06_F5",
+       "S01_F5",
+       "S04_F8",
+       "S08_F8",
+       "S06_F7",
+       "S07_F8",
+       "S10_F5",
+       "S09_F1",
+       "S06_F2",
+       "S02_F1",
+       "S06_F3",
+       "S05_F2",
+       "S02_F6",
+       "S01_F8",
+       "S09_F6",
+       "S02_F3",
+       "S04_F2",
+       "S15_F2",
+       "S16_F2",
+       "S02_F4",
+       "S08_F2",
+       "S12_F2",
+       "S13_F5",
+       "S10_F8",
+       "S05_F7",
+       "S13_F8",
+       "S09_F7",
+       "S09_F3",
+       "S03_F5",
+       "S04_F5",
+       "S14_F5",
+       "S02_F7",
+       "S08_F5",
+       "S07_F5",
+       "S03_F2",
+       "S09_F4",
+       "S14_F8",
+       "S07_F2",
+       "S02_F8",
+       "S05_F3",
+       "S11_F2",
+       "S14_F6",
+       "S02_F5",
+       "S13_F6",
+       "S12_F8",
+       "S09_F5",
+       "S13_F7",
+       "S14_F7",
+       "S12_F5",
+       "S14_F2",
+       "S13_F2",
+       "S09_F2",
+       "S10_F2",
+       "S13_F1",
+       "S09_F8",
+       "S14_F1",
+       "S11_F8",
+       "S01_F2",
+       "S06_F4",
+       "S16_F5",
+       "S11_F5",
+       "S16_F8",
+       "S13_F4",
+       "S05_F4",
+       "S14_F4",
+       "S15_F5",
+       "S02_F2",
+       "S03_F1",
+       "S11_F1",
+       "S07_F4",
+       "S16_F6",
+       "S07_F1",
+       "S16_F7",
+       "S15_F8",
+       "S15_F6",
+       "S08_F4",
+       "S08_F1",
+       "S04_F1",
+       "S15_F7",
+       "S03_F4",
+       "S15_F4",
+       "S15_F1",
+       "S04_F4",
+       "S07_F6",
+       "S11_F6",
+       "S12_F4",
+       "S08_F6",
+       "S03_F6",
+       "S12_F1",
+       "S16_F4",
+       "S16_F1",
+       "S11_F7"
+      ]
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "Gas sensor batch 7",
+     "accuracy_before": 0.630879911455451,
+     "accuracy_after": 0.9988931931377975,
+     "accuracy_recovered": 0.3680132816823465,
+     "recovery_test": {
+      "difference": 0.3680132816823464,
+      "ci_low": 0.345863309352518,
+      "ci_high": 0.3907028223574986,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 1807
+     },
+     "recovery_significant": true,
+     "gap": 0.3513686092546082,
+     "fraction_of_gap_recovered": 1.047370971650109,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.10243846799858147,
+     "train_samples": 2819,
+     "n_features_used": 128,
+     "n_production_labels_required": 1806,
+     "fit_flops_proxy": 60619776.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {
+    "recalibrate": "isotonic recalibration here is for binary models"
+   },
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "gas",
+   "shift_name": "Gas sensor batch 8",
+   "reference_accuracy": 0.9822485207100592,
+   "accuracy_before": 0.3197278911564626,
+   "gap": 0.6625206295535966,
+   "n_holdout": 147,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.4041 (95% CI +0.3755 to +0.4327); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.8879596972117157,
+      "difference": 0.0215530036240971,
+      "ci_low": -0.002863197932482291,
+      "ci_high": 0.07728439606629611,
+      "p_value_greater": 0.3798100949525237,
+      "n": 304,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.5940959409594095,
+      "difference": 0.4040590405904059,
+      "ci_low": 0.37546125461254615,
+      "ci_high": 0.4326568265682657,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 1084,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.9999865691587593,
+     "effective_sample_fraction": 0.10601963708799168
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "Gas sensor batch 8",
+     "accuracy_before": 0.3197278911564626,
+     "accuracy_after": 0.272108843537415,
+     "accuracy_recovered": -0.047619047619047616,
+     "recovery_test": {
+      "difference": -0.047619047619047616,
+      "ci_low": -0.10204081632653061,
+      "ci_high": 0.0,
+      "p_value_greater": 0.9795102448775612,
+      "n": 147
+     },
+     "recovery_significant": false,
+     "gap": 0.6625206295535966,
+     "fraction_of_gap_recovered": -0.07187556959718087,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 1.5367169699966325,
+     "train_samples": 1013,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 159792255.82908925,
+     "extra": {
+      "domain_classifier_auc": 0.9999798537381389,
+      "effective_sample_fraction": 0.10574816467670269
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "Gas sensor batch 8",
+     "accuracy_before": 0.3197278911564626,
+     "accuracy_after": 0.8163265306122449,
+     "accuracy_recovered": 0.4965986394557823,
+     "recovery_test": {
+      "difference": 0.4965986394557823,
+      "ci_low": 0.4013605442176871,
+      "ci_high": 0.5986394557823129,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 147
+     },
+     "recovery_significant": true,
+     "gap": 0.6625206295535966,
+     "fraction_of_gap_recovered": 0.7495595115134577,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.1674562290063477,
+     "train_samples": 4626,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 104806656.0,
+     "extra": {}
+    },
+    {
+     "strategy": "full_retrain",
+     "shift_name": "Gas sensor batch 8",
+     "accuracy_before": 0.3197278911564626,
+     "accuracy_after": 0.9183673469387755,
+     "accuracy_recovered": 0.5986394557823129,
+     "recovery_test": {
+      "difference": 0.5986394557823129,
+      "ci_low": 0.523639455782313,
+      "ci_high": 0.6802721088435374,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 147
+     },
+     "recovery_significant": true,
+     "gap": 0.6625206295535966,
+     "fraction_of_gap_recovered": 0.9035785892217024,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.307548274002329,
+     "train_samples": 8870,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 200958720.0,
+     "extra": {
+      "windows_used": 5
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "Gas sensor batch 8",
+     "accuracy_before": 0.3197278911564626,
+     "accuracy_after": 0.9387755102040817,
+     "accuracy_recovered": 0.6190476190476191,
+     "recovery_test": {
+      "difference": 0.6190476190476191,
+      "ci_low": 0.54421768707483,
+      "ci_high": 0.7006802721088435,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 147
+     },
+     "recovery_significant": true,
+     "gap": 0.6625206295535966,
+     "fraction_of_gap_recovered": 0.9343824047633514,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.04278868899564259,
+     "train_samples": 1160,
+     "n_features_used": 128,
+     "n_production_labels_required": 147,
+     "fit_flops_proxy": 23905280.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {
+    "feature_drop_retrain": "every feature is localised",
+    "recalibrate": "isotonic recalibration here is for binary models"
+   },
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "gas",
+   "shift_name": "Gas sensor batch 9",
+   "reference_accuracy": 0.9822485207100592,
+   "accuracy_before": 0.6,
+   "gap": 0.3822485207100592,
+   "n_holdout": 235,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.6629 (95% CI +0.5506 to +0.7640); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.8748010803753827,
+      "difference": -0.01034070480032403,
+      "ci_low": -0.03367496977604153,
+      "ci_high": 0.0008291539644859388,
+      "p_value_greater": 0.9300349825087456,
+      "n": 304,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.25842696629213485,
+      "difference": 0.6629213483146067,
+      "ci_low": 0.550561797752809,
+      "ci_high": 0.7640449438202247,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 89,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.99998739787024,
+     "effective_sample_fraction": 0.11903767790077968
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "Gas sensor batch 9",
+     "accuracy_before": 0.6,
+     "accuracy_after": 0.49361702127659574,
+     "accuracy_recovered": -0.10638297872340424,
+     "recovery_test": {
+      "difference": -0.10638297872340426,
+      "ci_low": -0.15329787234042552,
+      "ci_high": -0.06382978723404255,
+      "p_value_greater": 1.0,
+      "n": 235
+     },
+     "recovery_significant": false,
+     "gap": 0.3822485207100592,
+     "fraction_of_gap_recovered": -0.27830841183057764,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 1.5073576799986768,
+     "train_samples": 1013,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 170509301.03877515,
+     "extra": {
+      "domain_classifier_auc": 0.9999789964504001,
+      "effective_sample_fraction": 0.11170120834969285
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "Gas sensor batch 9",
+     "accuracy_before": 0.6,
+     "accuracy_after": 0.851063829787234,
+     "accuracy_recovered": 0.25106382978723407,
+     "recovery_test": {
+      "difference": 0.251063829787234,
+      "ci_low": 0.19574468085106383,
+      "ci_high": 0.31063829787234043,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 235
+     },
+     "recovery_significant": true,
+     "gap": 0.3822485207100592,
+     "fraction_of_gap_recovered": 0.6568078519201633,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.04960134200518951,
+     "train_samples": 1307,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 27101952.0,
+     "extra": {}
+    },
+    {
+     "strategy": "full_retrain",
+     "shift_name": "Gas sensor batch 9",
+     "accuracy_before": 0.6,
+     "accuracy_after": 0.7617021276595745,
+     "accuracy_recovered": 0.16170212765957448,
+     "recovery_test": {
+      "difference": 0.16170212765957448,
+      "ci_low": 0.11063829787234042,
+      "ci_high": 0.2127659574468085,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 235
+     },
+     "recovery_significant": true,
+     "gap": 0.3822485207100592,
+     "fraction_of_gap_recovered": 0.42302878598247806,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.34518367599957855,
+     "train_samples": 9164,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 228733440.0,
+     "extra": {
+      "windows_used": 6
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "Gas sensor batch 9",
+     "accuracy_before": 0.6,
+     "accuracy_after": 1.0,
+     "accuracy_recovered": 0.4,
+     "recovery_test": {
+      "difference": 0.4,
+      "ci_low": 0.33617021276595743,
+      "ci_high": 0.4595744680851064,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 235
+     },
+     "recovery_significant": true,
+     "gap": 0.3822485207100592,
+     "fraction_of_gap_recovered": 1.046439628482972,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.041966296994360164,
+     "train_samples": 1248,
+     "n_features_used": 128,
+     "n_production_labels_required": 235,
+     "fit_flops_proxy": 22843392.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {
+    "feature_drop_retrain": "every feature is localised",
+    "recalibrate": "isotonic recalibration here is for binary models"
+   },
+   "probe_truth_helps": true,
+   "triage_correct": true
+  },
+  {
+   "group": "gas",
+   "shift_name": "Gas sensor batch 10",
+   "reference_accuracy": 0.9822485207100592,
+   "accuracy_before": 0.45222222222222225,
+   "gap": 0.530026298487837,
+   "n_holdout": 1800,
+   "triage": {
+    "will_retraining_help": true,
+    "rationale": "probe 'retrain_on_recent' is predicted to raise accuracy by +0.5248 (95% CI +0.4397 to +0.6030); escalate to retraining",
+    "probes": [
+     {
+      "probe": "importance_weighted_retrain",
+      "validation": "importance-weighted reference validation",
+      "estimated_comparator_accuracy": 0.9611209372824562,
+      "difference": -0.0007869845176130951,
+      "ci_low": -0.002515925594101527,
+      "ci_high": 0.0,
+      "p_value_greater": 1.0,
+      "n": 304,
+      "predicted_gain_significant": false
+     },
+     {
+      "probe": "retrain_on_recent",
+      "validation": "held-out part of the latest delayed-label window",
+      "estimated_comparator_accuracy": 0.475177304964539,
+      "difference": 0.524822695035461,
+      "ci_low": 0.4397163120567376,
+      "ci_high": 0.6030141843971621,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 141,
+      "predicted_gain_significant": true
+     }
+    ],
+    "signals": {
+     "domain_classifier_auc": 0.9999857409235495,
+     "effective_sample_fraction": 0.2250543302438142
+    },
+    "alpha": 0.05
+   },
+   "results": [
+    {
+     "strategy": "importance_weighted_retrain",
+     "shift_name": "Gas sensor batch 10",
+     "accuracy_before": 0.45222222222222225,
+     "accuracy_after": 0.5027777777777778,
+     "accuracy_recovered": 0.05055555555555552,
+     "recovery_test": {
+      "difference": 0.050555555555555555,
+      "ci_low": 0.03333333333333333,
+      "ci_high": 0.06722222222222222,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 1800
+     },
+     "recovery_significant": true,
+     "gap": 0.530026298487837,
+     "fraction_of_gap_recovered": 0.09538310778123714,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 4.483227295000688,
+     "train_samples": 1013,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 379564125.0070788,
+     "extra": {
+      "domain_classifier_auc": 0.9999945157398267,
+      "effective_sample_fraction": 0.22878507128241027
+     }
+    },
+    {
+     "strategy": "retrain_on_recent",
+     "shift_name": "Gas sensor batch 10",
+     "accuracy_before": 0.45222222222222225,
+     "accuracy_after": 0.6488888888888888,
+     "accuracy_recovered": 0.1966666666666666,
+     "recovery_test": {
+      "difference": 0.19666666666666666,
+      "ci_low": 0.1749861111111111,
+      "ci_high": 0.21888888888888888,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 1800
+     },
+     "recovery_significant": true,
+     "gap": 0.530026298487837,
+     "fraction_of_gap_recovered": 0.3710507709292083,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.045644364996405784,
+     "train_samples": 1483,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 24866944.0,
+     "extra": {}
+    },
+    {
+     "strategy": "full_retrain",
+     "shift_name": "Gas sensor batch 10",
+     "accuracy_before": 0.45222222222222225,
+     "accuracy_after": 0.7138888888888889,
+     "accuracy_recovered": 0.26166666666666666,
+     "recovery_test": {
+      "difference": 0.26166666666666666,
+      "ci_low": 0.23833333333333334,
+      "ci_high": 0.285,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 1800
+     },
+     "recovery_significant": true,
+     "gap": 0.530026298487837,
+     "fraction_of_gap_recovered": 0.4936861952193705,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.3572742809992633,
+     "train_samples": 9634,
+     "n_features_used": 128,
+     "n_production_labels_required": 0,
+     "fit_flops_proxy": 235532032.0,
+     "extra": {
+      "windows_used": 7
+     }
+    },
+    {
+     "strategy": "label_retrain",
+     "shift_name": "Gas sensor batch 10",
+     "accuracy_before": 0.45222222222222225,
+     "accuracy_after": 0.9927777777777778,
+     "accuracy_recovered": 0.5405555555555555,
+     "recovery_test": {
+      "difference": 0.5405555555555556,
+      "ci_low": 0.5177777777777778,
+      "ci_high": 0.5638888888888889,
+      "p_value_greater": 0.0004997501249375312,
+      "n": 1800
+     },
+     "recovery_significant": true,
+     "gap": 0.530026298487837,
+     "fraction_of_gap_recovered": 1.019865537045536,
+     "reference_accuracy": 0.9822485207100592,
+     "wall_clock_seconds": 0.14089375599724008,
+     "train_samples": 2813,
+     "n_features_used": 128,
+     "n_production_labels_required": 1800,
+     "fit_flops_proxy": 83534848.0,
+     "extra": {}
+    }
+   ],
+   "skipped": {
+    "feature_drop_retrain": "every feature is localised",
+    "recalibrate": "isotonic recalibration here is for binary models"
+   },
+   "probe_truth_helps": true,
+   "triage_correct": true
   }
  ],
  "summary": {
-  "n_settings": 17,
-  "triage_correct": 15
+  "n_settings": 41,
+  "triage_correct": 38
  }
 }

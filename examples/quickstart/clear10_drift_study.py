@@ -10,14 +10,18 @@ buckets 2 to 10, each compared with the same fixed reference.
 Per window: every detector (decided by a test at ALPHA), per-dimension
 localisation (Holm), slices by predicted class, CBPE proxy metrics with their
 error against the true metrics, per-prediction reliability, and the label-free
-diagnosis plus a delayed-label audit of AUDIT_LABELS images.
-Output: outputs/clear10_drift_results.json.
+diagnosis plus a delayed-label audit of AUDIT_LABELS images. A three-component
+PCA view of every window is stored for the dashboard. The detection,
+estimation and diagnosis baselines are recorded for every window as well.
+Run:     python examples/quickstart/clear10_drift_study.py --model lr
+Output:  outputs/clear10_drift_results.json (lr) or outputs/clear10_drift_results_hgb.json.
 
 Requires the embeddings from examples/quickstart/clear10_tabularize_demo.py.
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import time
 from pathlib import Path
@@ -40,9 +44,12 @@ from drift_autopsy.experiments.clear10 import (
     embeddings,
     load_bucket,
     make_clear_model,
+    pca_projection,
     split_reference,
     to_dataset,
 )
+from drift_autopsy.experiments.common import baseline_detectors, comparison_block, json_default
+from drift_autopsy.experiments.models import MODEL_DESCRIPTIONS
 from drift_autopsy.localizers import UnivariateLocalizer
 from drift_autopsy.reliability import ReliabilityAnalyzer
 from drift_autopsy.stats import two_proportion_test
@@ -55,7 +62,11 @@ N_PERMUTATIONS = 200
 AUDIT_LABELS = 600
 MIN_SLICE_SAMPLES = 30
 RELIABILITY_RECORDS_KEPT = 1000
-OUTPUT = Path("outputs/clear10_drift_results.json")
+PROJECTION_POINTS = 250          # sampled points per window in the PCA view (dashboard only)
+
+
+def output_path(model: str) -> Path:
+    return Path("outputs/clear10_drift_results.json" if model == "lr" else f"outputs/clear10_drift_results_{model}.json")
 
 
 def detectors() -> Dict[str, Any]:
@@ -67,6 +78,7 @@ def detectors() -> Dict[str, Any]:
                                                      random_state=SEED),
         "Frechet distance": FrechetDistance(threshold=ALPHA, n_permutations=N_PERMUTATIONS, random_state=SEED),
         "CBPE": CBPE(threshold=ALPHA, n_bins=10),
+        **baseline_detectors(ALPHA, SEED),
     }
 
 
@@ -138,6 +150,15 @@ def analyse_window(key: str, analysis_type: str, frame: pd.DataFrame, *, model, 
     au = audit_diagnosis(model, reference_ds, frame.iloc[audit_idx][EMBEDDING_COLUMNS], y[audit_idx], alpha=ALPHA)
     diagnosis = combine(lf, au)
     timings["diagnosis"] = round(time.perf_counter() - start, 3)
+    comparison = comparison_block(
+        lf=lf, audit=au, model=model, reference_ds=reference_ds,
+        audit_X=frame.iloc[audit_idx][EMBEDDING_COLUMNS], audit_y=y[audit_idx], alpha=ALPHA,
+        cbpe_estimate=float(detection["CBPE"]["metadata"]["estimated_accuracy"]),
+        reference_accuracy=reference_accuracy, production_probabilities=window_ds.prediction_probabilities,
+        actual_accuracy=accuracy,
+    )
+    if comparison["verdicts"]["ours"] != diagnosis.drift_type:
+        raise AssertionError("recomputed verdict differs from the diagnosis")
 
     print(f"  accuracy {accuracy:.4f} ({accuracy - reference_accuracy:+.4f}, p={drop['p_value']:.3g}); "
           f"CBPE {pm.estimated['accuracy']:.4f}; drifted dims {len(loc.drifted_features)}; "
@@ -171,19 +192,23 @@ def analyse_window(key: str, analysis_type: str, frame: pd.DataFrame, *, model, 
             "audit_accuracy_drop_p_value": au["accuracy_drop_test"]["p_value"],
             "audit_structured_dimensions": au["structured_features"],
         },
+        "comparison": comparison,
         "reliability": {"summary": rel_summary, "records": records.to_dict(orient="records")},
         "timings_seconds": timings,
     }
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--model", choices=sorted(MODEL_DESCRIPTIONS), default="lr")
+    args = ap.parse_args()
     setup_logging(level="WARNING")
     rng = np.random.default_rng(SEED)
     bucket1 = load_bucket(REFERENCE_BUCKET)
     names = class_names(bucket1)
     split = split_reference(bucket1, seed=SEED)
     with threadpool_limits(limits=1):
-        model = make_clear_model(random_state=SEED).fit(embeddings(split.train), split.train["y_true"])
+        model = make_clear_model(random_state=SEED, kind=args.model).fit(embeddings(split.train), split.train["y_true"])
 
     reference_ds = to_dataset(split.calibration, model=model)
     test_correct = (model.predict(embeddings(split.test)) == split.test["y_true"].to_numpy()).astype(int)
@@ -202,6 +227,10 @@ def main() -> None:
     for b in ANALYSIS_BUCKETS:
         windows[str(b)] = {"bucket": b, **analyse_window(f"bucket {b}", "temporal", load_bucket(b), **common)}
 
+    # PCA view for the dashboard (own seeded generator, so it changes nothing above)
+    projection_windows = {"1": split.calibration, **{str(b): load_bucket(b) for b in ANALYSIS_BUCKETS}}
+    projection = pca_projection(split.train, projection_windows, n_per_window=PROJECTION_POINTS, seed=SEED)
+
     result = {
         "config": {
             "seed": SEED, "alpha": ALPHA, "psi_threshold": PSI_THRESHOLD, "n_permutations": N_PERMUTATIONS,
@@ -209,23 +238,19 @@ def main() -> None:
             "split_fractions": dict(zip(("train", "calibration", "test"), SPLIT_FRACTIONS)),
             "split_sizes": split.sizes(),
             "representation": "frozen ImageNet ResNet-18 global average pool (512-d)",
-            "model": "standardised multinomial logistic regression on the embeddings",
+            "model_kind": args.model,
+            "model": ("standardised multinomial logistic regression on the embeddings" if args.model == "lr"
+                      else MODEL_DESCRIPTIONS[args.model] + " on the embeddings"),
         },
         "class_names": names,
         "reference": {"test_accuracy": reference_accuracy},
         "reliability_model": reliability.describe(),
         "windows": windows,
+        "embedding_projection": projection,
     }
-    OUTPUT.write_text(json.dumps(result, indent=1, allow_nan=False, default=_json_default))
-    print(f"\nwrote {OUTPUT}")
-
-
-def _json_default(value):
-    if isinstance(value, np.generic):
-        return value.item()
-    if isinstance(value, np.ndarray):
-        return value.tolist()
-    raise TypeError(f"not JSON serialisable: {type(value)}")
+    out = output_path(args.model)
+    out.write_text(json.dumps(result, indent=1, allow_nan=False, default=json_default))
+    print(f"\nwrote {out}")
 
 
 if __name__ == "__main__":

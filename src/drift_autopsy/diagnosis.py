@@ -55,6 +55,12 @@ Delayed-label audit (a small labelled production sample)
    on f. A significant feature means P(Y | X) moved in a region of f
    (concept drift); none means the corruption is unstructured (label noise).
 
+Ablations (``null`` argument; the default "confidence" is the method):
+"none" drops audit x conf_bin from the null, so any change in errors is
+attributed to features; "class_confidence" replaces conf_bin by the joint
+cells of predicted class and confidence bin, which also absorbs label noise
+that depends on the true class.
+
 Bins. Numeric features: reference quintiles. Nominal features: categories
 seen at least ``ceil(5 / min(err, 1 - err))`` times in the audit (so each
 kept cell has an expected count of at least five of both outcomes, the usual
@@ -148,9 +154,12 @@ def label_free_diagnosis(
     mmd_permutations: int = 200,
     mmd_max_samples: int = 3000,
     random_state: int = 0,
+    precomputed_mmd: Optional[Dict[str, float]] = None,
 ) -> Dict[str, Any]:
     """Steps 1-4 of the module docstring. ``reference`` needs target and predictions;
-    ``production`` needs predictions only."""
+    ``production`` needs predictions only. ``precomputed_mmd`` ({"statistic",
+    "p_value"}) reuses an MMD test already run with the same settings and seed
+    on the same pair of samples, instead of running it again."""
     if reference.target is None or reference.predictions is None or production.predictions is None:
         raise ValueError("reference needs target and predictions; production needs predictions")
 
@@ -168,7 +177,9 @@ def label_free_diagnosis(
     ]
     pred_test = chi2_homogeneity(np.asarray(reference.predictions), np.asarray(production.predictions))
     mmd_test = None
-    if multivariate:
+    if multivariate and precomputed_mmd is not None:
+        mmd_test = {"statistic": float(precomputed_mmd["statistic"]), "p_value": float(precomputed_mmd["p_value"])}
+    elif multivariate:
         res = MMD(threshold=alpha, n_permutations=mmd_permutations, max_samples=mmd_max_samples,
                   standardize=True, random_state=random_state).fit_detect(reference, production)
         mmd_test = {"statistic": float(res.score), "p_value": float(res.p_value)}
@@ -267,8 +278,11 @@ def audit_diagnosis(
     audit_X: pd.DataFrame,
     audit_y: np.ndarray,
     alpha: float = 0.05,
+    null: str = "confidence",
 ) -> Dict[str, Any]:
-    """Steps 5-6 of the module docstring."""
+    """Steps 5-6 of the module docstring (``null`` selects an ablation)."""
+    if null not in ("confidence", "none", "class_confidence"):
+        raise ValueError(f"unknown null {null!r}")
     feats = reference.feature_names
     categorical = set(reference.categorical_features or [])
     ref_X = reference.to_pandas()[feats]
@@ -289,12 +303,17 @@ def audit_diagnosis(
     conf = np.concatenate([top_class_confidence(ref_proba), top_class_confidence(aud_proba)])
     ref_conf = top_class_confidence(ref_proba)
     conf_edges = np.unique(np.quantile(ref_conf, np.linspace(0, 1, N_QUANTILE_BINS + 1))[1:-1])
-    conf_bin = _one_hot(np.digitize(conf, conf_edges))
+    conf_codes = np.digitize(conf, conf_edges)
+    if null == "class_confidence":
+        pred = np.concatenate([ref_proba.argmax(1), aud_proba.argmax(1)])
+        conf_codes = pred * (len(conf_edges) + 1) + conf_codes
+    conf_bin = _one_hot(conf_codes)
     is_audit = np.r_[np.zeros(len(ref_correct)), np.ones(len(aud_correct))][:, None]
     correct = np.concatenate([ref_correct, aud_correct])
     err = 1 - aud_correct.mean()
     min_count = int(np.ceil(5.0 / max(min(err, 1 - err), 1e-9)))
 
+    null_kind = null
     rows = []
     for f in feats:
         values = np.concatenate([ref_X[f].to_numpy(float), audit_X[f].to_numpy(float)])
@@ -303,7 +322,7 @@ def audit_diagnosis(
             rows.append({"feature": f, "lr_statistic": 0.0, "dof": 0, "p_value": 1.0})
             continue
         f_bin = _one_hot(codes)
-        null = _design([conf_bin, f_bin, is_audit, is_audit * conf_bin])
+        null = _design([conf_bin, f_bin, is_audit] + ([] if null_kind == "none" else [is_audit * conf_bin]))
         alt = _design([null, is_audit * f_bin])
         lr = max(0.0, 2.0 * (_loglik(alt, correct) - _loglik(null, correct)))
         dof = alt.shape[1] - null.shape[1]
