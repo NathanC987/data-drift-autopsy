@@ -37,6 +37,7 @@ from drift_autopsy.remediation.importance_weighting import density_ratio_weights
 from drift_autopsy.stats import holm_reject, paired_accuracy_difference
 
 VALIDATION_FRACTION = 0.3
+PROBE_STRATEGIES = ("importance_weighted_retrain", "retrain_on_recent")   # the strategies the probes stand for
 
 
 def _correct(model: Any, X: np.ndarray, y: np.ndarray) -> np.ndarray:

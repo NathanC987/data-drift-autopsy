@@ -172,7 +172,8 @@ class SHAPAnalyzer(BaseRootCauseAnalyzer):
         
         try:
             predict_fn, explained_output = self._prediction_function(model, X_background)
-            explainer = shap.Explainer(predict_fn, X_background)
+            # Seeded: above 10 features shap picks the (random) permutation algorithm.
+            explainer = shap.Explainer(predict_fn, X_background, seed=self.random_state)
             
             logger.debug("Computing SHAP values for reference data")
             shap_values_ref = explainer(X_ref_sample, silent=True)
@@ -283,9 +284,6 @@ class SHAPAnalyzer(BaseRootCauseAnalyzer):
             )
         
         except Exception as e:
+            # Fail loudly: a silently missing explanation would look like "no change".
             logger.error(f"SHAP analysis failed: {e}")
-            return RCAResult(
-                analyzer_name=self.name,
-                explanations={"error": f"SHAP analysis failed: {str(e)}"},
-                recommendations=["Check model compatibility with SHAP", "Verify data format"],
-            )
+            raise

@@ -247,7 +247,12 @@ def reliability_step(study, focus, focus_label, n: str = "4.") -> None:
         plot(C.risk_hist(L.reliability_records(study, focus), fusion["label_thresholds"], focus_label), "risk_hist")
         st.caption(f"Based on the {len(L.reliability_records(study, focus)):,} predictions stored for this window.")
     with b:
-        plot(C.fusion_bars(coefs), "fusion")
+        if coefs.empty:
+            st.info(f"No fusion weights learned: the calibration split holds only {fusion.get('n_calibration_errors')} "
+                    f"wrong predictions, fewer than the {fusion.get('min_events')} a three-signal logistic model needs "
+                    "(ten per signal). The risk score is the confidence risk (1 - confidence) alone.")
+        else:
+            plot(C.fusion_bars(coefs), "fusion")
     shows(N.reliability(rel, coefs))
 
 

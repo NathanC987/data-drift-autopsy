@@ -153,11 +153,24 @@ def harmonize_relationship(raw: pd.DataFrame) -> pd.DataFrame:
     return raw
 
 
+def task_fingerprint(task: str) -> str:
+    """Short hash of everything that defines a task frame (task spec, selection
+    code and the relationship mapping), so a changed definition never reuses a
+    stale cache."""
+    import hashlib
+    import inspect
+
+    spec = ACS_TASKS[task]
+    payload = repr((spec, inspect.getsource(AcsTask.select), inspect.getsource(harmonize_relationship),
+                    sorted(RELSHIPP_TO_RELP.items())))
+    return hashlib.sha1(payload.encode("utf-8")).hexdigest()[:10]
+
+
 def load_acs_task_frame(task: str, year: int, state: str, data_root: str = "data",
                         download: bool = True) -> pd.DataFrame:
     """Task frame for one state-year (features, ``target`` and extra columns), cached as parquet."""
     spec = ACS_TASKS[task]
-    cache = Path(data_root) / CACHE_DIR / f"{task}_{state}_{year}.parquet"
+    cache = Path(data_root) / CACHE_DIR / f"{task}_{state}_{year}_{task_fingerprint(task)}.parquet"
     if cache.exists():
         return pd.read_parquet(cache)
     from folktables import ACSDataSource

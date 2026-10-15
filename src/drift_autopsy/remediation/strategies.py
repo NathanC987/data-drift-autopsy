@@ -10,9 +10,9 @@ Label cost differs, and each result reports it:
   window (labels the team already receives with a delay).
 * ``full_retrain``               - reference + every delayed-label window.
 * ``label_retrain``              - reference + a fresh labelled production
-  sample of ``n_labels`` rows (buys labels).
+  sample of ``ctx.n_labels`` rows (buys labels).
 * ``recalibrate``                - isotonic recalibration of the deployed
-  binary model on ``n_labels`` fresh production labels (buys labels).
+  binary model on ``ctx.n_labels`` fresh production labels (buys labels).
 
 A strategy that needs data the context lacks (no delayed windows, no
 production labels, a non-binary model for recalibration) raises
@@ -89,22 +89,22 @@ def full_retrain(ctx: RemediationContext) -> RemediationResult:
                  windows_used=len(ctx.recent_windows))
 
 
-def label_retrain(ctx: RemediationContext, n_labels: int = 2000) -> RemediationResult:
+def label_retrain(ctx: RemediationContext) -> RemediationResult:
     if ctx.production_y is None:
         raise NotApplicable("no production labels")
-    idx = _label_sample(ctx, n_labels)
+    idx = _label_sample(ctx, ctx.n_labels)
     X = np.vstack([ctx.reference_X, ctx.production_X[idx]])
     y = np.concatenate([ctx.reference_y, ctx.production_y[idx]])
     model, sec, n_iter = fit_model(ctx.model_factory, X, y)
     return grade(ctx, "label_retrain", model, sec, n_iter, len(X), X.shape[1], len(idx))
 
 
-def recalibrate(ctx: RemediationContext, n_labels: int = 2000) -> RemediationResult:
+def recalibrate(ctx: RemediationContext) -> RemediationResult:
     if ctx.production_y is None:
         raise NotApplicable("no production labels")
     if len(getattr(ctx.base_model, "classes_", [])) != 2:
         raise NotApplicable("isotonic recalibration here is for binary models")
-    idx = _label_sample(ctx, n_labels)
+    idx = _label_sample(ctx, ctx.n_labels)
     scores = ctx.base_model.predict_proba(ctx.production_X[idx])[:, 1]
     start = time.perf_counter()
     iso = IsotonicRegression(out_of_bounds="clip").fit(scores, ctx.production_y[idx])

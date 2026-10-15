@@ -42,6 +42,8 @@ class PSI(BaseDriftDetector):
         aggregate_method: str = "max",
     ):
         super().__init__(name="psi")
+        if aggregate_method not in ("max", "mean"):
+            raise ValueError(f"aggregate_method must be 'max' or 'mean', got {aggregate_method!r}")
         self.threshold = threshold
         self.n_bins = n_bins
         self.aggregate_method = aggregate_method
@@ -172,12 +174,7 @@ class PSI(BaseDriftDetector):
             )
         
         # Aggregate PSI values
-        if self.aggregate_method == "max":
-            aggregated_psi = float(np.max(psi_values))
-        elif self.aggregate_method == "mean":
-            aggregated_psi = float(np.mean(psi_values))
-        else:
-            aggregated_psi = float(np.max(psi_values))
+        aggregated_psi = float(np.mean(psi_values) if self.aggregate_method == "mean" else np.max(psi_values))
         
         # Determine drift and severity
         drift_detected = aggregated_psi >= self.threshold

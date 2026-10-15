@@ -47,6 +47,10 @@ class KSTest(BaseDriftDetector):
         aggregate_method: str = "max",
     ):
         super().__init__(name="ks_test")
+        if aggregate_method not in ("max", "mean", "vote"):
+            raise ValueError(f"aggregate_method must be 'max', 'mean' or 'vote', got {aggregate_method!r}")
+        if correction not in (None, "bonferroni", "holm"):
+            raise ValueError(f"correction must be None, 'bonferroni' or 'holm', got {correction!r}")
         self.threshold = threshold
         self.correction = correction
         self.aggregate_method = aggregate_method

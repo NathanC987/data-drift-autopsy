@@ -71,6 +71,10 @@
    "instability"
   ],
   "fusion": {
+   "learned": true,
+   "n_calibration_errors": 6392,
+   "min_events": 30,
+   "risk_source": "learned fusion",
    "signals": [
     "confidence_risk",
     "ood",
@@ -103,16 +107,28 @@
     1.0
    ],
    "bin_accuracy": [
-    0.8262476894639557,
-    0.8262476894639557,
-    0.8262476894639557,
-    0.8262476894639557,
-    0.8262476894639557,
+    null,
+    null,
+    null,
+    null,
+    null,
     0.5622076707202993,
     0.6482496836777731,
     0.7616438356164383,
     0.8562240960411605,
     0.9646359001176624
+   ],
+   "bin_reliable": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    true,
+    true,
+    true,
+    true
    ],
    "bin_counts": [
     0.0,
@@ -560,7 +576,7 @@
        ]
       }
      },
-     "execution_time_seconds": 36.782737731933594,
+     "execution_time_seconds": 45.82000398635864,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -647,7 +663,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.016675710678100586,
+     "execution_time_seconds": 0.023719310760498047,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -697,7 +713,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.5952417850494385,
+     "execution_time_seconds": 0.5514087677001953,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -768,7 +784,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.006684303283691406,
+     "execution_time_seconds": 0.01624274253845215,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -811,7 +827,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.006804704666137695,
+     "execution_time_seconds": 0.015974998474121094,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -850,7 +866,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 1.3185124397277832,
+     "execution_time_seconds": 6.636877775192261,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -13045,14 +13061,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 36.783,
-    "PSI": 0.017,
-    "MMD": 0.595,
-    "CBPE": 0.007,
-    "BBSD": 0.007,
-    "Domain classifier": 1.319,
-    "reliability": 0.31,
-    "diagnosis": 4.472
+    "KS Test": 45.82,
+    "PSI": 0.024,
+    "MMD": 0.551,
+    "CBPE": 0.016,
+    "BBSD": 0.016,
+    "Domain classifier": 6.637,
+    "reliability": 0.346,
+    "diagnosis": 6.452
    }
   },
   "CA 2015": {
@@ -13470,7 +13486,7 @@
        ]
       }
      },
-     "execution_time_seconds": 29.287118911743164,
+     "execution_time_seconds": 42.74099826812744,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -13557,7 +13573,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.035314321517944336,
+     "execution_time_seconds": 0.050975799560546875,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -13607,7 +13623,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.6554946899414062,
+     "execution_time_seconds": 0.6396822929382324,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -13678,7 +13694,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.015627622604370117,
+     "execution_time_seconds": 0.02479696273803711,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -13721,7 +13737,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.017781496047973633,
+     "execution_time_seconds": 0.026982545852661133,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -13760,7 +13776,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 1.1530747413635254,
+     "execution_time_seconds": 7.862170934677124,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -25959,14 +25975,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 29.287,
-    "PSI": 0.035,
-    "MMD": 0.656,
-    "CBPE": 0.016,
-    "BBSD": 0.018,
-    "Domain classifier": 1.153,
-    "reliability": 1.549,
-    "diagnosis": 4.803
+    "KS Test": 42.741,
+    "PSI": 0.051,
+    "MMD": 0.64,
+    "CBPE": 0.025,
+    "BBSD": 0.027,
+    "Domain classifier": 7.862,
+    "reliability": 2.95,
+    "diagnosis": 7.471
    }
   },
   "CA 2016": {
@@ -26398,7 +26414,7 @@
        ]
       }
      },
-     "execution_time_seconds": 29.084706783294678,
+     "execution_time_seconds": 43.37237358093262,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -26485,7 +26501,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.03583860397338867,
+     "execution_time_seconds": 0.055028676986694336,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -26535,7 +26551,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.6573011875152588,
+     "execution_time_seconds": 0.6466042995452881,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -26606,7 +26622,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.015990734100341797,
+     "execution_time_seconds": 0.026468515396118164,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -26649,7 +26665,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.03468680381774902,
+     "execution_time_seconds": 0.04506874084472656,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -26688,7 +26704,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 1.1973726749420166,
+     "execution_time_seconds": 11.428539276123047,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -38915,14 +38931,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 29.085,
-    "PSI": 0.036,
-    "MMD": 0.657,
-    "CBPE": 0.016,
-    "BBSD": 0.035,
-    "Domain classifier": 1.197,
-    "reliability": 1.541,
-    "diagnosis": 6.477
+    "KS Test": 43.372,
+    "PSI": 0.055,
+    "MMD": 0.647,
+    "CBPE": 0.026,
+    "BBSD": 0.045,
+    "Domain classifier": 11.429,
+    "reliability": 3.037,
+    "diagnosis": 10.579
    }
   },
   "CA 2017": {
@@ -39356,7 +39372,7 @@
        ]
       }
      },
-     "execution_time_seconds": 29.513211488723755,
+     "execution_time_seconds": 55.067742586135864,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -39443,7 +39459,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.035836219787597656,
+     "execution_time_seconds": 0.050151824951171875,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -39493,7 +39509,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.6442897319793701,
+     "execution_time_seconds": 0.7741646766662598,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -39564,7 +39580,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.016028881072998047,
+     "execution_time_seconds": 0.025848388671875,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -39607,7 +39623,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.03432965278625488,
+     "execution_time_seconds": 0.04369950294494629,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -39646,7 +39662,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 1.2201743125915527,
+     "execution_time_seconds": 6.53980827331543,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -51878,14 +51894,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 29.513,
-    "PSI": 0.036,
-    "MMD": 0.644,
-    "CBPE": 0.016,
-    "BBSD": 0.034,
-    "Domain classifier": 1.22,
-    "reliability": 1.592,
-    "diagnosis": 7.066
+    "KS Test": 55.068,
+    "PSI": 0.05,
+    "MMD": 0.774,
+    "CBPE": 0.026,
+    "BBSD": 0.044,
+    "Domain classifier": 6.54,
+    "reliability": 1.949,
+    "diagnosis": 9.28
    }
   },
   "CA 2018": {
@@ -52323,7 +52339,7 @@
        ]
       }
      },
-     "execution_time_seconds": 29.267491102218628,
+     "execution_time_seconds": 43.24384665489197,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -52410,7 +52426,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.036502838134765625,
+     "execution_time_seconds": 0.051363468170166016,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -52460,7 +52476,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.6621212959289551,
+     "execution_time_seconds": 0.664442777633667,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -52531,7 +52547,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.016246557235717773,
+     "execution_time_seconds": 0.026323795318603516,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -52574,7 +52590,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.030771493911743164,
+     "execution_time_seconds": 0.04229235649108887,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -52613,7 +52629,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 1.1744945049285889,
+     "execution_time_seconds": 5.366070985794067,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -64852,14 +64868,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 29.268,
-    "PSI": 0.037,
-    "MMD": 0.662,
-    "CBPE": 0.016,
-    "BBSD": 0.031,
-    "Domain classifier": 1.175,
-    "reliability": 1.631,
-    "diagnosis": 5.845
+    "KS Test": 43.244,
+    "PSI": 0.051,
+    "MMD": 0.664,
+    "CBPE": 0.026,
+    "BBSD": 0.042,
+    "Domain classifier": 5.366,
+    "reliability": 1.963,
+    "diagnosis": 7.772
    }
   },
   "CA 2019": {
@@ -65295,7 +65311,7 @@
        ]
       }
      },
-     "execution_time_seconds": 29.410993337631226,
+     "execution_time_seconds": 38.56184530258179,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -65382,7 +65398,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.0354156494140625,
+     "execution_time_seconds": 0.04710817337036133,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -65432,7 +65448,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.6585371494293213,
+     "execution_time_seconds": 0.7662861347198486,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -65503,7 +65519,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.016377687454223633,
+     "execution_time_seconds": 0.022398948669433594,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -65546,7 +65562,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.030098438262939453,
+     "execution_time_seconds": 0.03541755676269531,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -65585,7 +65601,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 1.3082029819488525,
+     "execution_time_seconds": 2.434382200241089,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -77828,14 +77844,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 29.411,
-    "PSI": 0.035,
-    "MMD": 0.659,
-    "CBPE": 0.016,
-    "BBSD": 0.03,
-    "Domain classifier": 1.308,
-    "reliability": 1.63,
-    "diagnosis": 6.505
+    "KS Test": 38.562,
+    "PSI": 0.047,
+    "MMD": 0.766,
+    "CBPE": 0.022,
+    "BBSD": 0.035,
+    "Domain classifier": 2.434,
+    "reliability": 1.762,
+    "diagnosis": 6.852
    }
   },
   "CA 2021": {
@@ -78271,7 +78287,7 @@
        ]
       }
      },
-     "execution_time_seconds": 30.071619987487793,
+     "execution_time_seconds": 37.70505666732788,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -78358,7 +78374,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.036115169525146484,
+     "execution_time_seconds": 0.04367995262145996,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -78408,7 +78424,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.6579470634460449,
+     "execution_time_seconds": 0.7198410034179688,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -78479,7 +78495,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.016308307647705078,
+     "execution_time_seconds": 0.019317626953125,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -78522,7 +78538,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.0309293270111084,
+     "execution_time_seconds": 0.03329062461853027,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -78561,7 +78577,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 1.273754358291626,
+     "execution_time_seconds": 1.2902607917785645,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -90796,14 +90812,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 30.072,
-    "PSI": 0.036,
-    "MMD": 0.658,
-    "CBPE": 0.016,
-    "BBSD": 0.031,
-    "Domain classifier": 1.274,
-    "reliability": 1.601,
-    "diagnosis": 5.152
+    "KS Test": 37.705,
+    "PSI": 0.044,
+    "MMD": 0.72,
+    "CBPE": 0.019,
+    "BBSD": 0.033,
+    "Domain classifier": 1.29,
+    "reliability": 1.687,
+    "diagnosis": 6.419
    }
   },
   "CA 2022": {
@@ -91241,7 +91257,7 @@
        ]
       }
      },
-     "execution_time_seconds": 30.43206238746643,
+     "execution_time_seconds": 32.45171880722046,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -91328,7 +91344,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.03594613075256348,
+     "execution_time_seconds": 0.0360560417175293,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -91378,7 +91394,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.6823322772979736,
+     "execution_time_seconds": 0.6744234561920166,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -91449,7 +91465,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.01668858528137207,
+     "execution_time_seconds": 0.01736736297607422,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -91492,7 +91508,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.031595468521118164,
+     "execution_time_seconds": 0.031520843505859375,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -91531,7 +91547,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 1.2596328258514404,
+     "execution_time_seconds": 1.3437831401824951,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -103774,14 +103790,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 30.432,
+    "KS Test": 32.452,
     "PSI": 0.036,
-    "MMD": 0.682,
+    "MMD": 0.674,
     "CBPE": 0.017,
     "BBSD": 0.032,
-    "Domain classifier": 1.26,
-    "reliability": 1.681,
-    "diagnosis": 6.059
+    "Domain classifier": 1.344,
+    "reliability": 1.687,
+    "diagnosis": 6.224
    }
   },
   "CA 2023": {
@@ -104219,7 +104235,7 @@
        ]
       }
      },
-     "execution_time_seconds": 30.560078382492065,
+     "execution_time_seconds": 33.26503610610962,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -104306,7 +104322,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.03739190101623535,
+     "execution_time_seconds": 0.036740779876708984,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -104356,7 +104372,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.6854183673858643,
+     "execution_time_seconds": 0.6688950061798096,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -104427,7 +104443,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.016666412353515625,
+     "execution_time_seconds": 0.018140077590942383,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -104470,7 +104486,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.031893253326416016,
+     "execution_time_seconds": 0.032509803771972656,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -104509,7 +104525,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 1.2391250133514404,
+     "execution_time_seconds": 2.3492584228515625,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -116756,14 +116772,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 30.56,
+    "KS Test": 33.265,
     "PSI": 0.037,
-    "MMD": 0.685,
-    "CBPE": 0.017,
-    "BBSD": 0.032,
-    "Domain classifier": 1.239,
-    "reliability": 1.711,
-    "diagnosis": 6.232
+    "MMD": 0.669,
+    "CBPE": 0.018,
+    "BBSD": 0.033,
+    "Domain classifier": 2.349,
+    "reliability": 1.749,
+    "diagnosis": 6.327
    }
   },
   "TX 2014": {
@@ -117198,7 +117214,7 @@
        ]
       }
      },
-     "execution_time_seconds": 28.123342037200928,
+     "execution_time_seconds": 30.77812957763672,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -117285,7 +117301,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.02681112289428711,
+     "execution_time_seconds": 0.02982473373413086,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -117335,7 +117351,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.5463035106658936,
+     "execution_time_seconds": 0.5577263832092285,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -117406,7 +117422,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.012326240539550781,
+     "execution_time_seconds": 0.015698909759521484,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -117449,7 +117465,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.024326562881469727,
+     "execution_time_seconds": 0.027006149291992188,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -117488,7 +117504,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 1.0973591804504395,
+     "execution_time_seconds": 1.2932159900665283,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -129725,14 +129741,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 28.123,
-    "PSI": 0.027,
-    "MMD": 0.546,
-    "CBPE": 0.012,
-    "BBSD": 0.024,
-    "Domain classifier": 1.097,
-    "reliability": 0.977,
-    "diagnosis": 5.169
+    "KS Test": 30.778,
+    "PSI": 0.03,
+    "MMD": 0.558,
+    "CBPE": 0.016,
+    "BBSD": 0.027,
+    "Domain classifier": 1.293,
+    "reliability": 1.049,
+    "diagnosis": 5.328
    }
   },
   "NY 2014": {
@@ -130169,7 +130185,7 @@
        ]
       }
      },
-     "execution_time_seconds": 28.675155878067017,
+     "execution_time_seconds": 31.382030248641968,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -130256,7 +130272,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.02445507049560547,
+     "execution_time_seconds": 0.02682209014892578,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -130306,7 +130322,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.5130343437194824,
+     "execution_time_seconds": 0.5055050849914551,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -130377,7 +130393,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.01073765754699707,
+     "execution_time_seconds": 0.012511968612670898,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -130420,7 +130436,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.02132582664489746,
+     "execution_time_seconds": 0.024262428283691406,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -130459,7 +130475,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 1.2990021705627441,
+     "execution_time_seconds": 1.4789707660675049,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -142698,14 +142714,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 28.675,
-    "PSI": 0.024,
-    "MMD": 0.513,
-    "CBPE": 0.011,
-    "BBSD": 0.021,
-    "Domain classifier": 1.299,
-    "reliability": 0.782,
-    "diagnosis": 6.265
+    "KS Test": 31.382,
+    "PSI": 0.027,
+    "MMD": 0.506,
+    "CBPE": 0.013,
+    "BBSD": 0.024,
+    "Domain classifier": 1.479,
+    "reliability": 0.822,
+    "diagnosis": 5.877
    }
   },
   "FL 2014": {
@@ -143143,7 +143159,7 @@
        ]
       }
      },
-     "execution_time_seconds": 28.497012615203857,
+     "execution_time_seconds": 30.6868417263031,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -143230,7 +143246,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.023102521896362305,
+     "execution_time_seconds": 0.026399612426757812,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -143280,7 +143296,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.5025229454040527,
+     "execution_time_seconds": 0.5057649612426758,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -143351,7 +143367,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.010048151016235352,
+     "execution_time_seconds": 0.011202096939086914,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -143394,7 +143410,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.0192108154296875,
+     "execution_time_seconds": 0.02038264274597168,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -143433,7 +143449,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 1.0315089225769043,
+     "execution_time_seconds": 1.257018804550171,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -155674,14 +155690,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 28.497,
-    "PSI": 0.023,
-    "MMD": 0.503,
-    "CBPE": 0.01,
-    "BBSD": 0.019,
-    "Domain classifier": 1.032,
-    "reliability": 0.698,
-    "diagnosis": 4.81
+    "KS Test": 30.687,
+    "PSI": 0.026,
+    "MMD": 0.506,
+    "CBPE": 0.011,
+    "BBSD": 0.02,
+    "Domain classifier": 1.257,
+    "reliability": 0.74,
+    "diagnosis": 5.379
    }
   },
   "WA 2014": {
@@ -156119,7 +156135,7 @@
        ]
       }
      },
-     "execution_time_seconds": 28.370509147644043,
+     "execution_time_seconds": 30.51285696029663,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -156206,7 +156222,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.016077280044555664,
+     "execution_time_seconds": 0.017612218856811523,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -156256,7 +156272,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.40891480445861816,
+     "execution_time_seconds": 0.4020373821258545,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -156327,7 +156343,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.006935834884643555,
+     "execution_time_seconds": 0.0074176788330078125,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -156370,7 +156386,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.013005971908569336,
+     "execution_time_seconds": 0.014027595520019531,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -156409,7 +156425,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 1.113635778427124,
+     "execution_time_seconds": 1.340820550918579,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -168646,14 +168662,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 28.371,
-    "PSI": 0.016,
-    "MMD": 0.409,
+    "KS Test": 30.513,
+    "PSI": 0.018,
+    "MMD": 0.402,
     "CBPE": 0.007,
-    "BBSD": 0.013,
-    "Domain classifier": 1.114,
-    "reliability": 0.297,
-    "diagnosis": 5.312
+    "BBSD": 0.014,
+    "Domain classifier": 1.341,
+    "reliability": 0.296,
+    "diagnosis": 5.517
    }
   }
  }

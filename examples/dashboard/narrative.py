@@ -200,11 +200,15 @@ def prior(df: pd.DataFrame, key: str) -> str:
 
 def reliability(rel: pd.DataFrame, coefs: pd.DataFrame) -> str:
     gain = (rel["auroc_risk"] - rel["auroc_confidence_only"])
-    top = coefs.sort_values("coefficient", ascending=False).iloc[0]
     ordered = ((rel["error_rate_low"] < rel["error_rate_medium"]) & (rel["error_rate_medium"] < rel["error_rate_high"])).sum()
+    if coefs.empty:
+        weights = "No fusion weights were learned (too few calibration errors), so the risk is 1 - confidence alone. "
+    else:
+        top = coefs.sort_values("coefficient", ascending=False).iloc[0]
+        weights = f"The largest fusion weight is {top['signal']} ({top['coefficient']:+.2f}). "
     return (f"The fused score's AUROC differs from confidence alone by {gain.min():+.3f} to {gain.max():+.3f}. "
             f"The out of distribution signal stays between {rel['auroc_ood'].min():.2f} and {rel['auroc_ood'].max():.2f} "
-            f"(0.5 is chance). The largest fusion weight is {top['signal']} ({top['coefficient']:+.2f}). "
+            f"(0.5 is chance). " + weights +
             f"The risk labels are correctly ordered (LOW < MEDIUM < HIGH error rate) in {ordered} of {len(rel)} windows.")
 
 

@@ -110,7 +110,7 @@ def test_label_free_estimates_on_a_known_case():
     est = label_free_estimates(cal, correct, prod)
     assert est["ac"] == pytest.approx(0.9)
     assert est["doc"] == pytest.approx(0.8 + 0.9 - 0.8)
-    assert est["cbpe"] == pytest.approx(0.8)          # empty bin falls back to calibration accuracy
+    assert est["cbpe"] == pytest.approx(0.9)          # empty bin: the model's own confidence is kept
     assert est["atc"] == pytest.approx(1.0)           # every production row is more confident than t
 
 
@@ -300,3 +300,61 @@ def test_gpu_permutation_tests_match_cpu(monkeypatch):
         assert on_gpu.metadata["device"] == "cuda" and on_cpu.metadata["device"] == "cpu"
         assert on_gpu.p_value == on_cpu.p_value
         assert on_gpu.statistic == pytest.approx(on_cpu.statistic, rel=1e-9, abs=1e-12)
+
+
+# --------------------------------------------------------------------------- #
+# sweep fixes: sparse CBPE bins, fusion events rule, input validation
+
+def test_cbpe_keeps_own_confidence_in_sparse_bins():
+    from drift_autopsy.estimation import MIN_BIN_COUNT, BinnedAccuracyCalibration
+
+    conf = np.r_[np.full(200, 0.95), np.full(2, 0.55)]          # the 0.5-0.6 bin holds only 2 rows
+    correct = np.r_[np.ones(180), np.zeros(20), np.ones(2)]
+    cal = BinnedAccuracyCalibration.fit(conf, correct, 10)
+    assert cal.bin_counts[5] < MIN_BIN_COUNT and not cal.reliable[5] and cal.reliable[9]
+    q = cal.predict_correct(np.array([0.55, 0.35, 0.95]))
+    assert q[0] == pytest.approx(0.55) and q[1] == pytest.approx(0.35)   # own confidence where data are silent
+    assert q[2] == pytest.approx(0.9)                                    # binned accuracy where data exist
+
+
+def test_fusion_falls_back_without_enough_errors():
+    from drift_autopsy.reliability.fusion import MIN_EVENTS_PER_SIGNAL, RiskFusion
+
+    rng = np.random.default_rng(0)
+    frame = pd.DataFrame(rng.random((400, 3)), columns=["confidence_risk", "ood", "instability"])
+    frame["calibrated_error"] = rng.random(400)
+    few = np.zeros(400, dtype=int)
+    few[:MIN_EVENTS_PER_SIGNAL * 3 - 1] = 1
+    f = RiskFusion(["confidence_risk", "ood", "instability"]).fit(frame, few)
+    assert not f.learned and f.coefficients() == {}
+    assert np.array_equal(f.predict(frame), frame["confidence_risk"].to_numpy())
+    many = (rng.random(400) < 0.3).astype(int)
+    assert RiskFusion(["confidence_risk", "ood", "instability"]).fit(frame, many).learned
+
+
+def test_dataset_and_detector_options_are_validated():
+    from drift_autopsy.detectors import PSI, KSTest
+
+    with pytest.raises(ValueError):
+        Dataset(data=pd.DataFrame({"a": [1, 2, 3]}), target=np.array([0, 1]))
+    with pytest.raises(ValueError):
+        PSI(aggregate_method="median")
+    with pytest.raises(ValueError):
+        KSTest(correction="fdr")
+
+
+def test_shap_importances_are_reproducible_above_ten_features():
+    # Above 10 features shap uses its random permutation algorithm; the seed must reach it.
+    from sklearn.linear_model import LogisticRegression
+
+    from drift_autopsy.rca.shap_analyzer import SHAPAnalyzer
+
+    rng = np.random.default_rng(0)
+    X = rng.normal(size=(400, 16))
+    model = LogisticRegression().fit(X, (X[:, 0] + X[:, 1] > 0).astype(int))
+    cols = [f"f{i}" for i in range(16)]
+    ref = Dataset(data=pd.DataFrame(X[:200], columns=cols))
+    test = Dataset(data=pd.DataFrame(X[200:] + 0.3, columns=cols))
+    runs = [SHAPAnalyzer(n_background_samples=30, n_test_samples=60, n_bootstrap=50)
+            .analyze(ref, test, None, model=model).feature_importances for _ in range(2)]
+    assert runs[0] == runs[1]

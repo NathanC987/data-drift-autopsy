@@ -39,6 +39,8 @@ class UnivariateLocalizer(BaseDriftLocalizer):
         top_k: Optional[int] = None,
     ):
         super().__init__(name="univariate")
+        if correction not in (None, "bonferroni", "holm"):
+            raise ValueError(f"correction must be None, 'bonferroni' or 'holm', got {correction!r}")
         self.threshold = threshold
         self.correction = correction
         self.top_k = top_k

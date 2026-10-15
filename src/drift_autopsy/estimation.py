@@ -8,8 +8,11 @@ calibration set the model was not trained on:
 
     acc_hat = mean_i  a[b(c_i)],   a[k] = accuracy of calibration rows in bin k,
 
-where c_i is the production confidence and b(.) its bin. Bins with no
-calibration rows fall back to the overall calibration accuracy. The estimate
+where c_i is the production confidence and b(.) its bin. A bin with fewer
+than MIN_BIN_COUNT calibration rows (the package's minimum cell count, as in
+the chi-square tests) holds no reliable accuracy estimate; a prediction that
+falls in such a bin keeps its own confidence, i.e. the model is assumed
+calibrated where the calibration data are silent. The estimate
 is unbiased only while P(correct | confidence) is unchanged between the
 calibration data and production, so it cannot see concept drift or label
 noise, and it goes stale as the calibration data ages.
@@ -32,6 +35,10 @@ from dataclasses import dataclass
 from typing import Dict, List
 
 import numpy as np
+
+from drift_autopsy.stats import MIN_EXPECTED_COUNT
+
+MIN_BIN_COUNT = MIN_EXPECTED_COUNT
 
 
 def top_class_confidence(probabilities: np.ndarray) -> np.ndarray:
@@ -64,12 +71,20 @@ class BinnedAccuracyCalibration:
         counts = np.bincount(bins, minlength=n_bins).astype(float)
         sums = np.bincount(bins, weights=correct, minlength=n_bins)
         overall = float(correct.mean())
-        accuracy = np.where(counts > 0, sums / np.maximum(counts, 1.0), overall)
+        accuracy = np.where(counts > 0, sums / np.maximum(counts, 1.0), np.nan)
         return cls(bin_edges=edges, bin_accuracy=accuracy, bin_counts=counts, overall_accuracy=overall)
 
+    @property
+    def reliable(self) -> np.ndarray:
+        """Bins with at least MIN_BIN_COUNT calibration rows."""
+        return self.bin_counts >= MIN_BIN_COUNT
+
     def predict_correct(self, confidence: np.ndarray) -> np.ndarray:
-        """Calibrated probability that each prediction is correct."""
-        return self.bin_accuracy[_bin_index(np.asarray(confidence, dtype=float), self.bin_edges)]
+        """Calibrated probability that each prediction is correct (its own
+        confidence in a bin with too few calibration rows)."""
+        confidence = np.asarray(confidence, dtype=float)
+        idx = _bin_index(confidence, self.bin_edges)
+        return np.where(self.reliable[idx], np.nan_to_num(self.bin_accuracy[idx]), confidence)
 
     def estimate_accuracy(self, confidence: np.ndarray) -> float:
         confidence = np.asarray(confidence, dtype=float)
@@ -80,7 +95,8 @@ class BinnedAccuracyCalibration:
     def to_dict(self) -> Dict[str, List[float]]:
         return {
             "bin_edges": self.bin_edges.tolist(),
-            "bin_accuracy": self.bin_accuracy.tolist(),
+            "bin_accuracy": [None if not np.isfinite(a) else float(a) for a in self.bin_accuracy],
+            "bin_reliable": self.reliable.tolist(),
             "bin_counts": self.bin_counts.tolist(),
             "overall_accuracy": self.overall_accuracy,
         }

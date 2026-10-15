@@ -77,6 +77,10 @@
    "instability"
   ],
   "fusion": {
+   "learned": true,
+   "n_calibration_errors": 16366,
+   "min_events": 30,
+   "risk_source": "learned fusion",
    "signals": [
     "confidence_risk",
     "ood",
@@ -109,16 +113,28 @@
     1.0
    ],
    "bin_accuracy": [
-    0.7261745415607014,
-    0.7261745415607014,
-    0.7261745415607014,
-    0.7261745415607014,
-    0.7261745415607014,
+    null,
+    null,
+    null,
+    null,
+    null,
     0.5568584070796461,
     0.6675617214887746,
     0.7431080253216255,
     0.8442022816277882,
     0.9534883720930233
+   ],
+   "bin_reliable": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    true,
+    true,
+    true,
+    true
    ],
    "bin_counts": [
     0.0,
@@ -527,191 +543,191 @@
        "top_importance_changes": [
         [
          "AGEP",
-         -0.007866381305092734
+         -0.007910421714601296
         ],
         [
          "DIS",
-         0.001987892818565866
+         0.0019651488950084214
         ],
         [
          "MIL",
-         -0.001565874346117841
+         -0.001570408780630448
         ],
         [
          "SCHL",
-         0.0013016210361943212
+         0.0013351889089151386
         ],
         [
          "ESP",
-         -0.0012538770280144627
-        ],
-        [
-         "DREM",
-         0.0009745978675337243
+         -0.0010921600323067562
         ],
         [
          "RELP",
-         -0.0008139971712945449
+         -0.000986095295772399
+        ],
+        [
+         "DREM",
+         0.0009739968286133173
         ],
         [
          "CIT",
-         0.0005870449352872436
+         0.0006081425788626946
         ],
         [
          "NATIVITY",
-         0.00041472171804001097
+         0.00042393908298583687
         ],
         [
          "MAR",
-         -0.0003508110078249069
+         -0.0003195457837466831
         ]
        ]
       },
       "feature_importances": {
-       "AGEP": -0.007866381305092734,
-       "SCHL": 0.0013016210361943212,
-       "MAR": -0.0003508110078249069,
-       "RELP": -0.0008139971712945449,
-       "DIS": 0.001987892818565866,
-       "ESP": -0.0012538770280144627,
-       "CIT": 0.0005870449352872436,
-       "MIG": 0.00019098070480158026,
-       "MIL": -0.001565874346117841,
-       "ANC": 1.5497911629165986e-05,
-       "NATIVITY": 0.00041472171804001097,
-       "DEAR": 7.402101179633351e-05,
-       "DEYE": 0.0002222210236945822,
-       "DREM": 0.0009745978675337243,
-       "SEX": -0.00023144334167960606,
-       "RAC1P": 0.00016747634893322233
+       "AGEP": -0.007910421714601296,
+       "SCHL": 0.0013351889089151386,
+       "MAR": -0.0003195457837466831,
+       "RELP": -0.000986095295772399,
+       "DIS": 0.0019651488950084214,
+       "ESP": -0.0010921600323067562,
+       "CIT": 0.0006081425788626946,
+       "MIG": 0.0001865033805635713,
+       "MIL": -0.001570408780630448,
+       "ANC": 2.4104588323910908e-05,
+       "NATIVITY": 0.00042393908298583687,
+       "DEAR": 6.207388071771246e-05,
+       "DEYE": 0.0002227482673709388,
+       "DREM": 0.0009739968286133173,
+       "SEX": -0.00028021195840095825,
+       "RAC1P": 0.0001496652898097233
       },
       "distribution_changes": {
        "AGEP": {
-        "ref_importance": 0.13656646403702766,
-        "test_importance": 0.12870008273193492,
-        "change": -0.007866381305092734,
-        "change_ci_low": -0.018010061850870507,
-        "change_ci_high": 0.0033321796004059873,
+        "ref_importance": 0.13646604958195613,
+        "test_importance": 0.12855562786735483,
+        "change": -0.007910421714601296,
+        "change_ci_low": -0.018021139246583464,
+        "change_ci_high": 0.003486037246632216,
         "change_significant": false
        },
        "SCHL": {
-        "ref_importance": 0.03663955530208184,
-        "test_importance": 0.037941176338276164,
-        "change": 0.0013016210361943212,
-        "change_ci_low": -0.003263590745077475,
-        "change_ci_high": 0.0059563972215396395,
+        "ref_importance": 0.03664798479755797,
+        "test_importance": 0.03798317370647311,
+        "change": 0.0013351889089151386,
+        "change_ci_low": -0.003351255052598976,
+        "change_ci_high": 0.005967364848526084,
         "change_significant": false
        },
        "MAR": {
-        "ref_importance": 0.0333979269578922,
-        "test_importance": 0.03304711595006729,
-        "change": -0.0003508110078249069,
-        "change_ci_low": -0.0029102527450087304,
-        "change_ci_high": 0.0020243249825681498,
+        "ref_importance": 0.033330759463194366,
+        "test_importance": 0.03301121367944768,
+        "change": -0.0003195457837466831,
+        "change_ci_low": -0.0029076361380712293,
+        "change_ci_high": 0.002066465866978821,
         "change_significant": false
        },
        "RELP": {
-        "ref_importance": 0.09893949314994302,
-        "test_importance": 0.09812549597864847,
-        "change": -0.0008139971712945449,
-        "change_ci_low": -0.008826213987539222,
-        "change_ci_high": 0.008505823478780214,
+        "ref_importance": 0.09907592323815688,
+        "test_importance": 0.09808982794238448,
+        "change": -0.000986095295772399,
+        "change_ci_low": -0.008970963393392943,
+        "change_ci_high": 0.008382543950160463,
         "change_significant": false
        },
        "DIS": {
-        "ref_importance": 0.05986630394538855,
-        "test_importance": 0.061854196763954414,
-        "change": 0.001987892818565866,
-        "change_ci_low": -0.006641581324239309,
-        "change_ci_high": 0.010194812436931152,
+        "ref_importance": 0.059948443975831094,
+        "test_importance": 0.061913592870839515,
+        "change": 0.0019651488950084214,
+        "change_ci_low": -0.006774280754317167,
+        "change_ci_high": 0.010129540510370431,
         "change_significant": false
        },
        "ESP": {
-        "ref_importance": 0.021394934583959038,
-        "test_importance": 0.020141057555944576,
-        "change": -0.0012538770280144627,
-        "change_ci_low": -0.009148240450055046,
-        "change_ci_high": 0.006317565796566547,
+        "ref_importance": 0.021250549067904245,
+        "test_importance": 0.02015838903559749,
+        "change": -0.0010921600323067562,
+        "change_ci_low": -0.008960973120217996,
+        "change_ci_high": 0.006494683657071968,
         "change_significant": false
        },
        "CIT": {
-        "ref_importance": 0.010914811111067636,
-        "test_importance": 0.01150185604635488,
-        "change": 0.0005870449352872436,
-        "change_ci_low": -0.0008486503691459402,
-        "change_ci_high": 0.0022262764746830686,
+        "ref_importance": 0.010916758093884028,
+        "test_importance": 0.011524900672746722,
+        "change": 0.0006081425788626946,
+        "change_ci_low": -0.0008383613289462556,
+        "change_ci_high": 0.0022560533774604696,
         "change_significant": false
        },
        "MIG": {
-        "ref_importance": 0.009987870177762053,
-        "test_importance": 0.010178850882563633,
-        "change": 0.00019098070480158026,
-        "change_ci_low": -0.001864667974031396,
-        "change_ci_high": 0.002387937486416217,
+        "ref_importance": 0.009988894919490062,
+        "test_importance": 0.010175398300053633,
+        "change": 0.0001865033805635713,
+        "change_ci_low": -0.0018712623327835154,
+        "change_ci_high": 0.0023850393017819326,
         "change_significant": false
        },
        "MIL": {
-        "ref_importance": 0.02511411778300445,
-        "test_importance": 0.02354824343688661,
-        "change": -0.001565874346117841,
-        "change_ci_low": -0.007873970874790913,
-        "change_ci_high": 0.005627368508553092,
+        "ref_importance": 0.02513649895236796,
+        "test_importance": 0.02356609017173751,
+        "change": -0.001570408780630448,
+        "change_ci_low": -0.007864517212950239,
+        "change_ci_high": 0.005659553510543678,
         "change_significant": false
        },
        "ANC": {
-        "ref_importance": 0.006619405676156481,
-        "test_importance": 0.006634903587785647,
-        "change": 1.5497911629165986e-05,
-        "change_ci_low": -0.00027488291126360657,
-        "change_ci_high": 0.000326836347475453,
+        "ref_importance": 0.006624866940493742,
+        "test_importance": 0.006648971528817653,
+        "change": 2.4104588323910908e-05,
+        "change_ci_low": -0.00026755851354807634,
+        "change_ci_high": 0.0003334346641365112,
         "change_significant": false
        },
        "NATIVITY": {
-        "ref_importance": 0.009621367292678474,
-        "test_importance": 0.010036089010718485,
-        "change": 0.00041472171804001097,
-        "change_ci_low": -0.00036402479234500223,
-        "change_ci_high": 0.0012632062965992517,
+        "ref_importance": 0.009621519615739921,
+        "test_importance": 0.010045458698725758,
+        "change": 0.00042393908298583687,
+        "change_ci_low": -0.00035168555132611255,
+        "change_ci_high": 0.0012727840123606348,
         "change_significant": false
        },
        "DEAR": {
-        "ref_importance": 0.003897273717857551,
-        "test_importance": 0.003971294729653884,
-        "change": 7.402101179633351e-05,
-        "change_ci_low": -0.001242938739134018,
-        "change_ci_high": 0.0013459501965298489,
+        "ref_importance": 0.003929414621102098,
+        "test_importance": 0.00399148850181981,
+        "change": 6.207388071771246e-05,
+        "change_ci_low": -0.0013114040544381508,
+        "change_ci_high": 0.0013528584247167778,
         "change_significant": false
        },
        "DEYE": {
-        "ref_importance": 0.003252700064332984,
-        "test_importance": 0.0034749210880275663,
-        "change": 0.0002222210236945822,
-        "change_ci_low": -0.0004967874720078864,
-        "change_ci_high": 0.001010278616349004,
+        "ref_importance": 0.003256346038941562,
+        "test_importance": 0.003479094306312501,
+        "change": 0.0002227482673709388,
+        "change_ci_low": -0.0004914514043527829,
+        "change_ci_high": 0.001011034519755641,
         "change_significant": false
        },
        "DREM": {
-        "ref_importance": 0.007223313716574814,
-        "test_importance": 0.008197911584108538,
-        "change": 0.0009745978675337243,
-        "change_ci_low": -0.0011604292081336138,
-        "change_ci_high": 0.0032086902123090754,
+        "ref_importance": 0.007256301483889717,
+        "test_importance": 0.008230298312503034,
+        "change": 0.0009739968286133173,
+        "change_ci_low": -0.001198896227512728,
+        "change_ci_high": 0.00318920164963811,
         "change_significant": false
        },
        "SEX": {
-        "ref_importance": 0.059049590457262754,
-        "test_importance": 0.05881814711558315,
-        "change": -0.00023144334167960606,
-        "change_ci_low": -0.001430201547636233,
-        "change_ci_high": 0.0009112313376679659,
+        "ref_importance": 0.05914356492087153,
+        "test_importance": 0.05886335296247057,
+        "change": -0.00028021195840095825,
+        "change_ci_low": -0.001445287539751974,
+        "change_ci_high": 0.0008581464007322995,
         "change_significant": false
        },
        "RAC1P": {
-        "ref_importance": 0.010226207735717125,
-        "test_importance": 0.010393684084650348,
-        "change": 0.00016747634893322233,
-        "change_ci_low": -0.0009563734689462805,
-        "change_ci_high": 0.0013330314707514686,
+        "ref_importance": 0.010234975517129973,
+        "test_importance": 0.010384640806939696,
+        "change": 0.0001496652898097233,
+        "change_ci_low": -0.0009888059769981407,
+        "change_ci_high": 0.0013262386073314124,
         "change_significant": false
        }
       },
@@ -745,7 +761,7 @@
        ]
       }
      },
-     "execution_time_seconds": 208.42412996292114,
+     "execution_time_seconds": 57.573312520980835,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -863,7 +879,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.14459538459777832,
+     "execution_time_seconds": 0.036634206771850586,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -893,9 +909,9 @@
       "score": 0.0,
       "threshold": 0.05,
       "p_value": 0.5472636815920398,
-      "statistic": -4.289804144330667e-05,
+      "statistic": -4.289804144352871e-05,
       "metadata": {
-       "mmd2_unbiased": -4.289804144330667e-05,
+       "mmd2_unbiased": -4.289804144352871e-05,
        "kernel": "rbf",
        "gamma": 0.06449845128530803,
        "n_permutations": 200,
@@ -907,12 +923,13 @@
        "actual_test_samples": 3000,
        "n_numeric_features": 2,
        "n_categorical_features": 14,
-       "encoded_dimension": 86
+       "encoded_dimension": 86,
+       "device": "cuda"
       }
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 5.533591270446777,
+     "execution_time_seconds": 0.4833259582519531,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -983,7 +1000,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.08293414115905762,
+     "execution_time_seconds": 0.013021230697631836,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -1026,7 +1043,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.0629420280456543,
+     "execution_time_seconds": 0.013273954391479492,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -1065,7 +1082,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 132.81016206741333,
+     "execution_time_seconds": 1.0871403217315674,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -1089,8 +1106,8 @@
     }
    },
    "explanation_shift": {
-    "cosine_distance": 0.0006090797026166994,
-    "relative_l1_change": 0.03382405886394141
+    "cosine_distance": 0.0006037324846965841,
+    "relative_l1_change": 0.03398906651708865
    },
    "diagnosis": {
     "final": {
@@ -13284,14 +13301,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 208.424,
-    "PSI": 0.145,
-    "MMD": 5.534,
-    "CBPE": 0.083,
-    "BBSD": 0.063,
-    "Domain classifier": 132.81,
-    "reliability": 2.381,
-    "diagnosis": 17.775
+    "KS Test": 57.573,
+    "PSI": 0.037,
+    "MMD": 0.483,
+    "CBPE": 0.013,
+    "BBSD": 0.013,
+    "Domain classifier": 1.087,
+    "reliability": 0.519,
+    "diagnosis": 5.528
    }
   },
   "CA 2015": {
@@ -13680,192 +13697,192 @@
        "n_test_samples": 1000,
        "top_importance_changes": [
         [
-         "SCHL",
-         0.0006138010862388812
+         "RELP",
+         -0.0005483673830504188
         ],
         [
-         "RELP",
-         -0.0004816417439951204
+         "SCHL",
+         0.0005194743270759417
         ],
         [
          "ANC",
-         -6.104327423731015e-05
+         -6.168101568752946e-05
         ],
         [
          "AGEP",
-         -0.004642386829726619
+         -0.00459300078022179
         ],
         [
          "ESP",
-         0.0028216039680847155
+         0.002813753728692355
         ],
         [
          "MIG",
-         0.0016861339368160512
+         0.0017327777779551738
         ],
         [
          "DREM",
-         0.0014405368343470342
+         0.0014460842989804613
         ],
         [
          "MIL",
-         -0.0007496584725332281
+         -0.0007438668005769825
         ],
         [
          "CIT",
-         0.00069573168033258
+         0.0007129941998588653
         ],
         [
          "MAR",
-         -0.0004922864665844323
+         -0.0005400558342773185
         ]
        ]
       },
       "feature_importances": {
-       "AGEP": -0.004642386829726619,
-       "SCHL": 0.0006138010862388812,
-       "MAR": -0.0004922864665844323,
-       "RELP": -0.0004816417439951204,
-       "DIS": 0.00027035730163755406,
-       "ESP": 0.0028216039680847155,
-       "CIT": 0.00069573168033258,
-       "MIG": 0.0016861339368160512,
-       "MIL": -0.0007496584725332281,
-       "ANC": -6.104327423731015e-05,
-       "NATIVITY": 0.000472782919190555,
-       "DEAR": -3.716989422232822e-05,
-       "DEYE": 0.0001645263997043238,
-       "DREM": 0.0014405368343470342,
-       "SEX": -0.00020892333031930638,
-       "RAC1P": 0.0003783006578196198
+       "AGEP": -0.00459300078022179,
+       "SCHL": 0.0005194743270759417,
+       "MAR": -0.0005400558342773185,
+       "RELP": -0.0005483673830504188,
+       "DIS": 0.00022522513899651125,
+       "ESP": 0.002813753728692355,
+       "CIT": 0.0007129941998588653,
+       "MIG": 0.0017327777779551738,
+       "MIL": -0.0007438668005769825,
+       "ANC": -6.168101568752946e-05,
+       "NATIVITY": 0.0004930337747712475,
+       "DEAR": -5.245419975832702e-05,
+       "DEYE": 0.00018199127602192304,
+       "DREM": 0.0014460842989804613,
+       "SEX": -0.00018419413482839014,
+       "RAC1P": 0.0003665907173587817
       },
       "distribution_changes": {
        "AGEP": {
-        "ref_importance": 0.13644847609014468,
-        "test_importance": 0.13180608926041806,
-        "change": -0.004642386829726619,
-        "change_ci_low": -0.01532321412493336,
-        "change_ci_high": 0.006249517701276078,
+        "ref_importance": 0.13646604958195613,
+        "test_importance": 0.13187304880173434,
+        "change": -0.00459300078022179,
+        "change_ci_low": -0.015209056839159575,
+        "change_ci_high": 0.006254245863362417,
         "change_significant": false
        },
        "SCHL": {
-        "ref_importance": 0.03662997820994197,
-        "test_importance": 0.03724377929618085,
-        "change": 0.0006138010862388812,
-        "change_ci_low": -0.004146614328561261,
-        "change_ci_high": 0.005088220642656845,
+        "ref_importance": 0.03664798479755797,
+        "test_importance": 0.037167459124633914,
+        "change": 0.0005194743270759417,
+        "change_ci_low": -0.004187883512402224,
+        "change_ci_high": 0.00503649288915758,
         "change_significant": false
        },
        "MAR": {
-        "ref_importance": 0.033268668063217544,
-        "test_importance": 0.03277638159663311,
-        "change": -0.0004922864665844323,
-        "change_ci_low": -0.0029069894539584477,
-        "change_ci_high": 0.001965058737937962,
+        "ref_importance": 0.033330759463194366,
+        "test_importance": 0.03279070362891705,
+        "change": -0.0005400558342773185,
+        "change_ci_low": -0.0030285587046297914,
+        "change_ci_high": 0.0019463836589641225,
         "change_significant": false
        },
        "RELP": {
-        "ref_importance": 0.09902686720696795,
-        "test_importance": 0.09854522546297283,
-        "change": -0.0004816417439951204,
-        "change_ci_low": -0.010601575469481485,
-        "change_ci_high": 0.008874679961009782,
+        "ref_importance": 0.09907592323815688,
+        "test_importance": 0.09852755585510646,
+        "change": -0.0005483673830504188,
+        "change_ci_low": -0.010555147307210739,
+        "change_ci_high": 0.008904052709390107,
         "change_significant": false
        },
        "DIS": {
-        "ref_importance": 0.05988205912542091,
-        "test_importance": 0.060152416427058465,
-        "change": 0.00027035730163755406,
-        "change_ci_low": -0.007902813875912826,
-        "change_ci_high": 0.00889242953047754,
+        "ref_importance": 0.059948443975831094,
+        "test_importance": 0.060173669114827605,
+        "change": 0.00022522513899651125,
+        "change_ci_low": -0.007956093935846776,
+        "change_ci_high": 0.008973360530254838,
         "change_significant": false
        },
        "ESP": {
-        "ref_importance": 0.021320664465769096,
-        "test_importance": 0.024142268433853812,
-        "change": 0.0028216039680847155,
-        "change_ci_low": -0.005993714947772816,
-        "change_ci_high": 0.011425457823318302,
+        "ref_importance": 0.021250549067904245,
+        "test_importance": 0.0240643027965966,
+        "change": 0.002813753728692355,
+        "change_ci_low": -0.005964136274003638,
+        "change_ci_high": 0.011332337201769306,
         "change_significant": false
        },
        "CIT": {
-        "ref_importance": 0.010920273852400651,
-        "test_importance": 0.011616005532733231,
-        "change": 0.00069573168033258,
-        "change_ci_low": -0.0007170062600953005,
-        "change_ci_high": 0.0022310694230391784,
+        "ref_importance": 0.010916758093884028,
+        "test_importance": 0.011629752293742893,
+        "change": 0.0007129941998588653,
+        "change_ci_low": -0.0007203488084365073,
+        "change_ci_high": 0.0022557575157163287,
         "change_significant": false
        },
        "MIG": {
-        "ref_importance": 0.01000441078565225,
-        "test_importance": 0.011690544722468301,
-        "change": 0.0016861339368160512,
-        "change_ci_low": -0.0010652014415755261,
-        "change_ci_high": 0.004323481817734025,
+        "ref_importance": 0.009988894919490062,
+        "test_importance": 0.011721672697445236,
+        "change": 0.0017327777779551738,
+        "change_ci_low": -0.0010110803455390359,
+        "change_ci_high": 0.0043983161815057,
         "change_significant": false
        },
        "MIL": {
-        "ref_importance": 0.025106830043225534,
-        "test_importance": 0.024357171570692306,
-        "change": -0.0007496584725332281,
-        "change_ci_low": -0.006994271305442255,
-        "change_ci_high": 0.0055009770411267945,
+        "ref_importance": 0.02513649895236796,
+        "test_importance": 0.024392632151790977,
+        "change": -0.0007438668005769825,
+        "change_ci_low": -0.007089169151622145,
+        "change_ci_high": 0.005507700117466602,
         "change_significant": false
        },
        "ANC": {
-        "ref_importance": 0.00661773453593356,
-        "test_importance": 0.00655669126169625,
-        "change": -6.104327423731015e-05,
-        "change_ci_low": -0.00035089757683865293,
-        "change_ci_high": 0.00024390098072949617,
+        "ref_importance": 0.006624866940493742,
+        "test_importance": 0.0065631859248062125,
+        "change": -6.168101568752946e-05,
+        "change_ci_low": -0.00035280221386059415,
+        "change_ci_high": 0.0002425791556918244,
         "change_significant": false
        },
        "NATIVITY": {
-        "ref_importance": 0.009629870839610921,
-        "test_importance": 0.010102653758801476,
-        "change": 0.000472782919190555,
-        "change_ci_low": -0.0003356972386669945,
-        "change_ci_high": 0.001301987215589048,
+        "ref_importance": 0.009621519615739921,
+        "test_importance": 0.010114553390511169,
+        "change": 0.0004930337747712475,
+        "change_ci_low": -0.0003138983149790423,
+        "change_ci_high": 0.0013177392215307127,
         "change_significant": false
        },
        "DEAR": {
-        "ref_importance": 0.003910970274989071,
-        "test_importance": 0.003873800380766743,
-        "change": -3.716989422232822e-05,
-        "change_ci_low": -0.0014177159433331578,
-        "change_ci_high": 0.0013566941059321594,
+        "ref_importance": 0.003929414621102098,
+        "test_importance": 0.0038769604213437707,
+        "change": -5.245419975832702e-05,
+        "change_ci_low": -0.001459179568206448,
+        "change_ci_high": 0.0013447754299735605,
         "change_significant": false
        },
        "DEYE": {
-        "ref_importance": 0.0032614140719349,
-        "test_importance": 0.003425940471639224,
-        "change": 0.0001645263997043238,
-        "change_ci_low": -0.0006506352859055177,
-        "change_ci_high": 0.0009297059892007175,
+        "ref_importance": 0.003256346038941562,
+        "test_importance": 0.003438337314963485,
+        "change": 0.00018199127602192304,
+        "change_ci_low": -0.0006413218760507333,
+        "change_ci_high": 0.0009567754557273814,
         "change_significant": false
        },
        "DREM": {
-        "ref_importance": 0.007236391265864401,
-        "test_importance": 0.008676928100211435,
-        "change": 0.0014405368343470342,
-        "change_ci_low": -0.0010253972569685761,
-        "change_ci_high": 0.0037646767196378153,
+        "ref_importance": 0.007256301483889717,
+        "test_importance": 0.008702385782870178,
+        "change": 0.0014460842989804613,
+        "change_ci_low": -0.000997544140490916,
+        "change_ci_high": 0.003740891329412265,
         "change_significant": false
        },
        "SEX": {
-        "ref_importance": 0.059148023772482274,
-        "test_importance": 0.05893910044216297,
-        "change": -0.00020892333031930638,
-        "change_ci_low": -0.0013662501049313757,
-        "change_ci_high": 0.0010227979146642755,
+        "ref_importance": 0.05914356492087153,
+        "test_importance": 0.05895937078604314,
+        "change": -0.00018419413482839014,
+        "change_ci_low": -0.00134184940720776,
+        "change_ci_high": 0.0010057643371740915,
         "change_significant": false
        },
        "RAC1P": {
-        "ref_importance": 0.010236625387536752,
-        "test_importance": 0.010614926045356372,
-        "change": 0.0003783006578196198,
-        "change_ci_low": -0.0008190196538668033,
-        "change_ci_high": 0.0016512964481662632,
+        "ref_importance": 0.010234975517129973,
+        "test_importance": 0.010601566234488755,
+        "change": 0.0003665907173587817,
+        "change_ci_low": -0.0008162351770526869,
+        "change_ci_high": 0.001606472230660959,
         "change_significant": false
        }
       },
@@ -13886,7 +13903,7 @@
        ]
       }
      },
-     "execution_time_seconds": 241.78567695617676,
+     "execution_time_seconds": 54.461711406707764,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -14004,7 +14021,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.40097498893737793,
+     "execution_time_seconds": 0.09588623046875,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -14034,9 +14051,9 @@
       "score": 0.0,
       "threshold": 0.05,
       "p_value": 0.6666666666666666,
-      "statistic": -5.319494365974009e-05,
+      "statistic": -5.3194943659518046e-05,
       "metadata": {
-       "mmd2_unbiased": -5.319494365974009e-05,
+       "mmd2_unbiased": -5.3194943659518046e-05,
        "kernel": "rbf",
        "gamma": 0.06653484369644527,
        "n_permutations": 200,
@@ -14048,12 +14065,13 @@
        "actual_test_samples": 3000,
        "n_numeric_features": 2,
        "n_categorical_features": 14,
-       "encoded_dimension": 86
+       "encoded_dimension": 86,
+       "device": "cuda"
       }
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 6.5112624168396,
+     "execution_time_seconds": 0.5706160068511963,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -14124,7 +14142,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.29556751251220703,
+     "execution_time_seconds": 0.04118943214416504,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -14167,7 +14185,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.26510000228881836,
+     "execution_time_seconds": 0.04476046562194824,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -14206,7 +14224,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 129.16623997688293,
+     "execution_time_seconds": 1.019637107849121,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -14230,8 +14248,8 @@
     }
    },
    "explanation_shift": {
-    "cosine_distance": 0.00036619567628093375,
-    "relative_l1_change": 0.028568301875010093
+    "cosine_distance": 0.000359853295522794,
+    "relative_l1_change": 0.028556158986193132
    },
    "diagnosis": {
     "final": {
@@ -26437,14 +26455,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 241.786,
-    "PSI": 0.401,
-    "MMD": 6.511,
-    "CBPE": 0.296,
-    "BBSD": 0.267,
-    "Domain classifier": 129.166,
-    "reliability": 11.621,
-    "diagnosis": 19.448
+    "KS Test": 54.462,
+    "PSI": 0.096,
+    "MMD": 0.571,
+    "CBPE": 0.041,
+    "BBSD": 0.045,
+    "Domain classifier": 1.02,
+    "reliability": 2.759,
+    "diagnosis": 6.211
    }
   },
   "CA 2016": {
@@ -26838,191 +26856,191 @@
        "top_importance_changes": [
         [
          "MIL",
-         -0.0027689130966187282
+         -0.002810606095438064
         ],
         [
          "AGEP",
-         0.0025474979546739884
-        ],
-        [
-         "RAC1P",
-         0.0007254364882299021
+         0.00259358882324065
         ],
         [
          "SCHL",
-         0.0007064437166810558
+         0.0007502054977416295
         ],
         [
-         "MIG",
-         0.00037298325391908055
+         "RAC1P",
+         0.0007268423284827168
         ],
         [
          "CIT",
-         0.0003689785743977679
+         0.0003697584998274654
+        ],
+        [
+         "MIG",
+         0.00035287420023532093
         ],
         [
          "ANC",
-         -6.443062584028745e-05
+         -5.125864663258102e-05
         ],
         [
          "ESP",
-         -0.0037493921510326177
+         -0.0036691003789136416
         ],
         [
          "RELP",
-         0.0031687463224730067
+         0.0032306638139437682
         ],
         [
          "DIS",
-         -0.003072878375804805
+         -0.003001736420669192
         ]
        ]
       },
       "feature_importances": {
-       "AGEP": 0.0025474979546739884,
-       "SCHL": 0.0007064437166810558,
-       "MAR": 7.313851529414106e-05,
-       "RELP": 0.0031687463224730067,
-       "DIS": -0.003072878375804805,
-       "ESP": -0.0037493921510326177,
-       "CIT": 0.0003689785743977679,
-       "MIG": 0.00037298325391908055,
-       "MIL": -0.0027689130966187282,
-       "ANC": -6.443062584028745e-05,
-       "NATIVITY": 0.0003180226828080959,
-       "DEAR": 0.0001430679892432717,
-       "DEYE": -5.865417778476694e-05,
-       "DREM": 0.0017798172065383979,
-       "SEX": -0.0002471052778048391,
-       "RAC1P": 0.0007254364882299021
+       "AGEP": 0.00259358882324065,
+       "SCHL": 0.0007502054977416295,
+       "MAR": 0.0001383174115603611,
+       "RELP": 0.0032306638139437682,
+       "DIS": -0.003001736420669192,
+       "ESP": -0.0036691003789136416,
+       "CIT": 0.0003697584998274654,
+       "MIG": 0.00035287420023532093,
+       "MIL": -0.002810606095438064,
+       "ANC": -5.125864663258102e-05,
+       "NATIVITY": 0.00033033382673383453,
+       "DEAR": 0.00013213051990925567,
+       "DEYE": -5.534025613670177e-05,
+       "DREM": 0.0017526967790836715,
+       "SEX": -7.652319198713647e-05,
+       "RAC1P": 0.0007268423284827168
       },
       "distribution_changes": {
        "AGEP": {
-        "ref_importance": 0.1365864598815446,
-        "test_importance": 0.1391339578362186,
-        "change": 0.0025474979546739884,
-        "change_ci_low": -0.0073419502767127715,
-        "change_ci_high": 0.01260190151273457,
+        "ref_importance": 0.13646604958195613,
+        "test_importance": 0.13905963840519678,
+        "change": 0.00259358882324065,
+        "change_ci_low": -0.00719595492530563,
+        "change_ci_high": 0.012814285427549251,
         "change_significant": false
        },
        "SCHL": {
-        "ref_importance": 0.03669756581454318,
-        "test_importance": 0.03740400953122423,
-        "change": 0.0007064437166810558,
-        "change_ci_low": -0.005087196178562982,
-        "change_ci_high": 0.005464359796723218,
+        "ref_importance": 0.03664798479755797,
+        "test_importance": 0.0373981902952996,
+        "change": 0.0007502054977416295,
+        "change_ci_low": -0.005016646401091222,
+        "change_ci_high": 0.005460366281114215,
         "change_significant": false
        },
        "MAR": {
-        "ref_importance": 0.03335770348859722,
-        "test_importance": 0.03343084200389136,
-        "change": 7.313851529414106e-05,
-        "change_ci_low": -0.0024346753217285226,
-        "change_ci_high": 0.0026918898169152935,
+        "ref_importance": 0.033330759463194366,
+        "test_importance": 0.03346907687475473,
+        "change": 0.0001383174115603611,
+        "change_ci_low": -0.0024516365040530477,
+        "change_ci_high": 0.002771597176579114,
         "change_significant": false
        },
        "RELP": {
-        "ref_importance": 0.09907085578997614,
-        "test_importance": 0.10223960211244915,
-        "change": 0.0031687463224730067,
-        "change_ci_low": -0.00682720708828204,
-        "change_ci_high": 0.013851042036583355,
+        "ref_importance": 0.09907592323815688,
+        "test_importance": 0.10230658705210065,
+        "change": 0.0032306638139437682,
+        "change_ci_low": -0.006816474588524079,
+        "change_ci_high": 0.01381498612621484,
         "change_significant": false
        },
        "DIS": {
-        "ref_importance": 0.05993366508214223,
-        "test_importance": 0.05686078670633742,
-        "change": -0.003072878375804805,
-        "change_ci_low": -0.011395811343584632,
-        "change_ci_high": 0.004419947340352204,
+        "ref_importance": 0.059948443975831094,
+        "test_importance": 0.0569467075551619,
+        "change": -0.003001736420669192,
+        "change_ci_low": -0.011391883056832214,
+        "change_ci_high": 0.004492452826990553,
         "change_significant": false
        },
        "ESP": {
-        "ref_importance": 0.021318862734272855,
-        "test_importance": 0.017569470583240238,
-        "change": -0.0037493921510326177,
-        "change_ci_low": -0.01060273971997099,
-        "change_ci_high": 0.0029001236294884263,
+        "ref_importance": 0.021250549067904245,
+        "test_importance": 0.017581448688990604,
+        "change": -0.0036691003789136416,
+        "change_ci_low": -0.010487074232757127,
+        "change_ci_high": 0.0029662708836613134,
         "change_significant": false
        },
        "CIT": {
-        "ref_importance": 0.0109263321150426,
-        "test_importance": 0.011295310689440369,
-        "change": 0.0003689785743977679,
-        "change_ci_low": -0.0009508896814826469,
-        "change_ci_high": 0.0018254442378624473,
+        "ref_importance": 0.010916758093884028,
+        "test_importance": 0.011286516593711493,
+        "change": 0.0003697584998274654,
+        "change_ci_low": -0.0009318569785042969,
+        "change_ci_high": 0.0018337181045908753,
         "change_significant": false
        },
        "MIG": {
-        "ref_importance": 0.009977573151826676,
-        "test_importance": 0.010350556405745757,
-        "change": 0.00037298325391908055,
-        "change_ci_low": -0.0018286378743613857,
-        "change_ci_high": 0.0024603460221093347,
+        "ref_importance": 0.009988894919490062,
+        "test_importance": 0.010341769119725383,
+        "change": 0.00035287420023532093,
+        "change_ci_low": -0.001868612883666084,
+        "change_ci_high": 0.002421902131338569,
         "change_significant": false
        },
        "MIL": {
-        "ref_importance": 0.02510468217392535,
-        "test_importance": 0.02233576907730662,
-        "change": -0.0027689130966187282,
-        "change_ci_low": -0.009196659121053235,
-        "change_ci_high": 0.003994034226929703,
+        "ref_importance": 0.02513649895236796,
+        "test_importance": 0.022325892856929895,
+        "change": -0.002810606095438064,
+        "change_ci_low": -0.00928046499839718,
+        "change_ci_high": 0.003917053712008711,
         "change_significant": false
        },
        "ANC": {
-        "ref_importance": 0.0066233845483539685,
-        "test_importance": 0.006558953922513681,
-        "change": -6.443062584028745e-05,
-        "change_ci_low": -0.0003287334923046644,
-        "change_ci_high": 0.00021441568344574225,
+        "ref_importance": 0.006624866940493742,
+        "test_importance": 0.006573608293861161,
+        "change": -5.125864663258102e-05,
+        "change_ci_low": -0.0003211722976825193,
+        "change_ci_high": 0.00024122339608835766,
         "change_significant": false
        },
        "NATIVITY": {
-        "ref_importance": 0.009634564886611553,
-        "test_importance": 0.00995258756941965,
-        "change": 0.0003180226828080959,
-        "change_ci_low": -0.0004629561951871586,
-        "change_ci_high": 0.0011098415363362908,
+        "ref_importance": 0.009621519615739921,
+        "test_importance": 0.009951853442473756,
+        "change": 0.00033033382673383453,
+        "change_ci_low": -0.0004472364549146351,
+        "change_ci_high": 0.0011249442410129233,
         "change_significant": false
        },
        "DEAR": {
-        "ref_importance": 0.003923028755039206,
-        "test_importance": 0.004066096744282478,
-        "change": 0.0001430679892432717,
-        "change_ci_low": -0.0013363747231586523,
-        "change_ci_high": 0.0016183920727524718,
+        "ref_importance": 0.003929414621102098,
+        "test_importance": 0.004061545141011353,
+        "change": 0.00013213051990925567,
+        "change_ci_low": -0.0013666905416175811,
+        "change_ci_high": 0.0015955758217739136,
         "change_significant": false
        },
        "DEYE": {
-        "ref_importance": 0.0032587566558254354,
-        "test_importance": 0.0032001024780406685,
-        "change": -5.865417778476694e-05,
-        "change_ci_low": -0.0007896156646678496,
-        "change_ci_high": 0.0006412107856015722,
+        "ref_importance": 0.003256346038941562,
+        "test_importance": 0.0032010057828048603,
+        "change": -5.534025613670177e-05,
+        "change_ci_low": -0.000787355515159033,
+        "change_ci_high": 0.0006493746044247204,
         "change_significant": false
        },
        "DREM": {
-        "ref_importance": 0.007243135773176752,
-        "test_importance": 0.00902295297971515,
-        "change": 0.0017798172065383979,
-        "change_ci_low": -0.0004407487935528331,
-        "change_ci_high": 0.004146982245169753,
+        "ref_importance": 0.007256301483889717,
+        "test_importance": 0.009008998262973389,
+        "change": 0.0017526967790836715,
+        "change_ci_low": -0.00044196630916729015,
+        "change_ci_high": 0.004068888173220705,
         "change_significant": false
        },
        "SEX": {
-        "ref_importance": 0.05925201997904287,
-        "test_importance": 0.05900491470123803,
-        "change": -0.0002471052778048391,
-        "change_ci_low": -0.0014975083422495692,
-        "change_ci_high": 0.0009746714887807173,
+        "ref_importance": 0.05914356492087153,
+        "test_importance": 0.05906704172888439,
+        "change": -7.652319198713647e-05,
+        "change_ci_low": -0.0012710955050746382,
+        "change_ci_high": 0.0011353152079599004,
         "change_significant": false
        },
        "RAC1P": {
-        "ref_importance": 0.010240812283717602,
-        "test_importance": 0.010966248771947504,
-        "change": 0.0007254364882299021,
-        "change_ci_low": -0.0004465327278979781,
-        "change_ci_high": 0.0019771892211483447,
+        "ref_importance": 0.010234975517129973,
+        "test_importance": 0.01096181784561269,
+        "change": 0.0007268423284827168,
+        "change_ci_low": -0.00042698594939934685,
+        "change_ci_high": 0.0019821581180366216,
         "change_significant": false
        }
       },
@@ -27047,7 +27065,7 @@
        ]
       }
      },
-     "execution_time_seconds": 242.5758192539215,
+     "execution_time_seconds": 54.3747673034668,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -27165,7 +27183,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.27675628662109375,
+     "execution_time_seconds": 0.09552168846130371,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -27192,12 +27210,12 @@
       "detector_name": "mmd",
       "drift_detected": true,
       "severity": "medium",
-      "score": 0.016093290690222042,
+      "score": 0.016093290690215145,
       "threshold": 0.05,
       "p_value": 0.009950248756218905,
-      "statistic": 0.0002589940052399875,
+      "statistic": 0.00025899400523976546,
       "metadata": {
-       "mmd2_unbiased": 0.0002589940052399875,
+       "mmd2_unbiased": 0.00025899400523976546,
        "kernel": "rbf",
        "gamma": 0.06745723946650813,
        "n_permutations": 200,
@@ -27209,12 +27227,13 @@
        "actual_test_samples": 3000,
        "n_numeric_features": 2,
        "n_categorical_features": 14,
-       "encoded_dimension": 86
+       "encoded_dimension": 86,
+       "device": "cuda"
       }
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 5.803138732910156,
+     "execution_time_seconds": 0.578620433807373,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -27285,7 +27304,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.24398422241210938,
+     "execution_time_seconds": 0.042635440826416016,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -27328,7 +27347,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.22266745567321777,
+     "execution_time_seconds": 0.04602670669555664,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -27367,7 +27386,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 134.1765537261963,
+     "execution_time_seconds": 1.2312259674072266,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -27391,8 +27410,8 @@
     }
    },
    "explanation_shift": {
-    "cosine_distance": 0.0006039623340962086,
-    "relative_l1_change": 0.03782336863058734
+    "cosine_distance": 0.0005932303488114243,
+    "relative_l1_change": 0.037614285796135884
    },
    "diagnosis": {
     "final": {
@@ -39618,14 +39637,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 242.576,
-    "PSI": 0.277,
-    "MMD": 5.803,
-    "CBPE": 0.244,
-    "BBSD": 0.223,
-    "Domain classifier": 134.177,
-    "reliability": 9.224,
-    "diagnosis": 19.368
+    "KS Test": 54.375,
+    "PSI": 0.096,
+    "MMD": 0.579,
+    "CBPE": 0.043,
+    "BBSD": 0.046,
+    "Domain classifier": 1.231,
+    "reliability": 2.799,
+    "diagnosis": 6.039
    }
   },
   "CA 2017": {
@@ -40021,191 +40040,191 @@
        "top_importance_changes": [
         [
          "RELP",
-         0.005615317222369562
+         0.00549022851719036
         ],
         [
          "MIL",
-         -0.0029398490855778135
+         -0.002932456969871749
         ],
         [
          "MIG",
-         0.0019811859280311536
+         0.001976994160043457
         ],
         [
          "SCHL",
-         -0.0011156578886332424
-        ],
-        [
-         "CIT",
-         0.0008715007693096272
+         -0.0011232583361623777
         ],
         [
          "AGEP",
-         0.0007822527685026337
+         0.0009276098292561319
+        ],
+        [
+         "CIT",
+         0.0008857683503406769
         ],
         [
          "RAC1P",
-         0.0007245781069871431
+         0.0007249006422263386
         ],
         [
          "MAR",
-         0.00017966381244070156
+         0.0001950152506168673
         ],
         [
          "ANC",
-         4.553317825418436e-05
+         5.817682275226568e-05
         ],
         [
          "ESP",
-         0.0019514242796015435
+         0.001989789677891707
         ]
        ]
       },
       "feature_importances": {
-       "AGEP": 0.0007822527685026337,
-       "SCHL": -0.0011156578886332424,
-       "MAR": 0.00017966381244070156,
-       "RELP": 0.005615317222369562,
-       "DIS": -0.0012504984230179012,
-       "ESP": 0.0019514242796015435,
-       "CIT": 0.0008715007693096272,
-       "MIG": 0.0019811859280311536,
-       "MIL": -0.0029398490855778135,
-       "ANC": 4.553317825418436e-05,
-       "NATIVITY": 0.00045189609442470094,
-       "DEAR": 5.974664324600275e-05,
-       "DEYE": -9.08478268562044e-05,
-       "DREM": 0.0015575780591859005,
-       "SEX": -0.00046271514473649605,
-       "RAC1P": 0.0007245781069871431
+       "AGEP": 0.0009276098292561319,
+       "SCHL": -0.0011232583361623777,
+       "MAR": 0.0001950152506168673,
+       "RELP": 0.00549022851719036,
+       "DIS": -0.0013931238878638272,
+       "ESP": 0.001989789677891707,
+       "CIT": 0.0008857683503406769,
+       "MIG": 0.001976994160043457,
+       "MIL": -0.002932456969871749,
+       "ANC": 5.817682275226568e-05,
+       "NATIVITY": 0.00044924984716193314,
+       "DEAR": 2.3591657497491238e-05,
+       "DEYE": -9.597784675553474e-05,
+       "DREM": 0.001517464631287325,
+       "SEX": -0.00045200118290313757,
+       "RAC1P": 0.0007249006422263386
       },
       "distribution_changes": {
        "AGEP": {
-        "ref_importance": 0.13658820572447145,
-        "test_importance": 0.13737045849297408,
-        "change": 0.0007822527685026337,
-        "change_ci_low": -0.009854424475709035,
-        "change_ci_high": 0.011165551791953379,
+        "ref_importance": 0.13646604958195613,
+        "test_importance": 0.13739365941121226,
+        "change": 0.0009276098292561319,
+        "change_ci_low": -0.009819175338819925,
+        "change_ci_high": 0.011260795958562836,
         "change_significant": false
        },
        "SCHL": {
-        "ref_importance": 0.03667054406220327,
-        "test_importance": 0.03555488617357003,
-        "change": -0.0011156578886332424,
-        "change_ci_low": -0.005728096741032854,
-        "change_ci_high": 0.003440763400455524,
+        "ref_importance": 0.03664798479755797,
+        "test_importance": 0.035524726461395595,
+        "change": -0.0011232583361623777,
+        "change_ci_low": -0.005766267481758709,
+        "change_ci_high": 0.003454277811265616,
         "change_significant": false
        },
        "MAR": {
-        "ref_importance": 0.03332188408746369,
-        "test_importance": 0.033501547899904394,
-        "change": 0.00017966381244070156,
-        "change_ci_low": -0.002024491433061314,
-        "change_ci_high": 0.002633478300533736,
+        "ref_importance": 0.033330759463194366,
+        "test_importance": 0.033525774713811234,
+        "change": 0.0001950152506168673,
+        "change_ci_low": -0.002031817311974791,
+        "change_ci_high": 0.0026942723490903575,
         "change_significant": false
        },
        "RELP": {
-        "ref_importance": 0.0988926075557793,
-        "test_importance": 0.10450792477814887,
-        "change": 0.005615317222369562,
-        "change_ci_low": -0.003633947400704284,
-        "change_ci_high": 0.01523412209576118,
+        "ref_importance": 0.09907592323815688,
+        "test_importance": 0.10456615175534724,
+        "change": 0.00549022851719036,
+        "change_ci_low": -0.0038721509012731837,
+        "change_ci_high": 0.015120922425811452,
         "change_significant": false
        },
        "DIS": {
-        "ref_importance": 0.05988240637327665,
-        "test_importance": 0.05863190795025875,
-        "change": -0.0012504984230179012,
-        "change_ci_low": -0.009627291578224216,
-        "change_ci_high": 0.006397048572414426,
+        "ref_importance": 0.059948443975831094,
+        "test_importance": 0.058555320087967266,
+        "change": -0.0013931238878638272,
+        "change_ci_low": -0.00974956959010696,
+        "change_ci_high": 0.006253312053045363,
         "change_significant": false
        },
        "ESP": {
-        "ref_importance": 0.02129152653085264,
-        "test_importance": 0.023242950810454185,
-        "change": 0.0019514242796015435,
-        "change_ci_low": -0.005957328759752258,
-        "change_ci_high": 0.010579497697598505,
+        "ref_importance": 0.021250549067904245,
+        "test_importance": 0.023240338745795952,
+        "change": 0.001989789677891707,
+        "change_ci_low": -0.005883220951964568,
+        "change_ci_high": 0.010596349337366013,
         "change_significant": false
        },
        "CIT": {
-        "ref_importance": 0.010923164486779876,
-        "test_importance": 0.011794665256089503,
-        "change": 0.0008715007693096272,
-        "change_ci_low": -0.0007591886438172999,
-        "change_ci_high": 0.002378631740554789,
+        "ref_importance": 0.010916758093884028,
+        "test_importance": 0.011802526444224705,
+        "change": 0.0008857683503406769,
+        "change_ci_low": -0.000745009994263158,
+        "change_ci_high": 0.002395177068644447,
         "change_significant": false
        },
        "MIG": {
-        "ref_importance": 0.009978798606256747,
-        "test_importance": 0.0119599845342879,
-        "change": 0.0019811859280311536,
-        "change_ci_low": -0.0006493558529860317,
-        "change_ci_high": 0.004575089115356001,
+        "ref_importance": 0.009988894919490062,
+        "test_importance": 0.011965889079533519,
+        "change": 0.001976994160043457,
+        "change_ci_low": -0.0006470070228849583,
+        "change_ci_high": 0.00459965702443354,
         "change_significant": false
        },
        "MIL": {
-        "ref_importance": 0.025155801025174132,
-        "test_importance": 0.02221595193959632,
-        "change": -0.0029398490855778135,
-        "change_ci_low": -0.009279989344920053,
-        "change_ci_high": 0.003302069608060376,
+        "ref_importance": 0.02513649895236796,
+        "test_importance": 0.02220404198249621,
+        "change": -0.002932456969871749,
+        "change_ci_low": -0.009264159102326041,
+        "change_ci_high": 0.0031985074453501376,
         "change_significant": false
        },
        "ANC": {
-        "ref_importance": 0.006630754320971119,
-        "test_importance": 0.006676287499225303,
-        "change": 4.553317825418436e-05,
-        "change_ci_low": -0.0002448553696622616,
-        "change_ci_high": 0.0003275421179374173,
+        "ref_importance": 0.006624866940493742,
+        "test_importance": 0.006683043763246008,
+        "change": 5.817682275226568e-05,
+        "change_ci_low": -0.00023579672391489887,
+        "change_ci_high": 0.00033888318621632437,
         "change_significant": false
        },
        "NATIVITY": {
-        "ref_importance": 0.009628304396010246,
-        "test_importance": 0.010080200490434947,
-        "change": 0.00045189609442470094,
-        "change_ci_low": -0.0004181731927478753,
-        "change_ci_high": 0.0012858350414829596,
+        "ref_importance": 0.009621519615739921,
+        "test_importance": 0.010070769462901854,
+        "change": 0.00044924984716193314,
+        "change_ci_low": -0.00041607256948483946,
+        "change_ci_high": 0.001272404411657067,
         "change_significant": false
        },
        "DEAR": {
-        "ref_importance": 0.003921312023009192,
-        "test_importance": 0.003981058666255195,
-        "change": 5.974664324600275e-05,
-        "change_ci_low": -0.0013197144941052336,
-        "change_ci_high": 0.0014536865508718985,
+        "ref_importance": 0.003929414621102098,
+        "test_importance": 0.003953006278599589,
+        "change": 2.3591657497491238e-05,
+        "change_ci_low": -0.0013901779960162222,
+        "change_ci_high": 0.001428733029829342,
         "change_significant": false
        },
        "DEYE": {
-        "ref_importance": 0.003260007990821725,
-        "test_importance": 0.0031691601639655207,
-        "change": -9.08478268562044e-05,
-        "change_ci_low": -0.0007675398305301631,
-        "change_ci_high": 0.0005799315833861744,
+        "ref_importance": 0.003256346038941562,
+        "test_importance": 0.0031603681921860273,
+        "change": -9.597784675553474e-05,
+        "change_ci_low": -0.000779919280881388,
+        "change_ci_high": 0.0005662138667099204,
         "change_significant": false
        },
        "DREM": {
-        "ref_importance": 0.007230161825793048,
-        "test_importance": 0.008787739884978949,
-        "change": 0.0015575780591859005,
-        "change_ci_low": -0.0006415723374730487,
-        "change_ci_high": 0.004043003548283516,
+        "ref_importance": 0.007256301483889717,
+        "test_importance": 0.008773766115177042,
+        "change": 0.001517464631287325,
+        "change_ci_low": -0.0007086217913235807,
+        "change_ci_high": 0.0040041903026386775,
         "change_significant": false
        },
        "SEX": {
-        "ref_importance": 0.05918016469635663,
-        "test_importance": 0.058717449551620136,
-        "change": -0.00046271514473649605,
-        "change_ci_low": -0.0015554985115261387,
-        "change_ci_high": 0.0006191053831225462,
+        "ref_importance": 0.05914356492087153,
+        "test_importance": 0.05869156373796839,
+        "change": -0.00045200118290313757,
+        "change_ci_low": -0.0015792388619485782,
+        "change_ci_high": 0.0006193578980580169,
         "change_significant": false
        },
        "RAC1P": {
-        "ref_importance": 0.010234968599864218,
-        "test_importance": 0.010959546706851361,
-        "change": 0.0007245781069871431,
-        "change_ci_low": -0.0004888135566638829,
-        "change_ci_high": 0.001973120271321613,
+        "ref_importance": 0.010234975517129973,
+        "test_importance": 0.010959876159356311,
+        "change": 0.0007249006422263386,
+        "change_ci_low": -0.00049660886055142,
+        "change_ci_high": 0.0019747746132261997,
         "change_significant": false
        }
       },
@@ -40232,7 +40251,7 @@
        ]
       }
      },
-     "execution_time_seconds": 228.3178369998932,
+     "execution_time_seconds": 54.56074333190918,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -40350,7 +40369,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.3870084285736084,
+     "execution_time_seconds": 0.09607720375061035,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -40377,12 +40396,12 @@
       "detector_name": "mmd",
       "drift_detected": true,
       "severity": "medium",
-      "score": 0.01872863490142661,
+      "score": 0.018728634901438466,
       "threshold": 0.05,
       "p_value": 0.009950248756218905,
-      "statistic": 0.00035076176527093494,
+      "statistic": 0.00035076176527137903,
       "metadata": {
-       "mmd2_unbiased": 0.00035076176527093494,
+       "mmd2_unbiased": 0.00035076176527137903,
        "kernel": "rbf",
        "gamma": 0.06635039767603645,
        "n_permutations": 200,
@@ -40394,12 +40413,13 @@
        "actual_test_samples": 3000,
        "n_numeric_features": 2,
        "n_categorical_features": 14,
-       "encoded_dimension": 86
+       "encoded_dimension": 86,
+       "device": "cuda"
       }
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 6.244098663330078,
+     "execution_time_seconds": 0.5767736434936523,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -40470,7 +40490,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.12430119514465332,
+     "execution_time_seconds": 0.042830467224121094,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -40513,7 +40533,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.11198711395263672,
+     "execution_time_seconds": 0.04635930061340332,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -40552,7 +40572,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 138.644873380661,
+     "execution_time_seconds": 1.2751317024230957,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -40576,8 +40596,8 @@
     }
    },
    "explanation_shift": {
-    "cosine_distance": 0.0005891315810696574,
-    "relative_l1_change": 0.03768881201622329
+    "cosine_distance": 0.0005792540736958562,
+    "relative_l1_change": 0.03797768751291369
    },
    "diagnosis": {
     "final": {
@@ -52811,14 +52831,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 228.318,
-    "PSI": 0.387,
-    "MMD": 6.244,
-    "CBPE": 0.124,
-    "BBSD": 0.112,
-    "Domain classifier": 138.645,
-    "reliability": 9.249,
-    "diagnosis": 17.364
+    "KS Test": 54.561,
+    "PSI": 0.096,
+    "MMD": 0.577,
+    "CBPE": 0.043,
+    "BBSD": 0.046,
+    "Domain classifier": 1.275,
+    "reliability": 2.781,
+    "diagnosis": 6.495
    }
   },
   "CA 2018": {
@@ -53215,191 +53235,191 @@
        "top_importance_changes": [
         [
          "ESP",
-         -0.0053245684018979195
+         -0.005158022331929864
         ],
         [
          "RELP",
-         0.0032528877699497666
+         0.003264348150580576
         ],
         [
          "MIL",
-         -0.0016381583011497308
+         -0.001706294196173977
         ],
         [
          "MIG",
-         0.0014736871253173706
+         0.0014672467802670716
         ],
         [
          "MAR",
-         -0.0008349125500306045
+         -0.0008476427903946621
         ],
         [
          "SCHL",
-         0.0002988799256226707
+         0.0003450024616257208
         ],
         [
          "RAC1P",
-         -0.00014653588670821525
-        ],
-        [
-         "CIT",
-         -1.8980549533363297e-05
-        ],
-        [
-         "ANC",
-         -8.028004189471888e-06
+         -0.000136979316636315
         ],
         [
          "AGEP",
-         -4.394069750723872e-06
+         7.07611222045268e-05
+        ],
+        [
+         "ANC",
+         -1.144706055062044e-05
+        ],
+        [
+         "CIT",
+         -2.6136968630952745e-06
         ]
        ]
       },
       "feature_importances": {
-       "AGEP": -4.394069750723872e-06,
-       "SCHL": 0.0002988799256226707,
-       "MAR": -0.0008349125500306045,
-       "RELP": 0.0032528877699497666,
-       "DIS": -0.0010059474663882684,
-       "ESP": -0.0053245684018979195,
-       "CIT": -1.8980549533363297e-05,
-       "MIG": 0.0014736871253173706,
-       "MIL": -0.0016381583011497308,
-       "ANC": -8.028004189471888e-06,
-       "NATIVITY": 2.0226832314515844e-05,
-       "DEAR": 2.66007493061075e-05,
-       "DEYE": -0.00017979463855594255,
-       "DREM": 0.0014051678682933588,
-       "SEX": -0.00020846283438293728,
-       "RAC1P": -0.00014653588670821525
+       "AGEP": 7.07611222045268e-05,
+       "SCHL": 0.0003450024616257208,
+       "MAR": -0.0008476427903946621,
+       "RELP": 0.003264348150580576,
+       "DIS": -0.000988047336569764,
+       "ESP": -0.005158022331929864,
+       "CIT": -2.6136968630952745e-06,
+       "MIG": 0.0014672467802670716,
+       "MIL": -0.001706294196173977,
+       "ANC": -1.144706055062044e-05,
+       "NATIVITY": 1.170360835203027e-05,
+       "DEAR": 2.6813313688776007e-05,
+       "DEYE": -0.00018596694773769223,
+       "DREM": 0.0013239308855081079,
+       "SEX": -0.0002043494103664903,
+       "RAC1P": -0.000136979316636315
       },
       "distribution_changes": {
        "AGEP": {
-        "ref_importance": 0.13652739575248224,
-        "test_importance": 0.13652300168273152,
-        "change": -4.394069750723872e-06,
-        "change_ci_low": -0.0104134468775866,
-        "change_ci_high": 0.010205848691973142,
+        "ref_importance": 0.13646604958195613,
+        "test_importance": 0.13653681070416065,
+        "change": 7.07611222045268e-05,
+        "change_ci_low": -0.01029074466394669,
+        "change_ci_high": 0.01024150685202653,
         "change_significant": false
        },
        "SCHL": {
-        "ref_importance": 0.03665307631715648,
-        "test_importance": 0.03695195624277915,
-        "change": 0.0002988799256226707,
-        "change_ci_low": -0.003906965714325271,
-        "change_ci_high": 0.004802827121315159,
+        "ref_importance": 0.03664798479755797,
+        "test_importance": 0.03699298725918369,
+        "change": 0.0003450024616257208,
+        "change_ci_low": -0.0038585441866822957,
+        "change_ci_high": 0.004858443136682257,
         "change_significant": false
        },
        "MAR": {
-        "ref_importance": 0.0332896965110826,
-        "test_importance": 0.032454783961051996,
-        "change": -0.0008349125500306045,
-        "change_ci_low": -0.003320925938996926,
-        "change_ci_high": 0.0016453279356439877,
+        "ref_importance": 0.033330759463194366,
+        "test_importance": 0.032483116672799704,
+        "change": -0.0008476427903946621,
+        "change_ci_low": -0.003352844975064212,
+        "change_ci_high": 0.0016840319085204363,
         "change_significant": false
        },
        "RELP": {
-        "ref_importance": 0.09892394964583061,
-        "test_importance": 0.10217683741578037,
-        "change": 0.0032528877699497666,
-        "change_ci_low": -0.00605677333975876,
-        "change_ci_high": 0.013411085443520489,
+        "ref_importance": 0.09907592323815688,
+        "test_importance": 0.10234027138873746,
+        "change": 0.003264348150580576,
+        "change_ci_low": -0.006078442141118871,
+        "change_ci_high": 0.013451571955455089,
         "change_significant": false
        },
        "DIS": {
-        "ref_importance": 0.059885575465813384,
-        "test_importance": 0.058879627999425116,
-        "change": -0.0010059474663882684,
-        "change_ci_low": -0.008407802330330418,
-        "change_ci_high": 0.007739963141685721,
+        "ref_importance": 0.059948443975831094,
+        "test_importance": 0.05896039663926133,
+        "change": -0.000988047336569764,
+        "change_ci_low": -0.00838085992506506,
+        "change_ci_high": 0.007646956035886921,
         "change_significant": false
        },
        "ESP": {
-        "ref_importance": 0.02134782456024705,
-        "test_importance": 0.016023256158349132,
-        "change": -0.0053245684018979195,
-        "change_ci_low": -0.01184511957641093,
-        "change_ci_high": 0.0012558069384685743,
+        "ref_importance": 0.021250549067904245,
+        "test_importance": 0.01609252673597438,
+        "change": -0.005158022331929864,
+        "change_ci_low": -0.011735376242052623,
+        "change_ci_high": 0.0014027742058646882,
         "change_significant": false
        },
        "CIT": {
-        "ref_importance": 0.010927793589660667,
-        "test_importance": 0.010908813040127304,
-        "change": -1.8980549533363297e-05,
-        "change_ci_low": -0.0015794250848609381,
-        "change_ci_high": 0.0014807256747594348,
+        "ref_importance": 0.010916758093884028,
+        "test_importance": 0.010914144397020932,
+        "change": -2.6136968630952745e-06,
+        "change_ci_low": -0.0015586032219596752,
+        "change_ci_high": 0.0014982133808671635,
         "change_significant": false
        },
        "MIG": {
-        "ref_importance": 0.009994650719947136,
-        "test_importance": 0.011468337845264506,
-        "change": 0.0014736871253173706,
-        "change_ci_low": -0.0009907868061919524,
-        "change_ci_high": 0.003953574149009409,
+        "ref_importance": 0.009988894919490062,
+        "test_importance": 0.011456141699757134,
+        "change": 0.0014672467802670716,
+        "change_ci_low": -0.0010417356079578514,
+        "change_ci_high": 0.003958141715701911,
         "change_significant": false
        },
        "MIL": {
-        "ref_importance": 0.02512044416899455,
-        "test_importance": 0.02348228586784482,
-        "change": -0.0016381583011497308,
-        "change_ci_low": -0.00785399828260597,
-        "change_ci_high": 0.004932270028564019,
+        "ref_importance": 0.02513649895236796,
+        "test_importance": 0.023430204756193982,
+        "change": -0.001706294196173977,
+        "change_ci_low": -0.008028850157647097,
+        "change_ci_high": 0.0048919704940852725,
         "change_significant": false
        },
        "ANC": {
-        "ref_importance": 0.006623635549723708,
-        "test_importance": 0.006615607545534236,
-        "change": -8.028004189471888e-06,
-        "change_ci_low": -0.0002874934159680873,
-        "change_ci_high": 0.00026656102239852494,
+        "ref_importance": 0.006624866940493742,
+        "test_importance": 0.0066134198799431216,
+        "change": -1.144706055062044e-05,
+        "change_ci_low": -0.0002883188095301191,
+        "change_ci_high": 0.0002594793658563305,
         "change_significant": false
        },
        "NATIVITY": {
-        "ref_importance": 0.009631913597114829,
-        "test_importance": 0.009652140429429345,
-        "change": 2.0226832314515844e-05,
-        "change_ci_low": -0.0007452692007941696,
-        "change_ci_high": 0.000813678468260542,
+        "ref_importance": 0.009621519615739921,
+        "test_importance": 0.009633223224091951,
+        "change": 1.170360835203027e-05,
+        "change_ci_low": -0.0007690517554703556,
+        "change_ci_high": 0.0007975392789451129,
         "change_significant": false
        },
        "DEAR": {
-        "ref_importance": 0.003928445393369425,
-        "test_importance": 0.003955046142675532,
-        "change": 2.66007493061075e-05,
-        "change_ci_low": -0.0013011896778594677,
-        "change_ci_high": 0.00148664658136998,
+        "ref_importance": 0.003929414621102098,
+        "test_importance": 0.003956227934790874,
+        "change": 2.6813313688776007e-05,
+        "change_ci_low": -0.0012844776704386226,
+        "change_ci_high": 0.0014857464731386936,
         "change_significant": false
        },
        "DEYE": {
-        "ref_importance": 0.0032548641720935054,
-        "test_importance": 0.003075069533537563,
-        "change": -0.00017979463855594255,
-        "change_ci_low": -0.0009329305475758037,
-        "change_ci_high": 0.0004542439663437719,
+        "ref_importance": 0.003256346038941562,
+        "test_importance": 0.00307037909120387,
+        "change": -0.00018596694773769223,
+        "change_ci_low": -0.0009367779539976873,
+        "change_ci_high": 0.00044726386231552334,
         "change_significant": false
        },
        "DREM": {
-        "ref_importance": 0.0072212043297924895,
-        "test_importance": 0.008626372198085848,
-        "change": 0.0014051678682933588,
-        "change_ci_low": -0.0006846817147062414,
-        "change_ci_high": 0.0039823504006773185,
+        "ref_importance": 0.007256301483889717,
+        "test_importance": 0.008580232369397825,
+        "change": 0.0013239308855081079,
+        "change_ci_low": -0.0007771243336517512,
+        "change_ci_high": 0.003911682916142121,
         "change_significant": false
        },
        "SEX": {
-        "ref_importance": 0.0591812106654368,
-        "test_importance": 0.058972747831053864,
-        "change": -0.00020846283438293728,
-        "change_ci_low": -0.0013365717586650628,
-        "change_ci_high": 0.0009628514751853854,
+        "ref_importance": 0.05914356492087153,
+        "test_importance": 0.05893921551050504,
+        "change": -0.0002043494103664903,
+        "change_ci_low": -0.0013471652186519997,
+        "change_ci_high": 0.0009671604909188424,
         "change_significant": false
        },
        "RAC1P": {
-        "ref_importance": 0.010240368015704429,
-        "test_importance": 0.010093832128996214,
-        "change": -0.00014653588670821525,
-        "change_ci_low": -0.0013323245823109698,
-        "change_ci_high": 0.0009665889868355553,
+        "ref_importance": 0.010234975517129973,
+        "test_importance": 0.010097996200493658,
+        "change": -0.000136979316636315,
+        "change_ci_low": -0.0013311655039291936,
+        "change_ci_high": 0.0009653288791585925,
         "change_significant": false
        }
       },
@@ -53427,7 +53447,7 @@
        ]
       }
      },
-     "execution_time_seconds": 224.9681568145752,
+     "execution_time_seconds": 54.084237813949585,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -53545,7 +53565,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.5880002975463867,
+     "execution_time_seconds": 0.0970461368560791,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -53572,12 +53592,12 @@
       "detector_name": "mmd",
       "drift_detected": true,
       "severity": "high",
-      "score": 0.028291392878192878,
+      "score": 0.02829139287820465,
       "threshold": 0.05,
       "p_value": 0.004975124378109453,
-      "statistic": 0.0008004029109882627,
+      "statistic": 0.0008004029109889288,
       "metadata": {
-       "mmd2_unbiased": 0.0008004029109882627,
+       "mmd2_unbiased": 0.0008004029109889288,
        "kernel": "rbf",
        "gamma": 0.06822153381799179,
        "n_permutations": 200,
@@ -53589,12 +53609,13 @@
        "actual_test_samples": 3000,
        "n_numeric_features": 2,
        "n_categorical_features": 14,
-       "encoded_dimension": 86
+       "encoded_dimension": 86,
+       "device": "cuda"
       }
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 5.853924036026001,
+     "execution_time_seconds": 0.5734703540802002,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -53665,7 +53686,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.18806672096252441,
+     "execution_time_seconds": 0.043953895568847656,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -53708,7 +53729,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.31128764152526855,
+     "execution_time_seconds": 0.04778432846069336,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -53747,7 +53768,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 136.4248502254486,
+     "execution_time_seconds": 1.4006543159484863,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -53771,8 +53792,8 @@
     }
    },
    "explanation_shift": {
-    "cosine_distance": 0.0005951694221265624,
-    "relative_l1_change": 0.029745982243268465
+    "cosine_distance": 0.0005724728992948513,
+    "relative_l1_change": 0.02956140489227032
    },
    "diagnosis": {
     "final": {
@@ -66010,14 +66031,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 224.968,
-    "PSI": 0.588,
-    "MMD": 5.854,
-    "CBPE": 0.188,
-    "BBSD": 0.311,
-    "Domain classifier": 136.425,
-    "reliability": 8.812,
-    "diagnosis": 19.456
+    "KS Test": 54.084,
+    "PSI": 0.097,
+    "MMD": 0.573,
+    "CBPE": 0.044,
+    "BBSD": 0.048,
+    "Domain classifier": 1.401,
+    "reliability": 2.783,
+    "diagnosis": 5.172
    }
   },
   "CA 2019": {
@@ -66416,191 +66437,191 @@
        "top_importance_changes": [
         [
          "MIL",
-         -0.0033363554539255873
+         -0.00339237337197254
         ],
         [
          "ESP",
-         -0.002889748477522776
+         -0.002893755456485205
         ],
         [
          "AGEP",
-         0.0027695757138709587
+         0.0026024132298393676
         ],
         [
          "SCHL",
-         0.0014694841121673102
+         0.001597707142316121
         ],
         [
          "RAC1P",
-         0.0014245080879293406
+         0.0014134940559117053
         ],
         [
          "MAR",
-         -0.0010910855100226269
+         -0.0010417743737359264
         ],
         [
          "CIT",
-         0.0008994427909019866
+         0.0009058502757883675
         ],
         [
          "MIG",
-         0.0008037601671428279
-        ],
-        [
-         "RELP",
-         0.0005726918484111054
+         0.0007727300634801804
         ],
         [
          "NATIVITY",
-         0.0004242255510967085
+         0.00041240087129976524
+        ],
+        [
+         "RELP",
+         0.00037316268219213244
         ]
        ]
       },
       "feature_importances": {
-       "AGEP": 0.0027695757138709587,
-       "SCHL": 0.0014694841121673102,
-       "MAR": -0.0010910855100226269,
-       "RELP": 0.0005726918484111054,
-       "DIS": 0.0006001618826841151,
-       "ESP": -0.002889748477522776,
-       "CIT": 0.0008994427909019866,
-       "MIG": 0.0008037601671428279,
-       "MIL": -0.0033363554539255873,
-       "ANC": -8.738410426436215e-05,
-       "NATIVITY": 0.0004242255510967085,
-       "DEAR": -0.00020299806537093547,
-       "DEYE": -2.938569774420816e-05,
-       "DREM": 0.0014424670898322426,
-       "SEX": 0.00020658183611955289,
-       "RAC1P": 0.0014245080879293406
+       "AGEP": 0.0026024132298393676,
+       "SCHL": 0.001597707142316121,
+       "MAR": -0.0010417743737359264,
+       "RELP": 0.00037316268219213244,
+       "DIS": 0.0006203156256107123,
+       "ESP": -0.002893755456485205,
+       "CIT": 0.0009058502757883675,
+       "MIG": 0.0007727300634801804,
+       "MIL": -0.00339237337197254,
+       "ANC": -7.42158728124255e-05,
+       "NATIVITY": 0.00041240087129976524,
+       "DEAR": -0.0002069454197792405,
+       "DEYE": -1.3287807269134633e-05,
+       "DREM": 0.0013915126461410922,
+       "SEX": 0.00017196370238482112,
+       "RAC1P": 0.0014134940559117053
       },
       "distribution_changes": {
        "AGEP": {
-        "ref_importance": 0.13644939822446475,
-        "test_importance": 0.1392189739383357,
-        "change": 0.0027695757138709587,
-        "change_ci_low": -0.008269597244219577,
-        "change_ci_high": 0.01327156835498414,
+        "ref_importance": 0.13646604958195613,
+        "test_importance": 0.1390684628117955,
+        "change": 0.0026024132298393676,
+        "change_ci_low": -0.008383627750642027,
+        "change_ci_high": 0.013265650013007769,
         "change_significant": false
        },
        "SCHL": {
-        "ref_importance": 0.03669869193265061,
-        "test_importance": 0.03816817604481792,
-        "change": 0.0014694841121673102,
-        "change_ci_low": -0.0034333456213125843,
-        "change_ci_high": 0.0061337664292890615,
+        "ref_importance": 0.03664798479755797,
+        "test_importance": 0.038245691939874094,
+        "change": 0.001597707142316121,
+        "change_ci_low": -0.0032557492344771626,
+        "change_ci_high": 0.006306590840616145,
         "change_significant": false
        },
        "MAR": {
-        "ref_importance": 0.03336171721103811,
-        "test_importance": 0.03227063170101548,
-        "change": -0.0010910855100226269,
-        "change_ci_low": -0.0034829179688818236,
-        "change_ci_high": 0.001351419470594645,
+        "ref_importance": 0.033330759463194366,
+        "test_importance": 0.03228898508945844,
+        "change": -0.0010417743737359264,
+        "change_ci_low": -0.0034298150366726446,
+        "change_ci_high": 0.001398654945128448,
         "change_significant": false
        },
        "RELP": {
-        "ref_importance": 0.09891398004599024,
-        "test_importance": 0.09948667189440134,
-        "change": 0.0005726918484111054,
-        "change_ci_low": -0.008806383395027179,
-        "change_ci_high": 0.009612279659130479,
+        "ref_importance": 0.09907592323815688,
+        "test_importance": 0.09944908592034901,
+        "change": 0.00037316268219213244,
+        "change_ci_low": -0.009030338830555608,
+        "change_ci_high": 0.00963213952563683,
         "change_significant": false
        },
        "DIS": {
-        "ref_importance": 0.05988154038071122,
-        "test_importance": 0.06048170226339534,
-        "change": 0.0006001618826841151,
-        "change_ci_low": -0.006812936013333524,
-        "change_ci_high": 0.008548070004781597,
+        "ref_importance": 0.059948443975831094,
+        "test_importance": 0.060568759601441806,
+        "change": 0.0006203156256107123,
+        "change_ci_low": -0.006739806770777676,
+        "change_ci_high": 0.008471199982698095,
         "change_significant": false
        },
        "ESP": {
-        "ref_importance": 0.021291003207817398,
-        "test_importance": 0.018401254730294622,
-        "change": -0.002889748477522776,
-        "change_ci_low": -0.009532396454102749,
-        "change_ci_high": 0.004274959035949253,
+        "ref_importance": 0.021250549067904245,
+        "test_importance": 0.01835679361141904,
+        "change": -0.002893755456485205,
+        "change_ci_low": -0.009513486710811656,
+        "change_ci_high": 0.004252504624093189,
         "change_significant": false
        },
        "CIT": {
-        "ref_importance": 0.010909877557314948,
-        "test_importance": 0.011809320348216934,
-        "change": 0.0008994427909019866,
-        "change_ci_low": -0.0006706525901734167,
-        "change_ci_high": 0.002422638454585084,
+        "ref_importance": 0.010916758093884028,
+        "test_importance": 0.011822608369672395,
+        "change": 0.0009058502757883675,
+        "change_ci_low": -0.000669303110371611,
+        "change_ci_high": 0.002436316398136445,
         "change_significant": false
        },
        "MIG": {
-        "ref_importance": 0.009992939677981351,
-        "test_importance": 0.010796699845124179,
-        "change": 0.0008037601671428279,
-        "change_ci_low": -0.001505407884594395,
-        "change_ci_high": 0.003578637454395965,
+        "ref_importance": 0.009988894919490062,
+        "test_importance": 0.010761624982970243,
+        "change": 0.0007727300634801804,
+        "change_ci_low": -0.0015131237616983978,
+        "change_ci_high": 0.003526826677389593,
         "change_significant": false
        },
        "MIL": {
-        "ref_importance": 0.025095192741676497,
-        "test_importance": 0.02175883728775091,
-        "change": -0.0033363554539255873,
-        "change_ci_low": -0.01021092764609987,
-        "change_ci_high": 0.0032632546713933066,
+        "ref_importance": 0.02513649895236796,
+        "test_importance": 0.02174412558039542,
+        "change": -0.00339237337197254,
+        "change_ci_low": -0.010251787266937363,
+        "change_ci_high": 0.0032012373677671323,
         "change_significant": false
        },
        "ANC": {
-        "ref_importance": 0.0066232033188678065,
-        "test_importance": 0.006535819214603444,
-        "change": -8.738410426436215e-05,
-        "change_ci_low": -0.00037149148036233075,
-        "change_ci_high": 0.00020510751385516304,
+        "ref_importance": 0.006624866940493742,
+        "test_importance": 0.0065506510676813165,
+        "change": -7.42158728124255e-05,
+        "change_ci_low": -0.00035380861768660656,
+        "change_ci_high": 0.00022124535350373048,
         "change_significant": false
        },
        "NATIVITY": {
-        "ref_importance": 0.009618819951007237,
-        "test_importance": 0.010043045502103946,
-        "change": 0.0004242255510967085,
-        "change_ci_low": -0.0004122230792074102,
-        "change_ci_high": 0.0011856338820333205,
+        "ref_importance": 0.009621519615739921,
+        "test_importance": 0.010033920487039686,
+        "change": 0.00041240087129976524,
+        "change_ci_low": -0.00042559950997450016,
+        "change_ci_high": 0.0011725402016407316,
         "change_significant": false
        },
        "DEAR": {
-        "ref_importance": 0.003920743595493509,
-        "test_importance": 0.003717745530122573,
-        "change": -0.00020299806537093547,
-        "change_ci_low": -0.0015554608481460315,
-        "change_ci_high": 0.001086808631519548,
+        "ref_importance": 0.003929414621102098,
+        "test_importance": 0.003722469201322857,
+        "change": -0.0002069454197792405,
+        "change_ci_low": -0.0015626807211605743,
+        "change_ci_high": 0.001084539472784278,
         "change_significant": false
        },
        "DEYE": {
-        "ref_importance": 0.0032490547348937656,
-        "test_importance": 0.0032196690371495574,
-        "change": -2.938569774420816e-05,
-        "change_ci_low": -0.0007172220887039552,
-        "change_ci_high": 0.000674193980127875,
+        "ref_importance": 0.003256346038941562,
+        "test_importance": 0.0032430582316724274,
+        "change": -1.3287807269134633e-05,
+        "change_ci_low": -0.0007168984994542856,
+        "change_ci_high": 0.0007068380180789228,
         "change_significant": false
        },
        "DREM": {
-        "ref_importance": 0.0072198577163138005,
-        "test_importance": 0.008662324806146043,
-        "change": 0.0014424670898322426,
-        "change_ci_low": -0.0008097963746252195,
-        "change_ci_high": 0.0035853209507399706,
+        "ref_importance": 0.007256301483889717,
+        "test_importance": 0.00864781413003081,
+        "change": 0.0013915126461410922,
+        "change_ci_low": -0.0008272602887719712,
+        "change_ci_high": 0.0035357767664650212,
         "change_significant": false
        },
        "SEX": {
-        "ref_importance": 0.059134272612999174,
-        "test_importance": 0.05934085444911873,
-        "change": 0.00020658183611955289,
-        "change_ci_low": -0.0008911627591763711,
-        "change_ci_high": 0.0013891241030555626,
+        "ref_importance": 0.05914356492087153,
+        "test_importance": 0.05931552862325635,
+        "change": 0.00017196370238482112,
+        "change_ci_low": -0.0009300836792262889,
+        "change_ci_high": 0.0013188393784343189,
         "change_significant": false
        },
        "RAC1P": {
-        "ref_importance": 0.010236315101162097,
-        "test_importance": 0.011660823189091438,
-        "change": 0.0014245080879293406,
-        "change_ci_low": 0.0002408804569840425,
-        "change_ci_high": 0.0024963478938015995,
+        "ref_importance": 0.010234975517129973,
+        "test_importance": 0.011648469573041678,
+        "change": 0.0014134940559117053,
+        "change_ci_low": 0.00023536738843844861,
+        "change_ci_high": 0.0024806235288882274,
         "change_significant": true
        }
       },
@@ -66631,7 +66652,7 @@
        ]
       }
      },
-     "execution_time_seconds": 218.47766423225403,
+     "execution_time_seconds": 54.308536767959595,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -66749,7 +66770,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.6381957530975342,
+     "execution_time_seconds": 0.0969083309173584,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -66776,12 +66797,12 @@
       "detector_name": "mmd",
       "drift_detected": true,
       "severity": "high",
-      "score": 0.022702493933611737,
+      "score": 0.02270249393360685,
       "threshold": 0.05,
       "p_value": 0.004975124378109453,
-      "statistic": 0.0005154032308056777,
+      "statistic": 0.0005154032308054557,
       "metadata": {
-       "mmd2_unbiased": 0.0005154032308056777,
+       "mmd2_unbiased": 0.0005154032308054557,
        "kernel": "rbf",
        "gamma": 0.06798166981978909,
        "n_permutations": 200,
@@ -66793,12 +66814,13 @@
        "actual_test_samples": 3000,
        "n_numeric_features": 2,
        "n_categorical_features": 14,
-       "encoded_dimension": 86
+       "encoded_dimension": 86,
+       "device": "cuda"
       }
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 6.668203353881836,
+     "execution_time_seconds": 0.583702802658081,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -66869,7 +66891,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.20343017578125,
+     "execution_time_seconds": 0.04263901710510254,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -66912,7 +66934,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.283428430557251,
+     "execution_time_seconds": 0.0745701789855957,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -66951,7 +66973,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 130.5512101650238,
+     "execution_time_seconds": 1.354288101196289,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -66975,8 +66997,8 @@
     }
    },
    "explanation_shift": {
-    "cosine_distance": 0.0004081511790122727,
-    "relative_l1_change": 0.034265814153759844
+    "cosine_distance": 0.0004103337010002983,
+    "relative_l1_change": 0.03356406575166661
    },
    "diagnosis": {
     "final": {
@@ -79224,14 +79246,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 218.478,
-    "PSI": 0.638,
-    "MMD": 6.668,
-    "CBPE": 0.203,
-    "BBSD": 0.283,
-    "Domain classifier": 130.551,
-    "reliability": 9.223,
-    "diagnosis": 18.337
+    "KS Test": 54.309,
+    "PSI": 0.097,
+    "MMD": 0.584,
+    "CBPE": 0.043,
+    "BBSD": 0.075,
+    "Domain classifier": 1.354,
+    "reliability": 2.808,
+    "diagnosis": 5.537
    }
   },
   "CA 2021": {
@@ -79630,191 +79652,191 @@
        "top_importance_changes": [
         [
          "RELP",
-         0.0036663683072187814
+         0.003730403003350244
         ],
         [
          "RAC1P",
-         0.0026693686750397377
+         0.0026501090665597433
         ],
         [
          "MIL",
-         -0.0020735838109628285
+         -0.002157730056590968
         ],
         [
          "SCHL",
-         0.0019835399685815894
+         0.002059682482099749
         ],
         [
          "DREM",
-         0.0018797234326407442
+         0.0018799434215554514
         ],
         [
          "DIS",
-         0.00110401355147325
+         0.0008988986754838238
         ],
         [
          "ESP",
-         0.0004306102267050693
+         0.0004629237770910448
         ],
         [
          "CIT",
-         0.0004287934117715043
+         0.00041991857219452963
         ],
         [
          "MIG",
-         -0.0002307843674791421
+         -0.00018789120342428862
         ],
         [
          "MAR",
-         -0.00012043856049180623
+         -0.00015056088222312192
         ]
        ]
       },
       "feature_importances": {
-       "AGEP": -0.00010839449796354317,
-       "SCHL": 0.0019835399685815894,
-       "MAR": -0.00012043856049180623,
-       "RELP": 0.0036663683072187814,
-       "DIS": 0.00110401355147325,
-       "ESP": 0.0004306102267050693,
-       "CIT": 0.0004287934117715043,
-       "MIG": -0.0002307843674791421,
-       "MIL": -0.0020735838109628285,
-       "ANC": 2.2291202317347575e-05,
-       "NATIVITY": 1.7414789117410623e-05,
-       "DEAR": -0.00017456933155626797,
-       "DEYE": 8.684272309132223e-05,
-       "DREM": 0.0018797234326407442,
-       "SEX": -0.0003021240639597758,
-       "RAC1P": 0.0026693686750397377
+       "AGEP": 8.563346198661725e-05,
+       "SCHL": 0.002059682482099749,
+       "MAR": -0.00015056088222312192,
+       "RELP": 0.003730403003350244,
+       "DIS": 0.0008988986754838238,
+       "ESP": 0.0004629237770910448,
+       "CIT": 0.00041991857219452963,
+       "MIG": -0.00018789120342428862,
+       "MIL": -0.002157730056590968,
+       "ANC": 2.0325275260559862e-05,
+       "NATIVITY": 3.0375531753553536e-05,
+       "DEAR": -0.0002145890053683033,
+       "DEYE": 8.688990794569708e-05,
+       "DREM": 0.0018799434215554514,
+       "SEX": -0.00035160204184409016,
+       "RAC1P": 0.0026501090665597433
       },
       "distribution_changes": {
        "AGEP": {
-        "ref_importance": 0.13652259341198866,
-        "test_importance": 0.13641419891402512,
-        "change": -0.00010839449796354317,
-        "change_ci_low": -0.011177497502164355,
-        "change_ci_high": 0.010597122418678866,
+        "ref_importance": 0.13646604958195613,
+        "test_importance": 0.13655168304394275,
+        "change": 8.563346198661725e-05,
+        "change_ci_low": -0.011026254990414026,
+        "change_ci_high": 0.010957158604059856,
         "change_significant": false
        },
        "SCHL": {
-        "ref_importance": 0.03670315964247877,
-        "test_importance": 0.03868669961106036,
-        "change": 0.0019835399685815894,
-        "change_ci_low": -0.0031870298034359715,
-        "change_ci_high": 0.006920300354578365,
+        "ref_importance": 0.03664798479755797,
+        "test_importance": 0.03870766727965772,
+        "change": 0.002059682482099749,
+        "change_ci_low": -0.0030496560844703144,
+        "change_ci_high": 0.00704490303010266,
         "change_significant": false
        },
        "MAR": {
-        "ref_importance": 0.03333055898443729,
-        "test_importance": 0.033210120423945486,
-        "change": -0.00012043856049180623,
-        "change_ci_low": -0.0027509798166363004,
-        "change_ci_high": 0.002366734602749359,
+        "ref_importance": 0.033330759463194366,
+        "test_importance": 0.033180198580971244,
+        "change": -0.00015056088222312192,
+        "change_ci_low": -0.002720606273413576,
+        "change_ci_high": 0.0023362249344002625,
         "change_significant": false
        },
        "RELP": {
-        "ref_importance": 0.09899698303987776,
-        "test_importance": 0.10266335134709655,
-        "change": 0.0036663683072187814,
-        "change_ci_low": -0.006182100068973828,
-        "change_ci_high": 0.014091971590219052,
+        "ref_importance": 0.09907592323815688,
+        "test_importance": 0.10280632624150712,
+        "change": 0.003730403003350244,
+        "change_ci_low": -0.0060893409716938395,
+        "change_ci_high": 0.014008722103346466,
         "change_significant": false
        },
        "DIS": {
-        "ref_importance": 0.05990080643241779,
-        "test_importance": 0.06100481998389104,
-        "change": 0.00110401355147325,
-        "change_ci_low": -0.006773614213299705,
-        "change_ci_high": 0.009704388841657387,
+        "ref_importance": 0.059948443975831094,
+        "test_importance": 0.06084734265131492,
+        "change": 0.0008988986754838238,
+        "change_ci_low": -0.007011604839410792,
+        "change_ci_high": 0.009485281629455392,
         "change_significant": false
        },
        "ESP": {
-        "ref_importance": 0.021311253194785808,
-        "test_importance": 0.021741863421490877,
-        "change": 0.0004306102267050693,
-        "change_ci_low": -0.007678092116789698,
-        "change_ci_high": 0.008761005961069589,
+        "ref_importance": 0.021250549067904245,
+        "test_importance": 0.02171347284499529,
+        "change": 0.0004629237770910448,
+        "change_ci_low": -0.007530025720879255,
+        "change_ci_high": 0.00875514267609502,
         "change_significant": false
        },
        "CIT": {
-        "ref_importance": 0.010908266197209715,
-        "test_importance": 0.01133705960898122,
-        "change": 0.0004287934117715043,
-        "change_ci_low": -0.00101600833190551,
-        "change_ci_high": 0.0018801624699360062,
+        "ref_importance": 0.010916758093884028,
+        "test_importance": 0.011336676666078557,
+        "change": 0.00041991857219452963,
+        "change_ci_low": -0.001011873535731872,
+        "change_ci_high": 0.001867075526382167,
         "change_significant": false
        },
        "MIG": {
-        "ref_importance": 0.009989623348863138,
-        "test_importance": 0.009758838981383995,
-        "change": -0.0002307843674791421,
-        "change_ci_low": -0.0023874788292490763,
-        "change_ci_high": 0.001764347321216434,
+        "ref_importance": 0.009988894919490062,
+        "test_importance": 0.009801003716065773,
+        "change": -0.00018789120342428862,
+        "change_ci_low": -0.0023429467820960045,
+        "change_ci_high": 0.0017979859250485107,
         "change_significant": false
        },
        "MIL": {
-        "ref_importance": 0.02510671393588405,
-        "test_importance": 0.02303313012492122,
-        "change": -0.0020735838109628285,
-        "change_ci_low": -0.008315305888355813,
-        "change_ci_high": 0.004202844731325226,
+        "ref_importance": 0.02513649895236796,
+        "test_importance": 0.02297876889577699,
+        "change": -0.002157730056590968,
+        "change_ci_low": -0.00837651224220932,
+        "change_ci_high": 0.004126906351008484,
         "change_significant": false
        },
        "ANC": {
-        "ref_importance": 0.006617426321539376,
-        "test_importance": 0.0066397175238567235,
-        "change": 2.2291202317347575e-05,
-        "change_ci_low": -0.0002694156083397083,
-        "change_ci_high": 0.00036342215411870295,
+        "ref_importance": 0.006624866940493742,
+        "test_importance": 0.006645192215754302,
+        "change": 2.0325275260559862e-05,
+        "change_ci_low": -0.00027114193717026687,
+        "change_ci_high": 0.000353419977540012,
         "change_significant": false
        },
        "NATIVITY": {
-        "ref_importance": 0.00963447932625232,
-        "test_importance": 0.00965189411536973,
-        "change": 1.7414789117410623e-05,
-        "change_ci_low": -0.0007384167530896997,
-        "change_ci_high": 0.0008311957973561341,
+        "ref_importance": 0.009621519615739921,
+        "test_importance": 0.009651895147493475,
+        "change": 3.0375531753553536e-05,
+        "change_ci_low": -0.000713585105841625,
+        "change_ci_high": 0.0008354593506817946,
         "change_significant": false
        },
        "DEAR": {
-        "ref_importance": 0.003918440917770674,
-        "test_importance": 0.003743871586214406,
-        "change": -0.00017456933155626797,
-        "change_ci_low": -0.0015415033865359014,
-        "change_ci_high": 0.0011446894917050885,
+        "ref_importance": 0.003929414621102098,
+        "test_importance": 0.0037148256157337944,
+        "change": -0.0002145890053683033,
+        "change_ci_low": -0.0015575347555199313,
+        "change_ci_high": 0.0011217465997119685,
         "change_significant": false
        },
        "DEYE": {
-        "ref_importance": 0.0032459400717256043,
-        "test_importance": 0.0033327827948169265,
-        "change": 8.684272309132223e-05,
-        "change_ci_low": -0.0006047129691240914,
-        "change_ci_high": 0.0008736374732558625,
+        "ref_importance": 0.003256346038941562,
+        "test_importance": 0.003343235946887259,
+        "change": 8.688990794569708e-05,
+        "change_ci_low": -0.0006234909945842226,
+        "change_ci_high": 0.000887808294680588,
         "change_significant": false
        },
        "DREM": {
-        "ref_importance": 0.00725783977087335,
-        "test_importance": 0.009137563203514094,
-        "change": 0.0018797234326407442,
-        "change_ci_low": -0.0006686707667661786,
-        "change_ci_high": 0.004403211955381775,
+        "ref_importance": 0.007256301483889717,
+        "test_importance": 0.009136244905445168,
+        "change": 0.0018799434215554514,
+        "change_ci_low": -0.0006854333048892344,
+        "change_ci_high": 0.004451266983534944,
         "change_significant": false
        },
        "SEX": {
-        "ref_importance": 0.05914076076630261,
-        "test_importance": 0.058838636702342836,
-        "change": -0.0003021240639597758,
-        "change_ci_low": -0.0015441548346682476,
-        "change_ci_high": 0.0010462702502927555,
+        "ref_importance": 0.05914356492087153,
+        "test_importance": 0.05879196287902744,
+        "change": -0.00035160204184409016,
+        "change_ci_low": -0.0017141792287688384,
+        "change_ci_high": 0.0009473824976067131,
         "change_significant": false
        },
        "RAC1P": {
-        "ref_importance": 0.010227681327327988,
-        "test_importance": 0.012897050002367726,
-        "change": 0.0026693686750397377,
-        "change_ci_low": 0.001485226046184101,
-        "change_ci_high": 0.0038406231363828144,
+        "ref_importance": 0.010234975517129973,
+        "test_importance": 0.012885084583689716,
+        "change": 0.0026501090665597433,
+        "change_ci_low": 0.0014657520036638414,
+        "change_ci_high": 0.0038055146694358204,
         "change_significant": true
        }
       },
@@ -79845,7 +79867,7 @@
        ]
       }
      },
-     "execution_time_seconds": 197.8037235736847,
+     "execution_time_seconds": 53.97149419784546,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -79963,7 +79985,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.16728901863098145,
+     "execution_time_seconds": 0.0999290943145752,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -80007,12 +80029,13 @@
        "actual_test_samples": 3000,
        "n_numeric_features": 2,
        "n_categorical_features": 14,
-       "encoded_dimension": 86
+       "encoded_dimension": 86,
+       "device": "cuda"
       }
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 3.848186731338501,
+     "execution_time_seconds": 0.5908303260803223,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -80083,7 +80106,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.0999612808227539,
+     "execution_time_seconds": 0.04835343360900879,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -80126,7 +80149,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.13869571685791016,
+     "execution_time_seconds": 0.07102227210998535,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -80165,7 +80188,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 66.33173680305481,
+     "execution_time_seconds": 1.386638879776001,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -80189,8 +80212,8 @@
     }
    },
    "explanation_shift": {
-    "cosine_distance": 0.0003532773831140812,
-    "relative_l1_change": 0.02871340322161549
+    "cosine_distance": 0.0003559503274763731,
+    "relative_l1_change": 0.02887883478766927
    },
    "diagnosis": {
     "final": {
@@ -92436,14 +92459,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 197.804,
-    "PSI": 0.167,
-    "MMD": 3.848,
-    "CBPE": 0.1,
-    "BBSD": 0.139,
-    "Domain classifier": 66.332,
-    "reliability": 5.697,
-    "diagnosis": 15.672
+    "KS Test": 53.972,
+    "PSI": 0.1,
+    "MMD": 0.591,
+    "CBPE": 0.048,
+    "BBSD": 0.071,
+    "Domain classifier": 1.387,
+    "reliability": 2.91,
+    "diagnosis": 7.352
    }
   },
   "CA 2022": {
@@ -92843,191 +92866,191 @@
        "top_importance_changes": [
         [
          "AGEP",
-         0.0066405382933060475
+         0.006462228871307235
         ],
         [
          "RAC1P",
-         0.0031446012909222155
+         0.0031233366778980892
         ],
         [
          "ESP",
-         -0.0021810497098118525
+         -0.0020533279259129233
         ],
         [
          "DREM",
-         0.0015115279113921574
+         0.0014628357179022672
         ],
         [
          "MIG",
-         0.001266441925959089
+         0.001257767785014994
         ],
         [
          "SCHL",
-         0.0011555794315882065
+         0.0011410418015000492
         ],
         [
          "MAR",
-         -0.0010663494474801097
+         -0.0010014235237828031
         ],
         [
          "CIT",
-         0.0005082430517034317
+         0.0005076679437209259
         ],
         [
          "MIL",
-         0.0004432057959551268
+         0.000394755350803834
         ],
         [
          "DIS",
-         0.00033317086911602983
+         0.00038446671576908287
         ]
        ]
       },
       "feature_importances": {
-       "AGEP": 0.0066405382933060475,
-       "SCHL": 0.0011555794315882065,
-       "MAR": -0.0010663494474801097,
-       "RELP": -0.00023872422310554364,
-       "DIS": 0.00033317086911602983,
-       "ESP": -0.0021810497098118525,
-       "CIT": 0.0005082430517034317,
-       "MIG": 0.001266441925959089,
-       "MIL": 0.0004432057959551268,
-       "ANC": -0.00014829413747032612,
-       "NATIVITY": 0.0001633836452550677,
-       "DEAR": 0.00045507700445389637,
-       "DEYE": 4.230412673155446e-05,
-       "DREM": 0.0015115279113921574,
-       "SEX": -1.6862650884005848e-05,
-       "RAC1P": 0.0031446012909222155
+       "AGEP": 0.006462228871307235,
+       "SCHL": 0.0011410418015000492,
+       "MAR": -0.0010014235237828031,
+       "RELP": -0.0003695304628768131,
+       "DIS": 0.00038446671576908287,
+       "ESP": -0.0020533279259129233,
+       "CIT": 0.0005076679437209259,
+       "MIG": 0.001257767785014994,
+       "MIL": 0.000394755350803834,
+       "ANC": -0.00016016214068542266,
+       "NATIVITY": 0.0001622060019246547,
+       "DEAR": 0.00044819960337274395,
+       "DEYE": 3.980592974761393e-05,
+       "DREM": 0.0014628357179022672,
+       "SEX": -0.0001272920892148796,
+       "RAC1P": 0.0031233366778980892
       },
       "distribution_changes": {
        "AGEP": {
-        "ref_importance": 0.13630228115554777,
-        "test_importance": 0.14294281944885381,
-        "change": 0.0066405382933060475,
-        "change_ci_low": -0.0036809721816306873,
-        "change_ci_high": 0.017305714808183208,
+        "ref_importance": 0.13646604958195613,
+        "test_importance": 0.14292827845326336,
+        "change": 0.006462228871307235,
+        "change_ci_low": -0.003836796096205185,
+        "change_ci_high": 0.01715188595355922,
         "change_significant": false
        },
        "SCHL": {
-        "ref_importance": 0.03665747995785838,
-        "test_importance": 0.03781305938944659,
-        "change": 0.0011555794315882065,
-        "change_ci_low": -0.003931793634539955,
-        "change_ci_high": 0.005947317018215054,
+        "ref_importance": 0.03664798479755797,
+        "test_importance": 0.03778902659905802,
+        "change": 0.0011410418015000492,
+        "change_ci_low": -0.00392735192726672,
+        "change_ci_high": 0.005905306735256576,
         "change_significant": false
        },
        "MAR": {
-        "ref_importance": 0.03335997804178028,
-        "test_importance": 0.03229362859430017,
-        "change": -0.0010663494474801097,
-        "change_ci_low": -0.0034930817804837604,
-        "change_ci_high": 0.0013618214831445873,
+        "ref_importance": 0.033330759463194366,
+        "test_importance": 0.03232933593941156,
+        "change": -0.0010014235237828031,
+        "change_ci_low": -0.003390748110434199,
+        "change_ci_high": 0.0013812819641912013,
         "change_significant": false
        },
        "RELP": {
-        "ref_importance": 0.09894020922230437,
-        "test_importance": 0.09870148499919883,
-        "change": -0.00023872422310554364,
-        "change_ci_low": -0.009879954966477394,
-        "change_ci_high": 0.00894724380818377,
+        "ref_importance": 0.09907592323815688,
+        "test_importance": 0.09870639277528007,
+        "change": -0.0003695304628768131,
+        "change_ci_low": -0.009990453585593662,
+        "change_ci_high": 0.008705667695395184,
         "change_significant": false
        },
        "DIS": {
-        "ref_importance": 0.059954148841659005,
-        "test_importance": 0.060287319710775035,
-        "change": 0.00033317086911602983,
-        "change_ci_low": -0.00818515502046947,
-        "change_ci_high": 0.008738880816041327,
+        "ref_importance": 0.059948443975831094,
+        "test_importance": 0.060332910691600176,
+        "change": 0.00038446671576908287,
+        "change_ci_low": -0.008252865940903952,
+        "change_ci_high": 0.00875116027154802,
         "change_significant": false
        },
        "ESP": {
-        "ref_importance": 0.021212123158016884,
-        "test_importance": 0.01903107344820503,
-        "change": -0.0021810497098118525,
-        "change_ci_low": -0.010055090144309262,
-        "change_ci_high": 0.004923306253309609,
+        "ref_importance": 0.021250549067904245,
+        "test_importance": 0.019197221141991322,
+        "change": -0.0020533279259129233,
+        "change_ci_low": -0.009943876884341275,
+        "change_ci_high": 0.005106396373469437,
         "change_significant": false
        },
        "CIT": {
-        "ref_importance": 0.010912538094892801,
-        "test_importance": 0.011420781146596233,
-        "change": 0.0005082430517034317,
-        "change_ci_low": -0.0010255580094075056,
-        "change_ci_high": 0.001994168243722817,
+        "ref_importance": 0.010916758093884028,
+        "test_importance": 0.011424426037604954,
+        "change": 0.0005076679437209259,
+        "change_ci_low": -0.0010173875789824558,
+        "change_ci_high": 0.0020052171578039935,
         "change_significant": false
        },
        "MIG": {
-        "ref_importance": 0.00997328078398093,
-        "test_importance": 0.011239722709940019,
-        "change": 0.001266441925959089,
-        "change_ci_low": -0.001346869141013609,
-        "change_ci_high": 0.004037212136652002,
+        "ref_importance": 0.009988894919490062,
+        "test_importance": 0.011246662704505056,
+        "change": 0.001257767785014994,
+        "change_ci_low": -0.0013750226870923776,
+        "change_ci_high": 0.004046731931346678,
         "change_significant": false
        },
        "MIL": {
-        "ref_importance": 0.02511086475871016,
-        "test_importance": 0.025554070554665288,
-        "change": 0.0004432057959551268,
-        "change_ci_low": -0.006155748646469228,
-        "change_ci_high": 0.007488965719929813,
+        "ref_importance": 0.02513649895236796,
+        "test_importance": 0.025531254303171793,
+        "change": 0.000394755350803834,
+        "change_ci_low": -0.006283608899157795,
+        "change_ci_high": 0.007436660621388498,
         "change_significant": false
        },
        "ANC": {
-        "ref_importance": 0.006614581106293682,
-        "test_importance": 0.006466286968823356,
-        "change": -0.00014829413747032612,
-        "change_ci_low": -0.00044266759732282407,
-        "change_ci_high": 0.00013484828972564717,
+        "ref_importance": 0.006624866940493742,
+        "test_importance": 0.006464704799808319,
+        "change": -0.00016016214068542266,
+        "change_ci_low": -0.0004557387346189513,
+        "change_ci_high": 0.0001193749520665942,
         "change_significant": false
        },
        "NATIVITY": {
-        "ref_importance": 0.009631235503984861,
-        "test_importance": 0.009794619149239929,
-        "change": 0.0001633836452550677,
-        "change_ci_low": -0.0006137824229854843,
-        "change_ci_high": 0.0010740157808386416,
+        "ref_importance": 0.009621519615739921,
+        "test_importance": 0.009783725617664576,
+        "change": 0.0001622060019246547,
+        "change_ci_low": -0.000611465837044342,
+        "change_ci_high": 0.001068900393540941,
         "change_significant": false
        },
        "DEAR": {
-        "ref_importance": 0.003904543519331171,
-        "test_importance": 0.004359620523785067,
-        "change": 0.00045507700445389637,
-        "change_ci_low": -0.000920716749987838,
-        "change_ci_high": 0.0020018298499788244,
+        "ref_importance": 0.003929414621102098,
+        "test_importance": 0.004377614224474842,
+        "change": 0.00044819960337274395,
+        "change_ci_low": -0.0009393722311517265,
+        "change_ci_high": 0.002031271909817191,
         "change_significant": false
        },
        "DEYE": {
-        "ref_importance": 0.0032482985790223567,
-        "test_importance": 0.003290602705753911,
-        "change": 4.230412673155446e-05,
-        "change_ci_low": -0.0006835599739467709,
-        "change_ci_high": 0.0008407027281618209,
+        "ref_importance": 0.003256346038941562,
+        "test_importance": 0.003296151968689176,
+        "change": 3.980592974761393e-05,
+        "change_ci_low": -0.0006817207561084006,
+        "change_ci_high": 0.0008338746556318961,
         "change_significant": false
        },
        "DREM": {
-        "ref_importance": 0.007258399882780751,
-        "test_importance": 0.008769927794172908,
-        "change": 0.0015115279113921574,
-        "change_ci_low": -0.0009809207224630969,
-        "change_ci_high": 0.003690101910315534,
+        "ref_importance": 0.007256301483889717,
+        "test_importance": 0.008719137201791984,
+        "change": 0.0014628357179022672,
+        "change_ci_low": -0.0010163961692936168,
+        "change_ci_high": 0.0036075496938186356,
         "change_significant": false
        },
        "SEX": {
-        "ref_importance": 0.059120587201445744,
-        "test_importance": 0.05910372455056174,
-        "change": -1.6862650884005848e-05,
-        "change_ci_low": -0.0011975267474272405,
-        "change_ci_high": 0.0011909377141728255,
+        "ref_importance": 0.05914356492087153,
+        "test_importance": 0.05901627283165665,
+        "change": -0.0001272920892148796,
+        "change_ci_low": -0.0012871645941974945,
+        "change_ci_high": 0.0010623267276245166,
         "change_significant": false
        },
        "RAC1P": {
-        "ref_importance": 0.01022037597948003,
-        "test_importance": 0.013364977270402246,
-        "change": 0.0031446012909222155,
-        "change_ci_low": 0.0019376849380363281,
-        "change_ci_high": 0.00430116428204111,
+        "ref_importance": 0.010234975517129973,
+        "test_importance": 0.013358312195028062,
+        "change": 0.0031233366778980892,
+        "change_ci_low": 0.0019004755293932686,
+        "change_ci_high": 0.004277775257692114,
         "change_significant": true
        }
       },
@@ -93059,7 +93082,7 @@
        ]
       }
      },
-     "execution_time_seconds": 92.2745578289032,
+     "execution_time_seconds": 53.6981635093689,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -93177,7 +93200,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.13176512718200684,
+     "execution_time_seconds": 0.09972763061523438,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -93204,12 +93227,12 @@
       "detector_name": "mmd",
       "drift_detected": true,
       "severity": "high",
-      "score": 0.05907348229503224,
+      "score": 0.05907348229503599,
       "threshold": 0.05,
       "p_value": 0.004975124378109453,
-      "statistic": 0.003489676310461487,
+      "statistic": 0.003489676310461931,
       "metadata": {
-       "mmd2_unbiased": 0.003489676310461487,
+       "mmd2_unbiased": 0.003489676310461931,
        "kernel": "rbf",
        "gamma": 0.06399955724366371,
        "n_permutations": 200,
@@ -93221,12 +93244,13 @@
        "actual_test_samples": 3000,
        "n_numeric_features": 2,
        "n_categorical_features": 14,
-       "encoded_dimension": 86
+       "encoded_dimension": 86,
+       "device": "cuda"
       }
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 3.5739660263061523,
+     "execution_time_seconds": 0.5933771133422852,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -93297,7 +93321,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.08732271194458008,
+     "execution_time_seconds": 0.04849433898925781,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -93340,7 +93364,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.14062142372131348,
+     "execution_time_seconds": 0.07662510871887207,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -93379,7 +93403,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 2.406569480895996,
+     "execution_time_seconds": 1.4220173358917236,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -93403,8 +93427,8 @@
     }
    },
    "explanation_shift": {
-    "cosine_distance": 0.0005285425080500117,
-    "relative_l1_change": 0.03627835154409149
+    "cosine_distance": 0.0005106599773621046,
+    "relative_l1_change": 0.03583899125846081
    },
    "diagnosis": {
     "final": {
@@ -105651,14 +105675,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 92.275,
-    "PSI": 0.132,
-    "MMD": 3.574,
-    "CBPE": 0.087,
-    "BBSD": 0.141,
-    "Domain classifier": 2.407,
-    "reliability": 3.563,
-    "diagnosis": 9.671
+    "KS Test": 53.698,
+    "PSI": 0.1,
+    "MMD": 0.593,
+    "CBPE": 0.049,
+    "BBSD": 0.077,
+    "Domain classifier": 1.422,
+    "reliability": 3.002,
+    "diagnosis": 5.639
    }
   },
   "CA 2023": {
@@ -106057,191 +106081,191 @@
        "top_importance_changes": [
         [
          "MIL",
-         -0.003837374783280504
+         -0.0038987962746600165
         ],
         [
          "RAC1P",
-         0.003447318199406156
+         0.0034521127458391615
         ],
         [
          "ESP",
-         -0.003386916246452234
+         -0.0033646727502750044
         ],
         [
          "RELP",
-         0.0029931258972012154
-        ],
-        [
-         "SCHL",
-         0.002076440489492397
+         0.002867361366327578
         ],
         [
          "DREM",
-         0.00202319423997524
+         0.0020092773611270808
+        ],
+        [
+         "SCHL",
+         0.0020045812681263736
         ],
         [
          "CIT",
-         0.0012979230678238016
+         0.0012459208117038215
         ],
         [
          "MAR",
-         -0.001201892646299843
+         -0.0012050323591871123
         ],
         [
          "AGEP",
-         -0.001003045818272763
+         -0.0009348591668299211
         ],
         [
          "MIG",
-         0.0008760462681812898
+         0.0008403241245357324
         ]
        ]
       },
       "feature_importances": {
-       "AGEP": -0.001003045818272763,
-       "SCHL": 0.002076440489492397,
-       "MAR": -0.001201892646299843,
-       "RELP": 0.0029931258972012154,
-       "DIS": 0.0007720162092621358,
-       "ESP": -0.003386916246452234,
-       "CIT": 0.0012979230678238016,
-       "MIG": 0.0008760462681812898,
-       "MIL": -0.003837374783280504,
-       "ANC": -0.00020494250623372904,
-       "NATIVITY": 0.0005641970759563426,
-       "DEAR": 0.00044868671133024233,
-       "DEYE": -4.030278687512743e-05,
-       "DREM": 0.00202319423997524,
-       "SEX": 0.00011740036556457528,
-       "RAC1P": 0.003447318199406156
+       "AGEP": -0.0009348591668299211,
+       "SCHL": 0.0020045812681263736,
+       "MAR": -0.0012050323591871123,
+       "RELP": 0.002867361366327578,
+       "DIS": 0.0007542976334009716,
+       "ESP": -0.0033646727502750044,
+       "CIT": 0.0012459208117038215,
+       "MIG": 0.0008403241245357324,
+       "MIL": -0.0038987962746600165,
+       "ANC": -0.0001985612631309171,
+       "NATIVITY": 0.0005729138014733369,
+       "DEAR": 0.0004374948327324178,
+       "DEYE": -4.324284248838437e-05,
+       "DREM": 0.0020092773611270808,
+       "SEX": 5.076101137800604e-05,
+       "RAC1P": 0.0034521127458391615
       },
       "distribution_changes": {
        "AGEP": {
-        "ref_importance": 0.13647051606660074,
-        "test_importance": 0.13546747024832798,
-        "change": -0.001003045818272763,
-        "change_ci_low": -0.012392236543510514,
-        "change_ci_high": 0.009077883500020253,
+        "ref_importance": 0.13646604958195613,
+        "test_importance": 0.1355311904151262,
+        "change": -0.0009348591668299211,
+        "change_ci_low": -0.01241568668356249,
+        "change_ci_high": 0.009155917249798348,
         "change_significant": false
        },
        "SCHL": {
-        "ref_importance": 0.0366205792159841,
-        "test_importance": 0.038697019705476496,
-        "change": 0.002076440489492397,
-        "change_ci_low": -0.0027097786067807987,
-        "change_ci_high": 0.007015710281170323,
+        "ref_importance": 0.03664798479755797,
+        "test_importance": 0.038652566065684346,
+        "change": 0.0020045812681263736,
+        "change_ci_low": -0.0027484084634236605,
+        "change_ci_high": 0.006999624077863302,
         "change_significant": false
        },
        "MAR": {
-        "ref_importance": 0.03332686926353691,
-        "test_importance": 0.03212497661723707,
-        "change": -0.001201892646299843,
-        "change_ci_low": -0.0036337545162065357,
-        "change_ci_high": 0.001036310883783513,
+        "ref_importance": 0.033330759463194366,
+        "test_importance": 0.032125727104007254,
+        "change": -0.0012050323591871123,
+        "change_ci_low": -0.0036539359236802097,
+        "change_ci_high": 0.0010605489076465574,
         "change_significant": false
        },
        "RELP": {
-        "ref_importance": 0.09895642415280836,
-        "test_importance": 0.10194955005000958,
-        "change": 0.0029931258972012154,
-        "change_ci_low": -0.005980199089762917,
-        "change_ci_high": 0.012560349567428701,
+        "ref_importance": 0.09907592323815688,
+        "test_importance": 0.10194328460448446,
+        "change": 0.002867361366327578,
+        "change_ci_low": -0.006167289616592635,
+        "change_ci_high": 0.012337190989424927,
         "change_significant": false
        },
        "DIS": {
-        "ref_importance": 0.05994153375700203,
-        "test_importance": 0.060713549966264165,
-        "change": 0.0007720162092621358,
-        "change_ci_low": -0.0068556954529417685,
-        "change_ci_high": 0.008751206036144165,
+        "ref_importance": 0.059948443975831094,
+        "test_importance": 0.060702741609232065,
+        "change": 0.0007542976334009716,
+        "change_ci_low": -0.0069161399201286035,
+        "change_ci_high": 0.008819827139723133,
         "change_significant": false
        },
        "ESP": {
-        "ref_importance": 0.021244982517167863,
-        "test_importance": 0.01785806627071563,
-        "change": -0.003386916246452234,
-        "change_ci_low": -0.010783463771315213,
-        "change_ci_high": 0.004025960231819254,
+        "ref_importance": 0.021250549067904245,
+        "test_importance": 0.01788587631762924,
+        "change": -0.0033646727502750044,
+        "change_ci_low": -0.010645457573253633,
+        "change_ci_high": 0.004084494435528691,
         "change_significant": false
        },
        "CIT": {
-        "ref_importance": 0.01090032901540338,
-        "test_importance": 0.012198252083227182,
-        "change": 0.0012979230678238016,
-        "change_ci_low": -0.00030668614119739104,
-        "change_ci_high": 0.002841392360419299,
+        "ref_importance": 0.010916758093884028,
+        "test_importance": 0.01216267890558785,
+        "change": 0.0012459208117038215,
+        "change_ci_low": -0.0003811872720918113,
+        "change_ci_high": 0.0027750596689762974,
         "change_significant": false
        },
        "MIG": {
-        "ref_importance": 0.009973225589720696,
-        "test_importance": 0.010849271857901986,
-        "change": 0.0008760462681812898,
-        "change_ci_low": -0.0015723334032796661,
-        "change_ci_high": 0.003505827594008825,
+        "ref_importance": 0.009988894919490062,
+        "test_importance": 0.010829219044025794,
+        "change": 0.0008403241245357324,
+        "change_ci_low": -0.0015879880874692975,
+        "change_ci_high": 0.0034594396925428754,
         "change_significant": false
        },
        "MIL": {
-        "ref_importance": 0.02505873636690326,
-        "test_importance": 0.021221361583622755,
-        "change": -0.003837374783280504,
-        "change_ci_low": -0.010091583146386602,
-        "change_ci_high": 0.003131109629065956,
+        "ref_importance": 0.02513649895236796,
+        "test_importance": 0.021237702677707943,
+        "change": -0.0038987962746600165,
+        "change_ci_low": -0.010167079785086307,
+        "change_ci_high": 0.0030224802362624013,
         "change_significant": false
        },
        "ANC": {
-        "ref_importance": 0.006618775214402944,
-        "test_importance": 0.006413832708169215,
-        "change": -0.00020494250623372904,
-        "change_ci_low": -0.0004881893579034095,
-        "change_ci_high": 0.00011027642421637001,
+        "ref_importance": 0.006624866940493742,
+        "test_importance": 0.006426305677362825,
+        "change": -0.0001985612631309171,
+        "change_ci_low": -0.0004812822297413621,
+        "change_ci_high": 0.0001103103016213993,
         "change_significant": false
        },
        "NATIVITY": {
-        "ref_importance": 0.009625559567661628,
-        "test_importance": 0.010189756643617971,
-        "change": 0.0005641970759563426,
-        "change_ci_low": -0.00029681453260930264,
-        "change_ci_high": 0.0013892207956956093,
+        "ref_importance": 0.009621519615739921,
+        "test_importance": 0.010194433417213258,
+        "change": 0.0005729138014733369,
+        "change_ci_low": -0.0002792340029610562,
+        "change_ci_high": 0.0013907659734020425,
         "change_significant": false
        },
        "DEAR": {
-        "ref_importance": 0.0039097262484442475,
-        "test_importance": 0.00435841295977449,
-        "change": 0.00044868671133024233,
-        "change_ci_low": -0.00098931848991636,
-        "change_ci_high": 0.0019976787031670416,
+        "ref_importance": 0.003929414621102098,
+        "test_importance": 0.0043669094538345155,
+        "change": 0.0004374948327324178,
+        "change_ci_low": -0.0009884945929651084,
+        "change_ci_high": 0.0020239558104542623,
         "change_significant": false
        },
        "DEYE": {
-        "ref_importance": 0.003240337996550826,
-        "test_importance": 0.0032000352096756986,
-        "change": -4.030278687512743e-05,
-        "change_ci_low": -0.000834723091178234,
-        "change_ci_high": 0.0006113980399466213,
+        "ref_importance": 0.003256346038941562,
+        "test_importance": 0.0032131031964531776,
+        "change": -4.324284248838437e-05,
+        "change_ci_low": -0.0008496939357470415,
+        "change_ci_high": 0.0006197525511207365,
         "change_significant": false
        },
        "DREM": {
-        "ref_importance": 0.0072247649703604845,
-        "test_importance": 0.009247959210335725,
-        "change": 0.00202319423997524,
-        "change_ci_low": -0.00032786633017547285,
-        "change_ci_high": 0.00457021622801734,
+        "ref_importance": 0.007256301483889717,
+        "test_importance": 0.009265578845016798,
+        "change": 0.0020092773611270808,
+        "change_ci_low": -0.00035795468845118545,
+        "change_ci_high": 0.004577743964802592,
         "change_significant": false
        },
        "SEX": {
-        "ref_importance": 0.059175186246395166,
-        "test_importance": 0.05929258661195974,
-        "change": 0.00011740036556457528,
-        "change_ci_low": -0.001202343191480049,
-        "change_ci_high": 0.0012251547721270895,
+        "ref_importance": 0.05914356492087153,
+        "test_importance": 0.059194325932249534,
+        "change": 5.076101137800604e-05,
+        "change_ci_low": -0.001238159880107081,
+        "change_ci_high": 0.001209100899308056,
         "change_significant": false
        },
        "RAC1P": {
-        "ref_importance": 0.01022592858223276,
-        "test_importance": 0.013673246781638917,
-        "change": 0.003447318199406156,
-        "change_ci_low": 0.002266606173522691,
-        "change_ci_high": 0.004677040214882123,
+        "ref_importance": 0.010234975517129973,
+        "test_importance": 0.013687088262969134,
+        "change": 0.0034521127458391615,
+        "change_ci_low": 0.002280392924335758,
+        "change_ci_high": 0.004691356717096455,
         "change_significant": true
        }
       },
@@ -106272,7 +106296,7 @@
        ]
       }
      },
-     "execution_time_seconds": 141.5673861503601,
+     "execution_time_seconds": 53.803187131881714,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -106390,7 +106414,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.47026634216308594,
+     "execution_time_seconds": 0.10010695457458496,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -106417,12 +106441,12 @@
       "detector_name": "mmd",
       "drift_detected": true,
       "severity": "high",
-      "score": 0.06134939054802824,
+      "score": 0.061349390548026426,
       "threshold": 0.05,
       "p_value": 0.004975124378109453,
-      "statistic": 0.0037637477206144965,
+      "statistic": 0.0037637477206142744,
       "metadata": {
-       "mmd2_unbiased": 0.0037637477206144965,
+       "mmd2_unbiased": 0.0037637477206142744,
        "kernel": "rbf",
        "gamma": 0.06636805308669327,
        "n_permutations": 200,
@@ -106434,12 +106458,13 @@
        "actual_test_samples": 3000,
        "n_numeric_features": 2,
        "n_categorical_features": 14,
-       "encoded_dimension": 86
+       "encoded_dimension": 86,
+       "device": "cuda"
       }
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 7.043941020965576,
+     "execution_time_seconds": 0.5953028202056885,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -106510,7 +106535,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.2707386016845703,
+     "execution_time_seconds": 0.045763492584228516,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -106553,7 +106578,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.3110778331756592,
+     "execution_time_seconds": 0.06880044937133789,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -106592,7 +106617,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 125.29379630088806,
+     "execution_time_seconds": 1.3649110794067383,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -106616,8 +106641,8 @@
     }
    },
    "explanation_shift": {
-    "cosine_distance": 0.0007621075475684469,
-    "relative_l1_change": 0.04561541531328484
+    "cosine_distance": 0.0007496971781960626,
+    "relative_l1_change": 0.04481778634575939
    },
    "diagnosis": {
     "final": {
@@ -118861,14 +118886,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 141.567,
-    "PSI": 0.47,
-    "MMD": 7.044,
-    "CBPE": 0.271,
-    "BBSD": 0.311,
-    "Domain classifier": 125.294,
-    "reliability": 12.752,
-    "diagnosis": 18.988
+    "KS Test": 53.803,
+    "PSI": 0.1,
+    "MMD": 0.595,
+    "CBPE": 0.046,
+    "BBSD": 0.069,
+    "Domain classifier": 1.365,
+    "reliability": 3.003,
+    "diagnosis": 6.534
    }
   },
   "TX 2014": {
@@ -119270,191 +119295,191 @@
        "top_importance_changes": [
         [
          "AGEP",
-         -0.008164414572906648
+         -0.008289874830039679
         ],
         [
          "DIS",
-         0.006268424983840691
+         0.006274836478641778
         ],
         [
          "RELP",
-         0.0047438070036961155
+         0.004771770282110774
         ],
         [
          "RAC1P",
-         -0.00331514019113769
+         -0.003312829582312691
         ],
         [
          "CIT",
-         -0.002674335838619448
+         -0.002675345104554387
         ],
         [
          "MIG",
-         0.0018620692876965914
+         0.0018486756469796636
         ],
         [
          "ESP",
-         -0.001768896275840308
+         -0.0017118875109051537
         ],
         [
          "SCHL",
-         -0.0015092395331605113
+         -0.001556061834536715
         ],
         [
          "NATIVITY",
-         -0.001350971905930266
+         -0.0013584628488137376
         ],
         [
          "DREM",
-         0.001067510038072944
+         0.001069476314921763
         ]
        ]
       },
       "feature_importances": {
-       "AGEP": -0.008164414572906648,
-       "SCHL": -0.0015092395331605113,
-       "MAR": -0.0006720031324890727,
-       "RELP": 0.0047438070036961155,
-       "DIS": 0.006268424983840691,
-       "ESP": -0.001768896275840308,
-       "CIT": -0.002674335838619448,
-       "MIG": 0.0018620692876965914,
-       "MIL": 5.634957874270374e-06,
-       "ANC": -0.00011446071683710122,
-       "NATIVITY": -0.001350971905930266,
-       "DEAR": 0.000659082066022736,
-       "DEYE": 0.00011162034853913049,
-       "DREM": 0.001067510038072944,
-       "SEX": -0.0006329080983589822,
-       "RAC1P": -0.00331514019113769
+       "AGEP": -0.008289874830039679,
+       "SCHL": -0.001556061834536715,
+       "MAR": -0.0006808959447523119,
+       "RELP": 0.004771770282110774,
+       "DIS": 0.006274836478641778,
+       "ESP": -0.0017118875109051537,
+       "CIT": -0.002675345104554387,
+       "MIG": 0.0018486756469796636,
+       "MIL": -8.906561771870533e-05,
+       "ANC": -0.00011133748557635124,
+       "NATIVITY": -0.0013584628488137376,
+       "DEAR": 0.0006256758764066313,
+       "DEYE": 0.0001246709539672805,
+       "DREM": 0.001069476314921763,
+       "SEX": -0.0007061750936991559,
+       "RAC1P": -0.003312829582312691
       },
       "distribution_changes": {
        "AGEP": {
-        "ref_importance": 0.1365117040605513,
-        "test_importance": 0.12834728948764465,
-        "change": -0.008164414572906648,
-        "change_ci_low": -0.018781495993833625,
-        "change_ci_high": 0.0020030346925390243,
+        "ref_importance": 0.13646604958195613,
+        "test_importance": 0.12817617475191645,
+        "change": -0.008289874830039679,
+        "change_ci_low": -0.01896230433673184,
+        "change_ci_high": 0.0018650071599025505,
         "change_significant": false
        },
        "SCHL": {
-        "ref_importance": 0.036663310262515354,
-        "test_importance": 0.03515407072935484,
-        "change": -0.0015092395331605113,
-        "change_ci_low": -0.005939393183475547,
-        "change_ci_high": 0.0029512641833211862,
+        "ref_importance": 0.03664798479755797,
+        "test_importance": 0.03509192296302126,
+        "change": -0.001556061834536715,
+        "change_ci_low": -0.005932313587378978,
+        "change_ci_high": 0.002917197194754125,
         "change_significant": false
        },
        "MAR": {
-        "ref_importance": 0.03332058721141354,
-        "test_importance": 0.032648584078924466,
-        "change": -0.0006720031324890727,
-        "change_ci_low": -0.0028836468456996463,
-        "change_ci_high": 0.0018523611399670168,
+        "ref_importance": 0.033330759463194366,
+        "test_importance": 0.032649863518442054,
+        "change": -0.0006808959447523119,
+        "change_ci_low": -0.0028639562816910485,
+        "change_ci_high": 0.0017857315554902144,
         "change_significant": false
        },
        "RELP": {
-        "ref_importance": 0.09894297116013664,
-        "test_importance": 0.10368677816383276,
-        "change": 0.0047438070036961155,
-        "change_ci_low": -0.004568969871773839,
-        "change_ci_high": 0.015081638165052714,
+        "ref_importance": 0.09907592323815688,
+        "test_importance": 0.10384769352026765,
+        "change": 0.004771770282110774,
+        "change_ci_low": -0.004688535861092495,
+        "change_ci_high": 0.014908113169849817,
         "change_significant": false
        },
        "DIS": {
-        "ref_importance": 0.05991037137960593,
-        "test_importance": 0.06617879636344662,
-        "change": 0.006268424983840691,
-        "change_ci_low": -0.002353059200046136,
-        "change_ci_high": 0.014513089624237755,
+        "ref_importance": 0.059948443975831094,
+        "test_importance": 0.06622328045447287,
+        "change": 0.006274836478641778,
+        "change_ci_low": -0.0021905656785493697,
+        "change_ci_high": 0.014478660124621723,
         "change_significant": false
        },
        "ESP": {
-        "ref_importance": 0.021324156398114896,
-        "test_importance": 0.019555260122274588,
-        "change": -0.001768896275840308,
-        "change_ci_low": -0.009566928407270699,
-        "change_ci_high": 0.005555343611415355,
+        "ref_importance": 0.021250549067904245,
+        "test_importance": 0.01953866155699909,
+        "change": -0.0017118875109051537,
+        "change_ci_low": -0.00952768738608606,
+        "change_ci_high": 0.00554704670742006,
         "change_significant": false
        },
        "CIT": {
-        "ref_importance": 0.010919441062456889,
-        "test_importance": 0.00824510522383744,
-        "change": -0.002674335838619448,
-        "change_ci_low": -0.003938547026057689,
-        "change_ci_high": -0.001354461685954219,
+        "ref_importance": 0.010916758093884028,
+        "test_importance": 0.00824141298932964,
+        "change": -0.002675345104554387,
+        "change_ci_low": -0.0039639036164655275,
+        "change_ci_high": -0.0013500519847348493,
         "change_significant": true
        },
        "MIG": {
-        "ref_importance": 0.009980829181584173,
-        "test_importance": 0.011842898469280765,
-        "change": 0.0018620692876965914,
-        "change_ci_low": -0.0009089473137813235,
-        "change_ci_high": 0.004321109097864676,
+        "ref_importance": 0.009988894919490062,
+        "test_importance": 0.011837570566469726,
+        "change": 0.0018486756469796636,
+        "change_ci_low": -0.0009073165001061068,
+        "change_ci_high": 0.004304032994893558,
         "change_significant": false
        },
        "MIL": {
-        "ref_importance": 0.025125137031922998,
-        "test_importance": 0.025130771989797268,
-        "change": 5.634957874270374e-06,
-        "change_ci_low": -0.005866047054268115,
-        "change_ci_high": 0.006241712875074131,
+        "ref_importance": 0.02513649895236796,
+        "test_importance": 0.025047433334649254,
+        "change": -8.906561771870533e-05,
+        "change_ci_low": -0.005945015495065173,
+        "change_ci_high": 0.006128300982713143,
         "change_significant": false
        },
        "ANC": {
-        "ref_importance": 0.006622914957208319,
-        "test_importance": 0.006508454240371218,
-        "change": -0.00011446071683710122,
-        "change_ci_low": -0.0003859968077544496,
-        "change_ci_high": 0.00016419939780541734,
+        "ref_importance": 0.006624866940493742,
+        "test_importance": 0.006513529454917391,
+        "change": -0.00011133748557635124,
+        "change_ci_low": -0.00038232259451000827,
+        "change_ci_high": 0.00016685978518903756,
         "change_significant": false
        },
        "NATIVITY": {
-        "ref_importance": 0.009624355495306608,
-        "test_importance": 0.008273383589376342,
-        "change": -0.001350971905930266,
-        "change_ci_low": -0.0021403364716702363,
-        "change_ci_high": -0.0006390993531183133,
+        "ref_importance": 0.009621519615739921,
+        "test_importance": 0.008263056766926184,
+        "change": -0.0013584628488137376,
+        "change_ci_low": -0.002158705811506146,
+        "change_ci_high": -0.000651733549922668,
         "change_significant": true
        },
        "DEAR": {
-        "ref_importance": 0.0039174873285576905,
-        "test_importance": 0.0045765693945804264,
-        "change": 0.000659082066022736,
-        "change_ci_low": -0.0011422687546687614,
-        "change_ci_high": 0.0021634391641638345,
+        "ref_importance": 0.003929414621102098,
+        "test_importance": 0.004555090497508729,
+        "change": 0.0006256758764066313,
+        "change_ci_low": -0.00116337687328331,
+        "change_ci_high": 0.002121499238034648,
         "change_significant": false
        },
        "DEYE": {
-        "ref_importance": 0.0032562006940253575,
-        "test_importance": 0.003367821042564488,
-        "change": 0.00011162034853913049,
-        "change_ci_low": -0.0005659563200077302,
-        "change_ci_high": 0.0008892436771884382,
+        "ref_importance": 0.003256346038941562,
+        "test_importance": 0.0033810169929088425,
+        "change": 0.0001246709539672805,
+        "change_ci_low": -0.0005536213413132323,
+        "change_ci_high": 0.0009208988671895931,
         "change_significant": false
        },
        "DREM": {
-        "ref_importance": 0.00725175359570046,
-        "test_importance": 0.008319263633773404,
-        "change": 0.001067510038072944,
-        "change_ci_low": -0.0011843228347948145,
-        "change_ci_high": 0.0033960407369355264,
+        "ref_importance": 0.007256301483889717,
+        "test_importance": 0.00832577779881148,
+        "change": 0.001069476314921763,
+        "change_ci_low": -0.0011428799825964919,
+        "change_ci_high": 0.003389702815680291,
         "change_significant": false
        },
        "SEX": {
-        "ref_importance": 0.05911554585666709,
-        "test_importance": 0.05848263775830811,
-        "change": -0.0006329080983589822,
-        "change_ci_low": -0.001800126167399559,
-        "change_ci_high": 0.0005369558951207405,
+        "ref_importance": 0.05914356492087153,
+        "test_importance": 0.05843738982717237,
+        "change": -0.0007061750936991559,
+        "change_ci_low": -0.001905402959589837,
+        "change_ci_high": 0.0004622314795007984,
         "change_significant": false
        },
        "RAC1P": {
-        "ref_importance": 0.01023784815607265,
-        "test_importance": 0.00692270796493496,
-        "change": -0.00331514019113769,
-        "change_ci_low": -0.004233622084358799,
-        "change_ci_high": -0.002353341137475781,
+        "ref_importance": 0.010234975517129973,
+        "test_importance": 0.006922145934817282,
+        "change": -0.003312829582312691,
+        "change_ci_low": -0.004232901739341616,
+        "change_ci_high": -0.002345134633076524,
         "change_significant": true
        }
       },
@@ -119488,7 +119513,7 @@
        ]
       }
      },
-     "execution_time_seconds": 208.38726806640625,
+     "execution_time_seconds": 53.406882524490356,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -119606,7 +119631,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.2109684944152832,
+     "execution_time_seconds": 0.0640573501586914,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -119633,12 +119658,12 @@
       "detector_name": "mmd",
       "drift_detected": true,
       "severity": "high",
-      "score": 0.07908213112606886,
+      "score": 0.07908213112607027,
       "threshold": 0.05,
       "p_value": 0.004975124378109453,
-      "statistic": 0.006253983463440749,
+      "statistic": 0.006253983463440971,
       "metadata": {
-       "mmd2_unbiased": 0.006253983463440749,
+       "mmd2_unbiased": 0.006253983463440971,
        "kernel": "rbf",
        "gamma": 0.06936575343885514,
        "n_permutations": 200,
@@ -119650,12 +119675,13 @@
        "actual_test_samples": 3000,
        "n_numeric_features": 2,
        "n_categorical_features": 14,
-       "encoded_dimension": 86
+       "encoded_dimension": 86,
+       "device": "cuda"
       }
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 5.718175172805786,
+     "execution_time_seconds": 0.4518134593963623,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -119726,7 +119752,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.15068531036376953,
+     "execution_time_seconds": 0.026137113571166992,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -119769,7 +119795,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.1735670566558838,
+     "execution_time_seconds": 0.04998183250427246,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -119808,7 +119834,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 129.3014566898346,
+     "execution_time_seconds": 1.344771146774292,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -119832,8 +119858,8 @@
     }
    },
    "explanation_shift": {
-    "cosine_distance": 0.001988271988935475,
-    "relative_l1_change": 0.06555078936533902
+    "cosine_distance": 0.0020139149962059566,
+    "relative_l1_change": 0.06607570390522591
    },
    "diagnosis": {
     "final": {
@@ -132090,14 +132116,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 208.387,
-    "PSI": 0.211,
-    "MMD": 5.718,
-    "CBPE": 0.151,
-    "BBSD": 0.174,
-    "Domain classifier": 129.301,
-    "reliability": 7.595,
-    "diagnosis": 17.761
+    "KS Test": 53.407,
+    "PSI": 0.064,
+    "MMD": 0.452,
+    "CBPE": 0.026,
+    "BBSD": 0.05,
+    "Domain classifier": 1.345,
+    "reliability": 1.686,
+    "diagnosis": 5.058
    }
   },
   "NY 2014": {
@@ -132498,191 +132524,191 @@
        "top_importance_changes": [
         [
          "RELP",
-         0.004045945774104581
+         0.0038802779616536748
         ],
         [
          "MIL",
-         -0.0024095443735661394
+         -0.0024933963055325838
         ],
         [
          "AGEP",
-         -0.0022805263045287405
+         -0.0022962646931032338
         ],
         [
          "RAC1P",
-         -0.0019732169918443964
+         -0.0019547759737693973
         ],
         [
          "ESP",
-         -0.0014574246670038538
-        ],
-        [
-         "SCHL",
-         -0.00098622021046961
+         -0.0013485227671648815
         ],
         [
          "DIS",
-         0.0009366269695769563
+         0.0008921057077849945
+        ],
+        [
+         "SCHL",
+         -0.0008613776572876791
         ],
         [
          "NATIVITY",
-         -0.0006775932395264514
+         -0.0006898339799070365
+        ],
+        [
+         "MIG",
+         -0.000345546895338094
         ],
         [
          "SEX",
-         -0.0004304222486629303
-        ],
-        [
-         "DREM",
-         0.00036922171437517304
+         -0.00034367739796508506
         ]
        ]
       },
       "feature_importances": {
-       "AGEP": -0.0022805263045287405,
-       "SCHL": -0.00098622021046961,
-       "MAR": -4.679148409125755e-05,
-       "RELP": 0.004045945774104581,
-       "DIS": 0.0009366269695769563,
-       "ESP": -0.0014574246670038538,
-       "CIT": -0.00010968521486789777,
-       "MIG": -0.00034026188811659905,
-       "MIL": -0.0024095443735661394,
-       "ANC": 0.00013694943257356196,
-       "NATIVITY": -0.0006775932395264514,
-       "DEAR": 0.00019504134560452283,
-       "DEYE": -7.288680984606421e-05,
-       "DREM": 0.00036922171437517304,
-       "SEX": -0.0004304222486629303,
-       "RAC1P": -0.0019732169918443964
+       "AGEP": -0.0022962646931032338,
+       "SCHL": -0.0008613776572876791,
+       "MAR": -1.1881653115775048e-05,
+       "RELP": 0.0038802779616536748,
+       "DIS": 0.0008921057077849945,
+       "ESP": -0.0013485227671648815,
+       "CIT": -0.0001111492981240459,
+       "MIG": -0.000345546895338094,
+       "MIL": -0.0024933963055325838,
+       "ANC": 0.0001342566741340456,
+       "NATIVITY": -0.0006898339799070365,
+       "DEAR": 0.0001515448245823503,
+       "DEYE": -8.222661339992148e-05,
+       "DREM": 0.00031806975451591484,
+       "SEX": -0.00034367739796508506,
+       "RAC1P": -0.0019547759737693973
       },
       "distribution_changes": {
        "AGEP": {
-        "ref_importance": 0.1364515614962473,
-        "test_importance": 0.13417103519171855,
-        "change": -0.0022805263045287405,
-        "change_ci_low": -0.012942705472137245,
-        "change_ci_high": 0.008494563448616413,
+        "ref_importance": 0.13646604958195613,
+        "test_importance": 0.1341697848888529,
+        "change": -0.0022962646931032338,
+        "change_ci_low": -0.013018704180978106,
+        "change_ci_high": 0.008365832492406756,
         "change_significant": false
        },
        "SCHL": {
-        "ref_importance": 0.036703657259699096,
-        "test_importance": 0.035717437049229486,
-        "change": -0.00098622021046961,
-        "change_ci_low": -0.0053434686188991165,
-        "change_ci_high": 0.0032381744886107954,
+        "ref_importance": 0.03664798479755797,
+        "test_importance": 0.03578660714027029,
+        "change": -0.0008613776572876791,
+        "change_ci_low": -0.00514281432470788,
+        "change_ci_high": 0.0033983970753040196,
         "change_significant": false
        },
        "MAR": {
-        "ref_importance": 0.03334010856442459,
-        "test_importance": 0.03329331708033333,
-        "change": -4.679148409125755e-05,
-        "change_ci_low": -0.002419707752684203,
-        "change_ci_high": 0.0023472856634338254,
+        "ref_importance": 0.033330759463194366,
+        "test_importance": 0.03331887781007859,
+        "change": -1.1881653115775048e-05,
+        "change_ci_low": -0.002405798008669146,
+        "change_ci_high": 0.0023357258590811056,
         "change_significant": false
        },
        "RELP": {
-        "ref_importance": 0.09902856975471,
-        "test_importance": 0.10307451552881458,
-        "change": 0.004045945774104581,
-        "change_ci_low": -0.005990086860219395,
-        "change_ci_high": 0.013115427561777013,
+        "ref_importance": 0.09907592323815688,
+        "test_importance": 0.10295620119981055,
+        "change": 0.0038802779616536748,
+        "change_ci_low": -0.006098835039627125,
+        "change_ci_high": 0.012957808388730254,
         "change_significant": false
        },
        "DIS": {
-        "ref_importance": 0.06000299885696685,
-        "test_importance": 0.0609396258265438,
-        "change": 0.0009366269695769563,
-        "change_ci_low": -0.006859902754233635,
-        "change_ci_high": 0.009101860872603354,
+        "ref_importance": 0.059948443975831094,
+        "test_importance": 0.06084054968361609,
+        "change": 0.0008921057077849945,
+        "change_ci_low": -0.006990142134944876,
+        "change_ci_high": 0.009067868849215018,
         "change_significant": false
        },
        "ESP": {
-        "ref_importance": 0.021293132969686736,
-        "test_importance": 0.019835708302682883,
-        "change": -0.0014574246670038538,
-        "change_ci_low": -0.00954290819074363,
-        "change_ci_high": 0.006374966050292387,
+        "ref_importance": 0.021250549067904245,
+        "test_importance": 0.019902026300739364,
+        "change": -0.0013485227671648815,
+        "change_ci_low": -0.009412258925973672,
+        "change_ci_high": 0.006439077154883672,
         "change_significant": false
        },
        "CIT": {
-        "ref_importance": 0.010927010717369205,
-        "test_importance": 0.010817325502501307,
-        "change": -0.00010968521486789777,
-        "change_ci_low": -0.0016533038749398947,
-        "change_ci_high": 0.0013443405733072596,
+        "ref_importance": 0.010916758093884028,
+        "test_importance": 0.010805608795759982,
+        "change": -0.0001111492981240459,
+        "change_ci_low": -0.0016718943299023233,
+        "change_ci_high": 0.0013345633416009027,
         "change_significant": false
        },
        "MIG": {
-        "ref_importance": 0.009982981062416409,
-        "test_importance": 0.00964271917429981,
-        "change": -0.00034026188811659905,
-        "change_ci_low": -0.0022004197716599875,
-        "change_ci_high": 0.0017737165995934804,
+        "ref_importance": 0.009988894919490062,
+        "test_importance": 0.009643348024151968,
+        "change": -0.000345546895338094,
+        "change_ci_low": -0.0022428866068026137,
+        "change_ci_high": 0.0017844421268649192,
         "change_significant": false
        },
        "MIL": {
-        "ref_importance": 0.02509829712812051,
-        "test_importance": 0.02268875275455437,
-        "change": -0.0024095443735661394,
-        "change_ci_low": -0.00793166578495077,
-        "change_ci_high": 0.003300010149278502,
+        "ref_importance": 0.02513649895236796,
+        "test_importance": 0.022643102646835375,
+        "change": -0.0024933963055325838,
+        "change_ci_low": -0.008010151626660413,
+        "change_ci_high": 0.0032097750676066544,
         "change_significant": false
        },
        "ANC": {
-        "ref_importance": 0.006622491422812053,
-        "test_importance": 0.006759440855385615,
-        "change": 0.00013694943257356196,
-        "change_ci_low": -0.00016225405316383517,
-        "change_ci_high": 0.00045233707554500214,
+        "ref_importance": 0.006624866940493742,
+        "test_importance": 0.006759123614627788,
+        "change": 0.0001342566741340456,
+        "change_ci_low": -0.00015677340651589673,
+        "change_ci_high": 0.0004547475290490984,
         "change_significant": false
        },
        "NATIVITY": {
-        "ref_importance": 0.009614918012652494,
-        "test_importance": 0.008937324773126042,
-        "change": -0.0006775932395264514,
-        "change_ci_low": -0.0014861877510314893,
-        "change_ci_high": 5.35130769156518e-05,
+        "ref_importance": 0.009621519615739921,
+        "test_importance": 0.008931685635832885,
+        "change": -0.0006898339799070365,
+        "change_ci_low": -0.0014775616895231869,
+        "change_ci_high": 4.2487733598443136e-05,
         "change_significant": false
        },
        "DEAR": {
-        "ref_importance": 0.003894361723625672,
-        "test_importance": 0.004089403069230195,
-        "change": 0.00019504134560452283,
-        "change_ci_low": -0.0012165820561453866,
-        "change_ci_high": 0.001655730469462196,
+        "ref_importance": 0.003929414621102098,
+        "test_importance": 0.004080959445684448,
+        "change": 0.0001515448245823503,
+        "change_ci_low": -0.0012357779544923916,
+        "change_ci_high": 0.00161699882445803,
         "change_significant": false
        },
        "DEYE": {
-        "ref_importance": 0.0032580316703548122,
-        "test_importance": 0.003185144860508748,
-        "change": -7.288680984606421e-05,
-        "change_ci_low": -0.0007860672870439424,
-        "change_ci_high": 0.0006042167906335393,
+        "ref_importance": 0.003256346038941562,
+        "test_importance": 0.0031741194255416405,
+        "change": -8.222661339992148e-05,
+        "change_ci_low": -0.0007909618280244367,
+        "change_ci_high": 0.000591095468796546,
         "change_significant": false
        },
        "DREM": {
-        "ref_importance": 0.007208455327171244,
-        "test_importance": 0.007577677041546417,
-        "change": 0.00036922171437517304,
-        "change_ci_low": -0.0019106362977586843,
-        "change_ci_high": 0.0025243347527410605,
+        "ref_importance": 0.007256301483889717,
+        "test_importance": 0.007574371238405632,
+        "change": 0.00031806975451591484,
+        "change_ci_low": -0.002004078682144275,
+        "change_ci_high": 0.0024818951108964336,
         "change_significant": false
        },
        "SEX": {
-        "ref_importance": 0.05920495235563923,
-        "test_importance": 0.0587745301069763,
-        "change": -0.0004304222486629303,
-        "change_ci_low": -0.0015572282275891287,
-        "change_ci_high": 0.0007540248944628885,
+        "ref_importance": 0.05914356492087153,
+        "test_importance": 0.05879988752290644,
+        "change": -0.00034367739796508506,
+        "change_ci_low": -0.0015354432537221334,
+        "change_ci_high": 0.000889116835734953,
         "change_significant": false
        },
        "RAC1P": {
-        "ref_importance": 0.010245039762628277,
-        "test_importance": 0.008271822770783881,
-        "change": -0.0019732169918443964,
-        "change_ci_low": -0.003024866764206158,
-        "change_ci_high": -0.000983054104683204,
+        "ref_importance": 0.010234975517129973,
+        "test_importance": 0.008280199543360576,
+        "change": -0.0019547759737693973,
+        "change_ci_low": -0.0030039468731289727,
+        "change_ci_high": -0.0009841709569733035,
         "change_significant": true
        }
       },
@@ -132715,7 +132741,7 @@
        ]
       }
      },
-     "execution_time_seconds": 208.74683451652527,
+     "execution_time_seconds": 53.23053693771362,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -132833,7 +132859,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.20159149169921875,
+     "execution_time_seconds": 0.05528879165649414,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -132860,12 +132886,12 @@
       "detector_name": "mmd",
       "drift_detected": true,
       "severity": "high",
-      "score": 0.06387998852811073,
+      "score": 0.06387998852810899,
       "threshold": 0.05,
       "p_value": 0.004975124378109453,
-      "statistic": 0.0040806529343515585,
+      "statistic": 0.0040806529343513365,
       "metadata": {
-       "mmd2_unbiased": 0.0040806529343515585,
+       "mmd2_unbiased": 0.0040806529343513365,
        "kernel": "rbf",
        "gamma": 0.06817277616256397,
        "n_permutations": 200,
@@ -132877,12 +132903,13 @@
        "actual_test_samples": 3000,
        "n_numeric_features": 2,
        "n_categorical_features": 14,
-       "encoded_dimension": 86
+       "encoded_dimension": 86,
+       "device": "cuda"
       }
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 6.029120206832886,
+     "execution_time_seconds": 0.40985918045043945,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -132953,7 +132980,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.12881255149841309,
+     "execution_time_seconds": 0.021956205368041992,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -132996,7 +133023,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.1461799144744873,
+     "execution_time_seconds": 0.04568195343017578,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -133035,7 +133062,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 123.9464783668518,
+     "execution_time_seconds": 1.21976637840271,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -133059,8 +133086,8 @@
     }
    },
    "explanation_shift": {
-    "cosine_distance": 0.00045725572951760274,
-    "relative_l1_change": 0.030904640314652645
+    "cosine_distance": 0.0004368214157347561,
+    "relative_l1_change": 0.029868705721705326
    },
    "diagnosis": {
     "final": {
@@ -145311,14 +145338,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 208.747,
-    "PSI": 0.202,
-    "MMD": 6.029,
-    "CBPE": 0.129,
-    "BBSD": 0.146,
-    "Domain classifier": 123.947,
-    "reliability": 7.057,
-    "diagnosis": 16.829
+    "KS Test": 53.231,
+    "PSI": 0.055,
+    "MMD": 0.41,
+    "CBPE": 0.022,
+    "BBSD": 0.046,
+    "Domain classifier": 1.22,
+    "reliability": 1.356,
+    "diagnosis": 5.548
    }
   },
   "FL 2014": {
@@ -145721,191 +145748,191 @@
        "top_importance_changes": [
         [
          "SCHL",
-         -0.004430615123023375
+         -0.004350395298245102
         ],
         [
          "DIS",
-         0.00392149611977332
+         0.003923580580306264
         ],
         [
          "RAC1P",
-         -0.0036846818280659565
+         -0.0036735116848557563
         ],
         [
          "MIL",
-         0.0027867401227248158
+         0.0027068640075818932
         ],
         [
          "AGEP",
-         0.0023210865456805563
+         0.002568936270216232
         ],
         [
          "MIG",
-         0.0015360639661632283
+         0.0015637986939046923
         ],
         [
          "MAR",
-         0.0013958960498619208
+         0.0013897434764280209
         ],
         [
          "ESP",
-         -0.0013514669487283831
+         -0.001263215243965058
         ],
         [
          "DREM",
-         0.001158007875239139
+         0.0011852620625030603
         ],
         [
          "NATIVITY",
-         -0.0010509967799684633
+         -0.0010396969055379984
         ]
        ]
       },
       "feature_importances": {
-       "AGEP": 0.0023210865456805563,
-       "SCHL": -0.004430615123023375,
-       "MAR": 0.0013958960498619208,
-       "RELP": 0.0007627227871529058,
-       "DIS": 0.00392149611977332,
-       "ESP": -0.0013514669487283831,
-       "CIT": -0.0010333867626904011,
-       "MIG": 0.0015360639661632283,
-       "MIL": 0.0027867401227248158,
-       "ANC": 2.7778812203187522e-05,
-       "NATIVITY": -0.0010509967799684633,
-       "DEAR": 0.0007659540117028454,
-       "DEYE": 0.00034758983823368053,
-       "DREM": 0.001158007875239139,
-       "SEX": -0.0005138806834220355,
-       "RAC1P": -0.0036846818280659565
+       "AGEP": 0.002568936270216232,
+       "SCHL": -0.004350395298245102,
+       "MAR": 0.0013897434764280209,
+       "RELP": 0.0007302156910901081,
+       "DIS": 0.003923580580306264,
+       "ESP": -0.001263215243965058,
+       "CIT": -0.0010163771910575714,
+       "MIG": 0.0015637986939046923,
+       "MIL": 0.0027068640075818932,
+       "ANC": 2.660138441538777e-05,
+       "NATIVITY": -0.0010396969055379984,
+       "DEAR": 0.0007521878299595998,
+       "DEYE": 0.0003251758991940721,
+       "DREM": 0.0011852620625030603,
+       "SEX": -0.000415978143852809,
+       "RAC1P": -0.0036735116848557563
       },
       "distribution_changes": {
        "AGEP": {
-        "ref_importance": 0.13661672884327794,
-        "test_importance": 0.1389378153889585,
-        "change": 0.0023210865456805563,
-        "change_ci_low": -0.008648537253940741,
-        "change_ci_high": 0.01275900431586066,
+        "ref_importance": 0.13646604958195613,
+        "test_importance": 0.13903498585217236,
+        "change": 0.002568936270216232,
+        "change_ci_low": -0.008449116309739421,
+        "change_ci_high": 0.013036309535919435,
         "change_significant": false
        },
        "SCHL": {
-        "ref_importance": 0.03672337559551905,
-        "test_importance": 0.03229276047249568,
-        "change": -0.004430615123023375,
-        "change_ci_low": -0.0088212282617162,
-        "change_ci_high": -0.00033199667716537844,
+        "ref_importance": 0.03664798479755797,
+        "test_importance": 0.03229758949931287,
+        "change": -0.004350395298245102,
+        "change_ci_low": -0.008744204395013862,
+        "change_ci_high": -0.0003250173731651745,
         "change_significant": true
        },
        "MAR": {
-        "ref_importance": 0.0333418617094571,
-        "test_importance": 0.03473775775931902,
-        "change": 0.0013958960498619208,
-        "change_ci_low": -0.0011336765271660954,
-        "change_ci_high": 0.003985033761015572,
+        "ref_importance": 0.033330759463194366,
+        "test_importance": 0.03472050293962239,
+        "change": 0.0013897434764280209,
+        "change_ci_low": -0.0011769526778224735,
+        "change_ci_high": 0.0039849487417572115,
         "change_significant": false
        },
        "RELP": {
-        "ref_importance": 0.09896479841111344,
-        "test_importance": 0.09972752119826635,
-        "change": 0.0007627227871529058,
-        "change_ci_low": -0.008809696157462472,
-        "change_ci_high": 0.010936111290407493,
+        "ref_importance": 0.09907592323815688,
+        "test_importance": 0.09980613892924699,
+        "change": 0.0007302156910901081,
+        "change_ci_low": -0.008928020894375752,
+        "change_ci_high": 0.01102902425153738,
         "change_significant": false
        },
        "DIS": {
-        "ref_importance": 0.059882773219180195,
-        "test_importance": 0.06380426933895351,
-        "change": 0.00392149611977332,
-        "change_ci_low": -0.004250217667507788,
-        "change_ci_high": 0.012842905506622168,
+        "ref_importance": 0.059948443975831094,
+        "test_importance": 0.06387202455613736,
+        "change": 0.003923580580306264,
+        "change_ci_low": -0.004228884016916387,
+        "change_ci_high": 0.012836848281832835,
         "change_significant": false
        },
        "ESP": {
-        "ref_importance": 0.021289899989360345,
-        "test_importance": 0.01993843304063196,
-        "change": -0.0013514669487283831,
-        "change_ci_low": -0.008467713753963962,
-        "change_ci_high": 0.006395164722868082,
+        "ref_importance": 0.021250549067904245,
+        "test_importance": 0.019987333823939187,
+        "change": -0.001263215243965058,
+        "change_ci_low": -0.008330704981919502,
+        "change_ci_high": 0.006459383590439666,
         "change_significant": false
        },
        "CIT": {
-        "ref_importance": 0.010925006016652868,
-        "test_importance": 0.009891619253962466,
-        "change": -0.0010333867626904011,
-        "change_ci_low": -0.0024583142906539875,
-        "change_ci_high": 0.00025279647610694213,
+        "ref_importance": 0.010916758093884028,
+        "test_importance": 0.009900380902826456,
+        "change": -0.0010163771910575714,
+        "change_ci_low": -0.002456396532043012,
+        "change_ci_high": 0.0002791036039026386,
         "change_significant": false
        },
        "MIG": {
-        "ref_importance": 0.009982845476512044,
-        "test_importance": 0.011518909442675272,
-        "change": 0.0015360639661632283,
-        "change_ci_low": -0.0006684953134351787,
-        "change_ci_high": 0.004242188570864512,
+        "ref_importance": 0.009988894919490062,
+        "test_importance": 0.011552693613394754,
+        "change": 0.0015637986939046923,
+        "change_ci_low": -0.0006778496543296118,
+        "change_ci_high": 0.004331990975281901,
         "change_significant": false
        },
        "MIL": {
-        "ref_importance": 0.02507865760287815,
-        "test_importance": 0.027865397725602967,
-        "change": 0.0027867401227248158,
-        "change_ci_low": -0.004442726970712096,
-        "change_ci_high": 0.009642770123526165,
+        "ref_importance": 0.02513649895236796,
+        "test_importance": 0.027843362959949852,
+        "change": 0.0027068640075818932,
+        "change_ci_low": -0.004504226595964328,
+        "change_ci_high": 0.0095514225111169,
         "change_significant": false
        },
        "ANC": {
-        "ref_importance": 0.006619901156175907,
-        "test_importance": 0.006647679968379095,
-        "change": 2.7778812203187522e-05,
-        "change_ci_low": -0.00025735364072513195,
-        "change_ci_high": 0.0003381987990962019,
+        "ref_importance": 0.006624866940493742,
+        "test_importance": 0.00665146832490913,
+        "change": 2.660138441538777e-05,
+        "change_ci_low": -0.0002626614464406709,
+        "change_ci_high": 0.0003385060930786945,
         "change_significant": false
        },
        "NATIVITY": {
-        "ref_importance": 0.009633235326258236,
-        "test_importance": 0.008582238546289773,
-        "change": -0.0010509967799684633,
-        "change_ci_low": -0.0018362653661129422,
-        "change_ci_high": -0.00034046254947316015,
+        "ref_importance": 0.009621519615739921,
+        "test_importance": 0.008581822710201923,
+        "change": -0.0010396969055379984,
+        "change_ci_low": -0.0018319999555457796,
+        "change_ci_high": -0.00034467852486368453,
         "change_significant": true
        },
        "DEAR": {
-        "ref_importance": 0.00392613393137323,
-        "test_importance": 0.004692087943076076,
-        "change": 0.0007659540117028454,
-        "change_ci_low": -0.0006765180073079624,
-        "change_ci_high": 0.0023221651169938098,
+        "ref_importance": 0.003929414621102098,
+        "test_importance": 0.0046816024510616975,
+        "change": 0.0007521878299595998,
+        "change_ci_low": -0.0006660794892844944,
+        "change_ci_high": 0.0022768507091004246,
         "change_significant": false
        },
        "DEYE": {
-        "ref_importance": 0.0032420624628939883,
-        "test_importance": 0.003589652301127669,
-        "change": 0.00034758983823368053,
-        "change_ci_low": -0.0004620941713502261,
-        "change_ci_high": 0.0011970510349980329,
+        "ref_importance": 0.003256346038941562,
+        "test_importance": 0.003581521938135634,
+        "change": 0.0003251758991940721,
+        "change_ci_low": -0.000499200410286512,
+        "change_ci_high": 0.0011975051014352926,
         "change_significant": false
        },
        "DREM": {
-        "ref_importance": 0.00727598038135161,
-        "test_importance": 0.008433988256590749,
-        "change": 0.001158007875239139,
-        "change_ci_low": -0.0011408292923092336,
-        "change_ci_high": 0.0033155674855450744,
+        "ref_importance": 0.007256301483889717,
+        "test_importance": 0.008441563546392777,
+        "change": 0.0011852620625030603,
+        "change_ci_low": -0.0011294222823531287,
+        "change_ci_high": 0.003348357882910747,
         "change_significant": false
        },
        "SEX": {
-        "ref_importance": 0.05924410175333081,
-        "test_importance": 0.05873022106990877,
-        "change": -0.0005138806834220355,
-        "change_ci_low": -0.0016451080597729164,
-        "change_ci_high": 0.0006161558073382356,
+        "ref_importance": 0.05914356492087153,
+        "test_importance": 0.05872758677701872,
+        "change": -0.000415978143852809,
+        "change_ci_low": -0.0015694337419880256,
+        "change_ci_high": 0.0007262630460147716,
         "change_significant": false
        },
        "RAC1P": {
-        "ref_importance": 0.010245440142065144,
-        "test_importance": 0.006560758313999188,
-        "change": -0.0036846818280659565,
-        "change_ci_low": -0.004584983601262945,
-        "change_ci_high": -0.0026776039287473748,
+        "ref_importance": 0.010234975517129973,
+        "test_importance": 0.006561463832274217,
+        "change": -0.0036735116848557563,
+        "change_ci_low": -0.00457091071069751,
+        "change_ci_high": -0.0026841974218901592,
         "change_significant": true
        }
       },
@@ -145940,7 +145967,7 @@
        ]
       }
      },
-     "execution_time_seconds": 206.87582278251648,
+     "execution_time_seconds": 53.027703046798706,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -146058,7 +146085,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.2741739749908447,
+     "execution_time_seconds": 0.0552668571472168,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -146085,12 +146112,12 @@
       "detector_name": "mmd",
       "drift_detected": true,
       "severity": "high",
-      "score": 0.09957281896140317,
+      "score": 0.09957281896140206,
       "threshold": 0.05,
       "p_value": 0.004975124378109453,
-      "statistic": 0.009914746275920372,
+      "statistic": 0.00991474627592015,
       "metadata": {
-       "mmd2_unbiased": 0.009914746275920372,
+       "mmd2_unbiased": 0.00991474627592015,
        "kernel": "rbf",
        "gamma": 0.06862509085311336,
        "n_permutations": 200,
@@ -146102,12 +146129,13 @@
        "actual_test_samples": 3000,
        "n_numeric_features": 2,
        "n_categorical_features": 14,
-       "encoded_dimension": 86
+       "encoded_dimension": 86,
+       "device": "cuda"
       }
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 5.218163013458252,
+     "execution_time_seconds": 0.4100940227508545,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -146178,7 +146206,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.1248619556427002,
+     "execution_time_seconds": 0.021909713745117188,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -146221,7 +146249,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.17447590827941895,
+     "execution_time_seconds": 0.03788185119628906,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -146260,7 +146288,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 114.7247314453125,
+     "execution_time_seconds": 1.1790375709533691,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -146284,8 +146312,8 @@
     }
    },
    "explanation_shift": {
-    "cosine_distance": 0.0008219368138242533,
-    "relative_l1_change": 0.050823133355841994
+    "cosine_distance": 0.0008039552521775795,
+    "relative_l1_change": 0.0505444483740308
    },
    "diagnosis": {
     "final": {
@@ -158538,14 +158566,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 206.876,
-    "PSI": 0.274,
-    "MMD": 5.218,
-    "CBPE": 0.125,
-    "BBSD": 0.175,
-    "Domain classifier": 114.725,
-    "reliability": 5.458,
-    "diagnosis": 20.612
+    "KS Test": 53.028,
+    "PSI": 0.055,
+    "MMD": 0.41,
+    "CBPE": 0.022,
+    "BBSD": 0.038,
+    "Domain classifier": 1.179,
+    "reliability": 1.397,
+    "diagnosis": 7.006
    }
   },
   "WA 2014": {
@@ -158947,191 +158975,191 @@
        "top_importance_changes": [
         [
          "MIL",
-         0.006473734900620826
+         0.006414627691004839
         ],
         [
          "AGEP",
-         -0.004777011607353859
+         -0.004840246532788833
         ],
         [
          "SCHL",
-         -0.004149870884547782
+         -0.0042064855361692716
         ],
         [
          "DIS",
-         0.0029058381948418657
-        ],
-        [
-         "RAC1P",
-         -0.002796691049799652
+         0.0029935583737435087
         ],
         [
          "RELP",
-         -0.0027315906718659855
+         -0.0028215462239791905
+        ],
+        [
+         "RAC1P",
+         -0.0027985475215887385
         ],
         [
          "CIT",
-         -0.0026893243326473054
-        ],
-        [
-         "DREM",
-         0.0018153751297150297
-        ],
-        [
-         "MAR",
-         -0.001807571575782499
+         -0.0026991129854777238
         ],
         [
          "NATIVITY",
-         -0.0017780340505602968
+         -0.001768859875626404
+        ],
+        [
+         "MAR",
+         -0.0017598978811400184
+        ],
+        [
+         "MIG",
+         0.0017385136265620216
         ]
        ]
       },
       "feature_importances": {
-       "AGEP": -0.004777011607353859,
-       "SCHL": -0.004149870884547782,
-       "MAR": -0.001807571575782499,
-       "RELP": -0.0027315906718659855,
-       "DIS": 0.0029058381948418657,
-       "ESP": -0.0008949530249043845,
-       "CIT": -0.0026893243326473054,
-       "MIG": 0.0017309913740024604,
-       "MIL": 0.006473734900620826,
-       "ANC": 0.0005093445266214237,
-       "NATIVITY": -0.0017780340505602968,
-       "DEAR": 0.0006035065703794743,
-       "DEYE": 1.2518852719422408e-05,
-       "DREM": 0.0018153751297150297,
-       "SEX": 0.0004344666904825753,
-       "RAC1P": -0.002796691049799652
+       "AGEP": -0.004840246532788833,
+       "SCHL": -0.0042064855361692716,
+       "MAR": -0.0017598978811400184,
+       "RELP": -0.0028215462239791905,
+       "DIS": 0.0029935583737435087,
+       "ESP": -0.000786598537251694,
+       "CIT": -0.0026991129854777238,
+       "MIG": 0.0017385136265620216,
+       "MIL": 0.006414627691004839,
+       "ANC": 0.000509642592316166,
+       "NATIVITY": -0.001768859875626404,
+       "DEAR": 0.0005401853978607932,
+       "DEYE": 2.1225667214257518e-05,
+       "DREM": 0.0017343015560626765,
+       "SEX": 0.0003810633997135063,
+       "RAC1P": -0.0027985475215887385
       },
       "distribution_changes": {
        "AGEP": {
-        "ref_importance": 0.13653475204137852,
-        "test_importance": 0.13175774043402466,
-        "change": -0.004777011607353859,
-        "change_ci_low": -0.015162309818486265,
-        "change_ci_high": 0.005972449889265596,
+        "ref_importance": 0.13646604958195613,
+        "test_importance": 0.1316258030491673,
+        "change": -0.004840246532788833,
+        "change_ci_low": -0.015304982118542726,
+        "change_ci_high": 0.005903018110381232,
         "change_significant": false
        },
        "SCHL": {
-        "ref_importance": 0.03664080447136415,
-        "test_importance": 0.032490933586816366,
-        "change": -0.004149870884547782,
-        "change_ci_low": -0.008774094249988408,
-        "change_ci_high": 0.00010365474943155736,
+        "ref_importance": 0.03664798479755797,
+        "test_importance": 0.0324414992613887,
+        "change": -0.0042064855361692716,
+        "change_ci_low": -0.008817547008382961,
+        "change_ci_high": 1.1663385106310144e-06,
         "change_significant": false
        },
        "MAR": {
-        "ref_importance": 0.033343745853603675,
-        "test_importance": 0.031536174277821176,
-        "change": -0.001807571575782499,
-        "change_ci_low": -0.004226519724418544,
-        "change_ci_high": 0.0007154974960196066,
+        "ref_importance": 0.033330759463194366,
+        "test_importance": 0.03157086158205435,
+        "change": -0.0017598978811400184,
+        "change_ci_low": -0.004196061800806208,
+        "change_ci_high": 0.0007841861885647199,
         "change_significant": false
        },
        "RELP": {
-        "ref_importance": 0.0989314218548163,
-        "test_importance": 0.09619983118295032,
-        "change": -0.0027315906718659855,
-        "change_ci_low": -0.01163933795878352,
-        "change_ci_high": 0.006381372207274814,
+        "ref_importance": 0.09907592323815688,
+        "test_importance": 0.09625437701417769,
+        "change": -0.0028215462239791905,
+        "change_ci_low": -0.011711940473660604,
+        "change_ci_high": 0.006202447791807404,
         "change_significant": false
        },
        "DIS": {
-        "ref_importance": 0.05987260680103675,
-        "test_importance": 0.06277844499587862,
-        "change": 0.0029058381948418657,
-        "change_ci_low": -0.0052515212063542005,
-        "change_ci_high": 0.011121322715237992,
+        "ref_importance": 0.059948443975831094,
+        "test_importance": 0.0629420023495746,
+        "change": 0.0029935583737435087,
+        "change_ci_low": -0.005151307417031518,
+        "change_ci_high": 0.011360715205318665,
         "change_significant": false
        },
        "ESP": {
-        "ref_importance": 0.021352356731371553,
-        "test_importance": 0.02045740370646717,
-        "change": -0.0008949530249043845,
-        "change_ci_low": -0.009167600021198756,
-        "change_ci_high": 0.006219358689788075,
+        "ref_importance": 0.021250549067904245,
+        "test_importance": 0.02046395053065255,
+        "change": -0.000786598537251694,
+        "change_ci_low": -0.009061179602169131,
+        "change_ci_high": 0.006378872441920997,
         "change_significant": false
        },
        "CIT": {
-        "ref_importance": 0.010909230555364094,
-        "test_importance": 0.008219906222716789,
-        "change": -0.0026893243326473054,
-        "change_ci_low": -0.004129664778751775,
-        "change_ci_high": -0.0014220803866229047,
+        "ref_importance": 0.010916758093884028,
+        "test_importance": 0.008217645108406304,
+        "change": -0.0026991129854777238,
+        "change_ci_low": -0.004133213190219184,
+        "change_ci_high": -0.0014307852384657527,
         "change_significant": true
        },
        "MIG": {
-        "ref_importance": 0.009986046209436251,
-        "test_importance": 0.011717037583438712,
-        "change": 0.0017309913740024604,
-        "change_ci_low": -0.0007120423922886105,
-        "change_ci_high": 0.004270146739591235,
+        "ref_importance": 0.009988894919490062,
+        "test_importance": 0.011727408546052084,
+        "change": 0.0017385136265620216,
+        "change_ci_low": -0.0007811403857167334,
+        "change_ci_high": 0.004295969327546805,
         "change_significant": false
        },
        "MIL": {
-        "ref_importance": 0.02510069541976555,
-        "test_importance": 0.03157443032038638,
-        "change": 0.006473734900620826,
-        "change_ci_low": -0.001291406238136389,
-        "change_ci_high": 0.014037772737584097,
+        "ref_importance": 0.02513649895236796,
+        "test_importance": 0.0315511266433728,
+        "change": 0.006414627691004839,
+        "change_ci_low": -0.0013149032330934734,
+        "change_ci_high": 0.013964104599933823,
         "change_significant": false
        },
        "ANC": {
-        "ref_importance": 0.006614845525655479,
-        "test_importance": 0.007124190052276902,
-        "change": 0.0005093445266214237,
-        "change_ci_low": 0.00019650658545460915,
-        "change_ci_high": 0.0007991298337047048,
+        "ref_importance": 0.006624866940493742,
+        "test_importance": 0.007134509532809908,
+        "change": 0.000509642592316166,
+        "change_ci_low": 0.00018710601471885166,
+        "change_ci_high": 0.000786161991816291,
         "change_significant": true
        },
        "NATIVITY": {
-        "ref_importance": 0.009632383093285183,
-        "test_importance": 0.007854349042724886,
-        "change": -0.0017780340505602968,
-        "change_ci_low": -0.0024879560127663695,
-        "change_ci_high": -0.0011452457647591306,
+        "ref_importance": 0.009621519615739921,
+        "test_importance": 0.007852659740113517,
+        "change": -0.001768859875626404,
+        "change_ci_low": -0.002480815945231109,
+        "change_ci_high": -0.001123563691925303,
         "change_significant": true
        },
        "DEAR": {
-        "ref_importance": 0.003902811748924893,
-        "test_importance": 0.004506318319304367,
-        "change": 0.0006035065703794743,
-        "change_ci_low": -0.0009333917073069503,
-        "change_ci_high": 0.002185846890239428,
+        "ref_importance": 0.003929414621102098,
+        "test_importance": 0.004469600018962891,
+        "change": 0.0005401853978607932,
+        "change_ci_low": -0.0009669619085925484,
+        "change_ci_high": 0.0021099753135634816,
         "change_significant": false
        },
        "DEYE": {
-        "ref_importance": 0.0032661141604769317,
-        "test_importance": 0.003278633013196354,
-        "change": 1.2518852719422408e-05,
-        "change_ci_low": -0.0007391010768342301,
-        "change_ci_high": 0.0008029431437070017,
+        "ref_importance": 0.003256346038941562,
+        "test_importance": 0.0032775717061558195,
+        "change": 2.1225667214257518e-05,
+        "change_ci_low": -0.0007101901428312008,
+        "change_ci_high": 0.0008076776808729483,
         "change_significant": false
        },
        "DREM": {
-        "ref_importance": 0.00720673071191727,
-        "test_importance": 0.0090221058416323,
-        "change": 0.0018153751297150297,
-        "change_ci_low": -0.0004130004329155513,
-        "change_ci_high": 0.004238132468718846,
+        "ref_importance": 0.007256301483889717,
+        "test_importance": 0.008990603039952394,
+        "change": 0.0017343015560626765,
+        "change_ci_low": -0.0004777255959357477,
+        "change_ci_high": 0.004102132258602225,
         "change_significant": false
        },
        "SEX": {
-        "ref_importance": 0.05914997784630575,
-        "test_importance": 0.05958444453678832,
-        "change": 0.0004344666904825753,
-        "change_ci_low": -0.000669080160792085,
-        "change_ci_high": 0.001509282705424667,
+        "ref_importance": 0.05914356492087153,
+        "test_importance": 0.059524628320585034,
+        "change": 0.0003810633997135063,
+        "change_ci_low": -0.0007438053285331941,
+        "change_ci_high": 0.0015128371053400032,
         "change_significant": false
        },
        "RAC1P": {
-        "ref_importance": 0.01023342170682493,
-        "test_importance": 0.007436730657025278,
-        "change": -0.002796691049799652,
-        "change_ci_low": -0.0038111134566087296,
-        "change_ci_high": -0.0018335775894251828,
+        "ref_importance": 0.010234975517129973,
+        "test_importance": 0.007436427995541234,
+        "change": -0.0027985475215887385,
+        "change_ci_low": -0.003806726560765607,
+        "change_ci_high": -0.0018319127028290992,
         "change_significant": true
        }
       },
@@ -159166,7 +159194,7 @@
        ]
       }
      },
-     "execution_time_seconds": 200.1944501399994,
+     "execution_time_seconds": 53.31023073196411,
      "metadata": {
       "detector": "ks_test",
       "localizer": "univariate",
@@ -159284,7 +159312,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.13042902946472168,
+     "execution_time_seconds": 0.033952951431274414,
      "metadata": {
       "detector": "psi",
       "localizer": null,
@@ -159311,12 +159339,12 @@
       "detector_name": "mmd",
       "drift_detected": true,
       "severity": "high",
-      "score": 0.11923022923093266,
+      "score": 0.11923022923093358,
       "threshold": 0.05,
       "p_value": 0.004975124378109453,
-      "statistic": 0.014215847562460748,
+      "statistic": 0.01421584756246097,
       "metadata": {
-       "mmd2_unbiased": 0.014215847562460748,
+       "mmd2_unbiased": 0.01421584756246097,
        "kernel": "rbf",
        "gamma": 0.0702891641742614,
        "n_permutations": 200,
@@ -159328,12 +159356,13 @@
        "actual_test_samples": 3000,
        "n_numeric_features": 2,
        "n_categorical_features": 14,
-       "encoded_dimension": 86
+       "encoded_dimension": 86,
+       "device": "cuda"
       }
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 5.742276668548584,
+     "execution_time_seconds": 0.2957632541656494,
      "metadata": {
       "detector": "mmd",
       "localizer": null,
@@ -159404,7 +159433,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.09819316864013672,
+     "execution_time_seconds": 0.012775421142578125,
      "metadata": {
       "detector": "cbpe",
       "localizer": null,
@@ -159447,7 +159476,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 0.13358187675476074,
+     "execution_time_seconds": 0.027959823608398438,
      "metadata": {
       "detector": "bbsd",
       "localizer": null,
@@ -159486,7 +159515,7 @@
      },
      "localization": null,
      "rca": null,
-     "execution_time_seconds": 129.40650057792664,
+     "execution_time_seconds": 1.1424922943115234,
      "metadata": {
       "detector": "domain_classifier",
       "localizer": null,
@@ -159510,8 +159539,8 @@
     }
    },
    "explanation_shift": {
-    "cosine_distance": 0.0014438261787331763,
-    "relative_l1_change": 0.06779109928240958
+    "cosine_distance": 0.0014443062814990526,
+    "relative_l1_change": 0.06759095967769647
    },
    "diagnosis": {
     "final": {
@@ -171766,14 +171795,14 @@
     ]
    },
    "timings_seconds": {
-    "KS Test": 200.195,
-    "PSI": 0.13,
-    "MMD": 5.742,
-    "CBPE": 0.098,
-    "BBSD": 0.134,
-    "Domain classifier": 129.407,
-    "reliability": 1.615,
-    "diagnosis": 19.747
+    "KS Test": 53.31,
+    "PSI": 0.034,
+    "MMD": 0.296,
+    "CBPE": 0.013,
+    "BBSD": 0.028,
+    "Domain classifier": 1.143,
+    "reliability": 0.457,
+    "diagnosis": 7.451
    }
   }
  }

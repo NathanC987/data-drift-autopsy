@@ -90,8 +90,14 @@ def _parse(text: str) -> pd.DataFrame:
 
 
 def load_batches(data_dir: Path = DATA_DIR, download: bool = True) -> pd.DataFrame:
-    """All ten batches with columns ``batch``, ``gas`` and the 128 features."""
-    cache = Path(data_dir) / "batches.parquet"
+    """All ten batches with columns ``batch``, ``gas`` and the 128 features.
+
+    The parquet cache name carries the archive checksum and a hash of the
+    parser, so a changed parser never reuses a stale cache."""
+    import inspect
+
+    parser = hashlib.sha1(inspect.getsource(_parse).encode("utf-8")).hexdigest()[:10]
+    cache = Path(data_dir) / f"batches_{SHA256[:10]}_{parser}.parquet"
     if cache.exists():
         return pd.read_parquet(cache)
     frames = []

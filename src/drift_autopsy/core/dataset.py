@@ -1,6 +1,6 @@
 """Dataset abstraction for drift detection."""
 
-from typing import Optional, List, Dict, Any, Union
+from typing import Optional, List, Union
 import numpy as np
 import pandas as pd
 from dataclasses import dataclass
@@ -31,6 +31,13 @@ class Dataset:
     
     def __post_init__(self):
         """Initialize and validate dataset."""
+        n = len(self.data)
+        for name in ("target", "predictions", "prediction_probabilities"):
+            value = getattr(self, name)
+            if value is not None and len(value) != n:
+                raise ValueError(f"{name} has {len(value)} entries but data has {n} rows")
+        if self.metadata is not None and len(self.metadata) != n:
+            raise ValueError(f"metadata has {len(self.metadata)} rows but data has {n}")
         # Extract feature names from DataFrame if not provided
         if self.feature_names is None:
             if isinstance(self.data, pd.DataFrame):

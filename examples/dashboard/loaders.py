@@ -239,7 +239,8 @@ def reliability_records(study: Dict[str, Any], key: str) -> pd.DataFrame:
 def fusion_coefficients(study: Dict[str, Any]) -> pd.DataFrame:
     coefs = study["reliability_model"]["fusion"]["coefficients"]
     label = {"confidence_risk": "low confidence", "ood": "out of distribution", "instability": "instability"}
-    return pd.DataFrame([{"signal": label.get(k, k), "coefficient": v} for k, v in coefs.items()])
+    return pd.DataFrame([{"signal": label.get(k, k), "coefficient": v} for k, v in coefs.items()],
+                        columns=["signal", "coefficient"])
 
 
 # --------------------------------------------------------------------------- #

@@ -13,11 +13,13 @@ the paper; none is hidden.
   outside the reference support and blind to P(Y|X) changes.
 - **Per-prediction reliability adds little beyond confidence** on ACS and
   CLEAR-10: the fused score's AUROC against errors matches confidence alone.
-  On the gas sensor data the fusion is fitted on only a handful of calibration
-  errors and is unstable (better in some batches, worse in others).
-- **CBPE needs calibration rows at every confidence level.** A very accurate
-  reference model leaves the low-confidence bins nearly empty, so CBPE stays
-  near the calibration accuracy when production confidence collapses (gas).
+  The fusion is learned only with at least ten calibration errors per signal
+  (Peduzzi et al., 1996); on the gas sensor data (4 and 11 errors) the risk is
+  1 - confidence alone.
+- **CBPE needs calibration rows at every confidence level.** Bins with fewer
+  than five calibration rows keep the model's own confidence. Even so, CBPE
+  stays optimistic when drift breaks the confidence-to-accuracy relation (gas
+  batch 8: estimate 0.618, true 0.330).
 - **Importance-weighted triage is conservative under support shift.** When
   production leaves the reference support, importance-weighted validation cannot
   see gains that come from extrapolation. With a labelled recent window the

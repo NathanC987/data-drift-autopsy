@@ -35,6 +35,7 @@ from drift_autopsy.experiments import acs, clear10, gas
 from drift_autopsy.experiments.common import json_default
 from drift_autopsy.experiments.models import MODEL_DESCRIPTIONS
 from drift_autopsy.remediation import RemediationContext, remediation_triage, run_remediation_suite
+from drift_autopsy.remediation import triage as triage_module
 from drift_autopsy.utils import setup_logging
 
 SEED = 42
@@ -42,7 +43,7 @@ ALPHA = 0.05
 N_LABELS = 2000          # fresh labels bought by label_retrain / recalibrate
 STRATEGIES = ["importance_weighted_retrain", "retrain_on_recent", "full_retrain", "feature_drop_retrain",
               "label_retrain", "recalibrate"]
-PROBE_STRATEGIES = {"importance_weighted_retrain", "retrain_on_recent"}
+PROBE_STRATEGIES = set(triage_module.PROBE_STRATEGIES)
 ACS_YEARS = [2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023]
 GEO_STATES = ["TX", "NY", "FL", "WA"]
 ACS_GROUPS = {"income": "acs", "employment": "acs_employment"}
@@ -95,8 +96,8 @@ def acs_settings(task: str, kind: str) -> List[Dict[str, Any]]:
     features = list(acs.ACS_TASKS[task].features)
     X14, y14 = acs.load_acs_task(task, 2014, "CA")
     split = acs.split_reference(X14, y14, seed=SEED)
-    factory = lambda keep_columns=None: acs.make_acs_model(random_state=SEED, keep_columns=keep_columns,
-                                                           kind=kind, task=task)
+    def factory(keep_columns=None):
+        return acs.make_acs_model(random_state=SEED, keep_columns=keep_columns, kind=kind, task=task)
     with threadpool_limits(limits=1):
         model = factory().fit(split.train_X.to_numpy(float), split.train_y)
     ref_acc = float(drift["reference"]["test_accuracy"])
@@ -114,14 +115,14 @@ def acs_settings(task: str, kind: str) -> List[Dict[str, Any]]:
         recent = [(windows[p][0].to_numpy(float), windows[p][1]) for p in ACS_YEARS[:i]]
         ctx = RemediationContext(ref_X, ref_y, Xp, Xh, yh, features, drifted(f"CA {year}"),
                                  f"{title} temporal CA {year}", model, factory, ref_acc, recent_windows=recent,
-                                 production_y=yp, seed=SEED)
+                                 production_y=yp, seed=SEED, n_labels=N_LABELS)
         out.append(run_setting(ctx, f"{group}_temporal"))
     for state in GEO_STATES:
         X, y = acs.load_acs_task(task, 2014, state)
         Xp, Xh, yp, yh = _half(X.to_numpy(float), y, SEED)
         ctx = RemediationContext(ref_X, ref_y, Xp, Xh, yh, features, drifted(f"{state} 2014"),
                                  f"{title} geographic {state} 2014", model, factory, ref_acc, production_y=yp,
-                                 seed=SEED)
+                                 seed=SEED, n_labels=N_LABELS)
         out.append(run_setting(ctx, f"{group}_geographic"))
     return out
 
@@ -130,7 +131,8 @@ def clear_settings(kind: str) -> List[Dict[str, Any]]:
     drift = json.loads(results_path("clear10", kind).read_text())
     b1 = clear10.load_bucket(clear10.REFERENCE_BUCKET)
     split = clear10.split_reference(b1, seed=SEED)
-    factory = lambda: clear10.make_clear_model(random_state=SEED, kind=kind)
+    def factory():
+        return clear10.make_clear_model(random_state=SEED, kind=kind)
     with threadpool_limits(limits=1):
         model = factory().fit(clear10.embeddings(split.train), split.train["y_true"])
     ref_acc = float(drift["reference"]["test_accuracy"])
@@ -143,7 +145,7 @@ def clear_settings(kind: str) -> List[Dict[str, Any]]:
         recent = [(clear10.embeddings(frames[p]), frames[p]["y_true"].to_numpy()) for p in clear10.ANALYSIS_BUCKETS[:i]]
         ctx = RemediationContext(ref_X, ref_y, Xp, Xh, yh, clear10.EMBEDDING_COLUMNS, [],
                                  f"CLEAR-10 bucket {b}", model, factory, ref_acc, recent_windows=recent,
-                                 production_y=yp, seed=SEED)
+                                 production_y=yp, seed=SEED, n_labels=N_LABELS)
         out.append(run_setting(ctx, "clear10"))
     return out
 
@@ -152,7 +154,8 @@ def gas_settings(kind: str) -> List[Dict[str, Any]]:
     drift = json.loads(results_path("gas", kind).read_text())
     data = gas.load_batches()
     split = gas.split_reference(data[data["batch"].isin(gas.REFERENCE_BATCHES)].reset_index(drop=True), seed=SEED)
-    factory = lambda keep_columns=None: gas.make_gas_model(random_state=SEED, kind=kind)
+    def factory(keep_columns=None):
+        return gas.make_gas_model(random_state=SEED, kind=kind)
     with threadpool_limits(limits=1):
         model = factory().fit(gas.features(split.train), split.train["gas"])
     ref_acc = float(drift["reference"]["test_accuracy"])
@@ -165,7 +168,7 @@ def gas_settings(kind: str) -> List[Dict[str, Any]]:
         recent = [(gas.features(frames[p]), frames[p]["gas"].to_numpy()) for p in gas.ANALYSIS_BATCHES[:i]]
         drifted = drift["windows"][f"batch {b}"]["localization"]["drifted_features"]
         ctx = RemediationContext(ref_X, ref_y, Xp, Xh, yh, gas.FEATURES, drifted, f"Gas sensor batch {b}",
-                                 model, factory, ref_acc, recent_windows=recent, production_y=yp, seed=SEED)
+                                 model, factory, ref_acc, recent_windows=recent, production_y=yp, seed=SEED, n_labels=N_LABELS)
         out.append(run_setting(ctx, "gas"))
     return out
 

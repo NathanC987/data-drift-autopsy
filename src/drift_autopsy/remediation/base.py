@@ -43,6 +43,7 @@ class RemediationContext:
     recent_windows: List[Tuple[np.ndarray, np.ndarray]] = field(default_factory=list)  # delayed-label windows, oldest first
     production_y: Optional[np.ndarray] = None   # only for strategies that buy fresh labels
     seed: int = 42
+    n_labels: int = 2000               # fresh production labels the label-buying strategies may buy
 
     def __post_init__(self) -> None:
         self.feature_names = list(self.feature_names)
