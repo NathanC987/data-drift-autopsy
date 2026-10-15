@@ -98,3 +98,51 @@ def test_mmd_categorical_shift_is_seen_without_numeric_change():
     out = MMD(n_permutations=100, standardize=True).fit_detect(ref, test)
     assert out.p_value < 0.05
     assert out.metadata["n_categorical_features"] == 1
+
+
+def test_weighted_holm_equal_weights_is_holm_and_controls_fwer():
+    from drift_autopsy.stats import holm_reject, weighted_holm_reject
+
+    rng = np.random.default_rng(1)
+    for _ in range(200):
+        p = rng.random(7) ** 3
+        assert np.array_equal(weighted_holm_reject(p, np.ones(7), 0.05), holm_reject(p, 0.05))
+    # one true effect plus nulls, block weights as in the diagnosis: FWER over the nulls stays below alpha
+    from drift_autopsy.diagnosis import label_free_decisions
+
+    errors, reps = 0, 20000
+    for _ in range(reps):
+        fp = np.r_[1e-12, rng.random(9)]
+        d = label_free_decisions(fp, rng.random(), rng.random(), 0.05)
+        errors += bool(d["feature_reject"][1:].any() or d["prediction"] or d["multivariate"])
+    assert errors / reps < 0.05 + 3 * np.sqrt(0.05 * 0.95 / reps)
+
+
+def test_label_free_decisions_first_step_matches_block_holm():
+    # "anything shifted" is Holm's first step over the three blocks with the feature block pooled by Bonferroni
+    from drift_autopsy.diagnosis import label_free_decisions
+
+    rng = np.random.default_rng(2)
+    for _ in range(500):
+        fp, pp, mp = rng.random(12) ** 4, rng.random() ** 4, rng.random() ** 4
+        d = label_free_decisions(fp, pp, mp, 0.05)
+        anything = d["univariate"] or d["prediction"] or d["multivariate"]
+        assert anything == (min(min(1.0, 12 * fp.min()), pp, mp) < 0.05 / 3)
+
+
+def test_logistic_loglik_is_exact_and_device_independent():
+    from drift_autopsy import gpu
+    from drift_autopsy.stats import logistic_loglik
+
+    rng = np.random.default_rng(3)
+    X = (rng.random((3000, 6)) < 0.3).astype(float)
+    y = (rng.random(3000) < 1 / (1 + np.exp(-(X @ rng.normal(size=6) - 0.5)))).astype(float)
+    cpu = logistic_loglik(X, y, device="cpu")
+    # the optimum: no small perturbation of a refit can do better than Newton's answer
+    from sklearn.linear_model import LogisticRegression
+
+    m = LogisticRegression(C=1e6, max_iter=10000, tol=1e-10).fit(X, y)
+    p = np.clip(m.predict_proba(X)[:, 1], 1e-15, 1 - 1e-15)
+    assert cpu >= float(np.sum(y * np.log(p) + (1 - y) * np.log(1 - p))) - 1e-6
+    if gpu.gpu_available():
+        assert abs(logistic_loglik(X, y, device="cuda") - cpu) < 1e-8

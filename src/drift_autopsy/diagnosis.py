@@ -22,15 +22,20 @@ Label-free stage (production labels never used)
    the weighted reference (weighted KS and weighted chi-square with Kish's
    effective sample size). Features that still differ are the residual shift.
 
-   Steps 1 and 2 are tested hierarchically at family-wise level alpha. At the
-   global level, Holm runs over three block tests: the univariate block
-   (Bonferroni p-value m * min p over its m feature tests), the prediction test
-   and the multivariate test. Only if the univariate block rejects are the
-   individual features tested, by Holm within the block at the level the block
-   was rejected at (a gatekeeping procedure, so family-wise control holds over
-   all decisions). Pooling the feature tests into one block is what lets a
-   permutation test, whose smallest attainable p-value is 1/(B + 1), compete
-   with hundreds of feature tests.
+   Steps 1 and 2 form one family tested at family-wise level alpha by a
+   weighted Holm procedure (Holm, 1979). The family holds every feature test,
+   the prediction test and the multivariate test. The three blocks (all
+   feature tests, prediction, multivariate) get equal weight 1/3, and the
+   feature block's weight is split equally over its m features, so a feature
+   test starts at level alpha / (3m) and the prediction and MMD tests at
+   alpha / 3. A rejected test passes its weight on to the tests not yet
+   rejected. The first step is the same as Holm over the three block tests
+   with the feature block pooled by its Bonferroni p-value m * min p: so the
+   decision "anything shifted" is unchanged, while every individual decision
+   (each feature, prediction, multivariate) is covered by the family-wise
+   guarantee. Pooling the features into one block is what lets a permutation
+   test, whose smallest attainable p-value is 1/(B + 1), compete with
+   hundreds of feature tests.
 
    * no test in the family rejects           -> no label-free evidence of drift
    * residual shift on some features         -> covariate shift on those features
@@ -64,18 +69,21 @@ that depends on the true class.
 Bins. Numeric features: reference quintiles. Nominal features: categories
 seen at least ``ceil(5 / min(err, 1 - err))`` times in the audit (so each
 kept cell has an expected count of at least five of both outcomes, the usual
-validity rule), the rest pooled.
+validity rule), the rest pooled. Interaction columns of bins the audit never
+visits are dropped, so the degrees of freedom count only estimable terms.
+The logistic fits are exact maximum likelihood (Newton's method, float64, on
+the GPU when available; :func:`drift_autopsy.stats.logistic_loglik`).
 """
 
 from __future__ import annotations
 
+import contextlib
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Sequence
 
 import numpy as np
 import pandas as pd
 from scipy import stats
-from sklearn.linear_model import LogisticRegression
 
 from drift_autopsy.core.dataset import Dataset
 from drift_autopsy.detectors import MMD
@@ -84,11 +92,15 @@ from drift_autopsy.localizers import UnivariateLocalizer
 from drift_autopsy.stats import (
     chi2_homogeneity,
     holm_reject,
+    logistic_loglik,
     two_proportion_test,
+    weighted_holm_reject,
     weighted_ks,
 )
 
 N_QUANTILE_BINS = 5
+AUDIT_RIDGE = 1e-6      # L2 penalty 1 / C with C = 1e6: only keeps the fit finite under separation
+GPU_MIN_ROWS = 20_000   # measured crossover: below it a GPU fit costs more in launches than it saves
 
 
 # --------------------------------------------------------------------------- #
@@ -129,6 +141,34 @@ def bbse_weights(
 # --------------------------------------------------------------------------- #
 # label-free stage
 
+def label_free_decisions(feature_p: Sequence[float], prediction_p: Optional[float], mmd_p: Optional[float],
+                         alpha: float) -> Dict[str, Any]:
+    """Weighted Holm over the feature, prediction and multivariate tests (module
+    docstring). ``prediction_p`` or ``mmd_p`` = None leaves that block out; the
+    remaining blocks share the weight equally. Returns the feature rejections
+    and, per block, whether any of its tests was rejected."""
+    feature_p = np.asarray(feature_p, dtype=float)
+    blocks = [("univariate", feature_p)]
+    if prediction_p is not None:
+        blocks.append(("prediction", np.array([float(prediction_p)])))
+    if mmd_p is not None:
+        blocks.append(("multivariate", np.array([float(mmd_p)])))
+    blocks = [(name, p) for name, p in blocks if p.size]
+    p_all = np.concatenate([p for _, p in blocks]) if blocks else np.empty(0)
+    w_all = np.concatenate([np.full(p.size, 1.0 / (len(blocks) * p.size)) for _, p in blocks]) if blocks else p_all
+    rejected = weighted_holm_reject(p_all, w_all, alpha) if p_all.size else np.zeros(0, dtype=bool)
+    out: Dict[str, Any] = {"univariate": False, "prediction": False, "multivariate": False,
+                           "feature_reject": np.zeros(feature_p.size, dtype=bool)}
+    start = 0
+    for name, p in blocks:
+        part = rejected[start:start + p.size]
+        out[name] = bool(part.any())
+        if name == "univariate":
+            out["feature_reject"] = part.copy()
+        start += p.size
+    return out
+
+
 def _weighted_feature_tests(
     reference: pd.DataFrame, weights: np.ndarray, production: pd.DataFrame,
     numeric: Sequence[str], categorical: Sequence[str], alpha: float,
@@ -163,12 +203,7 @@ def label_free_diagnosis(
     if reference.target is None or reference.predictions is None or production.predictions is None:
         raise ValueError("reference needs target and predictions; production needs predictions")
 
-    # Hierarchical (gatekeeping) testing with family-wise level alpha:
-    #   global level  - Holm over three block tests: the univariate block
-    #                   (Bonferroni p = m * min p over the feature tests), the
-    #                   prediction test and the multivariate MMD test;
-    #   feature level - only if the univariate block rejects, Holm within the
-    #                   block at the level that block was rejected at.
+    # one family-wise level alpha over every label-free decision (weighted Holm)
     loc = UnivariateLocalizer(threshold=alpha, correction=None).localize(reference, production)
     input_tests = [
         {"feature": fd.feature_name, "statistic": fd.score, "p_value": fd.p_value,
@@ -185,24 +220,19 @@ def label_free_diagnosis(
         mmd_test = {"statistic": float(res.score), "p_value": float(res.p_value)}
 
     feature_p = np.array([t["p_value"] for t in input_tests], dtype=float)
-    block_p = [min(1.0, len(feature_p) * float(feature_p.min())) if feature_p.size else 1.0, pred_test["p_value"]]
-    if mmd_test is not None:
-        block_p.append(mmd_test["p_value"])
-    block_reject = holm_reject(block_p, alpha)
-    ranks = np.empty(len(block_p), dtype=int)
-    ranks[np.argsort(block_p, kind="stable")] = np.arange(len(block_p))
-    univariate_level = alpha / (len(block_p) - ranks[0])
-    feature_reject = (holm_reject(feature_p, univariate_level) if block_reject[0]
-                      else np.zeros(len(feature_p), dtype=bool))
-    for t, rej in zip(input_tests, feature_reject):
+    decisions = label_free_decisions(feature_p, pred_test["p_value"],
+                                     mmd_test["p_value"] if mmd_test is not None else None, alpha)
+    for t, rej in zip(input_tests, decisions["feature_reject"]):
         t["drift_detected"] = bool(rej)
     input_shift = [t["feature"] for t in input_tests if t["drift_detected"]]
-    prediction_shift = bool(block_reject[1])
-    multivariate_shift = bool(block_reject[2]) if mmd_test is not None else False
-    rejected = block_reject
-    block_tests = {"univariate_bonferroni_p": block_p[0], "univariate_level": float(univariate_level),
-                   "prediction_p": block_p[1], "multivariate_p": block_p[2] if mmd_test is not None else None,
-                   "rejected": [bool(r) for r in block_reject]}
+    prediction_shift = decisions["prediction"]
+    multivariate_shift = decisions["multivariate"]
+    any_rejected = decisions["univariate"] or prediction_shift or multivariate_shift
+    block_tests = {"procedure": "weighted Holm (blocks weighted 1/3; features share their block's weight)",
+                   "univariate_bonferroni_p": min(1.0, len(feature_p) * float(feature_p.min())) if feature_p.size else 1.0,
+                   "prediction_p": pred_test["p_value"],
+                   "multivariate_p": mmd_test["p_value"] if mmd_test is not None else None,
+                   "rejected": [decisions["univariate"], prediction_shift, multivariate_shift]}
     if mmd_test is not None:
         mmd_test["drift_detected"] = multivariate_shift
 
@@ -219,7 +249,7 @@ def label_free_diagnosis(
     )
     residual_shift = [t["feature"] for t in residual_tests if t["drift_detected"]]
 
-    if not bool(np.any(rejected)):
+    if not any_rejected:
         verdict = "none"
     elif residual_shift:
         verdict = "covariate"
@@ -246,19 +276,19 @@ def label_free_diagnosis(
 # --------------------------------------------------------------------------- #
 # audit stage
 
-def _bins(values: np.ndarray, reference_values: np.ndarray, categorical: bool, min_count: int) -> np.ndarray:
+def _bins(values: np.ndarray, reference_values: np.ndarray, audit_values: np.ndarray, categorical: bool,
+          min_count: int) -> np.ndarray:
+    """Bin codes for ``values`` (reference rows then audit rows). Numeric: reference
+    quintiles. Nominal: categories seen at least ``min_count`` times in the audit
+    keep their own bin, every other category shares one pooled bin."""
     if not categorical:
         edges = np.unique(np.quantile(reference_values, np.linspace(0, 1, N_QUANTILE_BINS + 1))[1:-1])
         return np.digitize(values, edges)
-    counts = pd.Series(values).value_counts()
+    counts = pd.Series(audit_values).value_counts()
     keep = set(counts[counts >= min_count].index)
     codes = {c: i for i, c in enumerate(sorted(keep, key=str))}
     other = len(codes)
     return np.array([codes.get(v, other) for v in values])
-
-
-def _design(blocks: List[np.ndarray]) -> np.ndarray:
-    return np.hstack([b for b in blocks if b.size]) if blocks else np.empty((0, 0))
 
 
 def _one_hot(codes: np.ndarray) -> np.ndarray:
@@ -266,10 +296,20 @@ def _one_hot(codes: np.ndarray) -> np.ndarray:
     return (codes[:, None] == levels[None, 1:]).astype(float)   # drop first level
 
 
-def _loglik(X: np.ndarray, y: np.ndarray) -> float:
-    model = LogisticRegression(C=1e6, max_iter=5000).fit(X, y)
-    p = np.clip(model.predict_proba(X)[:, 1], 1e-12, 1 - 1e-12)
-    return float(np.sum(y * np.log(p) + (1 - y) * np.log(1 - p)))
+def _nonzero_columns(block: np.ndarray) -> np.ndarray:
+    """Drop all-zero columns (an interaction with a bin the audit never visits),
+    so the degrees of freedom count only estimable terms."""
+    return block[:, np.any(block != 0, axis=0)] if block.size else block
+
+
+def _design(blocks: List[np.ndarray]) -> np.ndarray:
+    return np.hstack([b for b in blocks if b.size]) if blocks else np.empty((0, 0))
+
+
+def _loglik(X: np.ndarray, y: np.ndarray, device: Optional[str] = None) -> float:
+    """Maximised log-likelihood of a logistic model with intercept (see
+    :func:`drift_autopsy.stats.logistic_loglik`)."""
+    return logistic_loglik(X, y, ridge=AUDIT_RIDGE, device=device)
 
 
 def audit_diagnosis(
@@ -314,20 +354,32 @@ def audit_diagnosis(
     min_count = int(np.ceil(5.0 / max(min(err, 1 - err), 1e-9)))
 
     null_kind = null
+    n_ref = len(ref_correct)
     rows = []
-    for f in feats:
-        values = np.concatenate([ref_X[f].to_numpy(float), audit_X[f].to_numpy(float)])
-        codes = _bins(values, ref_X[f].to_numpy(float), f in categorical, min_count)
-        if len(np.unique(codes[len(ref_correct):])) < 2:
-            rows.append({"feature": f, "lr_statistic": 0.0, "dof": 0, "p_value": 1.0})
-            continue
-        f_bin = _one_hot(codes)
-        null = _design([conf_bin, f_bin, is_audit] + ([] if null_kind == "none" else [is_audit * conf_bin]))
-        alt = _design([null, is_audit * f_bin])
-        lr = max(0.0, 2.0 * (_loglik(alt, correct) - _loglik(null, correct)))
-        dof = alt.shape[1] - null.shape[1]
-        rows.append({"feature": f, "lr_statistic": float(lr), "dof": int(dof),
-                     "p_value": float(stats.chi2.sf(lr, dof)) if dof > 0 else 1.0})
+    from drift_autopsy import gpu
+
+    # same float64 Newton iterations on either device; the GPU only pays off on large fits
+    device = "cuda" if gpu.gpu_available() and len(correct) >= GPU_MIN_ROWS else "cpu"
+    slot = gpu.gpu_slot() if device == "cuda" else contextlib.nullcontext()
+    with slot:
+        for f in feats:
+            ref_values, aud_values = ref_X[f].to_numpy(float), audit_X[f].to_numpy(float)
+            codes = _bins(np.concatenate([ref_values, aud_values]), ref_values, aud_values, f in categorical,
+                          min_count)
+            if len(np.unique(codes[n_ref:])) < 2:
+                rows.append({"feature": f, "lr_statistic": 0.0, "dof": 0, "p_value": 1.0})
+                continue
+            f_bin = _one_hot(codes)
+            null = _design([conf_bin, f_bin, is_audit]
+                           + ([] if null_kind == "none" else [_nonzero_columns(is_audit * conf_bin)]))
+            alt = _design([null, _nonzero_columns(is_audit * f_bin)])
+            dof = alt.shape[1] - null.shape[1]
+            if dof == 0:
+                rows.append({"feature": f, "lr_statistic": 0.0, "dof": 0, "p_value": 1.0})
+                continue
+            lr = max(0.0, 2.0 * (_loglik(alt, correct, device) - _loglik(null, correct, device)))
+            rows.append({"feature": f, "lr_statistic": float(lr), "dof": int(dof),
+                         "p_value": float(stats.chi2.sf(lr, dof))})
     rejected = holm_reject([r["p_value"] for r in rows], alpha)
     for r, rej in zip(rows, rejected):
         r["significant"] = bool(rej)

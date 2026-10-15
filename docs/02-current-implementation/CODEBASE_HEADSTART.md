@@ -22,12 +22,12 @@ Every decision is a hypothesis test at one significance level (default 0.05) wit
 | Module | Role |
 |---|---|
 | `core/` | `Dataset` (with `categorical_features`), result dataclasses, `DriftPipeline` (detect -> localise -> RCA, slice mode) |
-| `stats.py` | every test the package uses: Holm/Bonferroni, severity ladders, chi-square homogeneity with Cochran pooling, weighted KS / chi-square (Kish), two-proportion test, Wilson interval, paired bootstrap, generic permutation test |
+| `stats.py` | every test the package uses: Holm/Bonferroni and weighted Holm, exact logistic likelihood (Newton, float64, CPU or GPU), severity ladders, chi-square homogeneity with Cochran pooling, weighted KS / chi-square (Kish), two-proportion test, Wilson interval, paired bootstrap, generic permutation test |
 | `estimation.py` | CBPE: histogram-binning map from confidence to accuracy |
 | `detectors/` | KS (numeric only, corrected), PSI, MMD (permutation test, mixed-type encoding), PCA reconstruction and Frechet distance (permutation tests), domain classifier, CBPE (confidence-shift test plus estimate) |
 | `localizers/univariate.py` | KS for numeric, chi-square homogeneity for nominal features, Holm step-down; effect sizes (KS statistic, Cramer's V) and unseen-category share |
 | `rca/` | `SHAPAnalyzer` (explains the full model's probability, bootstrap intervals), `concept_probe.py` (CLIP), `cam.py` (class activation maps for a linear head on a frozen ResNet) |
-| `diagnosis.py` | drift-type diagnosis: label-free stage (input, prediction and MMD tests; BBSE; label-shift consistency) and audit stage (accuracy-drop test; error-structure likelihood-ratio tests) |
+| `diagnosis.py` | drift-type diagnosis: label-free stage (input, prediction and MMD tests under one weighted Holm family; BBSE; label-shift consistency) and audit stage (accuracy-drop test; error-structure likelihood-ratio tests) |
 | `reliability/` | per-prediction signals (confidence risk, OOD, instability), learned logistic fusion, risk labels |
 | `remediation/` | strategies with paired-bootstrap grading, density-ratio weights, label-free triage (importance-weighted validation) |
 | `benchmark/` | drift injectors, per-window evaluation, multi-state multi-seed orchestration, aggregation with confidence intervals |

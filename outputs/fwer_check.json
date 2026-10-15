@@ -1,0 +1,28 @@
+{
+ "alpha": 0.05,
+ "replicates": 200000,
+ "seed": 0,
+ "scenario": "one shifted feature (p = 1e-12); every other test a true null",
+ "results": {
+  "10": {
+   "weighted_holm": {
+    "fwer": 0.04918,
+    "mc_se": 0.00048353556022282375
+   },
+   "gatekeeping": {
+    "fwer": 0.065145,
+    "mc_se": 0.0005518203012530437
+   }
+  },
+  "16": {
+   "weighted_holm": {
+    "fwer": 0.04898,
+    "mc_se": 0.00048260211147486704
+   },
+   "gatekeeping": {
+    "fwer": 0.06568,
+    "mc_se": 0.0005539229982587832
+   }
+  }
+ }
+}

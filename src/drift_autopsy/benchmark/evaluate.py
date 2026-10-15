@@ -198,8 +198,10 @@ def run_replicate(state: str, seed: int, cfg: BenchmarkConfig) -> List[Dict[str,
         if income_col:
             split.train_X.pop(income_col)
             split.calibration_X.pop(income_col)
-        factory = lambda keep_columns=None: make_acs_model(random_state=seed, keep_columns=keep_columns,
-                                                           kind=cfg.model, task=ds.task)
+
+        def factory(keep_columns=None):
+            return make_acs_model(random_state=seed, keep_columns=keep_columns, kind=cfg.model, task=ds.task)
+
         model = factory().fit(split.train_X.to_numpy(dtype=float), split.train_y)
         reference = to_dataset(split.calibration_X, split.calibration_y, model=model, task=ds.task)
         reference_accuracy = float(np.mean(reference.predictions == split.calibration_y))

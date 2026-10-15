@@ -10,7 +10,8 @@ buckets 2 to 10, each compared with the same fixed reference.
 Per window: every detector (decided by a test at ALPHA), per-dimension
 localisation (Holm), slices by predicted class, CBPE proxy metrics with their
 error against the true metrics, per-prediction reliability, and the label-free
-diagnosis plus a delayed-label audit of AUDIT_LABELS images. A three-component
+diagnosis plus a delayed-label audit of AUDIT_LABELS images (each window draws
+its audit and stored records from its own random stream). A three-component
 PCA view of every window is stored for the dashboard. The detection,
 estimation and diagnosis baselines are recorded for every window as well.
 Run:     python examples/quickstart/clear10_drift_study.py --model lr
@@ -48,7 +49,7 @@ from drift_autopsy.experiments.clear10 import (
     split_reference,
     to_dataset,
 )
-from drift_autopsy.experiments.common import baseline_detectors, comparison_block, json_default
+from drift_autopsy.experiments.common import baseline_detectors, comparison_block, json_default, window_rng
 from drift_autopsy.experiments.models import MODEL_DESCRIPTIONS
 from drift_autopsy.localizers import UnivariateLocalizer
 from drift_autopsy.reliability import ReliabilityAnalyzer
@@ -111,8 +112,9 @@ def predicted_class_slices(reference_ds, window_ds, names: Dict[int, str]) -> Di
 
 
 def analyse_window(key: str, analysis_type: str, frame: pd.DataFrame, *, model, reference_ds, reference_frame,
-                   proxy, reliability, names, reference_test_correct, reference_accuracy, rng) -> Dict[str, Any]:
+                   proxy, reliability, names, reference_test_correct, reference_accuracy) -> Dict[str, Any]:
     print(f"\n=== {key} ({analysis_type}, {len(frame)} images)")
+    rng = window_rng(SEED, key)
     window_ds = to_dataset(frame, model=model, with_target=False)
     timings: Dict[str, float] = {}
 
@@ -203,7 +205,6 @@ def main() -> None:
     ap.add_argument("--model", choices=sorted(MODEL_DESCRIPTIONS), default="lr")
     args = ap.parse_args()
     setup_logging(level="WARNING")
-    rng = np.random.default_rng(SEED)
     bucket1 = load_bucket(REFERENCE_BUCKET)
     names = class_names(bucket1)
     split = split_reference(bucket1, seed=SEED)
@@ -221,7 +222,7 @@ def main() -> None:
 
     common = dict(model=model, reference_ds=reference_ds, reference_frame=split.calibration, proxy=proxy,
                   reliability=reliability, names=names, reference_test_correct=test_correct,
-                  reference_accuracy=reference_accuracy, rng=rng)
+                  reference_accuracy=reference_accuracy)
     windows: Dict[str, Any] = {"1 held-out": {"bucket": 1, **analyse_window("bucket 1 held-out", "control",
                                                                             split.test, **common)}}
     for b in ANALYSIS_BUCKETS:

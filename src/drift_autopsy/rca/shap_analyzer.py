@@ -1,7 +1,7 @@
 """SHAP-based root cause analysis."""
 
 import numpy as np
-from typing import Optional, Any, Dict, List
+from typing import Optional, Any, List
 import logging
 
 # NumPy 2.0 compatibility shims

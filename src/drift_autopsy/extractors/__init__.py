@@ -2,14 +2,9 @@
 
 from drift_autopsy.extractors.resnet import ResNetEmbeddingExtractor
 
-__all__ = ["ResNetEmbeddingExtractor"]
+# CLIP is an optional backbone (drift-autopsy[concept]). clip.py guards its own
+# optional imports and raises only when the extractor is used without open_clip,
+# so importing it here is always safe. Registration is a side effect of the import.
+from drift_autopsy.extractors.clip import CLIPEmbeddingExtractor
 
-# CLIP is an optional backbone (drift-autopsy[concept]); importing it must never
-# break the package when open_clip is absent. Registration is a side effect of
-# the import.
-try:  # pragma: no cover - exercised indirectly via the concept extra
-    from drift_autopsy.extractors.clip import CLIPEmbeddingExtractor
-
-    __all__.append("CLIPEmbeddingExtractor")
-except Exception:
-    pass
+__all__ = ["ResNetEmbeddingExtractor", "CLIPEmbeddingExtractor"]

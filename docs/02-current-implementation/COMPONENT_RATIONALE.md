@@ -4,9 +4,11 @@ Why each design choice was made. Every choice below replaces an earlier
 hand-tuned constant or an invalid test.
 
 - **One significance level, family-wise control.** Every decision is a test at
-  alpha with Holm or Bonferroni correction, so false-alarm rates are known in
+  alpha with Holm, weighted Holm or Bonferroni correction, so false-alarm rates are known in
   advance and verified on no-drift control windows (ACS held-out test split,
-  CLEAR-10 bucket 1 test split, benchmark controls).
+  CLEAR-10 bucket 1 test split, benchmark controls). The diagnosis has two
+  stages (label-free, audit), each a family at alpha, so a window without
+  drift gets a drift verdict with probability at most 2 alpha.
 - **Nominal features are categorical.** Census codes such as occupation have
   no order; KS and Euclidean kernels on them are meaningless. They are tested
   with chi-square homogeneity, one-hot encoded for the model and MMD, and

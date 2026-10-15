@@ -11,7 +11,7 @@ from drift_autopsy.core.dataset import Dataset
 from drift_autopsy.core.detector import DriftDetector
 from drift_autopsy.core.localizer import DriftLocalizer
 from drift_autopsy.core.rca import RootCauseAnalyzer
-from drift_autopsy.core.result import PipelineResult, DetectionResult, LocalizationResult, RCAResult
+from drift_autopsy.core.result import PipelineResult
 from drift_autopsy.registry import DetectorRegistry, LocalizerRegistry, RCARegistry
 from drift_autopsy.data.validators import DataValidator
 
@@ -22,8 +22,9 @@ class DriftPipeline:
     """
     Composable pipeline for drift detection, localization, and RCA.
     
-    Orchestrates the full drift analysis workflow with conditional execution
-    and proper error handling.
+    Orchestrates the full drift analysis workflow with conditional execution.
+    An error in any step propagates: a failed localization or RCA is never
+    reported as an empty result.
     
     Args:
         detector: Drift detector instance or name (for registry)
@@ -167,20 +168,16 @@ class DriftPipeline:
         localization_result = None
         if self.enable_localization:
             logger.info(f"[2/3] Running drift localization with {self.localizer.name}")
-            try:
-                localization_result = self.localizer.localize(
-                    reference_data,
-                    test_data,
-                    drift_signal=detection_result,
-                )
-                logger.info(
-                    f"Localization complete: "
-                    f"{len(localization_result.drifted_features)} drifted features"
-                )
-            except Exception as e:
-                logger.error(f"Drift localization failed: {e}")
-                # Continue pipeline even if localization fails
-                localization_result = None
+            # No try/except: a failed step must stop the run, never look like "nothing found".
+            localization_result = self.localizer.localize(
+                reference_data,
+                test_data,
+                drift_signal=detection_result,
+            )
+            logger.info(
+                f"Localization complete: "
+                f"{len(localization_result.drifted_features)} drifted features"
+            )
         else:
             logger.info("[2/3] Localization disabled, skipping")
 
@@ -188,18 +185,13 @@ class DriftPipeline:
         rca_result = None
         if self.enable_rca:
             logger.info(f"[3/3] Running RCA with {self.rca.name}")
-            try:
-                rca_result = self.rca.analyze(
-                    reference_data,
-                    test_data,
-                    localization=localization_result,
-                    model=self.model,
-                )
-                logger.info("RCA complete")
-            except Exception as e:
-                logger.error(f"RCA failed: {e}")
-                # Continue even if RCA fails
-                rca_result = None
+            rca_result = self.rca.analyze(
+                reference_data,
+                test_data,
+                localization=localization_result,
+                model=self.model,
+            )
+            logger.info("RCA complete")
         else:
             logger.info("[3/3] RCA disabled, skipping")
 

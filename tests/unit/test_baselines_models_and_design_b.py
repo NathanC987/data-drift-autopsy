@@ -358,3 +358,13 @@ def test_shap_importances_are_reproducible_above_ten_features():
     runs = [SHAPAnalyzer(n_background_samples=30, n_test_samples=60, n_bootstrap=50)
             .analyze(ref, test, None, model=model).feature_importances for _ in range(2)]
     assert runs[0] == runs[1]
+
+
+def test_audit_bins_count_categories_in_the_audit_only():
+    from drift_autopsy.diagnosis import _bins
+
+    ref = np.r_[np.full(1000, 1.0), np.full(1000, 2.0), np.full(1000, 3.0)]
+    aud = np.r_[np.full(40, 1.0), np.full(3, 2.0), np.full(57, 3.0)]     # category 2 is rare in the audit
+    codes = _bins(np.r_[ref, aud], ref, aud, True, min_count=25)
+    assert len(np.unique(codes)) == 3                       # 1 and 3 keep a bin, 2 joins the pooled bin
+    assert codes[1000] == codes[3000 + 40] and codes[1000] != codes[0]

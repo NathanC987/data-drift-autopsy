@@ -8,13 +8,13 @@ record (:func:`window_tests`), so they are graded on exactly the same windows.
 
 Baselines
 * ``input_monitoring`` - the usual monitoring practice: an input drift alarm
-  (univariate block or MMD, Holm over the two blocks) is read as covariate
-  shift; otherwise no drift. It never names the other types.
+  (feature tests or MMD, weighted Holm over the two blocks) is read as
+  covariate shift; otherwise no drift. It never names the other types.
 * ``bbse_first`` - label shift detection first (Lipton et al., 2018;
   Rabanser et al., 2019): a shift in the predicted-label distribution is read
   as prior shift; otherwise an input alarm is covariate shift; otherwise none.
-  Holm over the same three blocks as the method. It is the method without the
-  label-shift consistency test.
+  The same weighted Holm over the same three blocks as the method, so it is
+  exactly the method without the label-shift consistency test.
 * ``error_rate_monitoring`` - ``bbse_first`` plus performance monitoring on
   the audit labels (as in DDM, Gama et al., 2004): when no label-free test
   fires, a significant audit accuracy drop is read as concept drift. It cannot
@@ -24,7 +24,7 @@ Baselines
   types (see :mod:`drift_autopsy.benchmark.metrics`).
 
 Ablations of the method
-* ``no_mmd`` - the method without the multivariate block (Holm over two blocks).
+* ``no_mmd`` - the method without the multivariate block (weighted Holm over two blocks).
 * ``no_confidence_null`` / ``class_confidence_null`` - the audit test with the
   alternative nulls of :func:`drift_autopsy.diagnosis.audit_diagnosis`.
 """
@@ -35,7 +35,7 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 
-from drift_autopsy.stats import holm_reject
+from drift_autopsy.diagnosis import label_free_decisions
 
 TYPES = ("none", "covariate", "prior", "concept", "label_noise")
 BASELINES = ("input_monitoring", "bbse_first", "error_rate_monitoring")
@@ -80,17 +80,16 @@ def window_tests(lf: Dict[str, Any], audit: Dict[str, Any], cbpe_change: float,
     }
 
 
-def _blocks(t: Dict[str, Any], alpha: float, use_mmd: bool = True, use_prediction: bool = True):
-    fp = np.array(list(t["feature_p"].values()), dtype=float)
-    names = ["univariate"]
-    p = [min(1.0, len(fp) * float(fp.min())) if fp.size else 1.0]
+def _blocks(t: Dict[str, Any], alpha: float, use_mmd: bool = True, use_prediction: bool = True) -> Dict[str, bool]:
+    """Which blocks have a rejected test, under the method's weighted Holm procedure."""
+    d = label_free_decisions(list(t["feature_p"].values()), t["prediction_p"] if use_prediction else None,
+                             t["mmd_p"] if use_mmd else None, alpha)
+    out = {"univariate": d["univariate"]}
     if use_prediction:
-        names.append("prediction")
-        p.append(t["prediction_p"])
+        out["prediction"] = d["prediction"]
     if use_mmd and t["mmd_p"] is not None:
-        names.append("mmd")
-        p.append(t["mmd_p"])
-    return dict(zip(names, (bool(r) for r in holm_reject(p, alpha))))
+        out["mmd"] = d["multivariate"]
+    return out
 
 
 def _audit_type(audit: Dict[str, Any]) -> str:

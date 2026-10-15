@@ -47,3 +47,32 @@ the paper; none is hidden.
 - Batch execution only; no streaming runtime, scheduler integration,
   automated retraining or rollback.
 - No enterprise controls (RBAC, audit-grade event model, SLO enforcement).
+
+## Corrections (2026-10-15)
+
+A code review after design B was first run found two errors in the diagnosis,
+both corrected without regard to the results; every result was regenerated.
+
+- The label-free step tested features inside a gatekeeping rule that let the
+  prediction and MMD tests move up while features kept their level, so alpha
+  was spent twice: a simulated family-wise error rate of about 6.5% at a
+  nominal 5% (`examples/quickstart/fwer_check.py`). It is now one weighted Holm
+  family (`diagnosis.label_free_decisions`).
+- The audit kept a nominal category when it occurred often enough in the
+  reference and audit rows together, not in the audit as documented, so the
+  error-structure tests had hundreds of near-empty cells. Categories are now
+  counted in the audit, interaction columns of unvisited bins are dropped, and
+  the fits are exact maximum likelihood.
+
+`outputs/benchmark/prefix_verdicts.json` keeps the verdicts from before the
+correction so the change can be checked. The correction changed 115 of the
+5,300 benchmark verdicts, all of them between concept drift and label noise
+(the audit fix); the label-free fix alone changed none. Type identification
+moved from 87.1-94.3% to 85.7-94.3% on design A and from 63.2-81.8% to
+62.4-81.5% on design B. On the real windows every type verdict is unchanged;
+a few localized feature sets changed by one or two features.
+
+Each stage of the diagnosis is tested at alpha, so the chance that a window
+without drift gets a drift verdict is at most 2 alpha. On the 200 design A
+controls the diagnosis raised 13 false alarms (6.5%): 7 in the label-free
+stage and 6 in the audit.

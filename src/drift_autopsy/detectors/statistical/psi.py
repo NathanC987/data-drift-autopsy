@@ -2,7 +2,6 @@
 
 import numpy as np
 import pandas as pd
-from typing import Optional
 import logging
 
 from drift_autopsy.core.detector import BaseDriftDetector

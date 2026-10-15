@@ -24,9 +24,11 @@ def test_ood_score_is_calibrated_on_reference_and_flags_extremes_and_unseen():
     det = OODDetector(categorical_indices=[2]).fit(X)
     ref_scores = det.score(X)
     assert abs(np.mean(ref_scores > 0) - 0.10) < 0.02      # 90th percentile is the zero point
-    extreme = X[:50].copy(); extreme[:, 0] = 12.0
+    extreme = X[:50].copy()
+    extreme[:, 0] = 12.0
     assert np.all(det.score(extreme) == 1.0)
-    unseen = X[:50].copy(); unseen[:, 2] = 99.0
+    unseen = X[:50].copy()
+    unseen[:, 2] = 99.0
     assert det.score(unseen).mean() > ref_scores.mean()
 
 

@@ -17,7 +17,7 @@
    pipeline also runs the univariate localizer and the SHAP analyzer.
 2. The CBPE detector reports the confidence-shift test and the accuracy estimate.
 3. `diagnosis.label_free_diagnosis` runs the input tests, the prediction test
-   and the MMD test as one Holm family, estimates the prior shift (BBSE) and
+   and the MMD test as one weighted Holm family (three equal blocks), estimates the prior shift (BBSE) and
    re-tests the inputs against the BBSE-reweighted reference.
 4. `diagnosis.audit_diagnosis` (optional) uses a small labelled sample: an
    accuracy-drop test and per-feature likelihood-ratio tests of whether the

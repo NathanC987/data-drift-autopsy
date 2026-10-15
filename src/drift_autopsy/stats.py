@@ -52,6 +52,26 @@ def holm_reject(p_values: Sequence[float], alpha: float) -> np.ndarray:
     return reject
 
 
+def weighted_holm_reject(p_values: Sequence[float], weights: Sequence[float], alpha: float) -> np.ndarray:
+    """Weighted Holm step-down (Holm, 1979). Hypothesis i carries weight w_i > 0.
+    Order by p_i / w_i and reject while p_i < alpha * w_i / (sum of the weights
+    not yet rejected). Controls the family-wise error rate at alpha for any
+    dependence; with equal weights it is the ordinary Holm procedure."""
+    p = np.asarray(p_values, dtype=float)
+    w = np.asarray(weights, dtype=float)
+    if p.shape != w.shape or np.any(w <= 0):
+        raise ValueError("weights must be positive and match the p-values")
+    reject = np.zeros(p.size, dtype=bool)
+    remaining = float(w.sum())
+    for idx in np.argsort(p / w, kind="stable"):
+        if p[idx] < alpha * w[idx] / remaining:
+            reject[idx] = True
+            remaining -= w[idx]
+        else:
+            break
+    return reject
+
+
 def adjusted_threshold(alpha: float, m: int, correction: Optional[str]) -> float:
     """Per-test threshold for the most significant test of a family of m tests.
 
@@ -365,3 +385,105 @@ def macro_f1(true_labels: Sequence[Any], predicted_labels: Sequence[Any], labels
         fn = float(np.sum((t == c) & (p != c)))
         scores.append(0.0 if tp == 0 else 2 * tp / (2 * tp + fp + fn))
     return float(np.mean(scores))
+
+
+# --------------------------------------------------------------------------- #
+# logistic likelihood (audit error-structure tests)
+
+def logistic_loglik(X: np.ndarray, y: np.ndarray, ridge: float = 1e-6, device: Optional[str] = None,
+                    tol: float = 1e-10, max_iter: int = 100) -> float:
+    """Log-likelihood of a logistic regression with intercept at its optimum.
+
+    The model maximises sum_i log p(y_i | x_i) - (ridge / 2) * ||beta||^2 (the
+    intercept is not penalised; a tiny ridge only keeps the optimum finite
+    under separation). Newton's method with step halving runs to convergence
+    (the Newton decrement below ``tol``), so the optimum is exact rather than
+    stopped at a solver tolerance. ``device="cuda"`` runs the same float64
+    iterations on the GPU (PyTorch); otherwise NumPy. Returns the
+    unpenalised log-likelihood at the optimum.
+    """
+    X = np.asarray(X, dtype=float)
+    y = np.asarray(y, dtype=float)
+    if device == "cuda":
+        from drift_autopsy import gpu
+
+        try:
+            return _logistic_loglik_torch(X, y, ridge, tol, max_iter)
+        except Exception as error:          # out of GPU memory: same iterations on the CPU
+            if not gpu.is_oom(error):
+                raise
+            gpu.release()
+    return _logistic_loglik_numpy(X, y, ridge, tol, max_iter)
+
+
+def _logistic_loglik_numpy(X, y, ridge, tol, max_iter) -> float:
+    Z = np.hstack([np.ones((len(X), 1)), X])
+    pen = np.full(Z.shape[1], ridge)
+    pen[0] = 0.0
+    beta = np.zeros(Z.shape[1])
+
+    def objective(b):
+        eta = Z @ b
+        return float(np.sum(y * eta - np.logaddexp(0.0, eta)) - 0.5 * np.sum(pen * b * b))
+
+    current = objective(beta)
+    for _ in range(max_iter):
+        eta = Z @ beta
+        prob = 1.0 / (1.0 + np.exp(-eta))
+        grad = Z.T @ (y - prob) - pen * beta
+        hess = (Z * (prob * (1 - prob))[:, None]).T @ Z + np.diag(pen)
+        step = np.linalg.solve(hess, grad)
+        decrement = float(grad @ step)
+        if decrement / 2 < tol:
+            break
+        t, improved = 1.0, False
+        while t > 1e-12:
+            candidate = objective(beta + t * step)
+            if candidate >= current:
+                improved = True
+                break
+            t /= 2
+        if not improved:            # at the optimum to machine precision
+            break
+        beta, current = beta + t * step, candidate
+    eta = Z @ beta
+    return float(np.sum(y * eta - np.logaddexp(0.0, eta)))
+
+
+def _logistic_loglik_torch(X, y, ridge, tol, max_iter) -> float:
+    from drift_autopsy.gpu import torch_module
+
+    torch = torch_module()
+    dev = torch.device("cuda")
+    Z = torch.as_tensor(np.hstack([np.ones((len(X), 1)), X]), dtype=torch.float64, device=dev)
+    yt = torch.as_tensor(y, dtype=torch.float64, device=dev)
+    pen = torch.full((Z.shape[1],), ridge, dtype=torch.float64, device=dev)
+    pen[0] = 0.0
+    beta = torch.zeros(Z.shape[1], dtype=torch.float64, device=dev)
+
+    def objective(b):
+        eta = Z @ b
+        return float(torch.sum(yt * eta - torch.logaddexp(torch.zeros_like(eta), eta)) - 0.5 * torch.sum(pen * b * b))
+
+    current = objective(beta)
+    for _ in range(max_iter):
+        eta = Z @ beta
+        prob = torch.sigmoid(eta)
+        grad = Z.T @ (yt - prob) - pen * beta
+        hess = (Z * (prob * (1 - prob))[:, None]).T @ Z + torch.diag(pen)
+        step = torch.linalg.solve(hess, grad)
+        decrement = float(grad @ step)
+        if decrement / 2 < tol:
+            break
+        t, improved = 1.0, False
+        while t > 1e-12:
+            candidate = objective(beta + t * step)
+            if candidate >= current:
+                improved = True
+                break
+            t /= 2
+        if not improved:            # at the optimum to machine precision
+            break
+        beta, current = beta + t * step, candidate
+    eta = Z @ beta
+    return float(torch.sum(yt * eta - torch.logaddexp(torch.zeros_like(eta), eta)))

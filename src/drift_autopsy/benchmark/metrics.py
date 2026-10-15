@@ -196,7 +196,7 @@ def aggregate(runs: List[Dict[str, Any]], cfg=None) -> Dict[str, Any]:
     alpha = getattr(cfg, "alpha", 0.05)
     return {
         "methods": methods(runs, alpha) if runs and "verdicts" in runs[0] else {},
-        "estimators": estimators(runs),
+        "estimators": estimators(runs, alpha),
         "detection_power": detection_power(runs),
         "n_runs": len(runs),
         "n_replicates": len({_rep(r) for r in runs}),
@@ -301,7 +301,7 @@ def methods(runs: List[Dict[str, Any]], alpha: float = 0.05) -> Dict[str, Any]:
             "meta_features": META_FEATURES, "meta_validation": "leave one state out"}
 
 
-def estimators(runs: List[Dict[str, Any]]) -> Dict[str, Any]:
+def estimators(runs: List[Dict[str, Any]], alpha: float = 0.05) -> Dict[str, Any]:
     """Mean absolute error of each label-free accuracy estimate, overall and by type,
     and CBPE minus each baseline in per-replicate mean absolute error."""
     if not runs or "estimates" not in runs[0]["estimator"]:
@@ -330,7 +330,7 @@ def estimators(runs: List[Dict[str, Any]]) -> Dict[str, Any]:
     others = [n for n in names if n != "cbpe"]
     for n in others:
         out["paired_vs_cbpe"][n] = sign_flip_test(rep_mae("cbpe") - rep_mae(n))
-    rejected = holm_reject([out["paired_vs_cbpe"][n]["p_value"] for n in others], 0.05)
+    rejected = holm_reject([out["paired_vs_cbpe"][n]["p_value"] for n in others], alpha)
     for n, rej in zip(others, rejected):
         out["paired_vs_cbpe"][n]["holm_significant"] = bool(rej)
     return out
