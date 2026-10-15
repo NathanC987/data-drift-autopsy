@@ -268,7 +268,7 @@ def datasets(R: Results) -> None:
         sizes = [nrows(w) for w in win.values()]
         c = lr["config"]
         if code in ("inc", "emp"):
-            ref, windows = "CA 2014", "CA 2015--19, 2021--23; four states 2014"
+            ref, windows = "CA 2014", "CA 2015--19 and 2021--23; TX, NY, FL, WA 2014"
             nfeat = len(c["features"]["numeric"]) + len(c["features"]["categorical"])
             classes = 2
         elif code == "gas":
@@ -288,7 +288,7 @@ def datasets(R: Results) -> None:
         ]) + " \\\\")
     write_table("tab_datasets", (
         "\\footnotesize\\setlength{\\tabcolsep}{2.5pt}\n"
-        "\\begin{tabular}{@{}llp{2.35cm}rrrrr@{}}\n\\toprule\n"
+        "\\begin{tabular}{@{}ll>{\\raggedright\\arraybackslash}p{2.45cm}rrrrr@{}}\n\\toprule\n"
         " & & & & & & \\multicolumn{2}{c}{Ref.\\ accuracy} \\\\\n\\cmidrule(l){7-8}\n"
         "Dataset & Reference & Windows & Rows & Inputs & Classes & LR & GB \\\\\n\\midrule\n"
         + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"))
@@ -302,6 +302,7 @@ def window_keys(R: Results, code: str, model: str) -> None:
     alpha = d["config"]["alpha"]
     pre = code if model == "lr" else f"{code}-hgb"
     by_type: Dict[str, List[str]] = {}
+    mmd_only: List[str] = []
     for wname, w in d["windows"].items():
         k = f"{pre}-{wkey(code, wname)}"
         det = detections(w)
@@ -365,6 +366,13 @@ def window_keys(R: Results, code: str, model: str) -> None:
             R.add(f"{k}-nsensors", sum(v["n_drifted"] > 0 for v in sensors.values()))
         else:
             R.add(f"{k}-ndrift", w["localization"]["n_drifted_dimensions"])
+            # covariate verdicts that rest on the multivariate test alone: no
+            # single embedding dimension shifted significantly
+            if dg["drift_type"] == "covariate" and w["diagnosis"]["n_input_shift_dimensions"] == 0:
+                mmd_only.append(wlabel(code, wname).lstrip("b"))
+    if code == "clr":
+        R.add(f"{pre}-windownums-mmdonly", join(mmd_only) if mmd_only else "none")
+        R.add(f"{pre}-nwindows-mmdonly", len(mmd_only))
     for t, ws in by_type.items():
         R.add(f"{pre}-windows-{t.replace('_', '')}", join(ws))
         R.add(f"{pre}-windownums-{t.replace('_', '')}", join([w.lstrip("b") for w in ws]))
@@ -420,7 +428,7 @@ def real_table(R: Results) -> None:
 def timelines(R: Results) -> None:
     """Measured accuracy (both models) and the CBPE estimate (LR) over the windows of the four studies."""
     plt = mpl()
-    fig, axes = plt.subplots(2, 2, figsize=(6.6, 3.5))
+    fig, axes = plt.subplots(2, 2, figsize=(6.6, 2.95))
     for ax, code in zip(axes.flat, ("inc", "emp", "gas", "clr")):
         lr, gb = study(code, "lr"), study(code, "hgb")
         names = [k for k, w in lr["windows"].items() if w["analysis_type"] in ("control", "temporal")]
@@ -473,6 +481,9 @@ def estimators(R: Results) -> None:
             v = float(np.mean(pooled[t][e]))
             cells[e].append(v)
             R.add(f"est-bench-{t.replace('/', '').replace('_', '')}-{e}", pp(v, 2, sign=False))
+        vals = [float(np.mean(pooled[t][e])) for e, _ in ESTIMATORS]
+        R.add(f"est-bench-{t.replace('/', '')}-min", pp(min(vals), 2, sign=False))
+        R.add(f"est-bench-{t.replace('/', '')}-max", pp(max(vals), 2, sign=False))
     for code in ("inc", "emp", "gas", "clr"):
         cols.append(STUDY_TITLE[code])
         for e, _ in ESTIMATORS:
@@ -820,8 +831,16 @@ def benchmark(R: Results) -> None:
             R.add(f"det-{DETECTOR_KEY[det]}-{t.replace('_', '')}", pct(rate, 1))
             if t == "none":
                 R.add(f"det-{DETECTOR_KEY[det]}-none-ci", f"[{pct(lo, 1)}, {pct(hi, 1)}]")
+                # the paper states that no false alarm interval lies above alpha
+                if lo > float(cfg["alpha"]):
+                    raise ValueError(f"{det}: false alarm interval [{lo:.3f}, {hi:.3f}] lies above alpha; "
+                                     "revise the detection paragraph of the paper")
         det_rows.append(" & ".join(cells) + " \\\\")
     R.add("det-ncontrols", len(pooled[DETECTOR_ORDER[0]]["none"]))
+    # the paper groups KS, MMD and BBSD under one prior shift detection rate
+    prior_rates = {det: float(np.mean(pooled[det]["prior"])) for det in ("KS Test", "MMD", "BBSD")}
+    if len(set(prior_rates.values())) != 1:
+        raise ValueError(f"KS, MMD and BBSD prior shift rates differ {prior_rates}; revise the detection paragraph")
 
     # false alarms of our diagnosis on the same control windows, by the stage that raised them
     # (covariate and prior come from the label free stage, concept and label noise from the audit)
@@ -846,7 +865,7 @@ def benchmark(R: Results) -> None:
     # figures: confusion matrices of ours for the four LR configurations
     plt = mpl()
     labels = ["none", "covariate", "prior", "concept", "label_noise"]
-    fig, axes = plt.subplots(1, 4, figsize=(7.0, 2.3))
+    fig, axes = plt.subplots(1, 4, figsize=(7.0, 2.15))
     for ax, (code, design) in zip(axes, [("inc", "A"), ("inc", "B"), ("emp", "A"), ("emp", "B")]):
         ti = bench(code, design, "lr")["summary"]["type_identification"]
         rows_ = [t for t in labels if sum(ti["confusion_matrix"][t].values())]
