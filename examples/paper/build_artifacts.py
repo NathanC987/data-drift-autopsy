@@ -645,8 +645,8 @@ METHOD_ROWS = [
     ("ours", "Ours (hierarchical tests)"),
     ("input_monitoring", "Input monitoring"),
     ("bbse_first", "BBSE first"),
-    ("error_rate_monitoring", "Error rate monitoring"),
-    ("meta_classifier", "Learned meta classifier"),
+    ("error_rate_monitoring", "Error-rate monitoring"),
+    ("meta_classifier", "Learned meta-classifier"),
     (None, None),
     ("no_mmd", "Ours without MMD block"),
     ("no_confidence_null", "Ours, audit null without confidence"),
@@ -752,7 +752,7 @@ def benchmark(R: Results) -> None:
     R.add("bench-nbetter", n_better)
     R.add("bench-nworse", n_worse)
     if worse_cells and all(m == "meta_classifier" and d == "A" for m, d, _ in worse_cells):
-        R.add("bench-worse-cells", "all against the learned meta classifier on design A ("
+        R.add("bench-worse-cells", "all against the learned meta-classifier on design A ("
               + join([c for _, _, c in worse_cells]) + ")")
     else:
         R.add("bench-worse-cells", join([f"{dict(METHOD_ROWS[:5])[m].lower()} on {c} {d}" for m, d, c in worse_cells]))
@@ -782,7 +782,7 @@ def benchmark(R: Results) -> None:
     mech_rows = []
     mech_names = {"selection": "Covariate: selection bias", "prior_decrease": "Prior: decrease",
                   "concept_oblique": "Concept: oblique region", "concept_threshold": "Concept: income threshold",
-                  "class_noise": "Noise: class conditional"}
+                  "class_noise": "Noise: class-conditional"}
     for mname, mtitle in mech_names.items():
         cells = [mtitle]
         for code in BENCH_DATASETS:
