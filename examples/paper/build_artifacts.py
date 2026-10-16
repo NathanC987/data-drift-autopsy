@@ -719,13 +719,11 @@ def benchmark(R: Results) -> None:
                 R.add(f"{k}-p", pval(t["p_value"]))
         rows.append(" & ".join(cells) + " \\\\")
     write_table("tab_methods", (
-        "\\footnotesize\\setlength{\\tabcolsep}{2.6pt}\n"
+        "\\scriptsize\\setlength{\\tabcolsep}{2.6pt}\n"
         "\\begin{tabular}{@{}lrrrrrrrr@{}}\n\\toprule\n"
         " & \\multicolumn{4}{c}{Logistic regression} & \\multicolumn{4}{c}{Gradient boosting} \\\\\n"
         "\\cmidrule(lr){2-5}\\cmidrule(l){6-9}\n"
-        " & \\multicolumn{2}{c}{Income} & \\multicolumn{2}{c}{Employment} & \\multicolumn{2}{c}{Income} & \\multicolumn{2}{c}{Employment} \\\\\n"
-        "\\cmidrule(lr){2-3}\\cmidrule(lr){4-5}\\cmidrule(lr){6-7}\\cmidrule(l){8-9}\n"
-        "Method & A & B & A & B & A & B & A & B \\\\\n\\midrule\n"
+        "Method & Inc.\\ A & Inc.\\ B & Emp.\\ A & Emp.\\ B & Inc.\\ A & Inc.\\ B & Emp.\\ A & Emp.\\ B \\\\\n\\midrule\n"
         + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"))
 
     # counts of significant comparisons
