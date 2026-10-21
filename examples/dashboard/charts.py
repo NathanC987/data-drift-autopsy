@@ -459,6 +459,18 @@ def share_bars(ref_share: float, prod_share: float, ref_label: str, prod_label: 
     return _layout(fig, "", height=150, legend=False)
 
 
+def _wrap(label: str, width: int = 18) -> str:
+    """Break a label into lines of at most about `width` characters (Plotly <br>)."""
+    lines, cur = [], ""
+    for word in label.split():
+        if cur and len(cur) + 1 + len(word) > width:
+            lines.append(cur)
+            cur = word
+        else:
+            cur = f"{cur} {word}".strip()
+    return "<br>".join(lines + [cur])
+
+
 def decision_matrix(dp: pd.DataFrame) -> go.Figure:
     order = list(dict.fromkeys(dp["window"]))[::-1]
     questions = list(dict.fromkeys(dp["question"]))
@@ -478,8 +490,10 @@ def decision_matrix(dp: pd.DataFrame) -> go.Figure:
             textposition="middle right", marker=dict(symbol="square", size=16, color=TYPE_COLOR.get(verdict, NEUTRAL)),
             customdata=np.c_[g["stage"], g["rationale"]], showlegend=False,
             hovertemplate="<b>%{y}: " + verdict + "</b> (%{customdata[0]} stage)<br>%{customdata[1]}<extra></extra>"))
+    # wrap the long questions onto two lines so neighbouring headers do not overlap
     fig.update_xaxes(categoryorder="array", categoryarray=questions + ["verdict"], showgrid=False, side="top",
-                     tickangle=0, range=[-0.5, len(questions) + 1.2])
+                     tickangle=0, range=[-0.5, len(questions) + 1.2], tickvals=questions + ["verdict"],
+                     ticktext=[_wrap(q) for q in questions] + ["verdict"])
     fig.update_yaxes(categoryorder="array", categoryarray=order, showgrid=False)
     _layout(fig, "", height=130 + 40 * len(order))
     return fig.update_layout(legend=dict(orientation="h", y=-0.02, yanchor="top", x=0), margin=dict(b=40))

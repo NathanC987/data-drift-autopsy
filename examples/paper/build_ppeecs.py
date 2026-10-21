@@ -718,7 +718,9 @@ class Doc:
 
     def heading(self, b: Block) -> str:
         label = (b.number + " " if b.number else "") + b.text
-        return para("PPHeading", self.inline(label), "<w:keepNext/>")
+        brk = "<w:pageBreakBefore/>" if getattr(self, "page_break_next", False) else ""
+        self.page_break_next = False
+        return para("PPHeading", self.inline(label), "<w:keepNext/>" + brk)
 
     def paragraph(self, b: Block, first: bool) -> str:
         text = b.text
@@ -861,8 +863,8 @@ class Doc:
             elif b.kind == "list":
                 out.append(self.numbered_list(b))
             elif b.kind == "pagebreak":
-                out.append('<w:p><w:r><w:br w:type="page"/></w:r></w:p>')
-                prev = "heading"
+                # set on the next heading, so a full page never leaves an empty one behind
+                self.page_break_next = True
                 continue
             elif b.kind == "eq":
                 out.append(self.equation(b))
