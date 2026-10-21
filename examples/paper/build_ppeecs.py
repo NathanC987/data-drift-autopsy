@@ -277,7 +277,62 @@ def stack_models_main(t: Table) -> Table:
     return out
 
 
-TRANSFORMS = {"stack_models": stack_models, "stack_models_main": stack_models_main}
+def income_narrow(t: Table) -> Table:
+    """ACS Income table, one column wide: one-letter detector headers (defined in the caption)."""
+    short = {"KS": "K", "MMD": "M", "Conf.": "C", "BBSD": "B", "DC": "D", "Est. err.": "Est. err."}
+    for r in t.rows:
+        for c in r.cells:
+            c.text = short.get(c.text, c.text).replace("CA 2014 (control)", "Control")
+            if re.fullmatch(r"[A-Z]{2} \d{4}", c.text):
+                c.text = c.text.replace(" ", "\u00a0")       # keep "CA 2015" on one line
+            if c.text == "Alarms (LR)":
+                c.text = "Alarms"
+    # one Type column: the verdict of both models, or both verdicts where they differ
+    for i, r in enumerate(t.rows):
+        if i == 0:
+            r.cells[-1] = Cell("")
+            r.cmid_below = [cm for cm in r.cmid_below if cm[1] < len(t.aligns) - 2]
+            continue
+        lr, gb = r.cells[-2].text, r.cells[-1].text
+        r.cells[-2:] = [Cell("Type" if i == 1 else (lr if lr == gb else f"{lr}/{gb}"))]
+    t.aligns = t.aligns[:-1]
+    return t
+
+
+def estimators_short(t: Table) -> Table:
+    """Estimator table, one column wide: short column headers."""
+    short = {"No drift": "None", "Covariate": "Cov.", "Concept, noise": "Conc., noise", "ACS Inc.": "Inc.",
+             "ACS Emp.": "Emp.", "Benchmark, design A": "Benchmark (design A)"}
+    for r in t.rows:
+        for c in r.cells:
+            c.text = short.get(c.text, c.text)
+    return t
+
+
+TRANSFORMS = {"stack_models": stack_models, "stack_models_main": stack_models_main, "income_narrow": income_narrow,
+              "estimators_short": estimators_short}
+
+# RELP labels from the 2018 PUMS data dictionary
+RELP_LABELS = {
+    0: "Reference person", 1: "Husband/wife", 2: "Biological son or daughter", 3: "Adopted son or daughter",
+    4: "Stepson or stepdaughter", 5: "Brother or sister", 6: "Father or mother", 7: "Grandchild",
+    8: "Parent-in-law", 9: "Son-in-law or daughter-in-law", 10: "Other relative", 11: "Roomer or boarder",
+    12: "Housemate or roommate", 13: "Unmarried partner", 14: "Foster child", 15: "Other nonrelative",
+    16: "Institutionalized group quarters population", 17: "Noninstitutionalized group quarters population"}
+
+
+def relp_map() -> Table:
+    """The RELSHIPP to RELP mapping, read from the code that applies it."""
+    from drift_autopsy.experiments.acs import RELSHIPP_TO_RELP
+    rows = [Row([Cell("RELP"), Cell("Label (2018)"), Cell("RELSHIPP codes (2019 on)")], "heavy")]
+    for code, label in RELP_LABELS.items():
+        new = sorted(k for k, v in RELSHIPP_TO_RELP.items() if v == code)
+        rows.append(Row([Cell(str(code)), Cell(label), Cell(", ".join(map(str, new)) or "none")],
+                        "light" if code == 0 else None))
+    return Table(["r", "l", "l"], rows, 1)
+
+
+GENERATORS = {"relp_map": relp_map}
 
 
 # --------------------------------------------------------------------------- #
@@ -714,7 +769,10 @@ class Doc:
     def table(self, b: Block) -> str:
         src = b.lines
         gen = re.match(r"<<gen:(\w+)(?:\s+(\w+))?>>", src[0].strip()) if src else None
-        if gen:
+        code = re.match(r"<<code:(\w+)>>", src[0].strip()) if src else None
+        if code:
+            t = GENERATORS[code.group(1)]()
+        elif gen:
             t = parse_tabular(gen.group(1))
             if gen.group(2):
                 t = TRANSFORMS[gen.group(2)](t)
@@ -725,7 +783,7 @@ class Doc:
         out = para("PPFigureTableCaption", run(f"Table {b.number}", "<w:b/>") + run(" ") + cap,
                    '<w:keepNext/><w:keepLines/><w:spacing w:before="160" w:after="60"/>')
         avail = int(b.attrs.get("width", 0)) * 5669 // 100 if b.attrs.get("width") else (
-            COL_W if self.columns == 2 else PAGE_W)
+            COL_W if self.columns == 2 and b.attrs.get("span") != "2" else PAGE_W)
         out += self.table_xml(t, avail)
         return out + '<w:p><w:pPr><w:spacing w:after="0" w:line="160" w:lineRule="exact"/></w:pPr></w:p>'
 
@@ -811,7 +869,14 @@ class Doc:
             elif b.kind == "fig":
                 out.append(self.figure(b))
             elif b.kind == "table":
-                out.append(self.table(b))
+                if b.attrs.get("span") == "2" and self.columns == 2:
+                    # a table across both columns sits in its own one-column section
+                    brk = '<w:p><w:pPr><w:spacing w:after="0" w:line="20" w:lineRule="exact"/>{}</w:pPr></w:p>'
+                    out.append(brk.format(SECT_COLS.format(hdr=hdr, n=2)))
+                    out.append(self.table(b))
+                    out.append(brk.format(SECT_COLS.format(hdr=hdr, n=1)))
+                else:
+                    out.append(self.table(b))
             prev = b.kind
         if not any(b.kind == "heading" and b.text == "References" for b in self.blocks):
             out.append(self.references())
@@ -927,7 +992,7 @@ def column_widths(t: Table, avail: int) -> List[int]:
         col = 0
         for c in r.cells:
             if c.span == 1:
-                words = re.split(r"\s+|(?<=-)", re.sub(r"\[@[^\]]+\]", "[00]", c.text))
+                words = re.split(r"[ \t]+|(?<=-)", re.sub(r"\[@[^\]]+\]", "[00]", c.text))
                 minw[col] = max([minw[col]] + [text_width(w_) + 2 * 45 + 30 for w_ in words if w_])
             col += c.span
     if sum(nat) <= avail:
