@@ -283,8 +283,9 @@ def income_narrow(t: Table) -> Table:
     for r in t.rows:
         for c in r.cells:
             c.text = short.get(c.text, c.text).replace("CA 2014 (control)", "Control")
-            if re.fullmatch(r"[A-Z]{2} \d{4}", c.text):
-                c.text = c.text.replace(" ", "\u00a0")       # keep "CA 2015" on one line
+            m = re.fullmatch(r"([A-Z]{2}) (\d{4})", c.text)
+            if m:                                   # CA windows by year, other states by code (all 2014)
+                c.text = m.group(2) if m.group(1) == "CA" else m.group(1)
             if c.text == "Alarms (LR)":
                 c.text = "Alarms"
     # one Type column: the verdict of both models, or both verdicts where they differ
@@ -296,6 +297,17 @@ def income_narrow(t: Table) -> Table:
         lr, gb = r.cells[-2].text, r.cells[-1].text
         r.cells[-2:] = [Cell("Type" if i == 1 else (lr if lr == gb else f"{lr}/{gb}"))]
     t.aligns = t.aligns[:-1]
+    # drop the absolute LR accuracy: it equals the reference accuracy plus the ΔLR column
+    for i, r in enumerate(t.rows):
+        if i == 0:
+            r.cells[1].span -= 1
+            r.cmid_below = [(a - (a > 1), b - 1) for a, b in r.cmid_below]
+        else:
+            del r.cells[1]
+        for c in r.cells:
+            if re.fullmatch(r"[A-Z0-9]+, [A-Z0-9]+", c.text):
+                c.text = c.text.replace(", ", ",\u00a0")      # keep the two top shifts on one line
+    del t.aligns[1]
     return t
 
 
@@ -786,7 +798,7 @@ class Doc:
                    '<w:keepNext/><w:keepLines/><w:spacing w:before="160" w:after="60"/>')
         avail = int(b.attrs.get("width", 0)) * 5669 // 100 if b.attrs.get("width") else (
             COL_W if self.columns == 2 and b.attrs.get("span") != "2" else PAGE_W)
-        out += self.table_xml(t, avail)
+        out += self.table_xml(t, avail - 120)          # margin for the renderer's own spacing
         return out + '<w:p><w:pPr><w:spacing w:after="0" w:line="160" w:lineRule="exact"/></w:pPr></w:p>'
 
     def table_xml(self, t: Table, avail: int) -> str:
@@ -827,7 +839,7 @@ class Doc:
             trpr = "<w:cantSplit/>" + ("<w:tblHeader/>" if ri < t.header_rows else "")
             rows_xml.append(f"<w:tr><w:trPr>{trpr}</w:trPr>{''.join(tcs)}</w:tr>")
         return ('<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:jc w:val="center"/><w:tblLayout w:type="fixed"/>'
-                '<w:tblCellMar><w:left w:w="45" w:type="dxa"/><w:right w:w="45" w:type="dxa"/></w:tblCellMar>'
+                '<w:tblCellMar><w:left w:w="30" w:type="dxa"/><w:right w:w="30" w:type="dxa"/></w:tblCellMar>'
                 '<w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1"/>'
                 f'</w:tblPr><w:tblGrid>{grid}</w:tblGrid>{"".join(rows_xml)}</w:tbl>')
 
@@ -949,7 +961,7 @@ def text_width(text: str) -> float:
     plain = re.sub(r"[*$]", "", plain)
     if font is None:
         return len(plain) * 75.0
-    return font.getlength(plain) / 10 * 20
+    return font.getlength(plain) / 10 * 20 * 1.08      # LibreOffice sets table text slightly wider
 
 
 _FONT = []
@@ -972,12 +984,12 @@ def _font():
 def column_widths(t: Table, avail: int) -> List[int]:
     """Natural column widths, shrinking the widest text columns (which then wrap) to fit."""
     ncol = len(t.aligns)
-    nat = [300.0] * ncol
+    nat = [200.0] * ncol
     for r in t.rows:
         col = 0
         for c in r.cells:
             if c.span == 1:
-                nat[col] = max(nat[col], text_width(c.text) + 2 * 45 + 30)
+                nat[col] = max(nat[col], text_width(c.text) + 2 * 30 + 12)
             col += c.span
     for r in t.rows:                       # spanning cells must fit their columns
         col = 0
@@ -989,13 +1001,13 @@ def column_widths(t: Table, avail: int) -> List[int]:
                     for j in range(col, col + c.span):
                         nat[j] += (need - have) / c.span
             col += c.span
-    minw = [300.0] * ncol                  # a column never gets narrower than its longest word
+    minw = [200.0] * ncol                  # a column never gets narrower than its longest word
     for r in t.rows:
         col = 0
         for c in r.cells:
             if c.span == 1:
                 words = re.split(r"[ \t]+|(?<=-)", re.sub(r"\[@[^\]]+\]", "[00]", c.text))
-                minw[col] = max([minw[col]] + [text_width(w_) + 2 * 45 + 30 for w_ in words if w_])
+                minw[col] = max([minw[col]] + [text_width(w_) + 2 * 30 + 12 for w_ in words if w_])
             col += c.span
     if sum(nat) <= avail:
         return [int(w) for w in nat]
