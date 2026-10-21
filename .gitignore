@@ -61,6 +61,7 @@ data/clear10/
 data/gas_sensor_drift/
 /paper/
 agh-cs-paper/
+ppeecs-paper/
 
 # Logs
 *.log
