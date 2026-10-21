@@ -428,7 +428,7 @@ def real_table(R: Results) -> None:
 def timelines(R: Results) -> None:
     """Measured accuracy (both models) and the CBPE estimate (LR) over the windows of the four studies."""
     plt = mpl()
-    fig, axes = plt.subplots(2, 2, figsize=(6.6, 2.95))
+    fig, axes = plt.subplots(2, 2, figsize=(6.6, 2.75))
     for ax, code in zip(axes.flat, ("inc", "emp", "gas", "clr")):
         lr, gb = study(code, "lr"), study(code, "hgb")
         names = [k for k, w in lr["windows"].items() if w["analysis_type"] in ("control", "temporal")]
