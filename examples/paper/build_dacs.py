@@ -11,7 +11,8 @@ that compiles on its own (Overleaf or any TeX installation):
 
 Run from the repository root (TECTONIC may point to the binary if it is not on PATH):
 
-    python examples/paper/build_dacs.py
+    python examples/paper/build_dacs.py              # LaTeX and PDF
+    python examples/paper/build_dacs.py --figures    # redraw the result figures first
 """
 
 from __future__ import annotations
@@ -31,6 +32,7 @@ from build_ppeecs import (DOLLAR, FIGS, GENERATORS, INLINE, PAPER, PP, ROOT, TRA
 
 TEMPLATE_DIR = PAPER / "dacs-conf-paper"
 SRC = PAPER / "dacs" / "paper.md"
+DACS_FIGS = PAPER / "dacs" / "figures"     # result figures redrawn for the 131 mm text width
 OUT = PAPER / "dacs" / "build"
 PAGE_LIMIT = 12
 
@@ -182,7 +184,7 @@ class TexDoc:
         else:
             t = parse_pipe_table(src)
         self.captions.append((f"Table {self.numbers[b.attrs['id']]}", b.text))
-        lines = ["\\begin{table}[!htb]", f"\\caption{{{self.inline(b.text)}}}\\label{{{b.attrs['id']}}}%",
+        lines = ["\\begin{table}[!tb]", f"\\caption{{{self.inline(b.text)}}}\\label{{{b.attrs['id']}}}%",
                  "\\begin{tabular}{@{}" + "".join(t.aligns) + "@{}}", "\\toprule"]
         last = len(t.rows) - 1
         for ri, r in enumerate(t.rows):
@@ -209,17 +211,18 @@ class TexDoc:
 
     def figure(self, b: Block) -> str:
         name = Path(b.attrs["file"]).stem
-        ext = ".pdf" if (FIGS / f"{name}.pdf").exists() else Path(b.attrs["file"]).suffix
-        self.figures.append(name + ext)
+        folder = DACS_FIGS if (DACS_FIGS / f"{name}.pdf").exists() else FIGS
+        ext = ".pdf" if (folder / f"{name}.pdf").exists() else Path(b.attrs["file"]).suffix
+        self.figures.append((folder, name + ext))
         width = float(b.attrs.get("width", 83.5))
         self.captions.append((f"Fig. {self.numbers[b.attrs['id']]}", b.text))
         return "\n".join([
-            "\\begin{figure}[!htb]", "\\centering",
+            "\\begin{figure}[!tb]", "\\centering",
             f"\\includegraphics[width={width:g}mm,height=0.6\\textheight,keepaspectratio]{{{name}{ext}}}",
             f"\\caption{{{self.inline(b.text)}}}\\label{{{b.attrs['id']}}}", "\\end{figure}"])
 
     def body(self) -> str:
-        self.figures: List[str] = []
+        self.figures: List[tuple] = []
         out = []
         for b in self.blocks:
             if b.kind == "abstract":
@@ -262,8 +265,8 @@ class TexDoc:
 
 
 def short_title(title: str) -> str:
-    """Running head: the title up to its comma-free core."""
-    return "Drift Detection, Diagnosis and Reliability Analysis" if title.startswith("Drift Detection") else title
+    """Running head: the title, or its part before a colon when it is long."""
+    return title if len(title) <= 70 else title.split(":")[0]
 
 
 def protect(title: str) -> str:
@@ -311,7 +314,82 @@ def compile_tex(tex: Path) -> Path:
     return tex.with_suffix(".pdf")
 
 
+def figures() -> None:
+    """Confusion matrices and accuracy timelines as one row of four panels across the text width."""
+    os.chdir(ROOT)
+    import numpy as np
+    import build_artifacts as ba
+
+    DACS_FIGS.mkdir(parents=True, exist_ok=True)
+    plt = ba.mpl()
+    plt.rcParams.update({"font.size": 8, "axes.titlesize": 8, "axes.labelsize": 8, "legend.fontsize": 7.5,
+                         "xtick.labelsize": 7, "ytick.labelsize": 7, "font.family": "DejaVu Sans"})
+    W = 131 / 25.4
+
+    def save(fig, name: str) -> None:
+        fig.savefig(DACS_FIGS / f"{name}.pdf", bbox_inches="tight", pad_inches=0.02)
+        plt.close(fig)
+
+    labels = ["none", "covariate", "prior", "concept", "label_noise"]
+    short = {"none": "None", "covariate": "Cov.", "prior": "Prior", "concept": "Conc.", "label_noise": "Noise"}
+    fig, axes = plt.subplots(1, 4, figsize=(W, 1.75))
+    for ax, (code, design) in zip(axes, [("inc", "A"), ("inc", "B"), ("emp", "A"), ("emp", "B")]):
+        ti = ba.bench(code, design, "lr")["summary"]["type_identification"]
+        rows_ = [t for t in labels if sum(ti["confusion_matrix"][t].values())]
+        M = np.array([[ti["confusion_matrix"][a][b] for b in labels] for a in rows_], dtype=float)
+        frac = M / M.sum(axis=1, keepdims=True)
+        ax.imshow(frac, cmap="Blues", vmin=0, vmax=1, aspect="auto")
+        for i in range(len(rows_)):
+            for j in range(len(labels)):
+                if M[i, j]:
+                    ax.text(j, i, f"{int(M[i, j])}", ha="center", va="center", fontsize=6,
+                            color="white" if frac[i, j] > 0.6 else ba.INK)
+        ax.set_xticks(range(len(labels)), [short[t] for t in labels], rotation=45, ha="right")
+        ax.set_yticks(range(len(rows_)), [short[t] for t in rows_])
+        ax.set_title(f"{ba.STUDY_TITLE[code]}, {design}", loc="left")
+        ax.grid(False)
+    axes[0].set_ylabel("injected")
+    fig.supxlabel("diagnosed", fontsize=8, y=0.0)
+    fig.tight_layout(pad=0.3, w_pad=0.8)
+    save(fig, "Fig03")
+
+    fig, axes = plt.subplots(1, 4, figsize=(W, 1.8))
+    for ax, code in zip(axes, ("inc", "emp", "gas", "clr")):
+        lr, gb = ba.study(code, "lr"), ba.study(code, "hgb")
+        names = [k for k, w in lr["windows"].items() if w["analysis_type"] in ("control", "temporal")]
+        x = np.arange(len(names))
+        years = [lr["windows"][k].get("year") for k in names]
+        breaks = [i for i in range(1, len(names)) if years[i] and years[i - 1] and years[i] - years[i - 1] > 1]
+
+        def series(d, fn):
+            y = [float(fn(d["windows"][k])) for k in names]
+            xs = list(x.astype(float))
+            for b in reversed(breaks):
+                xs.insert(b, np.nan)
+                y.insert(b, np.nan)
+            return xs, y
+
+        for d, color, lab in ((lr, ba.PALETTE[0], "LR measured"), (gb, ba.PALETTE[2], "GB measured")):
+            ax.plot(*series(d, lambda w: w["actual_accuracy"]), "-o", color=color, ms=2.2, lw=1.0, label=lab)
+        ax.plot(*series(lr, ba.cbpe_estimate), "--s", color=ba.PALETTE[1], ms=2.2, lw=0.9, mfc="white",
+                label="LR estimate (CBPE)")
+        ticks = []
+        for k in names:
+            lab = ba.wlabel(code, k).replace("control", "C")
+            ticks.append(lab.replace("CA 20", "") if code in ("inc", "emp") else lab.replace("b", ""))
+        ax.set_xticks(x, ticks, fontsize=6, rotation=90)
+        ax.set_title(ba.STUDY_TITLE[code], loc="left")
+    axes[0].set_ylabel("accuracy")
+    handles, labs = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labs, loc="upper center", ncol=3, frameon=False, bbox_to_anchor=(0.5, 1.02))
+    fig.tight_layout(pad=0.3, w_pad=0.6, rect=(0, 0, 1, 0.88))
+    save(fig, "Fig04")
+    print(f"wrote figures to {DACS_FIGS.relative_to(ROOT)}")
+
+
 def main() -> None:
+    if "--figures" in sys.argv:
+        figures()
     results = load_results()
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "figures").mkdir(exist_ok=True)
@@ -321,10 +399,11 @@ def main() -> None:
 
     paper = TexDoc(SRC, results)
     paper.write(OUT / "DACS_paper.tex", "references")
-    for name in paper.figures:
-        shutil.copy(FIGS / name, OUT / "figures" / name)
+    names = [name for _, name in paper.figures]
+    for folder, name in paper.figures:
+        shutil.copy(folder / name, OUT / "figures" / name)
     for stale in list((OUT / "figures").iterdir()) + list(OUT.glob("DACS_supplement.*")):
-        if stale.name not in paper.figures:
+        if stale.name not in names:
             stale.unlink()
 
     failures = []
