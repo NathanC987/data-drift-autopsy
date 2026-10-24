@@ -62,6 +62,8 @@ data/gas_sensor_drift/
 /paper/
 agh-cs-paper/
 ppeecs-paper/
+dacs-conf-paper/
+icmmdu-conf-paper/
 
 # Logs
 *.log

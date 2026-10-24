@@ -4,7 +4,7 @@ The conference allows 12 pages, so paper/dacs/paper.md is the PPEECS text
 (paper/ppeecs/paper.md) with whole parts removed and nothing else reworded; there is
 no supplement. The script reads it with the parser of build_ppeecs.py (same results,
 references, figures, generated tables and table transforms) and writes LaTeX on the
-sn-jnl class in paper/dacs-conf-paper/. The output goes to paper/dacs/build/, a folder
+sn-jnl class in dacs-conf-paper/ (project root). The output goes to paper/dacs/build/, a folder
 that compiles on its own (Overleaf or any TeX installation):
 
     DACS_paper.tex / .pdf, references.bib, sn-jnl.cls, sn-mathphys-num.bst, figures/
@@ -30,7 +30,7 @@ from build_ppeecs import (DOLLAR, FIGS, GENERATORS, INLINE, PAPER, PP, ROOT, TRA
                           Doc, float_check, load_results, parse_pipe_table, parse_source, parse_tabular,
                           pdf_pages)
 
-TEMPLATE_DIR = PAPER / "dacs-conf-paper"
+TEMPLATE_DIR = ROOT / "dacs-conf-paper"
 SRC = PAPER / "dacs" / "paper.md"
 DACS_FIGS = PAPER / "dacs" / "figures"     # result figures redrawn for the 131 mm text width
 OUT = PAPER / "dacs" / "build"
