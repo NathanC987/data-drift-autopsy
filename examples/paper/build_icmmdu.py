@@ -18,21 +18,20 @@ from __future__ import annotations
 
 import datetime as dt
 import re
-import statistics
 import sys
 import zipfile
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from build_ppeecs import (FIGS, GENERATORS, TRANSFORMS, relp_map, PAPER, PP, ROOT, Block, Cell, Doc, MathEngine, Row, Table,  # noqa: E402
+from build_ppeecs import (FIGS, GENERATORS, TRANSFORMS, PAPER, PP, ROOT, Block, Doc, MathEngine, Table,  # noqa: E402
                           column_widths, esc, lint, load_results, para, parse_bib, pdf_pages, png_size, run,
                           tex_unicode, to_pdf)
 
 TEMPLATE = ROOT / "icmmdu-conf-paper" / "splnproc2311.docm"
 SRC = PAPER / "icmmdu" / "paper.md"
 OUT = PAPER / "icmmdu" / "build"
-ICM_FIGS = PAPER / "icmmdu" / "figures"      # figures made for this version (dashboard views)
+ICM_FIGS = PAPER / "icmmdu" / "figures"      # figures made for this version
 MIN_PAGES = 10
 TEXT_W = 6918                     # twips: 122 mm text width of the template
 ABSTRACT_MAX_WORDS = 250
@@ -44,26 +43,7 @@ RUNIN = {"Acknowledgments", "Disclosure of Interests"}
 # tables computed from the results
 
 RESULTS = load_results()
-DATASETS = (("inc", "ACS Income"), ("emp", "ACS\u00a0Employment"), ("gas", "Gas sensor"), ("clr", "CLEAR-10"))
 STAGES = ("ks", "psi", "mmd", "conf", "bbsd", "dc", "diagnosis", "reliability")    # the stages of Section 3
-
-
-def real_summary() -> Table:
-    """Detection, loss and verdicts on the real windows, per dataset and model family."""
-    head = ["Dataset", "Model", "Windows", "Ctrl. alarms", "Sig. drops", "Max. |Δ|", "Est. err.", "No drift", "Cov."]
-    rows = [Row([Cell(h) for h in head], "heavy")]
-    for code, name in DATASETS:
-        for model, label in (("", "LR"), ("-hgb", "GB")):
-            k = f"{code}{model}"
-            n = {t: int(RESULTS[f"{k}-nwindows-{t}"]) for t in ("none", "covariate", "prior", "concept", "labelnoise")}
-            if n["prior"] or n["concept"] or n["labelnoise"]:
-                raise ValueError(f"{k}: the summary table has no column for prior, concept or noise verdicts")
-            rows.append(Row([Cell(name if label == "LR" else ""), Cell(label), Cell(str(sum(n.values()))),
-                             Cell(RESULTS[f"{k}-ctrl-nalarms"]), Cell(RESULTS[f"{k}-nsigdrop"]),
-                             Cell(RESULTS[f"{k}-dacc-maxabs"]), Cell(RESULTS[f"{k}-esterr-mean"]),
-                             Cell(str(n["none"])), Cell(str(n["covariate"]))],
-                            "light" if (code == "inc" and label == "LR") else ("light" if label == "LR" else None)))
-    return Table(["l", "l"] + ["r"] * 7, rows, 1)
 
 
 def window_times() -> Dict[str, Dict[str, float]]:
@@ -77,34 +57,6 @@ def window_times() -> Dict[str, Dict[str, float]]:
     return out
 
 
-def runtime() -> Table:
-    times = window_times()
-    rows = [Row([Cell(""), Cell("LR", 2), Cell("GB", 2)], "heavy", [(1, 2), (3, 4)]),
-            Row([Cell(h) for h in ("Dataset", "Median", "Max", "Median", "Max")])]
-    for code, name in DATASETS:
-        cells = [Cell(name)]
-        for k in (code, f"{code}-hgb"):
-            v = list(times[k].values())
-            cells += [Cell(f"{statistics.median(v):.1f}"), Cell(f"{max(v):.1f}")]
-        rows.append(Row(cells, "light" if code == "inc" else None))
-    return Table(["l", "r", "r", "r", "r"], rows, 2)
-
-
-def relp_wide() -> Table:
-    """The RELP mapping of build_ppeecs.relp_map in two halves side by side, half as tall."""
-    t = relp_map()
-    head, body = t.rows[0], t.rows[1:]
-    half = (len(body) + 1) // 2
-    rows = [Row(head.cells + [Cell(c.text) for c in head.cells], "heavy")]
-    for i in range(half):
-        right = body[half + i].cells if half + i < len(body) else [Cell(""), Cell(""), Cell("")]
-        rows.append(Row(body[i].cells + right, "light" if i == 0 else None))
-    for r in rows:
-        r.cells[2].text = r.cells[2].text.replace("RELSHIPP codes (2019 on)", "RELSHIPP")
-        r.cells[5].text = r.cells[5].text.replace("RELSHIPP codes (2019 on)", "RELSHIPP")
-    return Table(t.aligns * 2, rows, 1)
-
-
 def income_wide(t: Table) -> Table:
     """ACS Income table at the full text width: a short control label, the two top shifts kept on one line."""
     for r in t.rows:
@@ -115,9 +67,18 @@ def income_wide(t: Table) -> Table:
     return t
 
 
-TRANSFORMS.update({"income_wide": income_wide})
+def datasets_wide(t: Table) -> Table:
+    """Datasets table: each group of windows kept on one line, so the census rows take two lines, not four."""
+    for r in t.rows:
+        for c in r.cells:
+            if c.text.startswith("CA 2015"):
+                c.text = c.text.replace(" and ", ", ")
+                c.text = " ".join(g.replace(" ", "\u00a0") for g in re.split(r"(?<=;) ", c.text))
+    return t
+
+
+TRANSFORMS.update({"income_wide": income_wide, "datasets_wide": datasets_wide})
 RESULTS["icm-time-max"] = f"{max(max(v.values()) for v in window_times().values()):.0f}"
-GENERATORS.update({"real_summary": real_summary, "runtime": runtime, "relp_wide": relp_wide})
 
 
 # --------------------------------------------------------------------------- #
@@ -142,7 +103,10 @@ def lncs_name(name: str) -> str:
 
 
 def lncs_reference(e: Dict[str, str]) -> List[Tuple[str, Optional[str]]]:
-    """Author, F., Author, S.: Title. Journal 2(5), 99–110 (2016), as in the template's examples."""
+    """Author, F., Author, S.: Title. Journal 2(5), 99–110 (2016), as in the template's examples.
+
+    A paper in a journal or proceedings is found by its venue, so it carries its DOI but no URL;
+    only web documents keep a URL and the date it was accessed."""
     authors = ", ".join(lncs_name(a) for a in re.split(r"\s+and\s+", e["author"]))
     title = tex_unicode(e["title"]).rstrip(".")
     year = e.get("year", "")
@@ -155,7 +119,7 @@ def lncs_reference(e: Dict[str, str]) -> List[Tuple[str, Optional[str]]]:
         text = f"{authors}: {title}. {tex_unicode(e['journal'])} {vol}, {loc} ({year})"
     elif typ == "inproceedings":
         pp = f", pp. {pages}" if pages else ""
-        text = f"{authors}: {title}. In: {tex_unicode(e['booktitle'])}{pp}{where} ({year})"
+        text = f"{authors}: {title}. In: {tex_unicode(e['booktitle'])}{pp} ({year})"
     elif typ == "book":
         text = f"{authors}: {title}. {tex_unicode(e['publisher'])}{where} ({year})"
     elif typ == "techreport":
@@ -167,7 +131,7 @@ def lncs_reference(e: Dict[str, str]) -> List[Tuple[str, Optional[str]]]:
     if e.get("doi"):
         url = f"https://doi.org/{e['doi']}"
         return [(text + ". ", None), (url, url)]
-    if e.get("url"):
+    if e.get("url") and typ in ("online", "techreport"):
         return [(text + ", ", None), (e["url"], e["url"]), (f", last accessed {e['urldate']}", None)]
     return [(text + ".", None)]
 
@@ -458,12 +422,12 @@ def figures() -> None:
 
     ICM_FIGS.mkdir(parents=True, exist_ok=True)
     plt = ba.mpl()
-    plt.rcParams.update({"font.size": 8, "axes.titlesize": 8, "axes.labelsize": 8, "legend.fontsize": 7.5,
+    plt.rcParams.update({"font.size": 8, "axes.titlesize": 8, "axes.labelsize": 8, "legend.fontsize": 7,
                          "xtick.labelsize": 7, "ytick.labelsize": 7, "font.family": "DejaVu Sans"})
-    W = 120 / 25.4
+    W = 88 / 25.4                 # printed at 88 mm, so the lettering stays at 7 to 8 pt
 
     # measured and estimated accuracy over the temporal windows, 2 x 2
-    fig, axes = plt.subplots(2, 2, figsize=(W, 3.6))
+    fig, axes = plt.subplots(2, 2, figsize=(W, 2.68))
     for ax, code in zip(axes.flat, ("inc", "emp", "gas", "clr")):
         lr, gb = ba.study(code, "lr"), ba.study(code, "hgb")
         names = [k for k, w in lr["windows"].items() if w["analysis_type"] in ("control", "temporal")]
@@ -490,7 +454,8 @@ def figures() -> None:
     for ax in axes[:, 0]:
         ax.set_ylabel("accuracy")
     handles, labs = axes[0][0].get_legend_handles_labels()
-    fig.legend(handles, labs, loc="upper center", ncol=3, frameon=False, bbox_to_anchor=(0.5, 1.0))
+    fig.legend(handles, labs, loc="upper center", ncol=3, frameon=False, bbox_to_anchor=(0.5, 1.0),
+               columnspacing=1.0, handlelength=1.6)
     fig.tight_layout(pad=0.3, h_pad=0.8, w_pad=1.0, rect=(0, 0, 1, 0.94))
     fig.savefig(ICM_FIGS / "Fig05.pdf", bbox_inches="tight", pad_inches=0.02)
     fig.savefig(ICM_FIGS / "Fig05.png", dpi=600, bbox_inches="tight", pad_inches=0.02)
