@@ -48,6 +48,8 @@ PREAMBLE = r"""\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
 \usepackage{textcomp}%
 \usepackage{manyfoot}%
 \usepackage{booktabs}%
+% figures and tables are set in the text flow, right after the paragraph that introduces them
+\makeatletter\providecommand\captionof[1]{\def\@captype{#1}\caption}\makeatother
 
 \graphicspath{{figures/}}
 \raggedbottom
@@ -184,7 +186,8 @@ class TexDoc:
         else:
             t = parse_pipe_table(src)
         self.captions.append((f"Table {self.numbers[b.attrs['id']]}", b.text))
-        lines = ["\\begin{table}[!tb]", f"\\caption{{{self.inline(b.text)}}}\\label{{{b.attrs['id']}}}%",
+        lines = ["\\par\\vspace{0.7\\intextsep}\\noindent\\begin{minipage}{\\textwidth}\\centering\\tablebodyfont",
+                 f"\\captionof{{table}}{{{self.inline(b.text)}}}\\label{{{b.attrs['id']}}}%",
                  "\\begin{tabular}{@{}" + "".join(t.aligns) + "@{}}", "\\toprule"]
         last = len(t.rows) - 1
         for ri, r in enumerate(t.rows):
@@ -206,7 +209,7 @@ class TexDoc:
                 lines.append(f"\\cmidrule(lr){{{a + 1}-{z + 1}}}")
             if ri == last:
                 lines.append("\\botrule")
-        lines += ["\\end{tabular}", "\\end{table}"]
+        lines += ["\\end{tabular}", "\\end{minipage}\\par\\vspace{0.7\\intextsep}"]
         return "\n".join(lines)
 
     def figure(self, b: Block) -> str:
@@ -217,9 +220,10 @@ class TexDoc:
         width = float(b.attrs.get("width", 83.5))
         self.captions.append((f"Fig. {self.numbers[b.attrs['id']]}", b.text))
         return "\n".join([
-            "\\begin{figure}[!tb]", "\\centering",
+            "\\par\\vspace{0.7\\intextsep}\\noindent\\begin{minipage}{\\textwidth}\\centering",
             f"\\includegraphics[width={width:g}mm,height=0.6\\textheight,keepaspectratio]{{{name}{ext}}}",
-            f"\\caption{{{self.inline(b.text)}}}\\label{{{b.attrs['id']}}}", "\\end{figure}"])
+            f"\\captionof{{figure}}{{{self.inline(b.text)}}}\\label{{{b.attrs['id']}}}",
+            "\\end{minipage}\\par\\vspace{0.7\\intextsep}"])
 
     def body(self) -> str:
         self.figures: List[tuple] = []
@@ -387,6 +391,25 @@ def figures() -> None:
     print(f"wrote figures to {DACS_FIGS.relative_to(ROOT)}")
 
 
+def order_check(pdf: Path, captions: List[tuple]) -> int:
+    """Each float must follow the text that first mentions it, on the same page."""
+    pages = pdf_pages(pdf)
+    bad = 0
+    for tag, cap in captions:
+        start = " ".join(re.sub(r"\[@[^\]]+\]|\$[^$]*\$|\\res\{[^}]+\}|[*]", " ", cap).split()[:4])
+        key = f"{tag} {start}"
+        page = next((i for i, t in enumerate(pages) if key in t), None)
+        if page is None:
+            bad += 1
+            continue
+        text = pages[page]
+        m = re.search(re.escape(tag) + r"(?![0-9])", text.replace(key, "\0" * len(key)))
+        if not m or m.start() > text.index(key):
+            bad += 1
+            print(f"  {tag:9s} appears before its first mention")
+    return bad
+
+
 def main() -> None:
     if "--figures" in sys.argv:
         figures()
@@ -413,6 +436,8 @@ def main() -> None:
         print(f"{pdf.relative_to(ROOT)}: {n} pages")
         if float_check(pdf, paper.captions):
             failures.append(f"{pdf.name}: floats not on the page of their first mention")
+        if order_check(pdf, paper.captions):
+            failures.append(f"{pdf.name}: floats placed above the text that introduces them")
         if n > PAGE_LIMIT:
             failures.append(f"{pdf.name} has {n} pages (limit {PAGE_LIMIT})")
     for f_ in failures:
