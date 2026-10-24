@@ -261,7 +261,9 @@ class TexDoc:
         if self.prefix:
             numbering = "".join(f"\\renewcommand{{\\the{c}}}{{{self.prefix}\\arabic{{{c}}}}}\n"
                                 for c in ("section", "figure", "table", "equation"))
-        tex = (PREAMBLE + "\n\\begin{document}\n\n" + self.front_matter() + "\n" + numbering + "\n" + body
+        names = ", ".join(a.split(";")[0].strip() for a in self.front["author"])
+        meta = f"\\hypersetup{{pdftitle={{{tex_text(self.front['title'][0])}}}, pdfauthor={{{names}}}}}\n"
+        tex = (PREAMBLE + meta + "\n\\begin{document}\n\n" + self.front_matter() + "\n" + numbering + "\n" + body
                + f"\n\n\\bibliography{{{bib}}}\n\n\\end{{document}}\n")
         out.write_text(tex)
         print(f"wrote {out.relative_to(ROOT)}: {len(self.cites)} references, {len(self.figures)} figures, "
