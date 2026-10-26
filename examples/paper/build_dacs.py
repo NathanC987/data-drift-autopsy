@@ -320,20 +320,27 @@ def compile_tex(tex: Path) -> Path:
     return tex.with_suffix(".pdf")
 
 
-def figures() -> None:
-    """Confusion matrices and accuracy timelines as one row of four panels across the text width."""
+def figures(out: Path = DACS_FIGS, width_mm: float = 131, png: bool = False,
+            names: tuple = ("Fig03", "Fig04")) -> None:
+    """Confusion matrices and accuracy timelines as one row of four panels across the text width
+    (PNG at 600 dpi as well for the Word versions)."""
     os.chdir(ROOT)
     import numpy as np
     import build_artifacts as ba
 
-    DACS_FIGS.mkdir(parents=True, exist_ok=True)
+    out.mkdir(parents=True, exist_ok=True)
     plt = ba.mpl()
     plt.rcParams.update({"font.size": 8, "axes.titlesize": 8, "axes.labelsize": 8, "legend.fontsize": 7.5,
                          "xtick.labelsize": 7, "ytick.labelsize": 7, "font.family": "DejaVu Sans"})
-    W = 131 / 25.4
+    W = width_mm / 25.4
 
     def save(fig, name: str) -> None:
-        fig.savefig(DACS_FIGS / f"{name}.pdf", bbox_inches="tight", pad_inches=0.02)
+        if name not in names:
+            plt.close(fig)
+            return
+        fig.savefig(out / f"{name}.pdf", bbox_inches="tight", pad_inches=0.02)
+        if png:
+            fig.savefig(out / f"{name}.png", dpi=600, bbox_inches="tight", pad_inches=0.02)
         plt.close(fig)
 
     labels = ["none", "covariate", "prior", "concept", "label_noise"]
@@ -390,7 +397,7 @@ def figures() -> None:
     fig.legend(handles, labs, loc="upper center", ncol=3, frameon=False, bbox_to_anchor=(0.5, 1.02))
     fig.tight_layout(pad=0.3, w_pad=0.6, rect=(0, 0, 1, 0.88))
     save(fig, "Fig04")
-    print(f"wrote figures to {DACS_FIGS.relative_to(ROOT)}")
+    print(f"wrote figures to {out.relative_to(ROOT)}")
 
 
 def order_check(pdf: Path, captions: List[tuple]) -> int:

@@ -156,6 +156,10 @@ def title_case(text: str) -> str:
 # document writer on the template's styles
 
 class LncsDoc(Doc):
+    template = TEMPLATE
+    fig_dir = ICM_FIGS          # figures made for this version, looked up before the PPEECS ones
+    kw_sep = ", "
+
     def front_matter(self) -> str:
         f = self.front
         title = re.sub(r'"([^"]*)"', "\u201c\\1\u201d", f["title"][0])
@@ -174,7 +178,7 @@ class LncsDoc(Doc):
         kw = [k.strip() for k in self.front["keywords"][0].split(",")]
         return (para("abstract", run("Abstract. ", "<w:b/><w:bCs/>") + self.inline(b.text),
                      '<w:spacing w:after="0"/><w:ind w:firstLine="0"/>')
-                + para("keywords", run("Keywords:", "<w:b/><w:bCs/>") + run(" " + ", ".join(kw) + ".")))
+                + para("keywords", run("Keywords:", "<w:b/><w:bCs/>") + run(" " + self.kw_sep.join(kw) + ".")))
 
     def heading(self, b: Block) -> str:
         # the template numbers its headings itself (1, 1.1), in step with Doc.number_blocks
@@ -209,7 +213,7 @@ class LncsDoc(Doc):
         return para(style, run(tag + ".", "<w:b/>") + run(" ") + self.inline(text), jc)
 
     def figure(self, b: Block) -> str:
-        path = ICM_FIGS / b.attrs["file"]
+        path = self.fig_dir / b.attrs["file"]
         if not path.exists():
             path = FIGS / b.attrs["file"]
         w_px, h_px = png_size(path)
@@ -342,7 +346,7 @@ class LncsDoc(Doc):
         return "".join(out) + sect
 
     def write(self, out: Path, title: str) -> None:
-        zin = zipfile.ZipFile(TEMPLATE)
+        zin = zipfile.ZipFile(self.template)
         parts = {n: zin.read(n) for n in zin.namelist()}
         # a plain .docx: drop the macros, the ribbon and the template's sample chart
         for n in list(parts):
@@ -381,6 +385,7 @@ class LncsDoc(Doc):
         names = [a.split(";")[0].strip() for a in self.front["author"]]
         first = names[0].split()
         lead = f"{first[0][0]}. {' '.join(first[1:])}" + (" et al." if len(names) > 2 else "")
+        lead = self.front.get("running-authors", [lead])[0]
         for name, old, new in (("word/header1.xml", "F. Author and S. Author", lead),
                                ("word/header2.xml", "Contribution Title (shortened if too long)",
                                 self.front.get("running", [title])[0])):
@@ -466,7 +471,8 @@ def figures() -> None:
 # --------------------------------------------------------------------------- #
 # checks
 
-def float_check(pdf: Path, captions: List[Tuple[str, str]]) -> int:
+def float_check(pdf: Path, captions: List[Tuple[str, str]],
+                heads: str = r"\d+ R\. Guhagarkar et al\.|.*? Analysis \d+") -> int:
     """Every float follows its first mention: below it on the same page or, when it does not fit in the
     space left there, at the top of the next page (nothing but the running head above it)."""
     pages = pdf_pages(pdf)
@@ -484,7 +490,7 @@ def float_check(pdf: Path, captions: List[Tuple[str, str]]) -> int:
             where = "same page"
         elif cap_page is not None and mention is not None and cap_page == mention + 1:
             above = pages[cap_page][:pages[cap_page].index(key)]
-            above = re.sub(r"^(\d+ R\. Guhagarkar et al\.|.*? Analysis \d+)\s*", "", above)
+            above = re.sub(rf"^({heads})\s*", "", above)       # the running head
             ok = len(above) < 15
             where = "top of next page"
         else:
