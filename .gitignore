@@ -64,6 +64,8 @@ agh-cs-paper/
 ppeecs-paper/
 dacs-conf-paper/
 icmmdu-conf-paper/
+e2a-conf-paper/
+dsis-conf-paper/
 
 # Logs
 *.log
