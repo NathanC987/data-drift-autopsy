@@ -27,6 +27,7 @@ from __future__ import annotations
 import re
 import shutil
 import sys
+import zipfile
 from pathlib import Path
 from typing import List
 
@@ -263,6 +264,19 @@ def checks(doc: BnrcDoc) -> List[str]:
     return fails
 
 
+def upload_zip() -> Path:
+    """The LaTeX manuscript with everything it needs to compile, as the submission system asks."""
+    zip_path = PAPER / "bnrc" / f"{MAIN}_latex.zip"
+    files = [f"{MAIN}.tex", f"{MAIN}.bbl", "references.bib", "sn-jnl.cls", "sn-basic.bst"]
+    figures = sorted(f"figures/{f.name}" for f in (OUT / "figures").iterdir()
+                     if f"{{{f.name}}}" in (OUT / f"{MAIN}.tex").read_text())
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
+        for name in files + figures:
+            z.write(OUT / name, name)
+    print(f"{zip_path.relative_to(ROOT)}: {len(files) + len(figures)} files")
+    return zip_path
+
+
 def main() -> None:
     results = load_results()
     OUT.mkdir(parents=True, exist_ok=True)
@@ -296,6 +310,7 @@ def main() -> None:
             print(f"{pdf.relative_to(ROOT)}: {len(pdf_pages(pdf))} pages")
             if after_mention_check(pdf, doc.captions):
                 failures.append(f"{pdf.name}: a float is placed above the text that introduces it")
+        upload_zip()
     for f_ in failures:
         print("FAIL", f_)
     sys.exit(1 if failures else 0)
