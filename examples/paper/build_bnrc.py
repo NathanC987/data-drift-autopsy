@@ -32,8 +32,8 @@ from typing import List
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_dacs as dacs  # noqa: E402
-from build_dacs import TexDoc, compile_tex, dacs_bib, order_check  # noqa: E402
-from build_ppeecs import FIGS, PAPER, PP, ROOT, Block, Doc, float_check, load_results, pdf_pages  # noqa: E402
+from build_dacs import TexDoc, compile_tex, dacs_bib  # noqa: E402
+from build_ppeecs import FIGS, PAPER, PP, ROOT, Block, Doc, load_results, pdf_pages  # noqa: E402
 
 TEMPLATE_DIR = ROOT / "sn-journal-paper"
 SRC = PAPER / "bnrc" / "paper.md"
@@ -45,12 +45,94 @@ MAIN, ADD = "BNRC_manuscript", "BNRC_additional_file_1"
 MANUSCRIPT_CLASS = r"\documentclass[pdflatex,referee,lineno,sn-basic]{sn-jnl}"
 SUPPLEMENT_CLASS = r"\documentclass[pdflatex,sn-basic]{sn-jnl}"
 TITLE_WORDS, ABSTRACT_WORDS = 15, 350
+TEXT_WIDTH_PT = 372          # 31pc, the single-column text width of sn-jnl
+TABLE_CHAR_PT, TABLE_COLSEP_PT = 4.0, 12   # 8bp table font
+CITE_CHARS = 22              # printed length of an author-year citation
+WRAP_CHARS = 20              # left-aligned columns with longer cells wrap when the table is too wide
+FLOATS = r"""\usepackage{array}%
+\usepackage{tabularx}%
+% floats are never set above the text that introduces them
+\usepackage{flafter}%
+"""
 
 
 def split_caption(text: str) -> tuple:
     """Caption title (first sentence) and legend (the rest), as the journal sets them apart."""
     m = re.search(r"(?<!\bet al)(?<!\be\.g)(?<!\bi\.e)\.\s+(?=[A-Z*])", text)
     return (text[:m.start()], text[m.end():]) if m else (text, "")
+
+
+def visible(cell: str) -> str:
+    """Rough printed text of a table cell, for estimating column widths."""
+    cell = re.sub(r"\\cite\w*\{[^}]*\}", "x" * CITE_CHARS, cell)
+    cell = re.sub(r"\\multicolumn\{\d+\}\{\w\}\{(.*)\}$", r"\1", cell.strip())
+    cell = re.sub(r"\\[a-zA-Z]+\*?(\{\})?|[{}$~]", "", cell)
+    return cell.replace("--", "-").strip()
+
+
+def unbreakable(cell: str) -> str:
+    """A table cell in which a citation is never split over lines."""
+    cell = re.sub(r"(et al\.~\\citeyearpar\{[^}]*\})", r"\\mbox{\1}", cell)
+    cell = re.sub(r"(?<!\{)(\\citep\{[^}]*\})", r"\\mbox{\1}", cell)
+    return cell.replace("~\\mbox{", " \\mbox{")
+
+
+def longest_unit(cell: str) -> int:
+    """Characters of the widest piece of a cell that cannot be broken."""
+    units = re.findall(r"\\mbox\{(?:[^{}]|\{[^{}]*\})*\}|\S+", unbreakable(cell))
+    return max((len(visible(u)) for u in units), default=0)
+
+
+def stack(cell: str) -> str:
+    """A one-column header of several words, set on two balanced lines."""
+    m = re.fullmatch(r"\\multicolumn\{1\}\{c\}\{([^{}\\]+ [^{}\\]+)\}", cell.strip())
+    if not m:
+        return cell
+    words = m.group(1).split()
+    cut = min(range(1, len(words)), key=lambda i: abs(len(" ".join(words[:i])) - len(" ".join(words[i:]))))
+    return (f"\\multicolumn{{1}}{{c}}{{\\begin{{tabular}}[b]{{@{{}}c@{{}}}}{' '.join(words[:cut])}\\\\ "
+            f"{' '.join(words[cut:])}\\end{{tabular}}}}")
+
+
+def fit_table(tex: str) -> str:
+    """Narrow a table that is wider than the text: stack its headers, wrap its long cells, then close its gaps."""
+    head, rest = tex.split("\\toprule\n", 1)
+    header, body = rest.split("\\midrule\n", 1)
+    aligns = re.search(r"\\begin\{tabular\}\{@\{\}(\w+)@\{\}\}", head).group(1)
+    n = len(aligns)
+
+    def rows(part):
+        return [r[:-3].split(" & ") for r in part.split("\n") if r.endswith(" \\\\")]
+
+    def columns(hdr):
+        cols = [0] * n
+        for r in hdr + rows(body):
+            if len(r) == n:                     # spanning cells do not set column widths
+                for i, c in enumerate(r):
+                    parts = visible(c).split("\\\\") if "tabular" in c else [visible(c)]
+                    cols[i] = max(cols[i], max(len(x) for x in parts))
+        return cols
+
+    def width(cols, gap=TABLE_COLSEP_PT):
+        return sum(cols) * TABLE_CHAR_PT + gap * (n - 1)
+
+    cols = columns(rows(header))
+    if width(cols) <= TEXT_WIDTH_PT:
+        return tex
+    header = "\n".join(" & ".join(stack(c) for c in line[:-3].split(" & ")) + " \\\\"
+                       if line.endswith(" \\\\") else line for line in header.split("\n"))
+    cols = columns(rows(header))
+    wrap = [i for i, a in enumerate(aligns) if a == "l" and cols[i] > WRAP_CHARS]
+    if width(cols) > TEXT_WIDTH_PT and wrap:
+        # the long columns wrap to the width the others leave (tabularx), never inside a citation
+        spec = "".join(">{\\raggedright\\arraybackslash}X" if i in wrap else a for i, a in enumerate(aligns))
+        head = head.replace(f"\\begin{{tabular}}{{@{{}}{aligns}@{{}}}}", f"\\setlength{{\\tabcolsep}}{{4pt}}\n\\begin{{tabularx}}{{\\textwidth}}{{@{{}}{spec}@{{}}}}")
+        body = "\n".join(" & ".join(unbreakable(c) if i in wrap else c for i, c in enumerate(line[:-3].split(" & ")))
+                         + " \\\\" if line.endswith(" \\\\") and len(line[:-3].split(" & ")) == n else line
+                         for line in body.split("\n"))
+        cut = body.rindex("\\end{tabular}")
+        body = body[:cut] + "\\end{tabularx}" + body[cut + len("\\end{tabular}"):]
+    return head + "\\toprule\n" + header + "\\midrule\n" + body
 
 
 class BnrcDoc(TexDoc):
@@ -72,14 +154,17 @@ class BnrcDoc(TexDoc):
         return s.replace("\\abstract{}", "")
 
     def table(self, b: Block) -> str:
+        # a float in the journal's form: title above, the legend below as a table note
         title, legend = split_caption(b.text)
         tex = super().table(Block(kind=b.kind, text=title, level=b.level, attrs=dict(b.attrs), lines=b.lines))
         self.captions[-1] = (self.captions[-1][0], b.text)
-        if legend:
-            tex = tex.replace("\\end{tabular}\n\\end{minipage}",
-                              "\\end{tabular}\\par\\vspace{3pt}\n{\\footnotesize\\noindent " + self.inline(legend)
-                              + "\\par}\n\\end{minipage}")
-        return tex
+        tex = fit_table(tex)
+        tex = tex.replace("\\par\\vspace{0.7\\intextsep}\\noindent\\begin{minipage}{\\textwidth}\\centering\\tablebodyfont",
+                          "\\begin{table}[!htbp]\\centering\\tablebodyfont")
+        tex = tex.replace("\\captionof{table}", "\\caption")
+        note = f"\n\\footnotetext{{{self.inline(legend)}}}" if legend else ""
+        return re.sub(r"(\\end\{tabularx?\})\n\\end\{minipage\}\\par\\vspace\{0.7\\intextsep\}",
+                      lambda m: m.group(1) + note + "\n\\end{table}", tex)
 
     def figure(self, b: Block) -> str:
         name = Path(b.attrs["file"]).stem
@@ -89,14 +174,15 @@ class BnrcDoc(TexDoc):
         size = "\\textwidth" if width > 100 else f"{width:g}mm"
         self.captions.append((f"Fig. {self.numbers[b.attrs['id']]}", b.text))
         return "\n".join([
-            "\\par\\vspace{0.7\\intextsep}\\noindent\\begin{minipage}{\\textwidth}\\centering",
+            "\\begin{figure}[!htbp]\\centering",
             f"\\includegraphics[width={size},height=0.6\\textheight,keepaspectratio]{{{name}{ext}}}",
-            f"\\captionof{{figure}}{{{self.inline(b.text)}}}\\label{{{b.attrs['id']}}}",
-            "\\end{minipage}\\par\\vspace{0.7\\intextsep}"])
+            f"\\caption{{{self.inline(b.text)}}}\\label{{{b.attrs['id']}}}",
+            "\\end{figure}"])
 
     def write(self, out: Path, bib: str) -> None:
         saved = dacs.PREAMBLE
-        dacs.PREAMBLE = saved.replace(r"\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}", self.document_class)
+        dacs.PREAMBLE = saved.replace(r"\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}", self.document_class) \
+            .replace("\\usepackage{booktabs}%\n", "\\usepackage{booktabs}%\n" + FLOATS)
         try:
             super().write(out, bib)
         finally:
@@ -104,6 +190,8 @@ class BnrcDoc(TexDoc):
         tex = out.read_text()
         # Declarations in the journal's form: unnumbered back-matter headings
         tex = re.sub(r"\\subsection\*\{([^}]*)\}", r"\\bmhead{\1}", tex)
+        # the floats find their own place, so the page breaks of the PPEECS supplement are not kept
+        tex = tex.replace("\\clearpage\n", "")
         # text the authors still have to supply is printed in red
         tex = re.sub(r"\[\[(.*?)\]\]", r"\\textcolor{red}{\1}", tex)
         out.write_text(tex)
@@ -115,6 +203,25 @@ def journal_bib(src: Path, dst: Path) -> None:
     text = dst.read_text()
     text = re.sub(r"(?m)^(\s*)urldate(\s*)=\s*\{([^}]*)\}", r"\1note\2= {Accessed \3}", text)
     dst.write_text(text)
+
+
+def after_mention_check(pdf: Path, captions: List[tuple]) -> int:
+    """Each float must follow the text that first mentions it, on the same page or a later one."""
+    pages = pdf_pages(pdf)
+    bad = 0
+    for tag, cap in captions:
+        start = " ".join(re.sub(r"\[@[^\]]+\]|\$[^$]*\$|\\res\{[^}]+\}|[*]", " ", cap).split()[:4])
+        key = f"{tag} {start}"
+        cap_page = next((i for i, t in enumerate(pages) if key in t), None)
+        pat = re.compile(re.escape(tag) + r"(?![0-9])")
+        mention = next(((i, m.start()) for i, t in enumerate(pages)
+                        for m in [pat.search(t.replace(key, "\0" * len(key)))] if m), None)
+        ok = cap_page is not None and mention is not None and (
+            mention[0] < cap_page or (mention[0] == cap_page and mention[1] < pages[cap_page].index(key)))
+        bad += not ok
+        print(f"  {tag:9s} first mention p{mention[0] + 1 if mention else '?'}, "
+              f"float p{cap_page + 1 if cap_page is not None else '?'}" + ("" if ok else "  <-- BEFORE ITS MENTION"))
+    return bad
 
 
 def checks(doc: BnrcDoc) -> List[str]:
@@ -176,9 +283,8 @@ def main() -> None:
         for doc, stem in ((paper, MAIN), (supp, ADD)):
             pdf = compile_tex(OUT / f"{stem}.tex")
             print(f"{pdf.relative_to(ROOT)}: {len(pdf_pages(pdf))} pages")
-            if order_check(pdf, doc.captions):
+            if after_mention_check(pdf, doc.captions):
                 failures.append(f"{pdf.name}: a float is placed above the text that introduces it")
-            float_check(pdf, doc.captions)      # reported only; the journal does not require it
     for f_ in failures:
         print("FAIL", f_)
     sys.exit(1 if failures else 0)
