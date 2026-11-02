@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="870" viewBox="0 0 1600 870">
+<defs>
+  <marker id="arrow0" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,1 L9,5 L0,9 Z" fill="#e11d48"/></marker>
+  <marker id="arrow1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,1 L9,5 L0,9 Z" fill="#2563eb"/></marker>
+  <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,1 L9,5 L0,9 Z" fill="#94a3b8"/></marker>
+  <filter id="shadow" x="-10%" y="-20%" width="120%" height="150%">
+    <feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.08"/>
+  </filter>
+</defs>
+<rect width="1600" height="870" fill="#ffffff"/>
+<text x="50" y="58" font-family="Noto Sans" font-size="28" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">ResilientAI: Drift Detection and Diagnosis System</text>
+<text x="50" y="86" font-family="Noto Sans" font-size="15" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Label-free drift detection, accuracy estimation and drift-type diagnosis with a stated false-alarm rate</text>
+<rect x="50" y="112" width="230" height="500" rx="16" fill="#eef4ff" stroke="#2563eb" stroke-opacity="0.35" stroke-width="1.5"/>
+<rect x="66" y="128" width="26" height="26" rx="13" fill="#2563eb"/>
+<text x="79.0" y="146" font-family="Noto Sans" font-size="13" font-weight="bold" font-style="normal" fill="#ffffff" text-anchor="middle">A</text>
+<text x="102" y="146" font-family="Noto Sans" font-size="16.5" font-weight="bold" font-style="normal" fill="#2563eb" text-anchor="start">Inputs</text>
+<text x="68" y="172" font-family="Noto Sans" font-size="12.5" font-weight="normal" font-style="italic" fill="#475569" text-anchor="start">What is being monitored?</text>
+<rect x="323" y="112" width="213" height="500" rx="16" fill="#f4efff" stroke="#7c3aed" stroke-opacity="0.35" stroke-width="1.5"/>
+<rect x="339" y="128" width="26" height="26" rx="13" fill="#7c3aed"/>
+<text x="352.0" y="146" font-family="Noto Sans" font-size="13" font-weight="bold" font-style="normal" fill="#ffffff" text-anchor="middle">B</text>
+<text x="375" y="146" font-family="Noto Sans" font-size="16.5" font-weight="bold" font-style="normal" fill="#7c3aed" text-anchor="start">Preparation</text>
+<text x="341" y="172" font-family="Noto Sans" font-size="12.5" font-weight="normal" font-style="italic" fill="#475569" text-anchor="start">Bring data to a common form</text>
+<rect x="580" y="112" width="270" height="500" rx="16" fill="#fff6e8" stroke="#d97706" stroke-opacity="0.35" stroke-width="1.5"/>
+<rect x="596" y="128" width="26" height="26" rx="13" fill="#d97706"/>
+<text x="609.0" y="146" font-family="Noto Sans" font-size="13" font-weight="bold" font-style="normal" fill="#ffffff" text-anchor="middle">C</text>
+<text x="632" y="146" font-family="Noto Sans" font-size="16.5" font-weight="bold" font-style="normal" fill="#d97706" text-anchor="start">Detection &amp; estimation</text>
+<text x="598" y="172" font-family="Noto Sans" font-size="12.5" font-weight="normal" font-style="italic" fill="#475569" text-anchor="start">Did it change? How much accuracy is lost?</text>
+<rect x="895" y="112" width="380" height="500" rx="16" fill="#fff0f3" stroke="#e11d48" stroke-opacity="0.35" stroke-width="1.5"/>
+<rect x="911" y="128" width="26" height="26" rx="13" fill="#e11d48"/>
+<text x="924.0" y="146" font-family="Noto Sans" font-size="13" font-weight="bold" font-style="normal" fill="#ffffff" text-anchor="middle">D</text>
+<text x="947" y="146" font-family="Noto Sans" font-size="16.5" font-weight="bold" font-style="normal" fill="#e11d48" text-anchor="start">Diagnosis and root cause</text>
+<text x="913" y="172" font-family="Noto Sans" font-size="12.5" font-weight="normal" font-style="italic" fill="#475569" text-anchor="start">What type of drift is it and why?</text>
+<rect x="1320" y="112" width="230" height="500" rx="16" fill="#ebfaf3" stroke="#059669" stroke-opacity="0.35" stroke-width="1.5"/>
+<rect x="1336" y="128" width="40" height="26" rx="13" fill="#059669"/>
+<text x="1356.0" y="146" font-family="Noto Sans" font-size="13" font-weight="bold" font-style="normal" fill="#ffffff" text-anchor="middle">E·F</text>
+<text x="1386" y="146" font-family="Noto Sans" font-size="16.5" font-weight="bold" font-style="normal" fill="#059669" text-anchor="start">Acting on findings</text>
+<text x="1338" y="172" font-family="Noto Sans" font-size="12.5" font-weight="normal" font-style="italic" fill="#475569" text-anchor="start">What should the team do?</text>
+<path d="M286.5,346 L304.5,346 L316.5,362 L304.5,378 L286.5,378 L298.5,362 Z" fill="#cbd5e1"/>
+<path d="M543.0,346 L561.0,346 L573.0,362 L561.0,378 L543.0,378 L555.0,362 Z" fill="#cbd5e1"/>
+<path d="M857.5,346 L875.5,346 L887.5,362 L875.5,378 L857.5,378 L869.5,362 Z" fill="#cbd5e1"/>
+<path d="M1282.5,346 L1300.5,346 L1312.5,362 L1300.5,378 L1282.5,378 L1294.5,362 Z" fill="#cbd5e1"/>
+<rect x="64" y="196" width="202" height="76" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="64" y="206" width="4" height="56" rx="2" fill="#2563eb"/>
+<text x="80" y="222" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Deployed model</text>
+<text x="80" y="242" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Logistic regression or</text>
+<text x="80" y="259" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">gradient boosting</text>
+<rect x="64" y="303.3333333333333" width="202" height="76" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="64" y="313.3333333333333" width="4" height="56" rx="2" fill="#2563eb"/>
+<text x="80" y="329.3333333333333" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Labeled reference data</text>
+<text x="80" y="349.3333333333333" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Data the model was</text>
+<text x="80" y="366.3333333333333" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">built from</text>
+<rect x="64" y="410.66666666666663" width="202" height="76" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="64" y="420.66666666666663" width="4" height="56" rx="2" fill="#2563eb"/>
+<text x="80" y="436.66666666666663" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Production windows</text>
+<text x="80" y="456.66666666666663" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Unlabeled: years, states</text>
+<text x="80" y="473.66666666666663" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">or sensor batches</text>
+<rect x="64" y="518.0" width="202" height="76" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="64" y="528.0" width="4" height="56" rx="2" fill="#2563eb"/>
+<text x="80" y="544.0" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Audit labels (optional)</text>
+<text x="80" y="564.0" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">600 late labels</text>
+<text x="80" y="581.0" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">per window</text>
+<rect x="337" y="196" width="185" height="76" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="337" y="206" width="4" height="56" rx="2" fill="#7c3aed"/>
+<text x="353" y="222" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Image embeddings</text>
+<text x="353" y="242" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Frozen ResNet-18,</text>
+<text x="353" y="259" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">512 features per image</text>
+<rect x="337" y="357.0" width="185" height="76" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="337" y="367.0" width="4" height="56" rx="2" fill="#7c3aed"/>
+<text x="353" y="383.0" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Feature typing</text>
+<text x="353" y="403.0" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Numeric vs nominal codes;</text>
+<text x="353" y="420.0" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">codes are never numbers</text>
+<rect x="337" y="518.0" width="185" height="76" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="337" y="528.0" width="4" height="56" rx="2" fill="#7c3aed"/>
+<text x="353" y="544.0" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Stratified split</text>
+<text x="353" y="564.0" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">60% train · 20% calibration</text>
+<text x="353" y="581.0" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">20% test (control window)</text>
+<rect x="594" y="196" width="242" height="76" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="594" y="206" width="4" height="56" rx="2" fill="#d97706"/>
+<text x="610" y="222" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Shift detectors</text>
+<text x="610" y="242" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">KS · PSI · MMD · confidence χ²</text>
+<text x="610" y="259" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Baselines: BBSD, domain classifier</text>
+<rect x="594" y="357.0" width="242" height="76" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="594" y="367.0" width="4" height="56" rx="2" fill="#d97706"/>
+<text x="610" y="383.0" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Accuracy estimate</text>
+<text x="610" y="403.0" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">CBPE from model confidence</text>
+<text x="610" y="420.0" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Compared with AC, DoC, ATC</text>
+<rect x="594" y="518.0" width="242" height="76" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="594" y="528.0" width="4" height="56" rx="2" fill="#d97706"/>
+<text x="610" y="544.0" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Feature localization</text>
+<text x="610" y="564.0" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Per-feature tests with Holm,</text>
+<text x="610" y="581.0" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">effect sizes, unseen categories</text>
+<rect x="1334" y="196" width="202" height="93" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="1334" y="206" width="4" height="73" rx="2" fill="#059669"/>
+<text x="1350" y="222" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Reliability (E)</text>
+<text x="1350" y="242" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Risk of each prediction:</text>
+<text x="1350" y="259" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">confidence, instability,</text>
+<text x="1350" y="276" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">out-of-distribution score</text>
+<rect x="1334" y="340.0" width="202" height="93" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="1334" y="350.0" width="4" height="73" rx="2" fill="#059669"/>
+<text x="1350" y="366.0" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Retrain triage (F)</text>
+<text x="1350" y="386.0" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Will a cheap retrain help?</text>
+<text x="1350" y="403.0" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Importance-weighted</text>
+<text x="1350" y="420.0" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">validation, Holm</text>
+<rect x="1334" y="484.0" width="202" height="110" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="1334" y="494.0" width="4" height="90" rx="2" fill="#059669"/>
+<text x="1350" y="510.0" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Fix by drift type</text>
+<text x="1350" y="530.0" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Covariate → reweight</text>
+<text x="1350" y="547.0" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Prior → recalibrate</text>
+<text x="1350" y="564.0" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Concept → fresh labels</text>
+<text x="1350" y="581.0" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Noise → check labeling</text>
+<rect x="909" y="196" width="218" height="93" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="909" y="206" width="4" height="73" rx="2" fill="#e11d48"/>
+<text x="925" y="222" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Stage 1 · label-free</text>
+<text x="925" y="242" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Weighted Holm over feature,</text>
+<text x="925" y="259" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">prediction and MMD tests</text>
+<text x="925" y="276" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">BBSE + label-shift test</text>
+<rect x="1147" y="210" width="112" height="26" rx="13" fill="#e11d48" fill-opacity="0.1" stroke="#e11d48" stroke-width="1.2"/>
+<text x="1203.0" y="227.5" font-family="Noto Sans" font-size="11.5" font-weight="bold" font-style="normal" fill="#e11d48" text-anchor="middle">Covariate shift</text>
+<rect x="1147" y="246" width="112" height="26" rx="13" fill="#e11d48" fill-opacity="0.1" stroke="#e11d48" stroke-width="1.2"/>
+<text x="1203.0" y="263.5" font-family="Noto Sans" font-size="11.5" font-weight="bold" font-style="normal" fill="#e11d48" text-anchor="middle">Prior shift</text>
+<path d="M1127,223 L1143,223" fill="none" stroke="#e11d48" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow0)"/>
+<path d="M1127,259 L1143,259" fill="none" stroke="#e11d48" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow0)"/>
+<path d="M1018.0,289 L1018.0,331" fill="none" stroke="#e11d48" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow0)"/>
+<text x="1028.0" y="316" font-family="Noto Sans" font-size="11.5" font-weight="normal" font-style="italic" fill="#e11d48" text-anchor="start">nothing rejected</text>
+<rect x="909" y="335" width="218" height="93" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="909" y="345" width="4" height="73" rx="2" fill="#e11d48"/>
+<text x="925" y="361" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Stage 2 · audit</text>
+<text x="925" y="381" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Did accuracy drop?</text>
+<text x="925" y="398" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Does the drop depend on a</text>
+<text x="925" y="415" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">feature beyond confidence?</text>
+<rect x="1147" y="341" width="112" height="26" rx="13" fill="#e11d48" fill-opacity="0.1" stroke="#e11d48" stroke-width="1.2"/>
+<text x="1203.0" y="358.5" font-family="Noto Sans" font-size="11.5" font-weight="bold" font-style="normal" fill="#e11d48" text-anchor="middle">Concept drift</text>
+<path d="M1127,381.5 C1143,381.5 1137,354 1143,354" fill="none" stroke="#e11d48" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow0)"/>
+<rect x="1147" y="373" width="112" height="26" rx="13" fill="#e11d48" fill-opacity="0.1" stroke="#e11d48" stroke-width="1.2"/>
+<text x="1203.0" y="390.5" font-family="Noto Sans" font-size="11.5" font-weight="bold" font-style="normal" fill="#e11d48" text-anchor="middle">Label noise</text>
+<path d="M1127,381.5 C1143,381.5 1137,386 1143,386" fill="none" stroke="#e11d48" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow0)"/>
+<rect x="1147" y="405" width="112" height="26" rx="13" fill="#e11d48" fill-opacity="0.1" stroke="#e11d48" stroke-width="1.2"/>
+<text x="1203.0" y="422.5" font-family="Noto Sans" font-size="11.5" font-weight="bold" font-style="normal" fill="#e11d48" text-anchor="middle">No drift</text>
+<path d="M1127,381.5 C1143,381.5 1137,418 1143,418" fill="none" stroke="#e11d48" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow0)"/>
+<rect x="909" y="440" width="352" height="28" rx="8" fill="#ffffff" stroke="#e11d48" stroke-opacity="0.4" stroke-dasharray="4 3"/>
+<text x="1085.0" y="459" font-family="Noto Sans" font-size="11" font-weight="bold" font-style="normal" fill="#e11d48" text-anchor="middle">α = 0.05 per stage → false verdicts ≤ 2α (measured 6.5%)</text>
+<rect x="909" y="518" width="352" height="76" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="909" y="528" width="4" height="56" rx="2" fill="#e11d48"/>
+<text x="925" y="544" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Root cause</text>
+<text x="925" y="564" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">SHAP attribution change with bootstrap intervals (tabular)</text>
+<text x="925" y="581" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Class activation maps for images</text>
+<path d="M266,564.5 L299.5,564.5 Q307.5,564.5 307.5,572.5 L307.5,618 Q307.5,626 315.5,626 L868.5,626 Q876.5,626 876.5,618 L876.5,389.5 Q876.5,381.5 884.5,381.5 L905,381.5" fill="none" stroke="#2563eb" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4" marker-end="url(#arrow1)"/>
+<text x="592.0" y="641" font-family="Noto Sans" font-size="11.5" font-weight="normal" font-style="italic" fill="#2563eb" text-anchor="middle">audit labels go only to Stage 2</text>
+<rect x="50" y="668" width="560" height="170" rx="16" fill="#f1f5f9" stroke="#475569" stroke-opacity="0.35" stroke-width="1.5"/>
+<text x="68" y="702" font-family="Noto Sans" font-size="16.5" font-weight="bold" font-style="normal" fill="#475569" text-anchor="start">Study runners</text>
+<text x="68" y="728" font-family="Noto Sans" font-size="12.5" font-weight="normal" font-style="italic" fill="#475569" text-anchor="start"></text>
+<rect x="650" y="668" width="900" height="170" rx="16" fill="#ecfafd" stroke="#0e7490" stroke-opacity="0.35" stroke-width="1.5"/>
+<text x="668" y="702" font-family="Noto Sans" font-size="16.5" font-weight="bold" font-style="normal" fill="#0e7490" text-anchor="start">Outputs</text>
+<text x="668" y="728" font-family="Noto Sans" font-size="12.5" font-weight="normal" font-style="italic" fill="#475569" text-anchor="start"></text>
+<rect x="68" y="722" width="255" height="76" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="68" y="732" width="4" height="56" rx="2" fill="#475569"/>
+<text x="84" y="748" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Real-data studies</text>
+<text x="84" y="768" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">ACS Income and Employment,</text>
+<text x="84" y="785" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">UCI gas sensor, CLEAR-10</text>
+<rect x="337" y="722" width="255" height="76" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="337" y="732" width="4" height="56" rx="2" fill="#475569"/>
+<text x="353" y="748" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Injection benchmark</text>
+<text x="353" y="768" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">5 states × 10 seeds, known type</text>
+<text x="353" y="785" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Designs A (matched), B (held out)</text>
+<path d="M165,668 L165,616" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow2)"/>
+<text x="176" y="640" font-family="Noto Sans" font-size="11.5" font-weight="normal" font-style="italic" fill="#475569" text-anchor="start">windows</text>
+<rect x="668" y="722" width="230" height="76" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="668" y="732" width="4" height="56" rx="2" fill="#0e7490"/>
+<text x="684" y="748" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">JSON report per study</text>
+<text x="684" y="768" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Detections, estimates, verdicts,</text>
+<text x="684" y="785" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">risks and timings per window</text>
+<rect x="950" y="712" width="270" height="56" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="950" y="722" width="4" height="36" rx="2" fill="#0e7490"/>
+<text x="966" y="738" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Streamlit dashboard</text>
+<text x="966" y="758" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Step-by-step story per dataset</text>
+<rect x="950" y="774" width="270" height="52" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="950" y="784" width="4" height="32" rx="2" fill="#0e7490"/>
+<text x="966" y="800" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Results build</text>
+<text x="966" y="820" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">Every number is a named key</text>
+<rect x="1270" y="774" width="262" height="52" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+<rect x="1270" y="784" width="4" height="32" rx="2" fill="#0e7490"/>
+<text x="1286" y="800" font-family="Noto Sans" font-size="14.5" font-weight="bold" font-style="normal" fill="#0f172a" text-anchor="start">Paper and black book</text>
+<text x="1286" y="820" font-family="Noto Sans" font-size="12" font-weight="normal" font-style="normal" fill="#475569" text-anchor="start">No hand-typed numbers</text>
+<path d="M898,750 L946,750" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow2)"/>
+<path d="M898,750 L916,750 Q924,750 924,758 L924,792 Q924,800 932,800 L946,800" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow2)"/>
+<path d="M1220,800 L1266,800" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow2)"/>
+<path d="M715.0,612 L715.0,654" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1085.0,612 L1085.0,654" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1435.0,612 L1435.0,654" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M715.0,654 L1435.0,654" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M813.0,654 L813.0,718" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow2)"/>
+</svg>
