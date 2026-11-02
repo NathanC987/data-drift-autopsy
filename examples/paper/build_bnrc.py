@@ -38,6 +38,7 @@ from build_ppeecs import FIGS, PAPER, PP, ROOT, Block, Doc, load_results, pdf_pa
 TEMPLATE_DIR = ROOT / "sn-journal-paper"
 SRC = PAPER / "bnrc" / "paper.md"
 SUPP = PAPER / "bnrc" / "supplement.md"
+DATASETS_BIB = PAPER / "bnrc" / "datasets.bib"   # data citations used only here
 OUT = PAPER / "bnrc" / "build"
 MAIN, ADD = "BNRC_manuscript", "BNRC_additional_file_1"
 
@@ -141,7 +142,13 @@ class BnrcDoc(TexDoc):
         self.document_class = document_class
 
     def inline(self, text: str, subst: bool = True) -> str:
+        # <https://...> is a web address, set with \url and kept away from the character escapes
+        urls = re.findall(r"<(https?://[^>\s]+)>", text)
+        for i, u in enumerate(urls):
+            text = text.replace(f"<{u}>", f"URLMARK{i}Z")
         s = super().inline(text, subst)
+        for i, u in enumerate(urls):
+            s = s.replace(f"URLMARK{i}Z", f"\\url{{{u}}}")
         # author-year citations: "Roschewitz et al. (2025)" after a named author, else "(Lipton et al. 2018)"
         s = re.sub(r"et al\.~\\cite\{", r"et al.~\\citeyearpar{", s)
         return re.sub(r"\\cite\{", r"\\citep{", s)
@@ -159,6 +166,9 @@ class BnrcDoc(TexDoc):
         tex = super().table(Block(kind=b.kind, text=title, level=b.level, attrs=dict(b.attrs), lines=b.lines))
         self.captions[-1] = (self.captions[-1][0], b.text)
         tex = fit_table(tex)
+        # the journal does not allow commas in numbers inside tables: thousands get a thin space
+        top, cells = tex.split("\\toprule", 1)
+        tex = top + "\\toprule" + re.sub(r"(?<=\d),(?=\d{3}(?!\d))", r"\\,", cells)
         tex = tex.replace("\\par\\vspace{0.7\\intextsep}\\noindent\\begin{minipage}{\\textwidth}\\centering\\tablebodyfont",
                           "\\begin{table}[!htbp]\\centering\\tablebodyfont")
         tex = tex.replace("\\captionof{table}", "\\caption")
@@ -198,8 +208,9 @@ class BnrcDoc(TexDoc):
 
 
 def journal_bib(src: Path, dst: Path) -> None:
-    """The PPEECS references for sn-basic, with web pages carrying 'Accessed <date>' as the journal asks."""
-    dacs_bib(src, dst)
+    """The PPEECS references and the data citations for sn-basic, web pages carrying 'Accessed <date>' as the journal asks."""
+    dst.write_text(src.read_text() + "\n" + DATASETS_BIB.read_text())
+    dacs_bib(dst, dst)
     text = dst.read_text()
     text = re.sub(r"(?m)^(\s*)urldate(\s*)=\s*\{([^}]*)\}", r"\1note\2= {Accessed \3}", text)
     dst.write_text(text)
@@ -281,7 +292,7 @@ def main() -> None:
 
     if "--no-pdf" not in sys.argv:
         for doc, stem in ((paper, MAIN), (supp, ADD)):
-            pdf = compile_tex(OUT / f"{stem}.tex")
+            pdf = compile_tex(OUT / f"{stem}.tex", keep_bbl=True)
             print(f"{pdf.relative_to(ROOT)}: {len(pdf_pages(pdf))} pages")
             if after_mention_check(pdf, doc.captions):
                 failures.append(f"{pdf.name}: a float is placed above the text that introduces it")

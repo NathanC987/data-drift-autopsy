@@ -303,11 +303,16 @@ def dacs_bib(src: Path, dst: Path) -> None:
     dst.write_text("".join(out))
 
 
-def compile_tex(tex: Path) -> Path:
+def compile_tex(tex: Path, keep_bbl: bool = False) -> Path:
     exe = os.environ.get("TECTONIC") or shutil.which("tectonic")
     if not exe:
         raise RuntimeError("tectonic is needed for the PDF (set TECTONIC)")
-    r = subprocess.run([exe, "--keep-logs", tex.name], cwd=tex.parent, capture_output=True, text=True)
+    args = [exe, "--keep-logs"] + (["--keep-intermediates"] if keep_bbl else []) + [tex.name]
+    r = subprocess.run(args, cwd=tex.parent, capture_output=True, text=True)
+    if keep_bbl:
+        # only the bibliography is kept, so the folder also compiles where bibtex does not run
+        for ext in (".aux", ".out", ".toc", ".lof", ".lot"):
+            tex.with_suffix(ext).unlink(missing_ok=True)
     if r.returncode:
         print(r.stdout[-3000:], r.stderr[-3000:])
         raise RuntimeError(f"tectonic failed on {tex.name}")
