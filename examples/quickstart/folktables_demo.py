@@ -29,6 +29,7 @@ outputs/folktables_{task}_drift_results_{model}.json.
 from __future__ import annotations
 
 import argparse
+import os
 import json
 import time
 from pathlib import Path
@@ -58,7 +59,7 @@ from drift_autopsy.utils import setup_logging
 SEED = 42
 ALPHA = 0.05                 # significance level of every test
 PSI_THRESHOLD = 0.2          # conventional "significant shift" PSI level (Siddiqi, 2006)
-MMD_PERMUTATIONS = 200
+MMD_PERMUTATIONS = int(os.environ.get("DDA_PERMUTATIONS", 200))   # DDA_PERMUTATIONS: permutations of every permutation test
 MMD_MAX_SAMPLES = 3000
 SHAP_BACKGROUND = 100
 SHAP_EXPLAINED = 1000
@@ -70,10 +71,13 @@ TEMPORAL_YEARS = [2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023]
 GEO_STATES = ["TX", "NY", "FL", "WA"]
 
 
+OUTPUTS = Path(os.environ.get("DDA_OUTPUTS", "outputs"))   # DDA_OUTPUTS: write a separate result set
+
+
 def output_path(task: str, model: str) -> Path:
     if task == "income" and model == "lr":
-        return Path("outputs/folktables_drift_results.json")
-    return Path(f"outputs/folktables_{task}_drift_results_{model}.json")
+        return OUTPUTS / "folktables_drift_results.json"
+    return OUTPUTS / f"folktables_{task}_drift_results_{model}.json"
 
 
 def make_pipelines(model, with_shap: bool = True) -> Dict[str, DriftPipeline]:

@@ -20,6 +20,7 @@ Run:  python examples/quickstart/drift_injection_benchmark.py --dataset acs_inco
 from __future__ import annotations
 
 import argparse
+import os
 import json
 import time
 from pathlib import Path
@@ -29,7 +30,7 @@ import numpy as np
 from drift_autopsy.benchmark import BenchmarkConfig, run_benchmark
 from drift_autopsy.utils import setup_logging
 
-OUTPUT_DIR = Path("outputs/benchmark")
+OUTPUT_DIR = Path(os.environ.get("DDA_OUTPUTS", "outputs")) / "benchmark"   # DDA_OUTPUTS: separate result set
 
 
 def _json_default(value):
@@ -50,7 +51,8 @@ def main() -> None:
     args = ap.parse_args()
     setup_logging(level="WARNING")
 
-    cfg = BenchmarkConfig(dataset=args.dataset, design=args.design, model=args.model, n_jobs=args.n_jobs)
+    cfg = BenchmarkConfig(dataset=args.dataset, design=args.design, model=args.model, n_jobs=args.n_jobs,
+                          mmd_permutations=int(os.environ.get("DDA_PERMUTATIONS", 200)))
     if args.smoke:
         cfg.states, cfg.seeds = ("CA",), (0,)
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

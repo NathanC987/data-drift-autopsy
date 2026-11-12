@@ -12,18 +12,20 @@ through. Re-run after any experiment:
 from __future__ import annotations
 
 import json
+import os
 import re
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
 from drift_autopsy.stats import wilson_interval
 
-OUT = Path("outputs")
-GEN = Path("paper/generated")
-FIG = Path("paper/figures")
-PNG = Path("outputs/figures")   # raster copies for the dashboard
+# DDA_OUTPUTS / DDA_GEN / DDA_FIG select a separate result set (the BNRC revision uses outputs/bnrc)
+OUT = Path(os.environ.get("DDA_OUTPUTS", "outputs"))
+GEN = Path(os.environ.get("DDA_GEN", "paper/generated"))
+FIG = Path(os.environ.get("DDA_FIG", "paper/figures"))
+PNG = OUT / "figures"   # raster copies for the dashboard
 CAM_CMAP = "turbo"              # blue = low, red = high evidence for the predicted class
 CAM_ALPHA = 0.5
 
@@ -286,6 +288,7 @@ def datasets(R: Results) -> None:
             STUDY_TITLE[code], ref, windows, f"{comma(min(sizes))}--{comma(max(sizes))}", str(nfeat), str(classes),
             f(d["lr"]["reference"]["test_accuracy"]), f(d["hgb"]["reference"]["test_accuracy"]),
         ]) + " \\\\")
+    R.add("real-nwindows", sum(int(R.values[f"{c}-nwindows"]) for c in ("inc", "emp", "gas", "clr")))
     write_table("tab_datasets", (
         "\\footnotesize\\setlength{\\tabcolsep}{2.5pt}\n"
         "\\begin{tabular}{@{}ll>{\\raggedright\\arraybackslash}p{2.45cm}rrrrr@{}}\n\\toprule\n"
@@ -575,9 +578,13 @@ GROUP_TITLE = {"acs_temporal": "ACS Income, temporal", "acs_geographic": "ACS In
                "clear10": "CLEAR-10", "gas": "Gas sensor"}
 
 
+def has_recent_window(setting: Dict[str, Any]) -> bool:
+    return any(p["probe"] == "retrain_on_recent" for p in setting["triage"]["probes"])
+
+
 def remediation(R: Results) -> None:
     rows = []
-    totals = {"n": 0, "correct": 0, "tp": 0, "fn": 0, "fp": 0}
+    totals = {"n": 0, "correct": 0, "tp": 0, "fn": 0, "fp": 0, "rule": 0}
     for model in MODELS:
         d = json.loads((OUT / ("remediation_results.json" if model == "lr" else f"remediation_results_{model}.json")).read_text())
         groups = list(dict.fromkeys(s["group"] for s in d["settings"]))
@@ -593,12 +600,15 @@ def remediation(R: Results) -> None:
             helps = sum(s["probe_truth_helps"] for s in ss)
             esc = sum(s["triage"]["will_retraining_help"] for s in ss)
             correct = sum(s["triage_correct"] for s in ss)
+            # the simple rule: retrain exactly when an earlier labeled window exists
+            rule = sum(has_recent_window(s) == bool(s["probe_truth_helps"]) for s in ss)
             rows.append(" & ".join([
                 MODEL_TITLE[model] if g == groups[0] else "", GROUP_TITLE[g], str(len(ss)),
                 nsig("importance_weighted_retrain"), nsig("retrain_on_recent"), nsig("label_retrain"),
-                f"{esc}", f"{helps}", f"{correct}/{len(ss)}"]) + " \\\\")
+                f"{esc}", f"{helps}", f"{correct}/{len(ss)}", f"{rule}/{len(ss)}"]) + " \\\\")
             for s in ss:
-                has_recent = any(p["probe"] == "retrain_on_recent" for p in s["triage"]["probes"])
+                has_recent = has_recent_window(s)
+                totals["rule"] += has_recent == bool(s["probe_truth_helps"])
                 part = "recent" if has_recent else "norecent"
                 totals[f"{part}-n"] = totals.get(f"{part}-n", 0) + 1
                 totals[f"{part}-correct"] = totals.get(f"{part}-correct", 0) + int(s["triage_correct"])
@@ -621,12 +631,17 @@ def remediation(R: Results) -> None:
     R.add("rem-triage-fn", totals["fn"])
     R.add("rem-triage-fp", totals["fp"])
     R.add("rem-nlabels", comma(d["config"]["n_labels_bought"]))
+    for name, k in (("triage", totals["correct"]), ("rule", totals["rule"])):
+        lo, hi = wilson_interval(int(k), totals["n"])
+        R.add(f"rem-{name}-correct-pct", pct(k / totals["n"], 0))
+        R.add(f"rem-{name}-correct-ci", f"[{pct(lo, 0)}, {pct(hi, 0)}]")
+    R.add("rem-rule-correct", totals["rule"])
     write_table("tab_remediation", (
         "\\footnotesize\\setlength{\\tabcolsep}{3pt}\n"
-        "\\begin{tabular}{@{}llrrrrrrr@{}}\n\\toprule\n"
-        " & & & \\multicolumn{3}{c}{Significant gains} & \\multicolumn{3}{c}{Triage} \\\\\n"
-        "\\cmidrule(lr){4-6}\\cmidrule(l){7-9}\n"
-        "Model & Settings & $n$ & IW & Recent & Labels & Escalated & Truly helps & Correct \\\\\n\\midrule\n"
+        "\\begin{tabular}{@{}llrrrrrrrr@{}}\n\\toprule\n"
+        " & & & \\multicolumn{3}{c}{Significant gains} & \\multicolumn{3}{c}{Triage} & Rule \\\\\n"
+        "\\cmidrule(lr){4-6}\\cmidrule(lr){7-9}\\cmidrule(l){10-10}\n"
+        "Model & Settings & $n$ & IW & Recent & Labels & Escalated & Truly helps & Correct & Correct \\\\\n\\midrule\n"
         + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"))
 
 
@@ -853,6 +868,35 @@ def benchmark(R: Results) -> None:
     R.add("diag-fa-labelfree-n", n_lf)
     R.add("diag-fa-audit-n", n_audit)
     R.add("diag-fa-bound-pct", pct(2 * float(cfg["alpha"]), 0))
+    R.add("diag-fa-labelfree-pct", pct(n_lf / len(ctrl), 1))
+    R.add("diag-fa-audit-pct", pct(n_audit / len(ctrl), 1))
+    worst = None
+    for code in BENCH_DATASETS:
+        for model in MODELS:
+            v = [r["verdicts"]["ours"] for r in bench_runs(code, "A", model) if r["drift_type"] == "none"]
+            n_fa = sum(x != "none" for x in v)
+            lo, hi = wilson_interval(n_fa, len(v))
+            k = f"b-{code}-a-{model}-ctrl"
+            R.add(f"{k}-fa-n", n_fa)
+            R.add(f"{k}-n", len(v))
+            R.add(f"{k}-fa-pct", pct(n_fa / len(v), 0))
+            R.add(f"{k}-fa-ci", f"[{pct(lo, 1)}, {pct(hi, 1)}]")
+            if worst is None or n_fa / len(v) > worst[0]:
+                worst = (n_fa / len(v), n_fa, len(v), lo, hi, f"{STUDY_TITLE[code]} with {MODEL_TITLE[model]}")
+    R.add("diag-fa-worst-pct", pct(worst[0], 0))
+    R.add("diag-fa-worst-n", worst[1])
+    R.add("diag-fa-worst-of", worst[2])
+    R.add("diag-fa-worst-ci", f"[{pct(worst[3], 1)}, {pct(worst[4], 1)}]")
+    R.add("diag-fa-worst-cfg", worst[5])
+    # benchmark triage against the rule "retrain when a recent labeled window exists", which never
+    # retrains here because a benchmark window has no earlier labeled window
+    tri = [(r["triage"]["will_retraining_help"], r["triage_truth"]["retraining_helps"])
+           for code, design, model in CONFIGS for r in bench_runs(code, design, model)]
+    for name, k in (("triage", sum(e == h for e, h in tri)), ("rule", sum(not h for _, h in tri))):
+        lo, hi = wilson_interval(int(k), len(tri))
+        R.add(f"bench-{name}-correct-pct", pct(k / len(tri), 0))
+        R.add(f"bench-{name}-correct-ci", f"[{pct(lo, 0)}, {pct(hi, 0)}]")
+    R.add("bench-triage-n", comma(len(tri)))
     write_table("tab_detectors", (
         "\\footnotesize\\setlength{\\tabcolsep}{3pt}\n"
         "\\begin{tabular}{@{}lrrrrr@{}}\n\\toprule\n"
@@ -1082,9 +1126,71 @@ def cam_figure(R: Results, bucket: int, k: int = 4) -> None:
 
 
 
+def seed_tables(R: Results) -> None:
+    """Mean and SD over the seeds and a 95% interval with the state as the cluster, for the
+    share of correctly typed windows (Table 3) and the design B mechanisms (Table 4)."""
+    from scipy import stats as st
+
+    summ = json.loads((OUT / "benchmark" / "summary.json").read_text())
+
+    def cell(windows: List[Dict[str, Any]], method: str) -> Tuple[str, str]:
+        def share(group):
+            ok = {}
+            for w in windows:
+                ok.setdefault(w[group], []).append(w["verdicts"][method] == w["drift_type"])
+            return np.array([np.mean(v) for v in ok.values()])
+        seeds, states = share("seed"), share("state")
+        half = st.t.ppf(0.975, len(states) - 1) * states.std(ddof=1) / np.sqrt(len(states))
+        m = states.mean()
+        # mean and SD over seeds; the state-cluster interval goes on a second line
+        return (f"{100 * seeds.mean():.1f} $\\pm$ {100 * seeds.std(ddof=1):.1f}",
+                f"[{100 * max(m - half, 0):.0f}, {100 * min(m + half, 1):.0f}]")
+
+    rows = []
+    for model in MODELS:
+        first = True
+        for mkey, mname in METHOD_ROWS:
+            if mkey is None:
+                continue
+            pairs = [cell(summ["methods"][f"{BENCH_DATASETS[code]}_{design}_{model}"]["windows"], mkey)
+                     for code in BENCH_DATASETS for design in ("A", "B")]
+            rows.append(" & ".join([MODEL_TITLE[model] if first else "", mname] + [a for a, _ in pairs]) + " \\\\")
+            rows.append(" & ".join(["", ""] + [b for _, b in pairs]) + " \\\\")
+            first = False
+        if model == "lr":
+            rows.append("\\midrule")
+    write_table("tab_seeds_methods", (
+        "\\scriptsize\\setlength{\\tabcolsep}{3pt}\n"
+        "\\begin{tabular}{@{}llrrrr@{}}\n\\toprule\n"
+        "Model & Method & Inc.\\ A & Inc.\\ B & Emp.\\ A & Emp.\\ B \\\\\n\\midrule\n"
+        + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"))
+
+    mech_names = {"selection": "Covariate: selection bias", "prior_decrease": "Prior: decrease",
+                  "concept_oblique": "Concept: oblique region", "concept_threshold": "Concept: income threshold",
+                  "class_noise": "Noise: class-conditional"}
+    rows = []
+    for mname, mtitle in mech_names.items():
+        pairs = []
+        for code in BENCH_DATASETS:
+            for model in MODELS:
+                ws = [w for w in summ["methods"][f"{BENCH_DATASETS[code]}_B_{model}"]["windows"] if w["mechanism"] == mname]
+                pairs.append(cell(ws, "ours") if ws else ("--", ""))
+        rows.append(" & ".join([mtitle] + [a for a, _ in pairs]) + " \\\\")
+        rows.append(" & ".join([""] + [b for _, b in pairs]) + " \\\\")
+    write_table("tab_seeds_mechanisms", (
+        "\\scriptsize\\setlength{\\tabcolsep}{3pt}\n"
+        "\\begin{tabular}{@{}lrrrr@{}}\n\\toprule\n"
+        " & \\multicolumn{2}{c}{ACS Income} & \\multicolumn{2}{c}{ACS Employment} \\\\\n"
+        "\\cmidrule(lr){2-3}\\cmidrule(l){4-5}\n"
+        "Mechanism & LR & GB & LR & GB \\\\\n\\midrule\n"
+        + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"))
+
+
 def correction(R: Results) -> None:
     """The 2026-10-15 correction of the diagnosis: simulated family-wise error of
-    the old and new label-free rule, and how many benchmark verdicts changed."""
+    the old and new label-free rule, and how many benchmark verdicts changed. Always read from
+    outputs/, the result set in which the fix was made, also for a separate result set."""
+    OUT = Path("outputs")
     fw = json.loads((OUT / "fwer_check.json").read_text())
     gate = max(v["gatekeeping"]["fwer"] for v in fw["results"].values())
     wh = max(v["weighted_holm"]["fwer"] for v in fw["results"].values())
@@ -1188,6 +1294,8 @@ def main() -> None:
     concepts(R)
     remediation(R)
     benchmark(R)
+    if "windows" in next(iter(json.loads((OUT / "benchmark" / "summary.json").read_text())["methods"].values())):
+        seed_tables(R)
     correction(R)
     R.write(GEN / "results.tex")
     print(f"wrote {len(R.values)} result values, tables to {GEN}, figures to {FIG}")

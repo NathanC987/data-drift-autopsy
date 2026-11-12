@@ -20,10 +20,15 @@ folder that compiles on its own (pdflatex + bibtex, Overleaf or tectonic):
 Run from the repository root (TECTONIC may point to the binary if it is not on PATH):
 
     python examples/paper/build_bnrc.py
+    python examples/paper/build_bnrc.py --figures   # first redraw the figures from outputs/bnrc
+
+The numbers come from the BNRC result set: run examples/paper/build_artifacts.py with
+DDA_OUTPUTS=outputs/bnrc DDA_GEN=paper/generated/bnrc DDA_FIG=paper/figures/bnrc first.
 """
 
 from __future__ import annotations
 
+import os
 import re
 import shutil
 import sys
@@ -31,6 +36,12 @@ import zipfile
 from pathlib import Path
 from typing import List
 
+# the revision uses its own result set (1000 permutations): outputs/bnrc, paper/generated/bnrc
+# and paper/bnrc/figures; the other versions of the paper keep paper/generated
+os.environ.setdefault("DDA_OUTPUTS", "outputs/bnrc")
+os.environ.setdefault("DDA_GEN", "paper/generated/bnrc")
+os.environ.setdefault("DDA_FIG", "paper/figures/bnrc")
+os.environ.setdefault("DDA_PAPER_FIGS", "paper/bnrc/figures")
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_dacs as dacs  # noqa: E402
 from build_dacs import TexDoc, compile_tex, dacs_bib  # noqa: E402
@@ -52,6 +63,8 @@ TABLE_CHAR_PT, TABLE_COLSEP_PT = 4.0, 12   # 8bp table font
 CITE_CHARS = 22              # printed length of an author-year citation
 WRAP_CHARS = 20              # left-aligned columns with longer cells wrap when the table is too wide
 FLOATS = r"""\usepackage{array}%
+% ORCID iD after an author's name, as a link to the record
+\newcommand{\orcidid}[1]{\href{https://orcid.org/#1}{\textsuperscript{\sffamily\bfseries\textcolor[HTML]{A6CE39}{iD}}}}%
 \usepackage{tabularx}%
 % floats are never set above the text that introduces them
 \usepackage{flafter}%
@@ -155,9 +168,25 @@ class BnrcDoc(TexDoc):
         return re.sub(r"\\cite\{", r"\\citep{", s)
 
     def front_matter(self) -> str:
-        s = super().front_matter()
+        # an author line may carry an ORCID iD as a third field: "Name; 1*; 0000-0000-0000-0000"
+        authors = self.front["author"]
+        orcids = {}
+        for a in authors:
+            parts = [p.strip() for p in a.split(";")]
+            if len(parts) > 2:
+                orcids[parts[0]] = parts[2]
+        self.front["author"] = [";".join(a.split(";")[:2]) for a in authors]
+        try:
+            s = super().front_matter()
+        finally:
+            self.front["author"] = authors
+        for name, oid in orcids.items():
+            first, last = name.rsplit(" ", 1)
+            mark = (f"\\orcidid{{{oid}}}" if re.fullmatch(r"\d{4}-\d{4}-\d{4}-\d{3}[\dX]", oid)
+                    else "\\textcolor{red}{[ORCID]}")
+            s = s.replace(f"\\fnm{{{first}}} \\sur{{{last}}}}}", f"\\fnm{{{first}}} \\sur{{{last}}}\\,{mark}}}", 1)
         # structured abstract: each labelled part starts its own paragraph
-        for head in ("Results:", "Conclusions:"):
+        for head in ("Methods:", "Results:", "Conclusions:"):
             s = s.replace(f" \\textbf{{{head}}}", f"\\par \\textbf{{{head}}}")
         return s.replace("\\abstract{}", "")
 
@@ -167,9 +196,9 @@ class BnrcDoc(TexDoc):
         tex = super().table(Block(kind=b.kind, text=title, level=b.level, attrs=dict(b.attrs), lines=b.lines))
         self.captions[-1] = (self.captions[-1][0], b.text)
         tex = fit_table(tex)
-        # the journal does not allow commas in numbers inside tables: thousands get a thin space
+        # the journal does not allow separators in numbers: 13910, not 13,910
         top, cells = tex.split("\\toprule", 1)
-        tex = top + "\\toprule" + re.sub(r"(?<=\d),(?=\d{3}(?!\d))", r"\\,", cells)
+        tex = top + "\\toprule" + re.sub(r"(?<=\d),(?=\d{3}(?!\d))", "", cells)
         tex = tex.replace("\\par\\vspace{0.7\\intextsep}\\noindent\\begin{minipage}{\\textwidth}\\centering\\tablebodyfont",
                           "\\begin{table}[!htbp]\\centering\\tablebodyfont")
         tex = tex.replace("\\captionof{table}", "\\caption")
@@ -247,7 +276,7 @@ def checks(doc: BnrcDoc) -> List[str]:
         fails.append(f"abstract has {n} words")
     if "[@" in abstract.text:
         fails.append("abstract cites references")
-    for head in ("**Background:**", "**Results:**", "**Conclusions:**"):
+    for head in ("**Background:**", "**Methods:**", "**Results:**", "**Conclusions:**"):
         if head not in abstract.text:
             fails.append(f"abstract lacks {head}")
     keywords = [k for k in doc.front["keywords"][0].split(",") if k.strip()]
@@ -277,8 +306,72 @@ def upload_zip() -> Path:
     return zip_path
 
 
+def figures() -> None:
+    """The PPEECS figures drawn from the BNRC result set, then Fig. 3 with the GB control counts."""
+    import build_ppeecs
+    build_ppeecs.figures()
+    shutil.copy(PP / "figures" / "FigS2.png", FIGS / "FigS2.png")   # dashboard screenshot
+    confusion_figure()
+
+
+def confusion_figure() -> None:
+    """Fig. 3: confusion matrices of the diagnosis with LR; the control row also gives the GB counts."""
+    import numpy as np
+    import build_artifacts as ba
+
+    plt = ba.mpl()
+    plt.rcParams.update({"font.size": 8, "axes.titlesize": 8, "axes.labelsize": 8,
+                         "xtick.labelsize": 7.5, "ytick.labelsize": 7.5, "font.family": "DejaVu Sans"})
+    labels = ["none", "covariate", "prior", "concept", "label_noise"]
+    short = {"none": "None", "covariate": "Cov.", "prior": "Prior", "concept": "Conc.", "label_noise": "Noise"}
+    fig, axes = plt.subplots(2, 2, figsize=(83.5 / 25.4, 2.9))
+    for ax, (code, design) in zip(axes.flat, [("inc", "A"), ("inc", "B"), ("emp", "A"), ("emp", "B")]):
+        cm = {m: ba.bench(code, design, m)["summary"]["type_identification"]["confusion_matrix"] for m in ("lr", "hgb")}
+        rows_ = [t for t in labels if sum(cm["lr"][t].values())]
+        M = np.array([[cm["lr"][a][b] for b in labels] for a in rows_], dtype=float)
+        frac = M / M.sum(axis=1, keepdims=True)
+        ax.imshow(frac, cmap="Blues", vmin=0, vmax=1, aspect="auto")
+        for i, a in enumerate(rows_):
+            for j, b in enumerate(labels):
+                gb = cm["hgb"][a][b]
+                if a == "none" and (M[i, j] or gb):
+                    text, size = f"{int(M[i, j])}/{gb}", 5
+                elif M[i, j]:
+                    text, size = f"{int(M[i, j])}", 6.5
+                else:
+                    continue
+                ax.text(j, i, text, ha="center", va="center", fontsize=size,
+                        color="white" if frac[i, j] > 0.6 else ba.INK)
+        bottom = code == "emp"
+        ax.set_xticks(range(len(labels)), [short[t] for t in labels] if bottom else [], rotation=45, ha="right")
+        ax.set_yticks(range(len(rows_)), [short[t] for t in rows_])
+        ax.set_title(f"{ba.STUDY_TITLE[code].replace('ACS ', '')}, {design}", loc="left")
+        ax.grid(False)
+    for ax in axes[:, 0]:
+        ax.set_ylabel("injected")
+    fig.supxlabel("diagnosed", fontsize=8, y=0.01)
+    fig.tight_layout(pad=0.3, h_pad=0.6, w_pad=0.6)
+    for ext, kw in ((".pdf", {}), (".png", {"dpi": 600})):
+        fig.savefig(FIGS / f"Fig03{ext}", bbox_inches="tight", pad_inches=0.02, **kw)
+    plt.close(fig)
+
+
+THOUSANDS = re.compile(r"\d(,|\\,|\{,\})\d{3}(?!\d)")
+
+
+def thousands_check(tex: Path) -> List[str]:
+    """Numbers must be written without separators (13910, \\$50000); the bibliography is exempt."""
+    body = tex.read_text().split("\\begin{document}", 1)[-1].split("\\bibliography", 1)[0]
+    return [f"{tex.name}: number with a thousands separator: ...{body[max(m.start() - 30, 0):m.end() + 10]}..."
+            for m in THOUSANDS.finditer(body)]
+
+
 def main() -> None:
-    results = load_results()
+    if "--figures" in sys.argv:
+        FIGS.mkdir(parents=True, exist_ok=True)
+        figures()
+    # the journal writes numbers without thousands separators
+    results = {k: re.sub(r"(?<=\d),(?=\d{3}(?!\d))", "", v) for k, v in load_results().items()}
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "figures").mkdir(exist_ok=True)
     shutil.copy(TEMPLATE_DIR / "sn-jnl.cls", OUT / "sn-jnl.cls")
@@ -292,6 +385,7 @@ def main() -> None:
     failures = checks(paper)
     paper.write(OUT / f"{MAIN}.tex", "references")
     supp.write(OUT / f"{ADD}.tex", "references")
+    failures += thousands_check(OUT / f"{MAIN}.tex") + thousands_check(OUT / f"{ADD}.tex")
 
     names = set()
     for folder, name in paper.figures + supp.figures:

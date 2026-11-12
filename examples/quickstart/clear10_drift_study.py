@@ -23,6 +23,7 @@ Requires the embeddings from examples/quickstart/clear10_tabularize_demo.py.
 from __future__ import annotations
 
 import argparse
+import os
 import json
 import time
 from pathlib import Path
@@ -59,7 +60,8 @@ from drift_autopsy.utils import setup_logging
 SEED = 42
 ALPHA = 0.05
 PSI_THRESHOLD = 0.2
-N_PERMUTATIONS = 200
+N_PERMUTATIONS = int(os.environ.get("DDA_PERMUTATIONS", 200))   # DDA_PERMUTATIONS: permutations of every permutation test
+OUTPUTS = Path(os.environ.get("DDA_OUTPUTS", "outputs"))   # DDA_OUTPUTS: write a separate result set
 AUDIT_LABELS = 600
 MIN_SLICE_SAMPLES = 30
 RELIABILITY_RECORDS_KEPT = 1000
@@ -67,7 +69,7 @@ PROJECTION_POINTS = 250          # sampled points per window in the PCA view (da
 
 
 def output_path(model: str) -> Path:
-    return Path("outputs/clear10_drift_results.json" if model == "lr" else f"outputs/clear10_drift_results_{model}.json")
+    return OUTPUTS / ("clear10_drift_results.json" if model == "lr" else f"clear10_drift_results_{model}.json")
 
 
 def detectors() -> Dict[str, Any]:

@@ -46,7 +46,8 @@ from typing import Dict, List, Optional, Tuple
 ROOT = Path(__file__).resolve().parents[2]
 PAPER = ROOT / "paper"
 PP = PAPER / "ppeecs"
-FIGS = PP / "figures"
+FIGS = ROOT / os.environ.get("DDA_PAPER_FIGS", "paper/ppeecs/figures")   # DDA_PAPER_FIGS: figures of a separate result set
+GENERATED = ROOT / os.environ.get("DDA_GEN", "paper/generated")       # DDA_GEN: results and tables of that set
 BUILD = PP / "build"
 TEMPLATE = PP / "template.docx"
 MATH_CACHE = PP / "math_cache.json"
@@ -125,7 +126,7 @@ def png_size(path: Path) -> Tuple[int, int]:
 
 def load_results() -> Dict[str, str]:
     vals = {}
-    for line in (PAPER / "generated" / "results.tex").read_text().splitlines():
+    for line in (GENERATED / "results.tex").read_text().splitlines():
         m = re.match(r"\\expandafter\\def\\csname res@(.+?)\\endcsname\{(.*)\}$", line)
         if m:
             vals[m.group(1)] = tex_value(m.group(2))
@@ -193,7 +194,7 @@ def parse_colspec(spec: str) -> List[str]:
 
 def parse_tabular(name: str) -> Table:
     """A generated booktabs tabular as rows of cells with rules."""
-    src = (PAPER / "generated" / f"{name}.tex").read_text()
+    src = (GENERATED / f"{name}.tex").read_text()
     src = "\n".join(l for l in src.splitlines() if not l.lstrip().startswith("%"))
     m = re.search(r"\\begin\{tabular\}\{((?:[^{}]|\{[^{}]*\})*)\}(.*)\\end\{tabular\}", src, re.S)
     aligns = parse_colspec(m.group(1))
@@ -1186,7 +1187,7 @@ def figures() -> None:
             shutil.copy(Path(tmp) / f"{src}.pdf", FIGS / f"{name}.pdf")
         subprocess.run(["pdftoppm", "-r", "600", "-png", "-singlefile", str(FIGS / f"{name}.pdf"), str(FIGS / name)],
                        check=True)
-    print(f"wrote figures to {FIGS.relative_to(ROOT)}")
+    print(f"wrote figures to {FIGS}")
 
 
 # --------------------------------------------------------------------------- #

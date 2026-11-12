@@ -17,6 +17,7 @@ Run after the benchmark:  python examples/quickstart/benchmark_summary.py
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -32,7 +33,7 @@ from drift_autopsy.benchmark.metrics import (
 from drift_autopsy.experiments.common import json_default
 from drift_autopsy.stats import wilson_interval
 
-DIR = Path("outputs/benchmark")
+DIR = Path(os.environ.get("DDA_OUTPUTS", "outputs")) / "benchmark"   # DDA_OUTPUTS: separate result set
 DATASETS = ("acs_income", "acs_employment")
 MODELS = ("lr", "hgb")
 ALPHA = 0.05
@@ -76,6 +77,10 @@ def main() -> None:
                     "paired_tests": paired_method_tests(runs, preds, alpha=ALPHA),
                     "meta_validation": ("leave one state out" if design == "A"
                                         else "trained on design A, state held out"),
+                    # one row per window, for statistics over seeds and states
+                    "windows": [{"state": r["state"], "seed": r["seed"], "mechanism": r["mechanism"],
+                                 "drift_type": r["drift_type"], "verdicts": {m: preds[m][i] for m in preds}}
+                                for i, r in enumerate(runs)],
                 }
                 if design == "B":
                     mech: Dict[str, Any] = {}

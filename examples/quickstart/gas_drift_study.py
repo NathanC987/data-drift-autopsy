@@ -24,6 +24,7 @@ Output: outputs/gas_drift_results_{model}.json
 from __future__ import annotations
 
 import argparse
+import os
 import json
 import time
 from pathlib import Path
@@ -46,7 +47,8 @@ from drift_autopsy.utils import setup_logging
 SEED = 42
 ALPHA = 0.05
 PSI_THRESHOLD = 0.2
-MMD_PERMUTATIONS = 200
+MMD_PERMUTATIONS = int(os.environ.get("DDA_PERMUTATIONS", 200))   # DDA_PERMUTATIONS: permutations of every permutation test
+OUTPUTS = Path(os.environ.get("DDA_OUTPUTS", "outputs"))   # DDA_OUTPUTS: write a separate result set
 MMD_MAX_SAMPLES = 3000
 RELIABILITY_RECORDS_KEPT = 1000
 
@@ -213,7 +215,7 @@ def main() -> None:
         "reliability_model": reliability.describe(),
         "windows": windows,
     }
-    out = Path(f"outputs/gas_drift_results_{args.model}.json")
+    out = OUTPUTS / f"gas_drift_results_{args.model}.json"
     out.write_text(json.dumps(result, indent=1, allow_nan=False, default=json_default))
     print(f"\nwrote {out}")
 

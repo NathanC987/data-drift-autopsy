@@ -24,6 +24,7 @@ Output: outputs/remediation_results.json (lr) or outputs/remediation_results_{mo
 from __future__ import annotations
 
 import argparse
+import os
 import json
 from pathlib import Path
 from typing import Any, Dict, List
@@ -39,6 +40,7 @@ from drift_autopsy.remediation import triage as triage_module
 from drift_autopsy.utils import setup_logging
 
 SEED = 42
+OUTPUTS = Path(os.environ.get("DDA_OUTPUTS", "outputs"))   # DDA_OUTPUTS: read and write a separate result set
 ALPHA = 0.05
 N_LABELS = 2000          # fresh labels bought by label_retrain / recalibrate
 STRATEGIES = ["importance_weighted_retrain", "retrain_on_recent", "full_retrain", "feature_drop_retrain",
@@ -52,11 +54,11 @@ ACS_GROUPS = {"income": "acs", "employment": "acs_employment"}
 def results_path(study: str, model: str) -> Path:
     suffix = "" if model == "lr" else f"_{model}"
     return {
-        "income": Path("outputs/folktables_drift_results.json" if model == "lr"
-                       else f"outputs/folktables_income_drift_results_{model}.json"),
-        "employment": Path(f"outputs/folktables_employment_drift_results_{model}.json"),
-        "clear10": Path(f"outputs/clear10_drift_results{suffix}.json"),
-        "gas": Path(f"outputs/gas_drift_results_{model}.json"),
+        "income": OUTPUTS / ("folktables_drift_results.json" if model == "lr"
+                              else f"folktables_income_drift_results_{model}.json"),
+        "employment": OUTPUTS / f"folktables_employment_drift_results_{model}.json",
+        "clear10": OUTPUTS / f"clear10_drift_results{suffix}.json",
+        "gas": OUTPUTS / f"gas_drift_results_{model}.json",
     }[study]
 
 
@@ -188,7 +190,7 @@ def main() -> None:
         "settings": settings,
         "summary": {"n_settings": len(settings), "triage_correct": n_correct},
     }
-    out = Path("outputs/remediation_results.json" if args.model == "lr" else f"outputs/remediation_results_{args.model}.json")
+    out = OUTPUTS / ("remediation_results.json" if args.model == "lr" else f"remediation_results_{args.model}.json")
     out.write_text(json.dumps(payload, indent=1, allow_nan=False, default=json_default))
     print(f"\ntriage correct in {n_correct}/{len(settings)} settings; wrote {out}")
 
