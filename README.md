@@ -73,6 +73,17 @@ streamlit run examples/dashboard/app.py                                      # d
 pytest                                                                       # tests
 ```
 
+The journal version of the paper (Bulletin of the National Research Centre) uses a
+second result set with 1000 permutations in every permutation test, written to
+`outputs/bnrc/` so that `outputs/` stays as it was. The same seeds are used.
+
+```bash
+export DDA_OUTPUTS=outputs/bnrc DDA_PERMUTATIONS=1000
+# run the studies, remediation, the eight benchmark configurations and the summary as above
+DDA_GEN=paper/generated/bnrc DDA_FIG=paper/figures/bnrc python examples/paper/build_artifacts.py
+python examples/paper/build_bnrc.py --figures                                # manuscript and Additional file 1
+```
+
 Data: ACS Income and ACS Employment via
 [Folktables](https://github.com/socialfoundations/folktables) (raw files under
 `data/<year>/`, task caches under `data/folktables_us_census/tasks/`; from

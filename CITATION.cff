@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Data Drift Autopsy: drift detection, diagnosis and reliability analysis for deployed machine learning models"
+type: software
+authors:
+  - family-names: Guhagarkar
+    given-names: Rahul
+  - family-names: Cherian
+    given-names: Nathan
+  - family-names: Pal
+    given-names: Alok
+  - family-names: Patre
+    given-names: Akul
+  - family-names: Mirchandani
+    given-names: Sanjay
+license: MIT
+repository-code: "https://github.com/NathanC987/data-drift-autopsy"
+keywords:
+  - concept drift
+  - label shift
+  - model monitoring
+  - drift diagnosis
+  - hypothesis testing

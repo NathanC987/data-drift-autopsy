@@ -1,0 +1,14 @@
+{
+  "title": "Data Drift Autopsy: drift detection, diagnosis and reliability analysis for deployed machine learning models",
+  "upload_type": "software",
+  "description": "Code, configurations and scripts behind the paper \"Drift Detection, Diagnosis and Reliability Analysis for Deployed Machine Learning Models\". The pipeline detects drift, estimates the lost accuracy without labels, locates the shifted features, names the drift type with hypothesis tests under one family-wise error rate and reports reliability and retraining evidence. The release contains every study, benchmark and paper build script; README.md lists the commands.",
+  "creators": [
+    {"name": "Guhagarkar, Rahul", "affiliation": "Vivekanand Education Society's Institute of Technology"},
+    {"name": "Cherian, Nathan", "affiliation": "Vivekanand Education Society's Institute of Technology"},
+    {"name": "Pal, Alok", "affiliation": "Vivekanand Education Society's Institute of Technology"},
+    {"name": "Patre, Akul", "affiliation": "Vivekanand Education Society's Institute of Technology"},
+    {"name": "Mirchandani, Sanjay", "affiliation": "Vivekanand Education Society's Institute of Technology"}
+  ],
+  "license": "MIT",
+  "keywords": ["concept drift", "label shift", "model monitoring", "drift diagnosis", "hypothesis testing"]
+}
