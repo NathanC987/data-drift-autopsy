@@ -1,4 +1,4 @@
-# 🚀 Project Setup Guide
+ # 🚀 Project Setup Guide
 
 This guide covers how to set up the Data Drift Autopsy project as a GitHub repository and deploy it on a new device.
 

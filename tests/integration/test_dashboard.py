@@ -197,4 +197,4 @@ def test_app_renders_without_exceptions():
     at = AppTest.from_file("examples/dashboard/app.py", default_timeout=300)
     at.run()
     assert len(at.exception) == 0, [e.value for e in at.exception]
-    assert len(at.tabs) == 4
+    assert len(at.tabs) == 5

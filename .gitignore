@@ -80,3 +80,5 @@ Thumbs.db
 outputs/clip_concepts/clip_emb_bucket_*.npy
 outputs/clip_concepts/clip_ids_bucket_*.json
 outputs/clear10_tabularized_demo/
+
+data/chest X ray/
