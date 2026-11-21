@@ -20,9 +20,9 @@ Diagnosis System**.
 | Stage | Method |
 |---|---|
 | Accuracy estimate | CBPE: histogram-binning map from confidence to accuracy, fitted on held-out labeled data; baselines average confidence, DoC, ATC |
-| Detection | KS (numeric features, corrected), PSI, MMD / PCA reconstruction / Frechet distance permutation tests, confidence-shift chi-square test; baselines BBSD and a classifier two-sample test |
-| Localization | KS or chi-square homogeneity per feature (Holm), effect sizes, unseen-category share, predicted-class slices |
-| Root cause | SHAP attribution change with bootstrap intervals (tables); CLIP concept probe and class activation maps (images) |
+| Detection | KS (numeric features, corrected), PSI, MMD / PCA reconstruction / Frechet distance permutation tests, confidence-shift chi-square test, autoencoder reconstruction MSE (Chest X-ray); baselines BBSD and a classifier two-sample test |
+| Localization | KS or chi-square homogeneity per feature (Holm), effect sizes, unseen-category share, predicted-class slices, 32-D autoencoder latent localization (Chest X-ray) |
+| Root cause | SHAP attribution change with bootstrap intervals (tables); CLIP concept probe, class activation maps, and CNN Grad-CAM saliency maps (images) |
 | Drift type | label-free stage: input, prediction and MMD tests, black-box shift estimation, label-shift consistency; audit stage (600 late labels): accuracy-drop and error-structure tests that separate concept drift from label noise; compared with rule baselines, a learned meta-classifier and ablations |
 | Reliability | confidence risk, out-of-distribution score, instability; logistic fusion learned on held-out data |
 | Remediation | strategies graded by paired bootstrap; label-free triage by importance-weighted validation |
@@ -86,7 +86,11 @@ they are tested with count-based statistics.
 ```
 
 It walks through the pipeline step by step over the JSON reports in `outputs/`,
-with charts and generated plain-language notes.
+with charts and generated plain-language notes, and includes an interactive
+**Chest X-ray (drift & RCA)** tab (`examples/dashboard/chest_xray_demo.py`) for
+running live autoencoder reconstruction, 32-D latent drift detection (MMD, KS,
+PSI, Holm-corrected localization), CBPE, OOD scoring, CNN Grad-CAM saliency
+RCA, and structured JSON report export on local radiographs.
 
 ## Reproducing the studies and the paper
 
@@ -121,24 +125,25 @@ python examples/paper/build_bnrc.py --figures                                # m
 
 **Data:** ACS Income and ACS Employment via
 [Folktables](https://github.com/socialfoundations/folktables) (raw files under
-`data/<year>/`, task caches under `data/folktables_us_census/tasks/`; from 2019
-the relationship variable RELSHIPP is mapped back to RELP), the
+`data/<year>/`, task caches under `data/folktables_us_census/tasks/`; from
+2019 the relationship variable RELSHIPP is mapped back to RELP), the
 [UCI gas sensor array drift dataset](https://archive.ics.uci.edu/dataset/224/gas+sensor+array+drift+dataset)
-(downloaded and checksummed under `data/gas_sensor_drift/`) and CLEAR-10 from
-the [CLEAR benchmark](https://clear-benchmark.github.io/) under `data/clear10/`.
-All data are public; nothing personal is collected.
+(downloaded and checksummed under `data/gas_sensor_drift/`), CLEAR-10 from
+the [CLEAR benchmark](https://clear-benchmark.github.io/) under `data/clear10/`,
+and the NIH Chest X-ray sample (`sample_labels.csv` + radiographs) under
+`data/chest X ray/`. All data are public; nothing personal is collected.
 
 ## Repository layout
 
 | Path | Contents |
 |---|---|
-| `src/drift_autopsy/` | the package: detectors, estimation, localizers, diagnosis, rca, reliability, remediation, benchmark, experiments |
+| `src/drift_autopsy/` | the package: detectors (including `reconstruction/` autoencoder and `chest_xray_cnn`), estimation, localizers, diagnosis, rca (`grad_cam`, `cam`, `concept_probe`, `shap_analyzer`), reliability, remediation, reporting, benchmark, experiments |
 | `examples/quickstart/` | study, benchmark and summary scripts |
 | `examples/dashboard/` | Streamlit dashboard |
 | `examples/paper/` | builds of the generated results and of each paper version |
 | `outputs/` | committed JSON reports and figures (`outputs/bnrc/`: 1000-permutation set) |
 | `tests/` | unit, integration and smoke tests |
-| `docs/` | `02-current-implementation/`: what is implemented, why, data contracts, limitations; `01-end-goal/`: long-term direction; `architecture/`: architecture diagram |
+| `docs/` | `02-current-implementation/`: what is implemented, why, data contracts, limitations; `01-end-goal/`: long-term product direction; `architecture/`: architecture diagram |
 
 The paper sources, its versions and the project report live in a separate
 repository, [capstone-paper](https://github.com/NathanC987/capstone-paper),
