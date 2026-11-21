@@ -92,6 +92,23 @@ running live autoencoder reconstruction, 32-D latent drift detection (MMD, KS,
 PSI, Holm-corrected localization), CBPE, OOD scoring, CNN Grad-CAM saliency
 RCA, and structured JSON report export on local radiographs.
 
+### Dashboard views
+
+**ACS (census)**
+
+![ACS Census Dashboard](docs/screenshots/dashboard-acs.png)
+
+**CLEAR-10 (images)**
+
+![CLEAR-10 Images Dashboard](docs/screenshots/dashboard-clear10.png)
+
+**Chest X-ray (drift & RCA)**
+
+![Chest X-ray Overview and Pipeline](docs/screenshots/dashboard-chest-xray-overview.png)
+
+![Chest X-ray Drift Detection and PCA Localization](docs/screenshots/dashboard-chest-xray-detection-pca.png)
+
+![Chest X-ray Grad-CAM RCA and Structured Report](docs/screenshots/dashboard-chest-xray-gradcam-report.png)
 ## Reproducing the studies and the paper
 
 Every study takes `--model lr` (logistic regression) or `--model hgb`
