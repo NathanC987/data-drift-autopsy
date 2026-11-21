@@ -1,410 +1,306 @@
 """
-Folktables Temporal Drift Demo
+ACS drift study (temporal and geographic) for one Folktables task and one model family.
 
-Demonstrates drift detection on ACS Income data across years (2014-2018) for California.
-Trains a model on 2014 data and monitors temporal drift as the years progress.
+Monitored model: the shared ACS model (drift_autopsy.experiments.acs), trained
+on 60% of California 2014. The other 40% is split into a calibration set (the
+reference window for every detector and the CBPE accuracy map) and a test set
+(the reference accuracy). Production windows:
+
+* control    - the California 2014 test split (same distribution; nothing
+               should fire, which checks the false alarm behaviour);
+* temporal   - California 2015 to 2019 and 2021 to 2023 (full years; there is
+               no standard 2020 one-year release);
+* geographic - Texas, New York, Florida and Washington 2014 (full years).
+
+For each window the script records the detector decisions (including the
+detection baselines BBSD and the domain classifier), the feature localisation,
+the SHAP attribution changes with bootstrap intervals, the CBPE accuracy
+estimate and its baselines, the drift-type diagnosis (label-free stage plus a
+delayed-label audit of AUDIT_LABELS rows) with the baseline and ablation
+verdicts, per-prediction reliability over the whole window and, for
+evaluation only, the true accuracy. Each window draws its audit and stored
+records from its own random stream.
+
+Run:  python examples/quickstart/folktables_demo.py --task income --model lr
+Output: outputs/folktables_drift_results.json for (income, lr); otherwise
+outputs/folktables_{task}_drift_results_{model}.json.
 """
 
-import json
-import numpy as np
-import pandas as pd
-from pathlib import Path
-from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import StandardScaler
-from sklearn.pipeline import Pipeline as SKPipeline
+from __future__ import annotations
 
-# Import drift autopsy components
-from drift_autopsy import DriftPipeline, Dataset
-from drift_autopsy.data import FolktablesLoader
-from drift_autopsy.detectors import KSTest, PSI, MMD, CBPE
+import argparse
+import os
+import json
+import time
+from pathlib import Path
+from typing import Any, Dict
+
+import numpy as np
+
+from drift_autopsy import DriftPipeline
+from drift_autopsy.detectors import CBPE, KSTest, MMD, PSI
+from drift_autopsy.diagnosis import audit_diagnosis, combine, label_free_diagnosis
+from drift_autopsy.experiments.acs import (
+    ACS_TASKS,
+    SPLIT_FRACTIONS,
+    load_acs_task,
+    make_acs_model,
+    split_reference,
+    to_dataset,
+)
+from drift_autopsy.experiments.common import baseline_detectors, comparison_block, json_default, window_rng
+from drift_autopsy.experiments.models import MODEL_DESCRIPTIONS
 from drift_autopsy.localizers import UnivariateLocalizer
 from drift_autopsy.rca import SHAPAnalyzer
+from drift_autopsy.reliability import ReliabilityAnalyzer
+from drift_autopsy.stats import two_proportion_test
 from drift_autopsy.utils import setup_logging
 
+SEED = 42
+ALPHA = 0.05                 # significance level of every test
+PSI_THRESHOLD = 0.2          # conventional "significant shift" PSI level (Siddiqi, 2006)
+MMD_PERMUTATIONS = int(os.environ.get("DDA_PERMUTATIONS", 200))   # DDA_PERMUTATIONS: permutations of every permutation test
+MMD_MAX_SAMPLES = 3000
+SHAP_BACKGROUND = 100
+SHAP_EXPLAINED = 1000
+RELIABILITY_RECORDS_KEPT = 1000   # per-prediction rows stored for the dashboard
+AUDIT_LABELS = 600                # delayed labels for the audit stage of the diagnosis
 
-DETECTOR_THRESHOLDS = {
-    "KS Test": 0.05,
-    "PSI": 0.2,
-    "MMD": 0.1,
-    "CBPE": 0.05,
-}
-
-# Keep localizer threshold explicit at run call-time for consistency.
-LOCALIZATION_THRESHOLD = 0.05
-
-
-def build_state_code_mapping(year: int, states):
-    """Build mapping between ACS state codes and state abbreviations."""
-    code_to_state = {}
-    state_to_code = {}
-
-    print("Resolving ACS state metadata codes...")
-    for state in states:
-        ds = FolktablesLoader.load_acs_income(
-            year=year,
-            states=[state],
-            download=True,
-        )
-        state_code = str(ds.metadata["state"].mode().iloc[0])
-        code_to_state[state_code] = state
-        state_to_code[state] = state_code
-        print(f"  {state} -> state code {state_code}")
-
-    return code_to_state, state_to_code
+BASE_STATE, BASE_YEAR = "CA", 2014
+TEMPORAL_YEARS = [2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023]
+GEO_STATES = ["TX", "NY", "FL", "WA"]
 
 
-def create_pipelines(lr_model):
-    """Create configured drift pipelines."""
+OUTPUTS = Path(os.environ.get("DDA_OUTPUTS", "outputs"))   # DDA_OUTPUTS: write a separate result set
+
+
+def output_path(task: str, model: str) -> Path:
+    if task == "income" and model == "lr":
+        return OUTPUTS / "folktables_drift_results.json"
+    return OUTPUTS / f"folktables_{task}_drift_results_{model}.json"
+
+
+def make_pipelines(model, with_shap: bool = True) -> Dict[str, DriftPipeline]:
+    """KS carries localisation and SHAP root cause analysis; the others detect only.
+
+    SHAP runs for the logistic model only: the exact explainer over 10 inputs
+    evaluates 1,024 coalitions per explained row, which the boosted model's
+    slower predictions turn into hours per window."""
+    extra = {name: DriftPipeline(detector=det) for name, det in
+             baseline_detectors(ALPHA, SEED, max_samples=MMD_MAX_SAMPLES).items()}
     return {
         "KS Test": DriftPipeline(
-            detector=KSTest(threshold=0.05, correction="bonferroni"),  # p-value threshold (95% confidence)
-            localizer="univariate",
-            rca="shap",  # Use SHAP analyzer from registry
-            model=lr_model,  # Pass model for RCA
+            detector=KSTest(threshold=ALPHA, correction="bonferroni"),
+            localizer=UnivariateLocalizer(threshold=ALPHA, correction="holm"),
+            rca=SHAPAnalyzer(
+                n_background_samples=SHAP_BACKGROUND, n_test_samples=SHAP_EXPLAINED,
+                random_state=SEED, alpha=ALPHA,
+            ),
+            model=model,
             enable_localization=True,
-            enable_rca=True,  # Enable RCA for KS Test
+            enable_rca=with_shap,
         ),
-        "PSI": DriftPipeline(
-            detector=PSI(threshold=0.2, n_bins=10),  # Industry standard: >0.2 indicates significant drift
-            localizer="univariate",
-            enable_localization=True,
-            enable_rca=False,
-        ),
+        "PSI": DriftPipeline(detector=PSI(threshold=PSI_THRESHOLD, n_bins=10)),
         "MMD": DriftPipeline(
-            detector=MMD(threshold=0.1, kernel="rbf", n_permutations=20, max_samples=3000),  # Reasonable default for normalized features
-            localizer="univariate",
-            enable_localization=True,
-            enable_rca=False,
+            detector=MMD(
+                threshold=ALPHA, n_permutations=MMD_PERMUTATIONS, max_samples=MMD_MAX_SAMPLES,
+                standardize=True, random_state=SEED,
+            )
         ),
-        "CBPE": DriftPipeline(
-            detector=CBPE(threshold=0.05, n_bins=10),  # Allow 5% performance degradation
-            localizer="univariate",
-            enable_localization=True,
-            enable_rca=False,
-        ),
+        "CBPE": DriftPipeline(detector=CBPE(threshold=ALPHA, n_bins=10)),
+        **extra,
     }
 
 
-def run_pipelines(
-    pipelines,
-    train_dataset,
-    test_dataset,
-    train_dataset_with_preds,
-    test_dataset_with_preds,
-    slice_config=None,
-):
-    """Run all pipelines and return dictionary results."""
-    run_results = {}
-
-    for pipeline_name, pipeline in pipelines.items():
-        print(f"Running {pipeline_name}...")
-
-        try:
-            run_kwargs = {
-                "detection_threshold": DETECTOR_THRESHOLDS[pipeline_name],
-                "localization_threshold": LOCALIZATION_THRESHOLD,
-            }
-            if slice_config is not None:
-                run_kwargs["slice_config"] = slice_config
-
-            # Use dataset with predictions for CBPE, without for others
-            if pipeline_name == "CBPE":
-                result = pipeline.run(train_dataset_with_preds, test_dataset_with_preds, **run_kwargs)
-            else:
-                result = pipeline.run(train_dataset, test_dataset, **run_kwargs)
-
-            print(f"  Drift Detected: {result.detection.drift_detected}")
-            print(f"  Severity: {result.detection.severity.value}")
-            print(f"  Score: {result.detection.score:.4f}")
-
-            if result.localization:
-                n_drifted = len(result.localization.drifted_features)
-                print(f"  Drifted Features: {n_drifted}")
-                if n_drifted > 0:
-                    top_3 = result.localization.drifted_features[:3]
-                    print(f"    Top 3: {', '.join(top_3)}")
-
-            if result.rca:
-                n_recommendations = len(result.rca.recommendations)
-                print(f"  RCA Recommendations: {n_recommendations}")
-                if n_recommendations > 0:
-                    print(f"    Sample: {result.rca.recommendations[0]}")
-
-            if result.metadata.get("slice_analysis", {}).get("enabled"):
-                n_slices = result.metadata.get("slice_analysis", {}).get("slice_count", 0)
-                print(f"  Slice Analysis: {n_slices} slices evaluated")
-
-            print(f"  Execution Time: {result.execution_time_seconds:.2f}s")
-            print()
-
-            run_results[pipeline_name] = result.to_dict()
-
-        except Exception as e:
-            print(f"  ERROR: {e}")
-            print()
-            run_results[pipeline_name] = {"error": str(e)}
-
-    return run_results
+def explanation_shift(rca: Dict[str, Any]) -> Dict[str, float]:
+    """Cosine distance and relative L1 change between reference and test |SHAP| profiles."""
+    changes = rca.get("distribution_changes") or {}
+    if not changes:
+        return {}
+    ref = np.array([v["ref_importance"] for v in changes.values()])
+    test = np.array([v["test_importance"] for v in changes.values()])
+    cosine = 1.0 - float(ref @ test / (np.linalg.norm(ref) * np.linalg.norm(test)))
+    return {"cosine_distance": cosine, "relative_l1_change": float(np.abs(test - ref).sum() / ref.sum())}
 
 
-def load_multi_state_income_dataset(year: int, states):
-    """Load ACS Income per-state and concatenate for deterministic geographic coverage."""
-    state_datasets = []
-    for state in states:
-        ds = FolktablesLoader.load_acs_income(
-            year=year,
-            states=[state],
-            download=True,
-        )
-        state_datasets.append(ds)
+def analyse_window(
+    key: str, analysis_type: str, X, y, *, task, model, pipelines, reference_ds, reliability,
+    reference_accuracy: float, reference_test_correct: np.ndarray,
+) -> Dict[str, Any]:
+    print(f"\n=== {key} ({analysis_type}, {len(X)} rows)")
+    features = list(ACS_TASKS[task].features)
+    rng = window_rng(SEED, key)
+    window_ds = to_dataset(X, y, model=model, task=task)
+    timings: Dict[str, float] = {}
 
-    first = state_datasets[0]
-    all_data = pd.concat([ds.data for ds in state_datasets], axis=0, ignore_index=True)
-    all_target = pd.concat([ds.target for ds in state_datasets], axis=0, ignore_index=True)
-    all_metadata = pd.concat([ds.metadata for ds in state_datasets], axis=0, ignore_index=True)
+    pipelines_out = {}
+    for name, pipe in pipelines.items():
+        start = time.perf_counter()
+        res = pipe.run(reference_ds, window_ds)
+        timings[name] = round(time.perf_counter() - start, 3)
+        pipelines_out[name] = res.to_dict()
+        det = res.detection
+        p = det.p_value if det.p_value is not None else float("nan")
+        print(f"  {name:8s} drift={det.drift_detected!s:5s} severity={det.severity.value:8s} "
+              f"score={det.score:.4g} p={p:.3g}")
 
-    return Dataset(
-        data=all_data,
-        feature_names=first.feature_names,
-        target=all_target,
-        target_name=first.target_name,
-        metadata=all_metadata,
+    correct = (window_ds.predictions == np.asarray(y)).astype(int)
+    accuracy = float(correct.mean())
+    drop_test = two_proportion_test(
+        int(reference_test_correct.sum()), len(reference_test_correct), int(correct.sum()), len(correct),
+        alternative="greater",
     )
+    estimated = float(pipelines_out["CBPE"]["detection"]["metadata"]["estimated_accuracy"])
 
+    start = time.perf_counter()
+    frame = reliability.analyze(X[features].to_numpy(dtype=float))
+    timings["reliability"] = round(time.perf_counter() - start, 3)
+    summary = ReliabilityAnalyzer.summarize(frame, y)
+    keep = np.sort(rng.choice(len(frame), min(RELIABILITY_RECORDS_KEPT, len(frame)), replace=False))
+    records = frame.iloc[keep].assign(correct=correct[keep], row=keep)
+    records["risk_label"] = records["risk_label"].astype(str)
 
-def main():
-    # Setup logging
-    setup_logging(level="INFO")
-    
-    print("=" * 80)
-    print("Folktables Temporal + Geographic Drift Analysis Demo")
-    print("Dataset: ACS Income (Temporal: CA 2014-2018, Geographic: cross-state)")
-    print("=" * 80)
-    print()
-    
-    # Configuration
-    BASE_YEAR = 2014
-    TEST_YEARS = [2015, 2016, 2017, 2018]
-    STATE = "CA"
-    GEO_STATES = ["CA", "TX", "NY", "FL", "WA"]
-    OUTPUT_DIR = Path("outputs")
-    OUTPUT_DIR.mkdir(exist_ok=True)
-    
-    # Step 1: Load training data (2014)
-    print(f"Loading training data: {STATE} {BASE_YEAR}")
-    train_dataset = FolktablesLoader.load_acs_income(
-        year=BASE_YEAR,
-        states=[STATE],
-        download=True
+    start = time.perf_counter()
+    lf = label_free_diagnosis(reference_ds, window_ds, alpha=ALPHA, mmd_permutations=MMD_PERMUTATIONS,
+                              mmd_max_samples=MMD_MAX_SAMPLES, random_state=SEED)
+    audit_idx = rng.choice(len(X), min(AUDIT_LABELS, len(X)), replace=False)
+    au = audit_diagnosis(model, reference_ds, X.iloc[audit_idx], np.asarray(y)[audit_idx], alpha=ALPHA)
+    diagnosis = combine(lf, au)
+    timings["diagnosis"] = round(time.perf_counter() - start, 3)
+    comparison = comparison_block(
+        lf=lf, audit=au, model=model, reference_ds=reference_ds, audit_X=X.iloc[audit_idx],
+        audit_y=np.asarray(y)[audit_idx], alpha=ALPHA, cbpe_estimate=estimated,
+        reference_accuracy=reference_accuracy, production_probabilities=window_ds.prediction_probabilities,
+        actual_accuracy=accuracy,
     )
-    print(f"  Loaded: {train_dataset.n_samples} samples, {train_dataset.n_features} features")
-    print()
-    
-    # Step 2: Train model
-    print("Training LogisticRegression model...")
-    X_train = train_dataset.to_numpy()
-    y_train = train_dataset.target.values
-    
-    model = SKPipeline([
-        ('scaler', StandardScaler()),
-        ('classifier', LogisticRegression(max_iter=1000, random_state=42))
-    ])
-    
-    model.fit(X_train, y_train)
-    train_score = model.score(X_train, y_train)
-    print(f"  Training accuracy: {train_score:.4f}")
-    print()
-    
-    # Get predictions on training data for CBPE baseline
-    train_proba = model.predict_proba(X_train)
-    train_dataset_with_preds = Dataset(
-        data=train_dataset.data,
-        feature_names=train_dataset.feature_names,
-        target=train_dataset.target,
-        predictions=model.predict(X_train),
-        prediction_probabilities=train_proba,
-        metadata=train_dataset.metadata,
-    )
+    if comparison["verdicts"]["ours"] != diagnosis.drift_type:
+        raise AssertionError("recomputed verdict differs from the diagnosis")
+    print(f"  diagnosis: {diagnosis.drift_type} [{diagnosis.stage}] {diagnosis.rationale}")
 
-    # Build explicit state<->code mapping for readable outputs (e.g., CA->TX).
-    code_to_state, state_to_code = build_state_code_mapping(BASE_YEAR, GEO_STATES)
-    reference_state_code = state_to_code[STATE]
-    print(f"  Reference state '{STATE}' maps to metadata state value: {reference_state_code}")
-    
-    # Step 3: Setup drift detection pipelines
-    print("Setting up drift detection pipelines...")
-    
-    # Extract the actual LogisticRegression model from the sklearn pipeline
-    # (sklearn Pipeline wraps the model, but SHAP needs the raw model)
-    lr_model = model.named_steps['classifier']
-    
-    pipelines = create_pipelines(lr_model)
-    
-    print(f"  Initialized {len(pipelines)} pipelines")
-    print()
-    
-    # Step 4: Run drift detection for each year
-    all_results = {}
-    
-    for year in TEST_YEARS:
-        print("=" * 80)
-        print(f"Analyzing Year: {year}")
-        print("=" * 80)
-        
-        # Load test data
-        print(f"Loading test data: {STATE} {year}")
-        test_dataset = FolktablesLoader.load_acs_income(
-            year=year,
-            states=[STATE],
-            download=True
-        )
-        print(f"  Loaded: {test_dataset.n_samples} samples")
-        
-        # Get predictions
-        X_test = test_dataset.to_numpy()
-        y_test = test_dataset.target.values
-        test_proba = model.predict_proba(X_test)
-        test_score = model.score(X_test, y_test)
-        
-        print(f"  Model accuracy on {year}: {test_score:.4f} (Δ = {test_score - train_score:+.4f})")
-        print()
-        
-        # Create dataset with predictions
-        test_dataset_with_preds = Dataset(
-            data=test_dataset.data,
-            feature_names=test_dataset.feature_names,
-            target=test_dataset.target,
-            predictions=model.predict(X_test),
-            prediction_probabilities=test_proba,
-            metadata=test_dataset.metadata,
-        )
-        
-        year_results = run_pipelines(
-            pipelines=pipelines,
-            train_dataset=train_dataset,
-            test_dataset=test_dataset,
-            train_dataset_with_preds=train_dataset_with_preds,
-            test_dataset_with_preds=test_dataset_with_preds,
-        )
-        
-        all_results[year] = {
-            "analysis_type": "temporal",
-            "actual_accuracy": float(test_score),
-            "accuracy_drop": float(test_score - train_score),
-            "pipelines": year_results,
-        }
+    print(f"  accuracy {accuracy:.4f} (change {accuracy - reference_accuracy:+.4f}, "
+          f"one-sided p={drop_test['p_value']:.3g}); CBPE estimate {estimated:.4f}; "
+          f"risk AUROC {summary.get('auroc_risk', float('nan')):.3f} vs confidence-only "
+          f"{summary.get('auroc_confidence_only', float('nan')):.3f}")
 
-    # Step 5: Run geographic drift analysis (cross-state at BASE_YEAR)
-    print("=" * 80)
-    print("Geographic Analysis")
-    print("=" * 80)
-    print(
-        f"Comparing reference slice '{STATE}' against test slices in {GEO_STATES} "
-        f"for year {BASE_YEAR}"
-    )
-
-    geo_dataset = load_multi_state_income_dataset(
-        year=BASE_YEAR,
-        states=GEO_STATES,
-    )
-    X_geo = geo_dataset.to_numpy()
-    geo_proba = model.predict_proba(X_geo)
-    geo_dataset_with_preds = Dataset(
-        data=geo_dataset.data,
-        feature_names=geo_dataset.feature_names,
-        target=geo_dataset.target,
-        predictions=model.predict(X_geo),
-        prediction_probabilities=geo_proba,
-        metadata=geo_dataset.metadata,
-    )
-
-    geo_slice_config = {
-        "enabled": True,
-        "column": "state",
-        "reference_slice_value": reference_state_code,
-        "min_samples_per_slice": 100,
+    return {
+        "analysis_type": analysis_type,
+        "n_rows": int(len(X)),
+        "positive_rate": float(np.mean(y)),
+        "predicted_positive_rate": float(np.mean(window_ds.predictions)),
+        "actual_accuracy": accuracy,
+        "accuracy_change": accuracy - reference_accuracy,
+        "accuracy_drop_test": drop_test,
+        "cbpe_estimated_accuracy": estimated,
+        "cbpe_estimate_error": estimated - accuracy,
+        "pipelines": pipelines_out,
+        "explanation_shift": explanation_shift(pipelines_out["KS Test"].get("rca") or {}),
+        "diagnosis": {
+            "final": diagnosis.to_dict(),
+            "label_free_verdict": lf["verdict"],
+            "input_shift_features": lf["input_shift_features"],
+            "residual_shift_features": lf["residual_shift_features"],
+            "prediction_shift": lf["prediction_shift"],
+            "multivariate_shift": lf["multivariate_shift"],
+            "bbse": lf["bbse"],
+            "audit": {k: au[k] for k in ("n_labels", "audit_accuracy", "accuracy_drop_significant",
+                                         "audit_positive_rate", "structured_features")},
+            "audit_accuracy_drop_p_value": au["accuracy_drop_test"]["p_value"],
+            "audit_prior_p_value": au["prior_test"]["p_value"],
+        },
+        "comparison": comparison,
+        "reliability": {"summary": summary, "records": records.to_dict(orient="records")},
+        "timings_seconds": timings,
     }
 
-    geographic_results = run_pipelines(
-        pipelines=pipelines,
-        train_dataset=geo_dataset,
-        test_dataset=geo_dataset,
-        train_dataset_with_preds=geo_dataset_with_preds,
-        test_dataset_with_preds=geo_dataset_with_preds,
-        slice_config=geo_slice_config,
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--task", choices=sorted(ACS_TASKS), default="income")
+    ap.add_argument("--model", choices=sorted(MODEL_DESCRIPTIONS), default="lr")
+    args = ap.parse_args()
+    setup_logging(level="WARNING")
+    task, spec = args.task, ACS_TASKS[args.task]
+    features = list(spec.features)
+
+    X_base, y_base = load_acs_task(task, BASE_YEAR, BASE_STATE)
+    split = split_reference(X_base, y_base, seed=SEED)
+    model = make_acs_model(random_state=SEED, kind=args.model, task=task).fit(
+        split.train_X.to_numpy(dtype=float), split.train_y)
+
+    reference_ds = to_dataset(split.calibration_X, split.calibration_y, model=model, task=task)
+    test_pred = model.predict(split.test_X.to_numpy(dtype=float))
+    reference_test_correct = (test_pred == split.test_y).astype(int)
+    reference_accuracy = float(reference_test_correct.mean())
+    print(f"{spec.title} / {args.model}: split {split.sizes()}; reference (held-out test) accuracy "
+          f"{reference_accuracy:.4f}")
+
+    reliability = ReliabilityAnalyzer(
+        model,
+        reference_X=split.train_X.to_numpy(dtype=float),
+        calibration_X=split.calibration_X.to_numpy(dtype=float),
+        calibration_y=split.calibration_y,
+        categorical_indices=[features.index(f) for f in spec.categorical],
+        random_state=SEED,
+    )
+    print(f"reliability fusion: {reliability.describe()['fusion']}")
+
+    with_shap = args.model == "lr"
+    pipelines = make_pipelines(model, with_shap=with_shap)
+    common = dict(
+        task=task, model=model, pipelines=pipelines, reference_ds=reference_ds, reliability=reliability,
+        reference_accuracy=reference_accuracy, reference_test_correct=reference_test_correct,
     )
 
-    all_results["geographic_analysis"] = {
-        "analysis_type": "geographic",
-        "year": BASE_YEAR,
-        "reference_state": STATE,
-        "reference_slice_value": reference_state_code,
-        "slice_value_labels": code_to_state,
-        "states_analyzed": GEO_STATES,
-        "slice_column": "state",
-        "pipelines": geographic_results,
+    windows: Dict[str, Any] = {}
+    key = f"{BASE_STATE} {BASE_YEAR} held-out"
+    windows[key] = {"state": BASE_STATE, "year": BASE_YEAR,
+                    **analyse_window(key, "control", split.test_X, split.test_y, **common)}
+    for year in TEMPORAL_YEARS:
+        X, y = load_acs_task(task, year, BASE_STATE)
+        key = f"{BASE_STATE} {year}"
+        windows[key] = {"state": BASE_STATE, "year": year, **analyse_window(key, "temporal", X, y, **common)}
+    for state in GEO_STATES:
+        X, y = load_acs_task(task, BASE_YEAR, state)
+        key = f"{state} {BASE_YEAR}"
+        windows[key] = {"state": state, "year": BASE_YEAR, **analyse_window(key, "geographic", X, y, **common)}
+
+    result = {
+        "config": {
+            "task": task,
+            "task_title": spec.title,
+            "label": spec.label_description,
+            "model_kind": args.model,
+            "seed": SEED,
+            "alpha": ALPHA,
+            "psi_threshold": PSI_THRESHOLD,
+            "mmd": {"n_permutations": MMD_PERMUTATIONS, "max_samples": MMD_MAX_SAMPLES, "standardize": True},
+            "shap": ({"n_background": SHAP_BACKGROUND, "n_explained_per_sample": SHAP_EXPLAINED} if with_shap
+                     else None),
+            "audit_labels": AUDIT_LABELS,
+            "ks_correction": "bonferroni",
+            "localization_correction": "holm",
+            "reference": f"{BASE_STATE} {BASE_YEAR}",
+            "temporal_years": TEMPORAL_YEARS,
+            "split_fractions": dict(zip(("train", "calibration", "test"), SPLIT_FRACTIONS)),
+            "split_sizes": split.sizes(),
+            "features": {"numeric": list(spec.numeric), "categorical": spec.categorical},
+            "model": MODEL_DESCRIPTIONS[args.model],
+        },
+        "reference": {
+            "test_accuracy": reference_accuracy,
+            "train_positive_rate": float(np.mean(split.train_y)),
+            "calibration_accuracy": float(np.mean(reference_ds.predictions == split.calibration_y)),
+            "calibration_mean_confidence": float(
+                model.predict_proba(split.calibration_X.to_numpy(dtype=float)).max(axis=1).mean()
+            ),
+        },
+        "reliability_model": reliability.describe(),
+        "windows": windows,
     }
-    
-    # Step 6: Save results
-    print("=" * 80)
-    print("Saving Results")
-    print("=" * 80)
-    
-    output_file = OUTPUT_DIR / "folktables_drift_results.json"
-    with open(output_file, 'w') as f:
-        json.dump(all_results, f, indent=2)
-    
-    print(f"Results saved to: {output_file}")
-    print()
-    
-    # Step 7: Print summary
-    print("=" * 80)
-    print("Summary")
-    print("=" * 80)
-    print()
-    print("Year-over-Year Performance:")
-    print(f"  {BASE_YEAR} (train): {train_score:.4f}")
-    for year in TEST_YEARS:
-        acc = all_results[year]["actual_accuracy"]
-        drop = all_results[year]["accuracy_drop"]
-        print(f"  {year}:         {acc:.4f} (Δ = {drop:+.4f})")
-    print()
-    
-    print("Drift Detection Summary:")
-    for pipeline_name in pipelines.keys():
-        print(f"\n{pipeline_name}:")
-        for year in TEST_YEARS:
-            if "error" not in all_results[year]["pipelines"][pipeline_name]:
-                result = all_results[year]["pipelines"][pipeline_name]
-                detected = result["detection"]["drift_detected"]
-                severity = result["detection"]["severity"]
-                print(f"  {year}: {'DRIFT' if detected else 'NO DRIFT':8s} ({severity})")
-    print()
-
-    print("Geographic Drift Summary:")
-    geo_labels = all_results.get("geographic_analysis", {}).get("slice_value_labels", {})
-    for pipeline_name in pipelines.keys():
-        print(f"\n{pipeline_name}:")
-        geo_pipeline = all_results.get("geographic_analysis", {}).get("pipelines", {}).get(pipeline_name, {})
-        slice_info = geo_pipeline.get("metadata", {}).get("slice_analysis", {})
-        if slice_info.get("enabled"):
-            print(f"  Slices evaluated: {slice_info.get('slice_count', 0)}")
-            for slice_key, payload in slice_info.get("slices", {}).items():
-                detection = payload.get("result", {}).get("detection", {})
-                detected = detection.get("drift_detected", False)
-                severity = detection.get("severity", "none")
-                ref_code = str(payload.get("reference_slice_value"))
-                test_code = str(payload.get("test_slice_value"))
-                ref_label = geo_labels.get(ref_code, ref_code)
-                test_label = geo_labels.get(test_code, test_code)
-                label_key = f"{ref_label}->{test_label}"
-                print(f"  {label_key}: {'DRIFT' if detected else 'NO DRIFT':8s} ({severity})")
-        else:
-            print("  No slice analysis output")
-
-    print()
-    
-    print("Demo complete!")
+    out = output_path(task, args.model)
+    out.parent.mkdir(exist_ok=True)
+    out.write_text(json.dumps(result, indent=1, allow_nan=False, default=json_default))
+    print(f"\nwrote {out}")
 
 
 if __name__ == "__main__":

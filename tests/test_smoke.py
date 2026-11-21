@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 from drift_autopsy import DriftPipeline, Dataset
-from drift_autopsy.detectors import KSTest, PSI, MMD
+from drift_autopsy.detectors import KSTest
 from drift_autopsy.localizers import UnivariateLocalizer
 from drift_autopsy.registry import DetectorRegistry
 

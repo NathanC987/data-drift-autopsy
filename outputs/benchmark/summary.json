@@ -1,0 +1,6690 @@
+{
+ "alpha": 0.05,
+ "methods": {
+  "acs_income_A_lr": {
+   "n_windows": 650,
+   "n_replicates": 50,
+   "scores": {
+    "ours": {
+     "accuracy": {
+      "k": 613,
+      "n": 650,
+      "rate": 0.943076923076923,
+      "ci": [
+       0.9225245253435427,
+       0.9584229768826186
+      ]
+     },
+     "macro_f1": 0.9402087261563776,
+     "per_type": {
+      "none": {
+       "k": 47,
+       "n": 50,
+       "rate": 0.94,
+       "ci": [
+        0.8378290831116182,
+        0.979385029651026
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 144,
+       "n": 150,
+       "rate": 0.96,
+       "ci": [
+        0.915486535783444,
+        0.9815408393979256
+       ]
+      },
+      "concept": {
+       "k": 142,
+       "n": 150,
+       "rate": 0.9466666666666667,
+       "ci": [
+        0.8982961216180454,
+        0.9727304600798061
+       ]
+      },
+      "label_noise": {
+       "k": 130,
+       "n": 150,
+       "rate": 0.8666666666666667,
+       "ci": [
+        0.803019825502258,
+        0.9120019952944858
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 47,
+       "covariate": 2,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 1
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 6,
+       "prior": 144,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 1,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 142,
+       "label_noise": 1
+      },
+      "label_noise": {
+       "none": 4,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 10,
+       "label_noise": 130
+      }
+     }
+    },
+    "input_monitoring": {
+     "accuracy": {
+      "k": 197,
+      "n": 650,
+      "rate": 0.3030769230769231,
+      "ci": [
+       0.2689874839817006,
+       0.33948029280667213
+      ]
+     },
+     "macro_f1": 0.17699275666773104,
+     "per_type": {
+      "none": {
+       "k": 47,
+       "n": 50,
+       "rate": 0.94,
+       "ci": [
+        0.8378290831116182,
+        0.979385029651026
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "concept": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 47,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 141,
+       "covariate": 9,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 141,
+       "covariate": 9,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      }
+     }
+    },
+    "bbse_first": {
+     "accuracy": {
+      "k": 198,
+      "n": 650,
+      "rate": 0.3046153846153846,
+      "ci": [
+       0.2704669348678638,
+       0.3410596874143498
+      ]
+     },
+     "macro_f1": 0.18307426597582038,
+     "per_type": {
+      "none": {
+       "k": 48,
+       "n": 50,
+       "rate": 0.96,
+       "ci": [
+        0.8653990931249297,
+        0.9889611156723802
+       ]
+      },
+      "covariate": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 48,
+       "covariate": 2,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 144,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 144,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      }
+     }
+    },
+    "error_rate_monitoring": {
+     "accuracy": {
+      "k": 340,
+      "n": 650,
+      "rate": 0.5230769230769231,
+      "ci": [
+       0.48465696847262923,
+       0.5612257139349834
+      ]
+     },
+     "macro_f1": 0.4494442938465709,
+     "per_type": {
+      "none": {
+       "k": 47,
+       "n": 50,
+       "rate": 0.94,
+       "ci": [
+        0.8378290831116182,
+        0.979385029651026
+       ]
+      },
+      "covariate": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 143,
+       "n": 150,
+       "rate": 0.9533333333333334,
+       "ci": [
+        0.9068135276008725,
+        0.9772134508387381
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 47,
+       "covariate": 2,
+       "prior": 0,
+       "concept": 1,
+       "label_noise": 0
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 1,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 143,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 4,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 140,
+       "label_noise": 0
+      }
+     }
+    },
+    "no_mmd": {
+     "accuracy": {
+      "k": 619,
+      "n": 650,
+      "rate": 0.9523076923076923,
+      "ci": [
+       0.9331003379893585,
+       0.9662002371998477
+      ]
+     },
+     "macro_f1": 0.9481033040121746,
+     "per_type": {
+      "none": {
+       "k": 47,
+       "n": 50,
+       "rate": 0.94,
+       "ci": [
+        0.8378290831116182,
+        0.979385029651026
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 144,
+       "n": 150,
+       "rate": 0.96,
+       "ci": [
+        0.915486535783444,
+        0.9815408393979256
+       ]
+      },
+      "concept": {
+       "k": 145,
+       "n": 150,
+       "rate": 0.9666666666666667,
+       "ci": [
+        0.9243482038212211,
+        0.9856795681019074
+       ]
+      },
+      "label_noise": {
+       "k": 133,
+       "n": 150,
+       "rate": 0.8866666666666667,
+       "ci": [
+        0.825997250162395,
+        0.928025760859626
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 47,
+       "covariate": 1,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 2
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 6,
+       "prior": 144,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 1,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 145,
+       "label_noise": 1
+      },
+      "label_noise": {
+       "none": 4,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 10,
+       "label_noise": 133
+      }
+     }
+    },
+    "no_confidence_null": {
+     "accuracy": {
+      "k": 514,
+      "n": 650,
+      "rate": 0.7907692307692308,
+      "ci": [
+       0.7578360411748263,
+       0.8202857571610921
+      ]
+     },
+     "macro_f1": 0.7759659192495391,
+     "per_type": {
+      "none": {
+       "k": 47,
+       "n": 50,
+       "rate": 0.94,
+       "ci": [
+        0.8378290831116182,
+        0.979385029651026
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 144,
+       "n": 150,
+       "rate": 0.96,
+       "ci": [
+        0.915486535783444,
+        0.9815408393979256
+       ]
+      },
+      "concept": {
+       "k": 143,
+       "n": 150,
+       "rate": 0.9533333333333334,
+       "ci": [
+        0.9068135276008725,
+        0.9772134508387381
+       ]
+      },
+      "label_noise": {
+       "k": 30,
+       "n": 150,
+       "rate": 0.2,
+       "ci": [
+        0.14384081582284963,
+        0.27114133079799635
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 47,
+       "covariate": 2,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 1
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 6,
+       "prior": 144,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 1,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 143,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 4,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 110,
+       "label_noise": 30
+      }
+     }
+    },
+    "class_confidence_null": {
+     "accuracy": {
+      "k": 605,
+      "n": 650,
+      "rate": 0.9307692307692308,
+      "ci": [
+       0.9086171671398943,
+       0.9478595711355403
+      ]
+     },
+     "macro_f1": 0.9293034074285836,
+     "per_type": {
+      "none": {
+       "k": 47,
+       "n": 50,
+       "rate": 0.94,
+       "ci": [
+        0.8378290831116182,
+        0.979385029651026
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 144,
+       "n": 150,
+       "rate": 0.96,
+       "ci": [
+        0.915486535783444,
+        0.9815408393979256
+       ]
+      },
+      "concept": {
+       "k": 136,
+       "n": 150,
+       "rate": 0.9066666666666666,
+       "ci": [
+        0.8494360687243842,
+        0.9435881325229135
+       ]
+      },
+      "label_noise": {
+       "k": 128,
+       "n": 150,
+       "rate": 0.8533333333333334,
+       "ci": [
+        0.7879153994391072,
+        0.9011056278741189
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 47,
+       "covariate": 2,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 1
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 6,
+       "prior": 144,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 1,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 136,
+       "label_noise": 7
+      },
+      "label_noise": {
+       "none": 4,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 12,
+       "label_noise": 128
+      }
+     }
+    },
+    "meta_classifier": {
+     "accuracy": {
+      "k": 634,
+      "n": 650,
+      "rate": 0.9753846153846154,
+      "ci": [
+       0.9603907458203316,
+       0.9847925117764873
+      ]
+     },
+     "macro_f1": 0.9631193578102382,
+     "per_type": {
+      "none": {
+       "k": 45,
+       "n": 50,
+       "rate": 0.9,
+       "ci": [
+        0.7863976856252035,
+        0.9565242350681096
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 147,
+       "n": 150,
+       "rate": 0.98,
+       "ci": [
+        0.9428533167296139,
+        0.9931752486770326
+       ]
+      },
+      "label_noise": {
+       "k": 142,
+       "n": 150,
+       "rate": 0.9466666666666667,
+       "ci": [
+        0.8982961216180454,
+        0.9727304600798061
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 45,
+       "covariate": 0,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 5
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 0,
+       "concept": 147,
+       "label_noise": 3
+      },
+      "label_noise": {
+       "none": 7,
+       "covariate": 0,
+       "prior": 0,
+       "concept": 1,
+       "label_noise": 142
+      }
+     }
+    }
+   },
+   "paired_tests": {
+    "input_monitoring": {
+     "mean_difference": 0.64,
+     "ci_low": 0.6046153846153847,
+     "ci_high": 0.667730769230769,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "bbse_first": {
+     "mean_difference": 0.6384615384615385,
+     "ci_low": 0.6030769230769232,
+     "ci_high": 0.6676923076923077,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "error_rate_monitoring": {
+     "mean_difference": 0.42,
+     "ci_low": 0.3969230769230769,
+     "ci_high": 0.44,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "no_mmd": {
+     "mean_difference": -0.009230769230769232,
+     "ci_low": -0.027692307692307693,
+     "ci_high": 0.0,
+     "p_value": 1.0,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": false
+    },
+    "no_confidence_null": {
+     "mean_difference": 0.1523076923076923,
+     "ci_low": 0.13384615384615384,
+     "ci_high": 0.17076923076923073,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "class_confidence_null": {
+     "mean_difference": 0.012307692307692302,
+     "ci_low": 0.001538461538461533,
+     "ci_high": 0.02307692307692307,
+     "p_value": 0.0755924407559244,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": false
+    },
+    "meta_classifier": {
+     "mean_difference": -0.03230769230769231,
+     "ci_low": -0.07230769230769231,
+     "ci_high": -1.1102230246251566e-17,
+     "p_value": 0.1065893410658934,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": false
+    }
+   },
+   "meta_validation": "leave one state out"
+  },
+  "acs_income_B_lr": {
+   "n_windows": 750,
+   "n_replicates": 50,
+   "scores": {
+    "ours": {
+     "accuracy": {
+      "k": 468,
+      "n": 750,
+      "rate": 0.624,
+      "ci": [
+       0.5887847856530871,
+       0.6579514449211473
+      ]
+     },
+     "macro_f1": 0.7034624263352411,
+     "per_type": {
+      "covariate": {
+       "k": 149,
+       "n": 150,
+       "rate": 0.9933333333333333,
+       "ci": [
+        0.9632071602251817,
+        0.9988221986649826
+       ]
+      },
+      "prior": {
+       "k": 138,
+       "n": 150,
+       "rate": 0.92,
+       "ci": [
+        0.8653786362494686,
+        0.953646358481347
+       ]
+      },
+      "concept": {
+       "k": 149,
+       "n": 300,
+       "rate": 0.49666666666666665,
+       "ci": [
+        0.4404895596001963,
+        0.5529280602079671
+       ]
+      },
+      "label_noise": {
+       "k": 32,
+       "n": 150,
+       "rate": 0.21333333333333335,
+       "ci": [
+        0.15536236119471125,
+        0.28562057890965276
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 149,
+       "prior": 1,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 12,
+       "prior": 138,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 132,
+       "covariate": 12,
+       "prior": 0,
+       "concept": 149,
+       "label_noise": 7
+      },
+      "label_noise": {
+       "none": 76,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 36,
+       "label_noise": 32
+      }
+     }
+    },
+    "input_monitoring": {
+     "accuracy": {
+      "k": 150,
+      "n": 750,
+      "rate": 0.2,
+      "ci": [
+       0.1729337852459352,
+       0.23012372142930423
+      ]
+     },
+     "macro_f1": 0.15856236786469344,
+     "per_type": {
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "concept": {
+       "k": 0,
+       "n": 300,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.012642971224546034
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 4,
+       "covariate": 146,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 282,
+       "covariate": 18,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 141,
+       "covariate": 9,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      }
+     }
+    },
+    "bbse_first": {
+     "accuracy": {
+      "k": 208,
+      "n": 750,
+      "rate": 0.2773333333333333,
+      "ci": [
+       0.2464899785708037,
+       0.31044603749481836
+      ]
+     },
+     "macro_f1": 0.31964511468304135,
+     "per_type": {
+      "covariate": {
+       "k": 58,
+       "n": 150,
+       "rate": 0.38666666666666666,
+       "ci": [
+        0.31249116779192654,
+        0.4665020875981708
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 0,
+       "n": 300,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.012642971224546034
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 58,
+       "prior": 92,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 288,
+       "covariate": 12,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 144,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      }
+     }
+    },
+    "error_rate_monitoring": {
+     "accuracy": {
+      "k": 364,
+      "n": 750,
+      "rate": 0.48533333333333334,
+      "ci": [
+       0.44973076127811795,
+       0.5210853834926715
+      ]
+     },
+     "macro_f1": 0.4685000765151024,
+     "per_type": {
+      "covariate": {
+       "k": 58,
+       "n": 150,
+       "rate": 0.38666666666666666,
+       "ci": [
+        0.31249116779192654,
+        0.4665020875981708
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 156,
+       "n": 300,
+       "rate": 0.52,
+       "ci": [
+        0.4635710820137406,
+        0.5759231991372775
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 58,
+       "prior": 92,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 132,
+       "covariate": 12,
+       "prior": 0,
+       "concept": 156,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 76,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 68,
+       "label_noise": 0
+      }
+     }
+    },
+    "no_mmd": {
+     "accuracy": {
+      "k": 472,
+      "n": 750,
+      "rate": 0.6293333333333333,
+      "ci": [
+       0.5941901190370389,
+       0.6631584225296356
+      ]
+     },
+     "macro_f1": 0.713828153426559,
+     "per_type": {
+      "covariate": {
+       "k": 149,
+       "n": 150,
+       "rate": 0.9933333333333333,
+       "ci": [
+        0.9632071602251817,
+        0.9988221986649826
+       ]
+      },
+      "prior": {
+       "k": 138,
+       "n": 150,
+       "rate": 0.92,
+       "ci": [
+        0.8653786362494686,
+        0.953646358481347
+       ]
+      },
+      "concept": {
+       "k": 152,
+       "n": 300,
+       "rate": 0.5066666666666667,
+       "ci": [
+        0.45036683073695566,
+        0.5627979296467172
+       ]
+      },
+      "label_noise": {
+       "k": 33,
+       "n": 150,
+       "rate": 0.22,
+       "ci": [
+        0.16116023701753923,
+        0.29282309982858373
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 149,
+       "prior": 1,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 12,
+       "prior": 138,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 135,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 152,
+       "label_noise": 7
+      },
+      "label_noise": {
+       "none": 77,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 37,
+       "label_noise": 33
+      }
+     }
+    },
+    "no_confidence_null": {
+     "accuracy": {
+      "k": 472,
+      "n": 750,
+      "rate": 0.6293333333333333,
+      "ci": [
+       0.5941901190370389,
+       0.6631584225296356
+      ]
+     },
+     "macro_f1": 0.7108152872963496,
+     "per_type": {
+      "covariate": {
+       "k": 149,
+       "n": 150,
+       "rate": 0.9933333333333333,
+       "ci": [
+        0.9632071602251817,
+        0.9988221986649826
+       ]
+      },
+      "prior": {
+       "k": 138,
+       "n": 150,
+       "rate": 0.92,
+       "ci": [
+        0.8653786362494686,
+        0.953646358481347
+       ]
+      },
+      "concept": {
+       "k": 151,
+       "n": 300,
+       "rate": 0.5033333333333333,
+       "ci": [
+        0.44707193979203275,
+        0.5595104403998036
+       ]
+      },
+      "label_noise": {
+       "k": 34,
+       "n": 150,
+       "rate": 0.22666666666666666,
+       "ci": [
+        0.1669817942684841,
+        0.3000019393193978
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 149,
+       "prior": 1,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 12,
+       "prior": 138,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 132,
+       "covariate": 12,
+       "prior": 0,
+       "concept": 151,
+       "label_noise": 5
+      },
+      "label_noise": {
+       "none": 76,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 34,
+       "label_noise": 34
+      }
+     }
+    },
+    "class_confidence_null": {
+     "accuracy": {
+      "k": 492,
+      "n": 750,
+      "rate": 0.656,
+      "ci": [
+       0.6212848390640622,
+       0.6891252574648135
+      ]
+     },
+     "macro_f1": 0.7633630518149864,
+     "per_type": {
+      "covariate": {
+       "k": 149,
+       "n": 150,
+       "rate": 0.9933333333333333,
+       "ci": [
+        0.9632071602251817,
+        0.9988221986649826
+       ]
+      },
+      "prior": {
+       "k": 138,
+       "n": 150,
+       "rate": 0.92,
+       "ci": [
+        0.8653786362494686,
+        0.953646358481347
+       ]
+      },
+      "concept": {
+       "k": 141,
+       "n": 300,
+       "rate": 0.47,
+       "ci": [
+        0.4142588116594049,
+        0.5264997666140677
+       ]
+      },
+      "label_noise": {
+       "k": 64,
+       "n": 150,
+       "rate": 0.4266666666666667,
+       "ci": [
+        0.3503209045656491,
+        0.5066747312750022
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 149,
+       "prior": 1,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 12,
+       "prior": 138,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 132,
+       "covariate": 12,
+       "prior": 0,
+       "concept": 141,
+       "label_noise": 15
+      },
+      "label_noise": {
+       "none": 76,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 4,
+       "label_noise": 64
+      }
+     }
+    },
+    "meta_classifier": {
+     "accuracy": {
+      "k": 233,
+      "n": 750,
+      "rate": 0.31066666666666665,
+      "ci": [
+       0.278582717778615,
+       0.3446802419897582
+      ]
+     },
+     "macro_f1": 0.3429308544730516,
+     "per_type": {
+      "covariate": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "prior": {
+       "k": 20,
+       "n": 150,
+       "rate": 0.13333333333333333,
+       "ci": [
+        0.0879980047055142,
+        0.196980174497742
+       ]
+      },
+      "concept": {
+       "k": 140,
+       "n": 300,
+       "rate": 0.4666666666666667,
+       "ci": [
+        0.41099110566704244,
+        0.5231850924145939
+       ]
+      },
+      "label_noise": {
+       "k": 73,
+       "n": 150,
+       "rate": 0.4866666666666667,
+       "ci": [
+        0.40801711922387535,
+        0.5659820872926068
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 92,
+       "covariate": 0,
+       "prior": 52,
+       "concept": 0,
+       "label_noise": 6
+      },
+      "prior": {
+       "none": 129,
+       "covariate": 0,
+       "prior": 20,
+       "concept": 1,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 135,
+       "covariate": 0,
+       "prior": 0,
+       "concept": 140,
+       "label_noise": 25
+      },
+      "label_noise": {
+       "none": 64,
+       "covariate": 0,
+       "prior": 0,
+       "concept": 13,
+       "label_noise": 73
+      }
+     }
+    }
+   },
+   "paired_tests": {
+    "input_monitoring": {
+     "mean_difference": 0.424,
+     "ci_low": 0.4013333333333332,
+     "ci_high": 0.4453333333333332,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "bbse_first": {
+     "mean_difference": 0.34666666666666657,
+     "ci_low": 0.31599999999999995,
+     "ci_high": 0.3786666666666666,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "error_rate_monitoring": {
+     "mean_difference": 0.13866666666666663,
+     "ci_low": 0.10933333333333332,
+     "ci_high": 0.1666999999999998,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "no_mmd": {
+     "mean_difference": -0.005333333333333332,
+     "ci_low": -0.015999999999999997,
+     "ci_high": 0.0,
+     "p_value": 1.0,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": false
+    },
+    "no_confidence_null": {
+     "mean_difference": -0.005333333333333334,
+     "ci_low": -0.012,
+     "ci_high": 0.001333333333333331,
+     "p_value": 0.21947805219478053,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": false
+    },
+    "class_confidence_null": {
+     "mean_difference": -0.03200000000000001,
+     "ci_low": -0.044000000000000004,
+     "ci_high": -0.020000000000000004,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "meta_classifier": {
+     "mean_difference": 0.3133333333333333,
+     "ci_low": 0.2866666666666666,
+     "ci_high": 0.3386666666666666,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    }
+   },
+   "meta_validation": "trained on design A, state held out"
+  },
+  "acs_income_A_hgb": {
+   "n_windows": 650,
+   "n_replicates": 50,
+   "scores": {
+    "ours": {
+     "accuracy": {
+      "k": 612,
+      "n": 650,
+      "rate": 0.9415384615384615,
+      "ci": [
+       0.9207750250657101,
+       0.9571136316666105
+      ]
+     },
+     "macro_f1": 0.9414243380681869,
+     "per_type": {
+      "none": {
+       "k": 47,
+       "n": 50,
+       "rate": 0.94,
+       "ci": [
+        0.8378290831116182,
+        0.979385029651026
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 142,
+       "n": 150,
+       "rate": 0.9466666666666667,
+       "ci": [
+        0.8982961216180454,
+        0.9727304600798061
+       ]
+      },
+      "concept": {
+       "k": 144,
+       "n": 150,
+       "rate": 0.96,
+       "ci": [
+        0.915486535783444,
+        0.9815408393979256
+       ]
+      },
+      "label_noise": {
+       "k": 129,
+       "n": 150,
+       "rate": 0.86,
+       "ci": [
+        0.7954479122405028,
+        0.9065735118144821
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 47,
+       "covariate": 2,
+       "prior": 0,
+       "concept": 1,
+       "label_noise": 0
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 8,
+       "prior": 142,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 144,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 3,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 12,
+       "label_noise": 129
+      }
+     }
+    },
+    "input_monitoring": {
+     "accuracy": {
+      "k": 197,
+      "n": 650,
+      "rate": 0.3030769230769231,
+      "ci": [
+       0.2689874839817006,
+       0.33948029280667213
+      ]
+     },
+     "macro_f1": 0.17699275666773104,
+     "per_type": {
+      "none": {
+       "k": 47,
+       "n": 50,
+       "rate": 0.94,
+       "ci": [
+        0.8378290831116182,
+        0.979385029651026
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "concept": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 47,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 141,
+       "covariate": 9,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 141,
+       "covariate": 9,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      }
+     }
+    },
+    "bbse_first": {
+     "accuracy": {
+      "k": 198,
+      "n": 650,
+      "rate": 0.3046153846153846,
+      "ci": [
+       0.2704669348678638,
+       0.3410596874143498
+      ]
+     },
+     "macro_f1": 0.18307426597582038,
+     "per_type": {
+      "none": {
+       "k": 48,
+       "n": 50,
+       "rate": 0.96,
+       "ci": [
+        0.8653990931249297,
+        0.9889611156723802
+       ]
+      },
+      "covariate": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 48,
+       "covariate": 2,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 144,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 144,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      }
+     }
+    },
+    "error_rate_monitoring": {
+     "accuracy": {
+      "k": 341,
+      "n": 650,
+      "rate": 0.5246153846153846,
+      "ci": [
+       0.48619198853556117,
+       0.5627495393658922
+      ]
+     },
+     "macro_f1": 0.4534434250764526,
+     "per_type": {
+      "none": {
+       "k": 47,
+       "n": 50,
+       "rate": 0.94,
+       "ci": [
+        0.8378290831116182,
+        0.979385029651026
+       ]
+      },
+      "covariate": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 144,
+       "n": 150,
+       "rate": 0.96,
+       "ci": [
+        0.915486535783444,
+        0.9815408393979256
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 47,
+       "covariate": 2,
+       "prior": 0,
+       "concept": 1,
+       "label_noise": 0
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 144,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 3,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 141,
+       "label_noise": 0
+      }
+     }
+    },
+    "no_mmd": {
+     "accuracy": {
+      "k": 618,
+      "n": 650,
+      "rate": 0.9507692307692308,
+      "ci": [
+       0.9313275447996787,
+       0.9649141848956868
+      ]
+     },
+     "macro_f1": 0.9492465959387788,
+     "per_type": {
+      "none": {
+       "k": 47,
+       "n": 50,
+       "rate": 0.94,
+       "ci": [
+        0.8378290831116182,
+        0.979385029651026
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 142,
+       "n": 150,
+       "rate": 0.9466666666666667,
+       "ci": [
+        0.8982961216180454,
+        0.9727304600798061
+       ]
+      },
+      "concept": {
+       "k": 147,
+       "n": 150,
+       "rate": 0.98,
+       "ci": [
+        0.9428533167296139,
+        0.9931752486770326
+       ]
+      },
+      "label_noise": {
+       "k": 132,
+       "n": 150,
+       "rate": 0.88,
+       "ci": [
+        0.818291645158672,
+        0.9227309691215898
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 47,
+       "covariate": 1,
+       "prior": 0,
+       "concept": 1,
+       "label_noise": 1
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 8,
+       "prior": 142,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 147,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 3,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 12,
+       "label_noise": 132
+      }
+     }
+    },
+    "no_confidence_null": {
+     "accuracy": {
+      "k": 507,
+      "n": 650,
+      "rate": 0.78,
+      "ci": [
+       0.7465603958934214,
+       0.8101494839856113
+      ]
+     },
+     "macro_f1": 0.7638341907077355,
+     "per_type": {
+      "none": {
+       "k": 47,
+       "n": 50,
+       "rate": 0.94,
+       "ci": [
+        0.8378290831116182,
+        0.979385029651026
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 142,
+       "n": 150,
+       "rate": 0.9466666666666667,
+       "ci": [
+        0.8982961216180454,
+        0.9727304600798061
+       ]
+      },
+      "concept": {
+       "k": 144,
+       "n": 150,
+       "rate": 0.96,
+       "ci": [
+        0.915486535783444,
+        0.9815408393979256
+       ]
+      },
+      "label_noise": {
+       "k": 24,
+       "n": 150,
+       "rate": 0.16,
+       "ci": [
+        0.10994008412845499,
+        0.22703968204183714
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 47,
+       "covariate": 2,
+       "prior": 0,
+       "concept": 1,
+       "label_noise": 0
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 8,
+       "prior": 142,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 144,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 3,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 117,
+       "label_noise": 24
+      }
+     }
+    },
+    "class_confidence_null": {
+     "accuracy": {
+      "k": 604,
+      "n": 650,
+      "rate": 0.9292307692307692,
+      "ci": [
+       0.9068918008243164,
+       0.9465260919572772
+      ]
+     },
+     "macro_f1": 0.9306049293378462,
+     "per_type": {
+      "none": {
+       "k": 47,
+       "n": 50,
+       "rate": 0.94,
+       "ci": [
+        0.8378290831116182,
+        0.979385029651026
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 142,
+       "n": 150,
+       "rate": 0.9466666666666667,
+       "ci": [
+        0.8982961216180454,
+        0.9727304600798061
+       ]
+      },
+      "concept": {
+       "k": 135,
+       "n": 150,
+       "rate": 0.9,
+       "ci": [
+        0.8415651883318529,
+        0.9384586161736859
+       ]
+      },
+      "label_noise": {
+       "k": 130,
+       "n": 150,
+       "rate": 0.8666666666666667,
+       "ci": [
+        0.803019825502258,
+        0.9120019952944858
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 47,
+       "covariate": 2,
+       "prior": 0,
+       "concept": 1,
+       "label_noise": 0
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 8,
+       "prior": 142,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 135,
+       "label_noise": 9
+      },
+      "label_noise": {
+       "none": 3,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 11,
+       "label_noise": 130
+      }
+     }
+    },
+    "meta_classifier": {
+     "accuracy": {
+      "k": 640,
+      "n": 650,
+      "rate": 0.9846153846153847,
+      "ci": [
+       0.9719140295978262,
+       0.9916223009620379
+      ]
+     },
+     "macro_f1": 0.9757176046831508,
+     "per_type": {
+      "none": {
+       "k": 45,
+       "n": 50,
+       "rate": 0.9,
+       "ci": [
+        0.7863976856252035,
+        0.9565242350681096
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 149,
+       "n": 150,
+       "rate": 0.9933333333333333,
+       "ci": [
+        0.9632071602251817,
+        0.9988221986649826
+       ]
+      },
+      "concept": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "label_noise": {
+       "k": 146,
+       "n": 150,
+       "rate": 0.9733333333333334,
+       "ci": [
+        0.9334461094878556,
+        0.989582059177032
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 45,
+       "covariate": 0,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 5
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 149,
+       "concept": 0,
+       "label_noise": 1
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 0,
+       "concept": 150,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 3,
+       "covariate": 0,
+       "prior": 0,
+       "concept": 1,
+       "label_noise": 146
+      }
+     }
+    }
+   },
+   "paired_tests": {
+    "input_monitoring": {
+     "mean_difference": 0.6384615384615384,
+     "ci_low": 0.6030769230769232,
+     "ci_high": 0.6676923076923077,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "bbse_first": {
+     "mean_difference": 0.6369230769230769,
+     "ci_low": 0.6015384615384616,
+     "ci_high": 0.6661538461538461,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "error_rate_monitoring": {
+     "mean_difference": 0.41692307692307695,
+     "ci_low": 0.39230769230769236,
+     "ci_high": 0.43846153846153846,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "no_mmd": {
+     "mean_difference": -0.009230769230769232,
+     "ci_low": -0.027692307692307693,
+     "ci_high": 0.0,
+     "p_value": 1.0,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": false
+    },
+    "no_confidence_null": {
+     "mean_difference": 0.16153846153846152,
+     "ci_low": 0.14307692307692307,
+     "ci_high": 0.17846153846153842,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "class_confidence_null": {
+     "mean_difference": 0.012307692307692299,
+     "ci_low": 0.0045769230769230765,
+     "ci_high": 0.021538461538461524,
+     "p_value": 0.020897910208979104,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "meta_classifier": {
+     "mean_difference": -0.043076923076923075,
+     "ci_low": -0.07846153846153844,
+     "ci_high": -0.012307692307692311,
+     "p_value": 0.0045995400459954,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    }
+   },
+   "meta_validation": "leave one state out"
+  },
+  "acs_income_B_hgb": {
+   "n_windows": 750,
+   "n_replicates": 50,
+   "scores": {
+    "ours": {
+     "accuracy": {
+      "k": 474,
+      "n": 750,
+      "rate": 0.632,
+      "ci": [
+       0.5968944633657765,
+       0.6657602336971182
+      ]
+     },
+     "macro_f1": 0.7093437650251079,
+     "per_type": {
+      "covariate": {
+       "k": 149,
+       "n": 150,
+       "rate": 0.9933333333333333,
+       "ci": [
+        0.9632071602251817,
+        0.9988221986649826
+       ]
+      },
+      "prior": {
+       "k": 139,
+       "n": 150,
+       "rate": 0.9266666666666666,
+       "ci": [
+        0.8734642066329596,
+        0.9585611848396149
+       ]
+      },
+      "concept": {
+       "k": 152,
+       "n": 300,
+       "rate": 0.5066666666666667,
+       "ci": [
+        0.45036683073695566,
+        0.5627979296467172
+       ]
+      },
+      "label_noise": {
+       "k": 34,
+       "n": 150,
+       "rate": 0.22666666666666666,
+       "ci": [
+        0.1669817942684841,
+        0.3000019393193978
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 149,
+       "prior": 1,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 11,
+       "prior": 139,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 127,
+       "covariate": 12,
+       "prior": 0,
+       "concept": 152,
+       "label_noise": 9
+      },
+      "label_noise": {
+       "none": 70,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 40,
+       "label_noise": 34
+      }
+     }
+    },
+    "input_monitoring": {
+     "accuracy": {
+      "k": 150,
+      "n": 750,
+      "rate": 0.2,
+      "ci": [
+       0.1729337852459352,
+       0.23012372142930423
+      ]
+     },
+     "macro_f1": 0.15856236786469344,
+     "per_type": {
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "concept": {
+       "k": 0,
+       "n": 300,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.012642971224546034
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 4,
+       "covariate": 146,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 282,
+       "covariate": 18,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 141,
+       "covariate": 9,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      }
+     }
+    },
+    "bbse_first": {
+     "accuracy": {
+      "k": 211,
+      "n": 750,
+      "rate": 0.2813333333333333,
+      "ci": [
+       0.2503299598763322,
+       0.31456528943362005
+      ]
+     },
+     "macro_f1": 0.3259898294810341,
+     "per_type": {
+      "covariate": {
+       "k": 61,
+       "n": 150,
+       "rate": 0.4066666666666667,
+       "ci": [
+        0.33134109612869495,
+        0.4866533494866793
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 0,
+       "n": 300,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.012642971224546034
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 61,
+       "prior": 89,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 288,
+       "covariate": 12,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 144,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      }
+     }
+    },
+    "error_rate_monitoring": {
+     "accuracy": {
+      "k": 372,
+      "n": 750,
+      "rate": 0.496,
+      "ci": [
+       0.4603289278645915,
+       0.5317118388910783
+      ]
+     },
+     "macro_f1": 0.47645711920066025,
+     "per_type": {
+      "covariate": {
+       "k": 61,
+       "n": 150,
+       "rate": 0.4066666666666667,
+       "ci": [
+        0.33134109612869495,
+        0.4866533494866793
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 161,
+       "n": 300,
+       "rate": 0.5366666666666666,
+       "ci": [
+        0.4801320652390865,
+        0.5922741168711132
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 61,
+       "prior": 89,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 127,
+       "covariate": 12,
+       "prior": 0,
+       "concept": 161,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 70,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 74,
+       "label_noise": 0
+      }
+     }
+    },
+    "no_mmd": {
+     "accuracy": {
+      "k": 479,
+      "n": 750,
+      "rate": 0.6386666666666667,
+      "ci": [
+       0.6036602576289836,
+       0.6722598281744614
+      ]
+     },
+     "macro_f1": 0.7217551844707017,
+     "per_type": {
+      "covariate": {
+       "k": 149,
+       "n": 150,
+       "rate": 0.9933333333333333,
+       "ci": [
+        0.9632071602251817,
+        0.9988221986649826
+       ]
+      },
+      "prior": {
+       "k": 139,
+       "n": 150,
+       "rate": 0.9266666666666666,
+       "ci": [
+        0.8734642066329596,
+        0.9585611848396149
+       ]
+      },
+      "concept": {
+       "k": 155,
+       "n": 300,
+       "rate": 0.5166666666666667,
+       "ci": [
+        0.4602663137927717,
+        0.5726455871664101
+       ]
+      },
+      "label_noise": {
+       "k": 36,
+       "n": 150,
+       "rate": 0.24,
+       "ci": [
+        0.17869313331595332,
+        0.31429139375544646
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 149,
+       "prior": 1,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 11,
+       "prior": 139,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 130,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 155,
+       "label_noise": 9
+      },
+      "label_noise": {
+       "none": 70,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 41,
+       "label_noise": 36
+      }
+     }
+    },
+    "no_confidence_null": {
+     "accuracy": {
+      "k": 472,
+      "n": 750,
+      "rate": 0.6293333333333333,
+      "ci": [
+       0.5941901190370389,
+       0.6631584225296356
+      ]
+     },
+     "macro_f1": 0.7044051061092638,
+     "per_type": {
+      "covariate": {
+       "k": 149,
+       "n": 150,
+       "rate": 0.9933333333333333,
+       "ci": [
+        0.9632071602251817,
+        0.9988221986649826
+       ]
+      },
+      "prior": {
+       "k": 139,
+       "n": 150,
+       "rate": 0.9266666666666666,
+       "ci": [
+        0.8734642066329596,
+        0.9585611848396149
+       ]
+      },
+      "concept": {
+       "k": 152,
+       "n": 300,
+       "rate": 0.5066666666666667,
+       "ci": [
+        0.45036683073695566,
+        0.5627979296467172
+       ]
+      },
+      "label_noise": {
+       "k": 32,
+       "n": 150,
+       "rate": 0.21333333333333335,
+       "ci": [
+        0.15536236119471125,
+        0.28562057890965276
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 149,
+       "prior": 1,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 11,
+       "prior": 139,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 127,
+       "covariate": 12,
+       "prior": 0,
+       "concept": 152,
+       "label_noise": 9
+      },
+      "label_noise": {
+       "none": 70,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 42,
+       "label_noise": 32
+      }
+     }
+    },
+    "class_confidence_null": {
+     "accuracy": {
+      "k": 499,
+      "n": 750,
+      "rate": 0.6653333333333333,
+      "ci": [
+       0.6307954873488482,
+       0.6981861534167977
+      ]
+     },
+     "macro_f1": 0.7695969447336142,
+     "per_type": {
+      "covariate": {
+       "k": 149,
+       "n": 150,
+       "rate": 0.9933333333333333,
+       "ci": [
+        0.9632071602251817,
+        0.9988221986649826
+       ]
+      },
+      "prior": {
+       "k": 139,
+       "n": 150,
+       "rate": 0.9266666666666666,
+       "ci": [
+        0.8734642066329596,
+        0.9585611848396149
+       ]
+      },
+      "concept": {
+       "k": 144,
+       "n": 300,
+       "rate": 0.48,
+       "ci": [
+        0.42407680086272237,
+        0.5364289179862594
+       ]
+      },
+      "label_noise": {
+       "k": 67,
+       "n": 150,
+       "rate": 0.44666666666666666,
+       "ci": [
+        0.36942801041509465,
+        0.5265688156508335
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 149,
+       "prior": 1,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 11,
+       "prior": 139,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 127,
+       "covariate": 12,
+       "prior": 0,
+       "concept": 144,
+       "label_noise": 17
+      },
+      "label_noise": {
+       "none": 70,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 7,
+       "label_noise": 67
+      }
+     }
+    },
+    "meta_classifier": {
+     "accuracy": {
+      "k": 294,
+      "n": 750,
+      "rate": 0.392,
+      "ci": [
+       0.3576959960739343,
+       0.42740470632915184
+      ]
+     },
+     "macro_f1": 0.43502198214533416,
+     "per_type": {
+      "covariate": {
+       "k": 1,
+       "n": 150,
+       "rate": 0.006666666666666667,
+       "ci": [
+        0.0011778013350174366,
+        0.03679283977481815
+       ]
+      },
+      "prior": {
+       "k": 100,
+       "n": 150,
+       "rate": 0.6666666666666666,
+       "ci": [
+        0.5878975668678504,
+        0.7371123516761239
+       ]
+      },
+      "concept": {
+       "k": 141,
+       "n": 300,
+       "rate": 0.47,
+       "ci": [
+        0.4142588116594049,
+        0.5264997666140677
+       ]
+      },
+      "label_noise": {
+       "k": 52,
+       "n": 150,
+       "rate": 0.3466666666666667,
+       "ci": [
+        0.2751950896082086,
+        0.4257957853313349
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 98,
+       "covariate": 1,
+       "prior": 40,
+       "concept": 0,
+       "label_noise": 11
+      },
+      "prior": {
+       "none": 50,
+       "covariate": 0,
+       "prior": 100,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 132,
+       "covariate": 0,
+       "prior": 0,
+       "concept": 141,
+       "label_noise": 27
+      },
+      "label_noise": {
+       "none": 72,
+       "covariate": 0,
+       "prior": 0,
+       "concept": 26,
+       "label_noise": 52
+      }
+     }
+    }
+   },
+   "paired_tests": {
+    "input_monitoring": {
+     "mean_difference": 0.4319999999999999,
+     "ci_low": 0.4079666666666665,
+     "ci_high": 0.4533333333333333,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "bbse_first": {
+     "mean_difference": 0.35066666666666657,
+     "ci_low": 0.31866666666666665,
+     "ci_high": 0.38133333333333325,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "error_rate_monitoring": {
+     "mean_difference": 0.13599999999999998,
+     "ci_low": 0.10533333333333332,
+     "ci_high": 0.16533333333333328,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "no_mmd": {
+     "mean_difference": -0.006666666666666665,
+     "ci_low": -0.019999999999999997,
+     "ci_high": 0.0,
+     "p_value": 1.0,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": false
+    },
+    "no_confidence_null": {
+     "mean_difference": 0.002666666666666666,
+     "ci_low": -0.002666666666666666,
+     "ci_high": 0.007999999999999998,
+     "p_value": 0.6282371762823717,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": false
+    },
+    "class_confidence_null": {
+     "mean_difference": -0.03333333333333333,
+     "ci_low": -0.044000000000000004,
+     "ci_high": -0.02263333333333351,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "meta_classifier": {
+     "mean_difference": 0.24,
+     "ci_low": 0.21466666666666664,
+     "ci_high": 0.26399999999999996,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    }
+   },
+   "meta_validation": "trained on design A, state held out"
+  },
+  "acs_employment_A_lr": {
+   "n_windows": 650,
+   "n_replicates": 50,
+   "scores": {
+    "ours": {
+     "accuracy": {
+      "k": 557,
+      "n": 650,
+      "rate": 0.8569230769230769,
+      "ci": [
+       0.8279052030431485,
+       0.8817469515279258
+      ]
+     },
+     "macro_f1": 0.8445665118209537,
+     "per_type": {
+      "none": {
+       "k": 45,
+       "n": 50,
+       "rate": 0.9,
+       "ci": [
+        0.7863976856252035,
+        0.9565242350681096
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 143,
+       "n": 150,
+       "rate": 0.9533333333333334,
+       "ci": [
+        0.9068135276008725,
+        0.9772134508387381
+       ]
+      },
+      "concept": {
+       "k": 144,
+       "n": 150,
+       "rate": 0.96,
+       "ci": [
+        0.915486535783444,
+        0.9815408393979256
+       ]
+      },
+      "label_noise": {
+       "k": 75,
+       "n": 150,
+       "rate": 0.5,
+       "ci": [
+        0.42099012028854144,
+        0.5790098797114586
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 45,
+       "covariate": 1,
+       "prior": 1,
+       "concept": 0,
+       "label_noise": 3
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 7,
+       "prior": 143,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 144,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 13,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 56,
+       "label_noise": 75
+      }
+     }
+    },
+    "input_monitoring": {
+     "accuracy": {
+      "k": 198,
+      "n": 650,
+      "rate": 0.3046153846153846,
+      "ci": [
+       0.2704669348678638,
+       0.3410596874143498
+      ]
+     },
+     "macro_f1": 0.17905127747007327,
+     "per_type": {
+      "none": {
+       "k": 48,
+       "n": 50,
+       "rate": 0.96,
+       "ci": [
+        0.8653990931249297,
+        0.9889611156723802
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "concept": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 48,
+       "covariate": 2,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 144,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 144,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      }
+     }
+    },
+    "bbse_first": {
+     "accuracy": {
+      "k": 198,
+      "n": 650,
+      "rate": 0.3046153846153846,
+      "ci": [
+       0.2704669348678638,
+       0.3410596874143498
+      ]
+     },
+     "macro_f1": 0.18103196108887654,
+     "per_type": {
+      "none": {
+       "k": 48,
+       "n": 50,
+       "rate": 0.96,
+       "ci": [
+        0.8653990931249297,
+        0.9889611156723802
+       ]
+      },
+      "covariate": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 48,
+       "covariate": 1,
+       "prior": 1,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 144,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 144,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 0,
+       "label_noise": 0
+      }
+     }
+    },
+    "error_rate_monitoring": {
+     "accuracy": {
+      "k": 339,
+      "n": 650,
+      "rate": 0.5215384615384615,
+      "ci": [
+       0.4831223102676142,
+       0.5597015266461575
+      ]
+     },
+     "macro_f1": 0.43253713436539265,
+     "per_type": {
+      "none": {
+       "k": 45,
+       "n": 50,
+       "rate": 0.9,
+       "ci": [
+        0.7863976856252035,
+        0.9565242350681096
+       ]
+      },
+      "covariate": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 144,
+       "n": 150,
+       "rate": 0.96,
+       "ci": [
+        0.915486535783444,
+        0.9815408393979256
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 45,
+       "covariate": 1,
+       "prior": 1,
+       "concept": 3,
+       "label_noise": 0
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 144,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 13,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 131,
+       "label_noise": 0
+      }
+     }
+    },
+    "no_mmd": {
+     "accuracy": {
+      "k": 563,
+      "n": 650,
+      "rate": 0.8661538461538462,
+      "ci": [
+       0.837815796208958,
+       0.8901894313251614
+      ]
+     },
+     "macro_f1": 0.8549284839234039,
+     "per_type": {
+      "none": {
+       "k": 46,
+       "n": 50,
+       "rate": 0.92,
+       "ci": [
+        0.8116175308165717,
+        0.968450485911407
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 143,
+       "n": 150,
+       "rate": 0.9533333333333334,
+       "ci": [
+        0.9068135276008725,
+        0.9772134508387381
+       ]
+      },
+      "concept": {
+       "k": 147,
+       "n": 150,
+       "rate": 0.98,
+       "ci": [
+        0.9428533167296139,
+        0.9931752486770326
+       ]
+      },
+      "label_noise": {
+       "k": 77,
+       "n": 150,
+       "rate": 0.5133333333333333,
+       "ci": [
+        0.4340179127073932,
+        0.5919828807761246
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 46,
+       "covariate": 0,
+       "prior": 1,
+       "concept": 0,
+       "label_noise": 3
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 7,
+       "prior": 143,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 3,
+       "concept": 147,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 13,
+       "covariate": 0,
+       "prior": 3,
+       "concept": 57,
+       "label_noise": 77
+      }
+     }
+    },
+    "no_confidence_null": {
+     "accuracy": {
+      "k": 544,
+      "n": 650,
+      "rate": 0.8369230769230769,
+      "ci": [
+       0.8065572404230674,
+       0.863329922728076
+      ]
+     },
+     "macro_f1": 0.8224426590408196,
+     "per_type": {
+      "none": {
+       "k": 45,
+       "n": 50,
+       "rate": 0.9,
+       "ci": [
+        0.7863976856252035,
+        0.9565242350681096
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 143,
+       "n": 150,
+       "rate": 0.9533333333333334,
+       "ci": [
+        0.9068135276008725,
+        0.9772134508387381
+       ]
+      },
+      "concept": {
+       "k": 144,
+       "n": 150,
+       "rate": 0.96,
+       "ci": [
+        0.915486535783444,
+        0.9815408393979256
+       ]
+      },
+      "label_noise": {
+       "k": 62,
+       "n": 150,
+       "rate": 0.41333333333333333,
+       "ci": [
+        0.3376534099233595,
+        0.49334143243377376
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 45,
+       "covariate": 1,
+       "prior": 1,
+       "concept": 0,
+       "label_noise": 3
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 7,
+       "prior": 143,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 144,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 13,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 69,
+       "label_noise": 62
+      }
+     }
+    },
+    "class_confidence_null": {
+     "accuracy": {
+      "k": 560,
+      "n": 650,
+      "rate": 0.8615384615384616,
+      "ci": [
+       0.8328556207997911,
+       0.8859730702528058
+      ]
+     },
+     "macro_f1": 0.8494753072572783,
+     "per_type": {
+      "none": {
+       "k": 45,
+       "n": 50,
+       "rate": 0.9,
+       "ci": [
+        0.7863976856252035,
+        0.9565242350681096
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 143,
+       "n": 150,
+       "rate": 0.9533333333333334,
+       "ci": [
+        0.9068135276008725,
+        0.9772134508387381
+       ]
+      },
+      "concept": {
+       "k": 144,
+       "n": 150,
+       "rate": 0.96,
+       "ci": [
+        0.915486535783444,
+        0.9815408393979256
+       ]
+      },
+      "label_noise": {
+       "k": 78,
+       "n": 150,
+       "rate": 0.52,
+       "ci": [
+        0.4405523690431856,
+        0.5984488211820913
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 45,
+       "covariate": 1,
+       "prior": 1,
+       "concept": 0,
+       "label_noise": 3
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 7,
+       "prior": 143,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 144,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 13,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 53,
+       "label_noise": 78
+      }
+     }
+    },
+    "meta_classifier": {
+     "accuracy": {
+      "k": 623,
+      "n": 650,
+      "rate": 0.9584615384615385,
+      "ci": [
+       0.9402384813568704,
+       0.9712974758076994
+      ]
+     },
+     "macro_f1": 0.9311557812669395,
+     "per_type": {
+      "none": {
+       "k": 36,
+       "n": 50,
+       "rate": 0.72,
+       "ci": [
+        0.5833487630404344,
+        0.8252582933408878
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 149,
+       "n": 150,
+       "rate": 0.9933333333333333,
+       "ci": [
+        0.9632071602251817,
+        0.9988221986649826
+       ]
+      },
+      "concept": {
+       "k": 149,
+       "n": 150,
+       "rate": 0.9933333333333333,
+       "ci": [
+        0.9632071602251817,
+        0.9988221986649826
+       ]
+      },
+      "label_noise": {
+       "k": 139,
+       "n": 150,
+       "rate": 0.9266666666666666,
+       "ci": [
+        0.8734642066329596,
+        0.9585611848396149
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 36,
+       "covariate": 0,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 14
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 1,
+       "covariate": 0,
+       "prior": 149,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 0,
+       "concept": 149,
+       "label_noise": 1
+      },
+      "label_noise": {
+       "none": 8,
+       "covariate": 0,
+       "prior": 0,
+       "concept": 3,
+       "label_noise": 139
+      }
+     }
+    }
+   },
+   "paired_tests": {
+    "input_monitoring": {
+     "mean_difference": 0.5523076923076924,
+     "ci_low": 0.52,
+     "ci_high": 0.5800000000000001,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "bbse_first": {
+     "mean_difference": 0.5523076923076924,
+     "ci_low": 0.5230769230769231,
+     "ci_high": 0.5784615384615385,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "error_rate_monitoring": {
+     "mean_difference": 0.33538461538461534,
+     "ci_low": 0.3123076923076924,
+     "ci_high": 0.35692307692307695,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "no_mmd": {
+     "mean_difference": -0.009230769230769232,
+     "ci_low": -0.027692307692307693,
+     "ci_high": 0.0,
+     "p_value": 1.0,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": false
+    },
+    "no_confidence_null": {
+     "mean_difference": 0.02,
+     "ci_low": 0.010769230769230769,
+     "ci_high": 0.030769230769230774,
+     "p_value": 0.0004999500049995,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "class_confidence_null": {
+     "mean_difference": -0.004615384615384615,
+     "ci_low": -0.012307692307692311,
+     "ci_high": 0.0030769230769230795,
+     "p_value": 0.45285471452854714,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": false
+    },
+    "meta_classifier": {
+     "mean_difference": -0.10153846153846154,
+     "ci_low": -0.13538461538461538,
+     "ci_high": -0.0723076923076923,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    }
+   },
+   "meta_validation": "leave one state out"
+  },
+  "acs_employment_B_lr": {
+   "n_windows": 600,
+   "n_replicates": 50,
+   "scores": {
+    "ours": {
+     "accuracy": {
+      "k": 483,
+      "n": 600,
+      "rate": 0.805,
+      "ci": [
+       0.7713990928560017,
+       0.834720269525641
+      ]
+     },
+     "macro_f1": 0.7928136933722877,
+     "per_type": {
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 145,
+       "n": 150,
+       "rate": 0.9666666666666667,
+       "ci": [
+        0.9243482038212211,
+        0.9856795681019074
+       ]
+      },
+      "concept": {
+       "k": 136,
+       "n": 150,
+       "rate": 0.9066666666666666,
+       "ci": [
+        0.8494360687243842,
+        0.9435881325229135
+       ]
+      },
+      "label_noise": {
+       "k": 52,
+       "n": 150,
+       "rate": 0.3466666666666667,
+       "ci": [
+        0.2751950896082086,
+        0.4257957853313349
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 5,
+       "prior": 145,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 2,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 136,
+       "label_noise": 6
+      },
+      "label_noise": {
+       "none": 12,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 80,
+       "label_noise": 52
+      }
+     }
+    },
+    "input_monitoring": {
+     "accuracy": {
+      "k": 150,
+      "n": 600,
+      "rate": 0.25,
+      "ci": [
+       0.21701661446323872,
+       0.28616423604361174
+      ]
+     },
+     "macro_f1": 0.16741071428571427,
+     "per_type": {
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "concept": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 14,
+       "covariate": 136,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 144,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 144,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      }
+     }
+    },
+    "bbse_first": {
+     "accuracy": {
+      "k": 235,
+      "n": 600,
+      "rate": 0.39166666666666666,
+      "ci": [
+       0.35341694240118393,
+       0.431294759485118
+      ]
+     },
+     "macro_f1": 0.37850488194964826,
+     "per_type": {
+      "covariate": {
+       "k": 85,
+       "n": 150,
+       "rate": 0.5666666666666667,
+       "ci": [
+        0.4866798706275503,
+        0.6433240967900394
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 85,
+       "prior": 65,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 144,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 144,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 0,
+       "label_noise": 0
+      }
+     }
+    },
+    "error_rate_monitoring": {
+     "accuracy": {
+      "k": 377,
+      "n": 600,
+      "rate": 0.6283333333333333,
+      "ci": [
+       0.5889641186290101,
+       0.66606971144414
+      ]
+     },
+     "macro_f1": 0.5459577121383274,
+     "per_type": {
+      "covariate": {
+       "k": 85,
+       "n": 150,
+       "rate": 0.5666666666666667,
+       "ci": [
+        0.4866798706275503,
+        0.6433240967900394
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 142,
+       "n": 150,
+       "rate": 0.9466666666666667,
+       "ci": [
+        0.8982961216180454,
+        0.9727304600798061
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 85,
+       "prior": 65,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 2,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 142,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 12,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 132,
+       "label_noise": 0
+      }
+     }
+    },
+    "no_mmd": {
+     "accuracy": {
+      "k": 488,
+      "n": 600,
+      "rate": 0.8133333333333334,
+      "ci": [
+       0.7801980517683933,
+       0.8424819489296878
+      ]
+     },
+     "macro_f1": 0.803174693128944,
+     "per_type": {
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 145,
+       "n": 150,
+       "rate": 0.9666666666666667,
+       "ci": [
+        0.9243482038212211,
+        0.9856795681019074
+       ]
+      },
+      "concept": {
+       "k": 139,
+       "n": 150,
+       "rate": 0.9266666666666666,
+       "ci": [
+        0.8734642066329596,
+        0.9585611848396149
+       ]
+      },
+      "label_noise": {
+       "k": 54,
+       "n": 150,
+       "rate": 0.36,
+       "ci": [
+        0.28756583250443635,
+        0.43942583591862505
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 5,
+       "prior": 145,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 2,
+       "covariate": 0,
+       "prior": 3,
+       "concept": 139,
+       "label_noise": 6
+      },
+      "label_noise": {
+       "none": 12,
+       "covariate": 0,
+       "prior": 3,
+       "concept": 81,
+       "label_noise": 54
+      }
+     }
+    },
+    "no_confidence_null": {
+     "accuracy": {
+      "k": 484,
+      "n": 600,
+      "rate": 0.8066666666666666,
+      "ci": [
+       0.7731570899317954,
+       0.8362744001131348
+      ]
+     },
+     "macro_f1": 0.79340345746665,
+     "per_type": {
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 145,
+       "n": 150,
+       "rate": 0.9666666666666667,
+       "ci": [
+        0.9243482038212211,
+        0.9856795681019074
+       ]
+      },
+      "concept": {
+       "k": 138,
+       "n": 150,
+       "rate": 0.92,
+       "ci": [
+        0.8653786362494686,
+        0.953646358481347
+       ]
+      },
+      "label_noise": {
+       "k": 51,
+       "n": 150,
+       "rate": 0.34,
+       "ci": [
+        0.2690333503042941,
+        0.4189571278934905
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 5,
+       "prior": 145,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 2,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 138,
+       "label_noise": 4
+      },
+      "label_noise": {
+       "none": 12,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 81,
+       "label_noise": 51
+      }
+     }
+    },
+    "class_confidence_null": {
+     "accuracy": {
+      "k": 551,
+      "n": 600,
+      "rate": 0.9183333333333333,
+      "ci": [
+       0.8936676475406663,
+       0.9376763959445374
+      ]
+     },
+     "macro_f1": 0.9278461760558877,
+     "per_type": {
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 145,
+       "n": 150,
+       "rate": 0.9666666666666667,
+       "ci": [
+        0.9243482038212211,
+        0.9856795681019074
+       ]
+      },
+      "concept": {
+       "k": 133,
+       "n": 150,
+       "rate": 0.8866666666666667,
+       "ci": [
+        0.825997250162395,
+        0.928025760859626
+       ]
+      },
+      "label_noise": {
+       "k": 123,
+       "n": 150,
+       "rate": 0.82,
+       "ci": [
+        0.7507767216820398,
+        0.873242321922391
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 5,
+       "prior": 145,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 2,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 133,
+       "label_noise": 9
+      },
+      "label_noise": {
+       "none": 12,
+       "covariate": 3,
+       "prior": 3,
+       "concept": 9,
+       "label_noise": 123
+      }
+     }
+    },
+    "meta_classifier": {
+     "accuracy": {
+      "k": 289,
+      "n": 600,
+      "rate": 0.4816666666666667,
+      "ci": [
+       0.44192980844556506,
+       0.5216367872582708
+      ]
+     },
+     "macro_f1": 0.39065072675491574,
+     "per_type": {
+      "covariate": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "prior": {
+       "k": 123,
+       "n": 150,
+       "rate": 0.82,
+       "ci": [
+        0.7507767216820398,
+        0.873242321922391
+       ]
+      },
+      "concept": {
+       "k": 25,
+       "n": 150,
+       "rate": 0.16666666666666666,
+       "ci": [
+        0.115514298743043,
+        0.23446586416900808
+       ]
+      },
+      "label_noise": {
+       "k": 141,
+       "n": 150,
+       "rate": 0.94,
+       "ci": [
+        0.8899102291652979,
+        0.9681159557907947
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 23,
+       "covariate": 0,
+       "prior": 125,
+       "concept": 0,
+       "label_noise": 2
+      },
+      "prior": {
+       "none": 18,
+       "covariate": 0,
+       "prior": 123,
+       "concept": 0,
+       "label_noise": 9
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 0,
+       "concept": 25,
+       "label_noise": 125
+      },
+      "label_noise": {
+       "none": 8,
+       "covariate": 0,
+       "prior": 0,
+       "concept": 1,
+       "label_noise": 141
+      }
+     }
+    }
+   },
+   "paired_tests": {
+    "input_monitoring": {
+     "mean_difference": 0.555,
+     "ci_low": 0.5266666666666666,
+     "ci_high": 0.58,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "bbse_first": {
+     "mean_difference": 0.41333333333333333,
+     "ci_low": 0.37666666666666665,
+     "ci_high": 0.45,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "error_rate_monitoring": {
+     "mean_difference": 0.17666666666666667,
+     "ci_low": 0.1416666666666667,
+     "ci_high": 0.21166666666666667,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "no_mmd": {
+     "mean_difference": -0.008333333333333333,
+     "ci_low": -0.025,
+     "ci_high": 0.0,
+     "p_value": 1.0,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": false
+    },
+    "no_confidence_null": {
+     "mean_difference": -0.0016666666666666653,
+     "ci_low": -0.015000000000000003,
+     "ci_high": 0.011666666666666664,
+     "p_value": 1.0,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": false
+    },
+    "class_confidence_null": {
+     "mean_difference": -0.11333333333333333,
+     "ci_low": -0.12833333333333333,
+     "ci_high": -0.09833333333333333,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "meta_classifier": {
+     "mean_difference": 0.32333333333333336,
+     "ci_low": 0.28500000000000003,
+     "ci_high": 0.36,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    }
+   },
+   "meta_validation": "trained on design A, state held out"
+  },
+  "acs_employment_A_hgb": {
+   "n_windows": 650,
+   "n_replicates": 50,
+   "scores": {
+    "ours": {
+     "accuracy": {
+      "k": 588,
+      "n": 650,
+      "rate": 0.9046153846153846,
+      "ci": [
+       0.8795974637425362,
+       0.9248789011376041
+      ]
+     },
+     "macro_f1": 0.9006288357481305,
+     "per_type": {
+      "none": {
+       "k": 48,
+       "n": 50,
+       "rate": 0.96,
+       "ci": [
+        0.8653990931249297,
+        0.9889611156723802
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 143,
+       "n": 150,
+       "rate": 0.9533333333333334,
+       "ci": [
+        0.9068135276008725,
+        0.9772134508387381
+       ]
+      },
+      "concept": {
+       "k": 147,
+       "n": 150,
+       "rate": 0.98,
+       "ci": [
+        0.9428533167296139,
+        0.9931752486770326
+       ]
+      },
+      "label_noise": {
+       "k": 100,
+       "n": 150,
+       "rate": 0.6666666666666666,
+       "ci": [
+        0.5878975668678504,
+        0.7371123516761239
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 48,
+       "covariate": 1,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 1
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 7,
+       "prior": 143,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 147,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 9,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 38,
+       "label_noise": 100
+      }
+     }
+    },
+    "input_monitoring": {
+     "accuracy": {
+      "k": 198,
+      "n": 650,
+      "rate": 0.3046153846153846,
+      "ci": [
+       0.2704669348678638,
+       0.3410596874143498
+      ]
+     },
+     "macro_f1": 0.17905127747007327,
+     "per_type": {
+      "none": {
+       "k": 48,
+       "n": 50,
+       "rate": 0.96,
+       "ci": [
+        0.8653990931249297,
+        0.9889611156723802
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "concept": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 48,
+       "covariate": 2,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 144,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 144,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      }
+     }
+    },
+    "bbse_first": {
+     "accuracy": {
+      "k": 199,
+      "n": 650,
+      "rate": 0.30615384615384617,
+      "ci": [
+       0.2719468475111173,
+       0.3426386202649372
+      ]
+     },
+     "macro_f1": 0.183206106870229,
+     "per_type": {
+      "none": {
+       "k": 49,
+       "n": 50,
+       "rate": 0.98,
+       "ci": [
+        0.8950455641036219,
+        0.9964607407283539
+       ]
+      },
+      "covariate": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 49,
+       "covariate": 1,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 147,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 147,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      }
+     }
+    },
+    "error_rate_monitoring": {
+     "accuracy": {
+      "k": 345,
+      "n": 650,
+      "rate": 0.5307692307692308,
+      "ci": [
+       0.4923356906974171,
+       0.5688412191793996
+      ]
+     },
+     "macro_f1": 0.44763497099088284,
+     "per_type": {
+      "none": {
+       "k": 48,
+       "n": 50,
+       "rate": 0.96,
+       "ci": [
+        0.8653990931249297,
+        0.9889611156723802
+       ]
+      },
+      "covariate": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 147,
+       "n": 150,
+       "rate": 0.98,
+       "ci": [
+        0.9428533167296139,
+        0.9931752486770326
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 48,
+       "covariate": 1,
+       "prior": 0,
+       "concept": 1,
+       "label_noise": 0
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 147,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 9,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 138,
+       "label_noise": 0
+      }
+     }
+    },
+    "no_mmd": {
+     "accuracy": {
+      "k": 588,
+      "n": 650,
+      "rate": 0.9046153846153846,
+      "ci": [
+       0.8795974637425362,
+       0.9248789011376041
+      ]
+     },
+     "macro_f1": 0.9004305962772945,
+     "per_type": {
+      "none": {
+       "k": 48,
+       "n": 50,
+       "rate": 0.96,
+       "ci": [
+        0.8653990931249297,
+        0.9889611156723802
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 143,
+       "n": 150,
+       "rate": 0.9533333333333334,
+       "ci": [
+        0.9068135276008725,
+        0.9772134508387381
+       ]
+      },
+      "concept": {
+       "k": 147,
+       "n": 150,
+       "rate": 0.98,
+       "ci": [
+        0.9428533167296139,
+        0.9931752486770326
+       ]
+      },
+      "label_noise": {
+       "k": 100,
+       "n": 150,
+       "rate": 0.6666666666666666,
+       "ci": [
+        0.5878975668678504,
+        0.7371123516761239
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 48,
+       "covariate": 0,
+       "prior": 1,
+       "concept": 0,
+       "label_noise": 1
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 7,
+       "prior": 143,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 3,
+       "concept": 147,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 9,
+       "covariate": 0,
+       "prior": 3,
+       "concept": 38,
+       "label_noise": 100
+      }
+     }
+    },
+    "no_confidence_null": {
+     "accuracy": {
+      "k": 555,
+      "n": 650,
+      "rate": 0.8538461538461538,
+      "ci": [
+       0.8246101522501715,
+       0.8789243113332211
+      ]
+     },
+     "macro_f1": 0.848462286399798,
+     "per_type": {
+      "none": {
+       "k": 48,
+       "n": 50,
+       "rate": 0.96,
+       "ci": [
+        0.8653990931249297,
+        0.9889611156723802
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 143,
+       "n": 150,
+       "rate": 0.9533333333333334,
+       "ci": [
+        0.9068135276008725,
+        0.9772134508387381
+       ]
+      },
+      "concept": {
+       "k": 147,
+       "n": 150,
+       "rate": 0.98,
+       "ci": [
+        0.9428533167296139,
+        0.9931752486770326
+       ]
+      },
+      "label_noise": {
+       "k": 67,
+       "n": 150,
+       "rate": 0.44666666666666666,
+       "ci": [
+        0.36942801041509465,
+        0.5265688156508335
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 48,
+       "covariate": 1,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 1
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 7,
+       "prior": 143,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 147,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 9,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 71,
+       "label_noise": 67
+      }
+     }
+    },
+    "class_confidence_null": {
+     "accuracy": {
+      "k": 589,
+      "n": 650,
+      "rate": 0.9061538461538462,
+      "ci": [
+       0.8812883519777408,
+       0.9262468583962404
+      ]
+     },
+     "macro_f1": 0.9021092623967093,
+     "per_type": {
+      "none": {
+       "k": 48,
+       "n": 50,
+       "rate": 0.96,
+       "ci": [
+        0.8653990931249297,
+        0.9889611156723802
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 143,
+       "n": 150,
+       "rate": 0.9533333333333334,
+       "ci": [
+        0.9068135276008725,
+        0.9772134508387381
+       ]
+      },
+      "concept": {
+       "k": 147,
+       "n": 150,
+       "rate": 0.98,
+       "ci": [
+        0.9428533167296139,
+        0.9931752486770326
+       ]
+      },
+      "label_noise": {
+       "k": 101,
+       "n": 150,
+       "rate": 0.6733333333333333,
+       "ci": [
+        0.5947685286976767,
+        0.7432417865880567
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 48,
+       "covariate": 1,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 1
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 7,
+       "prior": 143,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 147,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 9,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 37,
+       "label_noise": 101
+      }
+     }
+    },
+    "meta_classifier": {
+     "accuracy": {
+      "k": 633,
+      "n": 650,
+      "rate": 0.9738461538461538,
+      "ci": [
+       0.9585166476444296,
+       0.9836077644585484
+      ]
+     },
+     "macro_f1": 0.957067940485534,
+     "per_type": {
+      "none": {
+       "k": 42,
+       "n": 50,
+       "rate": 0.84,
+       "ci": [
+        0.7148578393696501,
+        0.916625793219666
+       ]
+      },
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 149,
+       "n": 150,
+       "rate": 0.9933333333333333,
+       "ci": [
+        0.9632071602251817,
+        0.9988221986649826
+       ]
+      },
+      "label_noise": {
+       "k": 142,
+       "n": 150,
+       "rate": 0.9466666666666667,
+       "ci": [
+        0.8982961216180454,
+        0.9727304600798061
+       ]
+      }
+     },
+     "confusion": {
+      "none": {
+       "none": 42,
+       "covariate": 0,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 8
+      },
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 0,
+       "concept": 149,
+       "label_noise": 1
+      },
+      "label_noise": {
+       "none": 7,
+       "covariate": 1,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 142
+      }
+     }
+    }
+   },
+   "paired_tests": {
+    "input_monitoring": {
+     "mean_difference": 0.6000000000000001,
+     "ci_low": 0.5738461538461539,
+     "ci_high": 0.6230769230769231,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "bbse_first": {
+     "mean_difference": 0.5984615384615385,
+     "ci_low": 0.5738461538461539,
+     "ci_high": 0.6215384615384616,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "error_rate_monitoring": {
+     "mean_difference": 0.3738461538461539,
+     "ci_low": 0.35230769230769227,
+     "ci_high": 0.39384615384615385,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "no_mmd": {
+     "mean_difference": 0.0,
+     "ci_low": -0.027692307692307693,
+     "ci_high": 0.027692307692307693,
+     "p_value": 1.0,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": false
+    },
+    "no_confidence_null": {
+     "mean_difference": 0.05076923076923077,
+     "ci_low": 0.03538461538461539,
+     "ci_high": 0.06615384615384616,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "class_confidence_null": {
+     "mean_difference": -0.001538461538461542,
+     "ci_low": -0.009230769230769239,
+     "ci_high": 0.004615384615384615,
+     "p_value": 1.0,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": false
+    },
+    "meta_classifier": {
+     "mean_difference": -0.06923076923076922,
+     "ci_low": -0.09846153846153843,
+     "ci_high": -0.04307692307692307,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    }
+   },
+   "meta_validation": "leave one state out"
+  },
+  "acs_employment_B_hgb": {
+   "n_windows": 600,
+   "n_replicates": 50,
+   "scores": {
+    "ours": {
+     "accuracy": {
+      "k": 489,
+      "n": 600,
+      "rate": 0.815,
+      "ci": [
+       0.7819605807929769,
+       0.8440315475683916
+      ]
+     },
+     "macro_f1": 0.8011185077058771,
+     "per_type": {
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 145,
+       "n": 150,
+       "rate": 0.9666666666666667,
+       "ci": [
+        0.9243482038212211,
+        0.9856795681019074
+       ]
+      },
+      "concept": {
+       "k": 145,
+       "n": 150,
+       "rate": 0.9666666666666667,
+       "ci": [
+        0.9243482038212211,
+        0.9856795681019074
+       ]
+      },
+      "label_noise": {
+       "k": 49,
+       "n": 150,
+       "rate": 0.32666666666666666,
+       "ci": [
+        0.2567582134119433,
+        0.40523147130232323
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 5,
+       "prior": 145,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 145,
+       "label_noise": 2
+      },
+      "label_noise": {
+       "none": 16,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 82,
+       "label_noise": 49
+      }
+     }
+    },
+    "input_monitoring": {
+     "accuracy": {
+      "k": 150,
+      "n": 600,
+      "rate": 0.25,
+      "ci": [
+       0.21701661446323872,
+       0.28616423604361174
+      ]
+     },
+     "macro_f1": 0.16741071428571427,
+     "per_type": {
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "concept": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 14,
+       "covariate": 136,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 144,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 144,
+       "covariate": 6,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      }
+     }
+    },
+    "bbse_first": {
+     "accuracy": {
+      "k": 242,
+      "n": 600,
+      "rate": 0.4033333333333333,
+      "ci": [
+       0.36481574260936184,
+       0.44308085291995375
+      ]
+     },
+     "macro_f1": 0.3949810776716526,
+     "per_type": {
+      "covariate": {
+       "k": 92,
+       "n": 150,
+       "rate": 0.6133333333333333,
+       "ci": [
+        0.5334979124018292,
+        0.6875088322080735
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 92,
+       "prior": 58,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 147,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 147,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      }
+     }
+    },
+    "error_rate_monitoring": {
+     "accuracy": {
+      "k": 389,
+      "n": 600,
+      "rate": 0.6483333333333333,
+      "ci": [
+       0.6092932160959504,
+       0.6854861459366516
+      ]
+     },
+     "macro_f1": 0.5667100496342694,
+     "per_type": {
+      "covariate": {
+       "k": 92,
+       "n": 150,
+       "rate": 0.6133333333333333,
+       "ci": [
+        0.5334979124018292,
+        0.6875088322080735
+       ]
+      },
+      "prior": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "concept": {
+       "k": 147,
+       "n": 150,
+       "rate": 0.98,
+       "ci": [
+        0.9428533167296139,
+        0.9931752486770326
+       ]
+      },
+      "label_noise": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 92,
+       "prior": 58,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 150,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 147,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 16,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 131,
+       "label_noise": 0
+      }
+     }
+    },
+    "no_mmd": {
+     "accuracy": {
+      "k": 488,
+      "n": 600,
+      "rate": 0.8133333333333334,
+      "ci": [
+       0.7801980517683933,
+       0.8424819489296878
+      ]
+     },
+     "macro_f1": 0.7985643685186193,
+     "per_type": {
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 145,
+       "n": 150,
+       "rate": 0.9666666666666667,
+       "ci": [
+        0.9243482038212211,
+        0.9856795681019074
+       ]
+      },
+      "concept": {
+       "k": 145,
+       "n": 150,
+       "rate": 0.9666666666666667,
+       "ci": [
+        0.9243482038212211,
+        0.9856795681019074
+       ]
+      },
+      "label_noise": {
+       "k": 48,
+       "n": 150,
+       "rate": 0.32,
+       "ci": [
+        0.25064529057637863,
+        0.3983439973961289
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 5,
+       "prior": 145,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 3,
+       "concept": 145,
+       "label_noise": 2
+      },
+      "label_noise": {
+       "none": 16,
+       "covariate": 0,
+       "prior": 3,
+       "concept": 83,
+       "label_noise": 48
+      }
+     }
+    },
+    "no_confidence_null": {
+     "accuracy": {
+      "k": 492,
+      "n": 600,
+      "rate": 0.82,
+      "ci": [
+       0.7872538124261853,
+       0.8486746989250461
+      ]
+     },
+     "macro_f1": 0.8063647125789477,
+     "per_type": {
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 145,
+       "n": 150,
+       "rate": 0.9666666666666667,
+       "ci": [
+        0.9243482038212211,
+        0.9856795681019074
+       ]
+      },
+      "concept": {
+       "k": 147,
+       "n": 150,
+       "rate": 0.98,
+       "ci": [
+        0.9428533167296139,
+        0.9931752486770326
+       ]
+      },
+      "label_noise": {
+       "k": 50,
+       "n": 150,
+       "rate": 0.3333333333333333,
+       "ci": [
+        0.262887648323876,
+        0.41210243313214945
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 5,
+       "prior": 145,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 147,
+       "label_noise": 0
+      },
+      "label_noise": {
+       "none": 16,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 81,
+       "label_noise": 50
+      }
+     }
+    },
+    "class_confidence_null": {
+     "accuracy": {
+      "k": 562,
+      "n": 600,
+      "rate": 0.9366666666666666,
+      "ci": [
+       0.9142645753151987,
+       0.9535128724661693
+      ]
+     },
+     "macro_f1": 0.9482751842016495,
+     "per_type": {
+      "covariate": {
+       "k": 150,
+       "n": 150,
+       "rate": 1.0,
+       "ci": [
+        0.9750297556319235,
+        1.0
+       ]
+      },
+      "prior": {
+       "k": 145,
+       "n": 150,
+       "rate": 0.9666666666666667,
+       "ci": [
+        0.9243482038212211,
+        0.9856795681019074
+       ]
+      },
+      "concept": {
+       "k": 143,
+       "n": 150,
+       "rate": 0.9533333333333334,
+       "ci": [
+        0.9068135276008725,
+        0.9772134508387381
+       ]
+      },
+      "label_noise": {
+       "k": 124,
+       "n": 150,
+       "rate": 0.8266666666666667,
+       "ci": [
+        0.7581400726100628,
+        0.8788793677361272
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 150,
+       "prior": 0,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "prior": {
+       "none": 0,
+       "covariate": 5,
+       "prior": 145,
+       "concept": 0,
+       "label_noise": 0
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 143,
+       "label_noise": 4
+      },
+      "label_noise": {
+       "none": 16,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 7,
+       "label_noise": 124
+      }
+     }
+    },
+    "meta_classifier": {
+     "accuracy": {
+      "k": 307,
+      "n": 600,
+      "rate": 0.5116666666666667,
+      "ci": [
+       0.4717230993999969,
+       0.5514617942430168
+      ]
+     },
+     "macro_f1": 0.4220476474971734,
+     "per_type": {
+      "covariate": {
+       "k": 0,
+       "n": 150,
+       "rate": 0.0,
+       "ci": [
+        0.0,
+        0.0249702443680766
+       ]
+      },
+      "prior": {
+       "k": 124,
+       "n": 150,
+       "rate": 0.8266666666666667,
+       "ci": [
+        0.7581400726100628,
+        0.8788793677361272
+       ]
+      },
+      "concept": {
+       "k": 39,
+       "n": 150,
+       "rate": 0.26,
+       "ci": [
+        0.19642138912816148,
+        0.3355643281685153
+       ]
+      },
+      "label_noise": {
+       "k": 144,
+       "n": 150,
+       "rate": 0.96,
+       "ci": [
+        0.915486535783444,
+        0.9815408393979256
+       ]
+      }
+     },
+     "confusion": {
+      "covariate": {
+       "none": 0,
+       "covariate": 0,
+       "prior": 149,
+       "concept": 0,
+       "label_noise": 1
+      },
+      "prior": {
+       "none": 15,
+       "covariate": 0,
+       "prior": 124,
+       "concept": 0,
+       "label_noise": 11
+      },
+      "concept": {
+       "none": 0,
+       "covariate": 3,
+       "prior": 0,
+       "concept": 39,
+       "label_noise": 108
+      },
+      "label_noise": {
+       "none": 2,
+       "covariate": 1,
+       "prior": 0,
+       "concept": 3,
+       "label_noise": 144
+      }
+     }
+    }
+   },
+   "paired_tests": {
+    "input_monitoring": {
+     "mean_difference": 0.565,
+     "ci_low": 0.54,
+     "ci_high": 0.586708333333333,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "bbse_first": {
+     "mean_difference": 0.41166666666666674,
+     "ci_low": 0.375,
+     "ci_high": 0.45,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "error_rate_monitoring": {
+     "mean_difference": 0.16666666666666669,
+     "ci_low": 0.13166666666666665,
+     "ci_high": 0.2033333333333333,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "no_mmd": {
+     "mean_difference": 0.0016666666666666653,
+     "ci_low": -0.018375000000000002,
+     "ci_high": 0.025,
+     "p_value": 1.0,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": false
+    },
+    "no_confidence_null": {
+     "mean_difference": -0.005,
+     "ci_low": -0.014999999999999996,
+     "ci_high": 0.0049999999999999975,
+     "p_value": 0.49725027497250274,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": false
+    },
+    "class_confidence_null": {
+     "mean_difference": -0.12166666666666665,
+     "ci_low": -0.1383333333333333,
+     "ci_high": -0.10499999999999998,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    },
+    "meta_classifier": {
+     "mean_difference": 0.3033333333333333,
+     "ci_low": 0.27166666666666667,
+     "ci_high": 0.33666666666666656,
+     "p_value": 9.999000099990002e-05,
+     "n_replicates": 50,
+     "n_flips": 10000,
+     "holm_significant": true
+    }
+   },
+   "meta_validation": "trained on design A, state held out"
+  }
+ },
+ "mechanisms": {
+  "acs_income_lr": {
+   "class_noise": {
+    "drift_type": "label_noise",
+    "k": 32,
+    "n": 150,
+    "rate": 0.21333333333333335,
+    "ci": [
+     0.15536236119471125,
+     0.28562057890965276
+    ],
+    "diagnosed": {
+     "label_noise": 32,
+     "none": 76,
+     "concept": 36,
+     "covariate": 6
+    },
+    "mean_true_drop": 0.027623796806591917,
+    "per_intensity": {
+     "mild": 0.2,
+     "moderate": 0.3,
+     "strong": 0.14
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": 0.011965463473258579,
+     "moderate": 0.02524546347325858,
+     "strong": 0.045660463473258577
+    }
+   },
+   "concept_oblique": {
+    "drift_type": "concept",
+    "k": 143,
+    "n": 150,
+    "rate": 0.9533333333333334,
+    "ci": [
+     0.9068135276008725,
+     0.9772134508387381
+    ],
+    "diagnosed": {
+     "concept": 143,
+     "covariate": 6,
+     "label_noise": 1
+    },
+    "mean_true_drop": 0.21938379680659192,
+    "per_intensity": {
+     "mild": 0.94,
+     "moderate": 0.96,
+     "strong": 0.96
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": 0.10948046347325859,
+     "moderate": 0.21061046347325857,
+     "strong": 0.33806046347325863
+    }
+   },
+   "concept_threshold": {
+    "drift_type": "concept",
+    "k": 6,
+    "n": 150,
+    "rate": 0.04,
+    "ci": [
+     0.01845916060207442,
+     0.08451346421655606
+    ],
+    "diagnosed": {
+     "none": 132,
+     "label_noise": 6,
+     "concept": 6,
+     "covariate": 6
+    },
+    "mean_true_drop": -0.0029978698600747586,
+    "per_intensity": {
+     "mild": 0.0,
+     "moderate": 0.02,
+     "strong": 0.1
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": -0.006224536526741424,
+     "moderate": -0.006154536526741428,
+     "strong": 0.0033854634732585764
+    }
+   },
+   "prior_decrease": {
+    "drift_type": "prior",
+    "k": 138,
+    "n": 150,
+    "rate": 0.92,
+    "ci": [
+     0.8653786362494686,
+     0.953646358481347
+    ],
+    "diagnosed": {
+     "covariate": 12,
+     "prior": 138
+    },
+    "mean_true_drop": -0.027722626735585603,
+    "per_intensity": {
+     "mild": 0.9,
+     "moderate": 0.9,
+     "strong": 0.96
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": -0.016232745731922973,
+     "moderate": -0.02798934695503516,
+     "strong": -0.03894578751979867
+    }
+   },
+   "selection": {
+    "drift_type": "covariate",
+    "k": 149,
+    "n": 150,
+    "rate": 0.9933333333333333,
+    "ci": [
+     0.9632071602251817,
+     0.9988221986649826
+    ],
+    "diagnosed": {
+     "covariate": 149,
+     "prior": 1
+    },
+    "mean_true_drop": 0.0015684369333828553,
+    "per_intensity": {
+     "mild": 0.98,
+     "moderate": 1.0,
+     "strong": 1.0
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": -5.759793945264047e-05,
+     "moderate": 0.0012499825274307952,
+     "strong": 0.003512926212170411
+    }
+   }
+  },
+  "acs_income_hgb": {
+   "class_noise": {
+    "drift_type": "label_noise",
+    "k": 34,
+    "n": 150,
+    "rate": 0.22666666666666666,
+    "ci": [
+     0.1669817942684841,
+     0.3000019393193978
+    ],
+    "diagnosed": {
+     "none": 70,
+     "concept": 40,
+     "label_noise": 34,
+     "covariate": 6
+    },
+    "mean_true_drop": 0.0308317179225086,
+    "per_intensity": {
+     "mild": 0.18,
+     "moderate": 0.36,
+     "strong": 0.14
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": 0.013816717922508598,
+     "moderate": 0.028436717922508598,
+     "strong": 0.05024171792250859
+    }
+   },
+   "concept_oblique": {
+    "drift_type": "concept",
+    "k": 143,
+    "n": 150,
+    "rate": 0.9533333333333334,
+    "ci": [
+     0.9068135276008725,
+     0.9772134508387381
+    ],
+    "diagnosed": {
+     "concept": 143,
+     "label_noise": 1,
+     "covariate": 6
+    },
+    "mean_true_drop": 0.22488505125584196,
+    "per_intensity": {
+     "mild": 0.94,
+     "moderate": 0.96,
+     "strong": 0.96
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": 0.1129817179225086,
+     "moderate": 0.2160517179225086,
+     "strong": 0.34562171792250856
+    }
+   },
+   "concept_threshold": {
+    "drift_type": "concept",
+    "k": 9,
+    "n": 150,
+    "rate": 0.06,
+    "ci": [
+     0.03188404420920533,
+     0.11008977083470209
+    ],
+    "diagnosed": {
+     "none": 127,
+     "label_noise": 8,
+     "concept": 9,
+     "covariate": 6
+    },
+    "mean_true_drop": 0.001753384589175262,
+    "per_intensity": {
+     "mild": 0.02,
+     "moderate": 0.02,
+     "strong": 0.14
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": -0.003753282077491409,
+     "moderate": -0.001503282077491399,
+     "strong": 0.010516717922508594
+    }
+   },
+   "prior_decrease": {
+    "drift_type": "prior",
+    "k": 139,
+    "n": 150,
+    "rate": 0.9266666666666666,
+    "ci": [
+     0.8734642066329596,
+     0.9585611848396149
+    ],
+    "diagnosed": {
+     "covariate": 11,
+     "prior": 139
+    },
+    "mean_true_drop": -0.024280683876484604,
+    "per_intensity": {
+     "mild": 0.9,
+     "moderate": 0.92,
+     "strong": 0.96
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": -0.013765932734549196,
+     "moderate": -0.024381446866577873,
+     "strong": -0.034694672028326747
+    }
+   },
+   "selection": {
+    "drift_type": "covariate",
+    "k": 149,
+    "n": 150,
+    "rate": 0.9933333333333333,
+    "ci": [
+     0.9632071602251817,
+     0.9988221986649826
+    ],
+    "diagnosed": {
+     "covariate": 149,
+     "prior": 1
+    },
+    "mean_true_drop": 0.003137824333958873,
+    "per_intensity": {
+     "mild": 0.98,
+     "moderate": 1.0,
+     "strong": 1.0
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": 0.00219283298756793,
+     "moderate": 0.002828450028456553,
+     "strong": 0.004392189985852137
+    }
+   }
+  },
+  "acs_employment_lr": {
+   "class_noise": {
+    "drift_type": "label_noise",
+    "k": 52,
+    "n": 150,
+    "rate": 0.3466666666666667,
+    "ci": [
+     0.2751950896082086,
+     0.4257957853313349
+    ],
+    "diagnosed": {
+     "none": 12,
+     "concept": 80,
+     "label_noise": 52,
+     "prior": 3,
+     "covariate": 3
+    },
+    "mean_true_drop": 0.07705697260720146,
+    "per_intensity": {
+     "mild": 0.6,
+     "moderate": 0.4,
+     "strong": 0.04
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": 0.035693639273868136,
+     "moderate": 0.06925863927386815,
+     "strong": 0.12621863927386814
+    }
+   },
+   "concept_oblique": {
+    "drift_type": "concept",
+    "k": 136,
+    "n": 150,
+    "rate": 0.9066666666666666,
+    "ci": [
+     0.8494360687243842,
+     0.9435881325229135
+    ],
+    "diagnosed": {
+     "concept": 136,
+     "none": 2,
+     "prior": 3,
+     "label_noise": 6,
+     "covariate": 3
+    },
+    "mean_true_drop": 0.15663030594053481,
+    "per_intensity": {
+     "mild": 0.8,
+     "moderate": 0.96,
+     "strong": 0.96
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": 0.07336363927386813,
+     "moderate": 0.1494436392738681,
+     "strong": 0.2470836392738681
+    }
+   },
+   "prior_decrease": {
+    "drift_type": "prior",
+    "k": 145,
+    "n": 150,
+    "rate": 0.9666666666666667,
+    "ci": [
+     0.9243482038212211,
+     0.9856795681019074
+    ],
+    "diagnosed": {
+     "prior": 145,
+     "covariate": 5
+    },
+    "mean_true_drop": 0.025403009280559073,
+    "per_intensity": {
+     "mild": 0.96,
+     "moderate": 0.96,
+     "strong": 0.98
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": 0.014280863781973387,
+     "moderate": 0.02553850451400809,
+     "strong": 0.036389659545695736
+    }
+   },
+   "selection": {
+    "drift_type": "covariate",
+    "k": 150,
+    "n": 150,
+    "rate": 1.0,
+    "ci": [
+     0.9750297556319235,
+     1.0
+    ],
+    "diagnosed": {
+     "covariate": 150
+    },
+    "mean_true_drop": -0.002757818668055562,
+    "per_intensity": {
+     "mild": 1.0,
+     "moderate": 1.0,
+     "strong": 1.0
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": -0.001677111820746522,
+     "moderate": -0.002660086613641055,
+     "strong": -0.003936257569779109
+    }
+   }
+  },
+  "acs_employment_hgb": {
+   "class_noise": {
+    "drift_type": "label_noise",
+    "k": 49,
+    "n": 150,
+    "rate": 0.32666666666666666,
+    "ci": [
+     0.2567582134119433,
+     0.40523147130232323
+    ],
+    "diagnosed": {
+     "none": 16,
+     "concept": 82,
+     "label_noise": 49,
+     "covariate": 3
+    },
+    "mean_true_drop": 0.07982367137750644,
+    "per_intensity": {
+     "mild": 0.54,
+     "moderate": 0.44,
+     "strong": 0.0
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": 0.03609367137750644,
+     "moderate": 0.07229867137750644,
+     "strong": 0.13107867137750645
+    }
+   },
+   "concept_oblique": {
+    "drift_type": "concept",
+    "k": 145,
+    "n": 150,
+    "rate": 0.9666666666666667,
+    "ci": [
+     0.9243482038212211,
+     0.9856795681019074
+    ],
+    "diagnosed": {
+     "concept": 145,
+     "label_noise": 2,
+     "covariate": 3
+    },
+    "mean_true_drop": 0.17748700471083978,
+    "per_intensity": {
+     "mild": 0.94,
+     "moderate": 0.98,
+     "strong": 0.98
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": 0.08292367137750643,
+     "moderate": 0.16910367137750648,
+     "strong": 0.2804336713775064
+    }
+   },
+   "prior_decrease": {
+    "drift_type": "prior",
+    "k": 145,
+    "n": 150,
+    "rate": 0.9666666666666667,
+    "ci": [
+     0.9243482038212211,
+     0.9856795681019074
+    ],
+    "diagnosed": {
+     "prior": 145,
+     "covariate": 5
+    },
+    "mean_true_drop": 0.01853198999331827,
+    "per_intensity": {
+     "mild": 0.96,
+     "moderate": 0.96,
+     "strong": 0.98
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": 0.010003951492908291,
+     "moderate": 0.01848321300671704,
+     "strong": 0.027108805480329474
+    }
+   },
+   "selection": {
+    "drift_type": "covariate",
+    "k": 150,
+    "n": 150,
+    "rate": 1.0,
+    "ci": [
+     0.9750297556319235,
+     1.0
+    ],
+    "diagnosed": {
+     "covariate": 150
+    },
+    "mean_true_drop": -0.003174713248959106,
+    "per_intensity": {
+     "mild": 1.0,
+     "moderate": 1.0,
+     "strong": 1.0
+    },
+    "mean_true_drop_per_intensity": {
+     "mild": -0.0033217124562880175,
+     "moderate": -0.002913540101262475,
+     "strong": -0.003288887189326826
+    }
+   }
+  }
+ }
+}

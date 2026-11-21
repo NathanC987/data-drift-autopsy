@@ -25,6 +25,7 @@ venv/
 env/
 ENV/
 .venv
+.env
 
 # IDE
 .vscode/
@@ -57,6 +58,15 @@ dmypy.json
 data/raw/
 data/processed/
 data/clear10/
+data/gas_sensor_drift/
+/paper/
+agh-cs-paper/
+ppeecs-paper/
+dacs-conf-paper/
+icmmdu-conf-paper/
+e2a-conf-paper/
+dsis-conf-paper/
+sn-journal-paper/
 
 # Logs
 *.log
@@ -65,3 +75,10 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
+
+# Derived caches (rebuilt by the scripts from data/)
+outputs/clip_concepts/clip_emb_bucket_*.npy
+outputs/clip_concepts/clip_ids_bucket_*.json
+outputs/clear10_tabularized_demo/
+
+data/chest X ray/

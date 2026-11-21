@@ -9,6 +9,8 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
+from drift_autopsy.estimation import BinnedAccuracyCalibration
+
 
 @dataclass
 class ProxyMetrics:
@@ -23,7 +25,16 @@ class ProxyMetrics:
 
 
 class MulticlassProxyEstimator:
-    """Confidence-calibration proxy estimator for multiclass predictions."""
+    """CBPE-style proxy metrics for multiclass predictions.
+
+    Accuracy: mean calibrated probability of being correct, from the shared
+    histogram-binning map (:class:`drift_autopsy.estimation.BinnedAccuracyCalibration`)
+    fitted on a labelled calibration set. Per-class precision divides the
+    expected correct count of each predicted class by its predicted count;
+    per-class recall divides it by the expected class support, taken as the sum
+    of the predicted probabilities for that class. Macro metrics average over
+    classes.
+    """
 
     def __init__(self, n_bins: int = 10):
         if n_bins < 2:
@@ -67,20 +78,10 @@ class MulticlassProxyEstimator:
         confidence = np.max(proba, axis=1)
         correct = (reference_df["y_true"].to_numpy(dtype=int) == reference_df["y_pred"].to_numpy(dtype=int)).astype(float)
 
-        self.bin_edges = np.linspace(0.0, 1.0, self.n_bins + 1)
-        bin_ids = np.clip(np.digitize(confidence, self.bin_edges[1:-1], right=False), 0, self.n_bins - 1)
-
-        bin_acc = np.zeros(self.n_bins, dtype=float)
-        global_acc = float(correct.mean()) if len(correct) else 0.0
-
-        for bin_idx in range(self.n_bins):
-            mask = bin_ids == bin_idx
-            if np.any(mask):
-                bin_acc[bin_idx] = float(correct[mask].mean())
-            else:
-                bin_acc[bin_idx] = global_acc
-
-        self.bin_accuracy = bin_acc
+        calibration = BinnedAccuracyCalibration.fit(confidence, correct, self.n_bins)
+        self._calibration = calibration
+        self.bin_edges = calibration.bin_edges
+        self.bin_accuracy = calibration.bin_accuracy
 
     def estimate(self, bucket_df: pd.DataFrame) -> ProxyMetrics:
         """Estimate metrics for a bucket and return estimated-vs-actual pair."""
@@ -97,8 +98,7 @@ class MulticlassProxyEstimator:
         proba = bucket_df[proba_cols].to_numpy(dtype=float)
         y_pred = bucket_df["y_pred"].to_numpy(dtype=int)
         confidence = np.max(proba, axis=1)
-        bin_ids = np.clip(np.digitize(confidence, self.bin_edges[1:-1], right=False), 0, self.n_bins - 1)
-        q = self.bin_accuracy[bin_ids]
+        q = self._calibration.predict_correct(confidence)
 
         # Estimated TP by class uses calibrated correctness per predicted class.
         pred_counts = np.bincount(y_pred, minlength=self.class_count).astype(float)

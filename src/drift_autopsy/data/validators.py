@@ -3,7 +3,7 @@
 import logging
 import numpy as np
 import pandas as pd
-from typing import Optional, List
+from typing import Optional
 
 from drift_autopsy.core.dataset import Dataset
 

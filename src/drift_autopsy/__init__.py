@@ -25,6 +25,7 @@ from drift_autopsy.detectors import (
     MMD,
     PCAReconstructionError,
     FIDDistance,
+    BBSD,
     DomainClassifier,
     CBPE,
 )
@@ -63,6 +64,7 @@ __all__ = [
     "MMD",
     "PCAReconstructionError",
     "FIDDistance",
+    "BBSD",
     "DomainClassifier",
     "CBPE",
     "UnivariateLocalizer",

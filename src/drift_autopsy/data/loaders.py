@@ -196,6 +196,49 @@ class FolktablesLoader:
             metadata_cols=['group', 'state'],
         )
 
+    ACS_INCOME_FEATURES = [
+        "AGEP", "COW", "SCHL", "MAR", "OCCP", "POBP", "RELP", "WKHP", "SEX", "RAC1P",
+    ]
+
+    @classmethod
+    def load_acs_income_cached(
+        cls,
+        year: int,
+        state: str,
+        data_root: Union[str, Path] = "data",
+        dataset_name: str = "folktables_us_census",
+        download: bool = False,
+    ) -> "pd.DataFrame":
+        """Load one ACS Income (state, year) as a DataFrame, local cache first.
+
+        Returns a frame with the 10 ACS Income feature columns, a ``target``
+        column, and a ``state`` metadata column. Falls back to a Folktables
+        download only when ``download=True`` and no cache exists.
+        """
+        cache = (
+            Path(data_root) / dataset_name / "acs_income" / f"acs_income_{state}_{year}.parquet"
+        )
+        if cache.exists():
+            return pd.read_parquet(cache)
+
+        csv_cache = cache.with_suffix(".csv")
+        if csv_cache.exists():
+            return pd.read_csv(csv_cache)
+
+        if not download:
+            raise FileNotFoundError(
+                f"No cached ACS Income data at {cache}. Pass download=True to fetch it."
+            )
+
+        dataset = cls.load_acs_income(year=year, states=[state], download=True)
+        frame = dataset.data.copy()
+        frame["target"] = dataset.target.to_numpy() if hasattr(dataset.target, "to_numpy") else dataset.target
+        if dataset.metadata is not None and "state" in dataset.metadata.columns:
+            frame["state"] = dataset.metadata["state"].to_numpy()
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        frame.to_parquet(cache, index=False)
+        return frame
+
 
 class Clear10Loader:
     """
@@ -304,30 +347,24 @@ class Clear10Loader:
         class_to_idx = {name: idx for idx, name in enumerate(class_names)}
 
         rows: List[Dict[str, Any]] = []
+        n_missing_images = 0
         for class_name in class_names:
             if not include_background and class_name.upper() == "BACKGROUND":
                 continue
 
             class_metadata_rel = metadata_index[bucket_key].get(class_name)
             if class_metadata_rel is None:
-                logger.warning(
-                    "Missing metadata for bucket=%s class=%s in labeled_metadata.json",
-                    bucket,
-                    class_name,
-                )
-                continue
+                raise ValueError(f"bucket {bucket}: class {class_name!r} missing from labeled_metadata.json")
 
             class_metadata_path = root / class_metadata_rel
             if not class_metadata_path.exists():
-                logger.warning("Metadata file not found: %s", class_metadata_path)
-                continue
+                raise FileNotFoundError(f"metadata file not found: {class_metadata_path}")
 
             with open(class_metadata_path, "r") as f:
                 class_records = json.load(f)
 
             if not isinstance(class_records, dict):
-                logger.warning("Unexpected metadata format in %s", class_metadata_path)
-                continue
+                raise ValueError(f"unexpected metadata format in {class_metadata_path}")
 
             n_taken = 0
             for sample_id, meta in class_records.items():
@@ -337,7 +374,8 @@ class Clear10Loader:
                 sample_id_str = str(sample_id)
                 image_path = Clear10Loader._resolve_image_path(root, bucket, class_name, sample_id_str)
                 if image_path is None:
-                    # Keep ingestion robust in presence of occasional metadata/image mismatches.
+                    # a metadata record whose image file is absent from the release: counted and reported
+                    n_missing_images += 1
                     continue
 
                 date_taken = meta.get("DATE_TAKEN", "") if isinstance(meta, dict) else ""
@@ -360,5 +398,9 @@ class Clear10Loader:
 
         if not rows:
             raise ValueError(f"No samples were resolved for CLEAR-10 bucket {bucket}")
+        if n_missing_images:
+            logger.warning("CLEAR-10 bucket %s: %d metadata records have no image file", bucket, n_missing_images)
 
-        return pd.DataFrame(rows)
+        frame = pd.DataFrame(rows)
+        frame.attrs["n_missing_images"] = n_missing_images
+        return frame
