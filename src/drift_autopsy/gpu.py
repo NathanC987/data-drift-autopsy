@@ -20,12 +20,16 @@ Control:
 from __future__ import annotations
 
 import contextlib
-import fcntl
 import os
 import tempfile
 import time
 from pathlib import Path
 from typing import Iterator, Optional
+
+try:
+    import fcntl
+except ImportError:  # Windows has no fcntl; GPU slot locking is unavailable.
+    fcntl = None
 
 _TORCH = None
 _CUDA: Optional[bool] = None
@@ -43,6 +47,8 @@ def torch_module():
 def gpu_available() -> bool:
     """True when the GPU path should be used."""
     global _CUDA
+    if fcntl is None:
+        return False
     if os.environ.get("DRIFT_AUTOPSY_DEVICE", "").lower() == "cpu":
         return False
     if _CUDA is None:

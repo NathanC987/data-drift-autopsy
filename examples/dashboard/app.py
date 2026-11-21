@@ -21,6 +21,7 @@ import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import charts as C  # noqa: E402
+import chest_xray_demo  # noqa: E402
 import loaders as L  # noqa: E402
 import narrative as N  # noqa: E402
 
@@ -708,7 +709,13 @@ def main() -> None:
     concepts = load(str(L.DEFAULT_PATHS["concepts"]))
     cam = load(str(L.DEFAULT_PATHS["cam"]))
     summary = load(str(L.DEFAULT_PATHS["benchmark_summary"]))
-    tabs = st.tabs(["ACS (census)", "CLEAR-10 (images)", "Gas sensor array", "Injection benchmark"])
+    tabs = st.tabs([
+        "ACS (census)",
+        "CLEAR-10 (images)",
+        "Gas sensor array",
+        "Injection benchmark",
+        "Chest X-ray (drift & RCA)",
+    ])
     with tabs[0]:
         acs_tab()
     with tabs[1]:
@@ -717,6 +724,8 @@ def main() -> None:
         gas_tab()
     with tabs[3]:
         benchmark_tab(summary)
+    with tabs[4]:
+        chest_xray_demo.render()
 
 
 main()
