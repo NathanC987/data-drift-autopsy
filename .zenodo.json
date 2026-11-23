@@ -3,11 +3,11 @@
   "upload_type": "software",
   "description": "Code, configurations and scripts behind the paper \"Drift Detection, Diagnosis and Reliability Analysis for Deployed Machine Learning Models\". The pipeline detects drift, estimates the lost accuracy without labels, locates the shifted features, names the drift type with hypothesis tests under one family-wise error rate and reports reliability and retraining evidence. The release contains every study, benchmark and paper build script; README.md lists the commands.",
   "creators": [
-    {"name": "Guhagarkar, Rahul", "affiliation": "Vivekanand Education Society's Institute of Technology"},
-    {"name": "Cherian, Nathan", "affiliation": "Vivekanand Education Society's Institute of Technology"},
-    {"name": "Pal, Alok", "affiliation": "Vivekanand Education Society's Institute of Technology"},
-    {"name": "Patre, Akul", "affiliation": "Vivekanand Education Society's Institute of Technology"},
-    {"name": "Mirchandani, Sanjay", "affiliation": "Vivekanand Education Society's Institute of Technology"}
+    {"name": "Guhagarkar, Rahul", "orcid": "0009-0002-5740-2708", "affiliation": "Vivekanand Education Society's Institute of Technology"},
+    {"name": "Cherian, Nathan", "orcid": "0009-0005-9943-9287", "affiliation": "Vivekanand Education Society's Institute of Technology"},
+    {"name": "Pal, Alok", "orcid": "0009-0001-3970-5492", "affiliation": "Vivekanand Education Society's Institute of Technology"},
+    {"name": "Patre, Akul", "orcid": "0009-0009-5952-0338", "affiliation": "Vivekanand Education Society's Institute of Technology"},
+    {"name": "Mirchandani, Sanjay", "orcid": "0000-0003-3400-1215", "affiliation": "Vivekanand Education Society's Institute of Technology"}
   ],
   "license": "MIT",
   "keywords": ["concept drift", "label shift", "model monitoring", "drift diagnosis", "hypothesis testing"]
