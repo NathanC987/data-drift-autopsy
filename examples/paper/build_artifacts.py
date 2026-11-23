@@ -1326,6 +1326,7 @@ def added_noise(R: Results) -> None:
     pooled: Dict[str, Dict[str, List[bool]]] = {}
     drops: Dict[str, List[float]] = {}
     as_type: Dict[str, Dict[str, int]] = {}
+    none_lowest: Dict[str, int] = {}
     n_an = 0
     for code in BENCH_DATASETS:
         for model in MODELS:
@@ -1349,6 +1350,8 @@ def added_noise(R: Results) -> None:
                 drops.setdefault(mech, []).append(r["true_accuracy_drop"])
                 as_type.setdefault(mech, {}).setdefault(verdicts["ours"], 0)
                 as_type[mech][verdicts["ours"]] += 1
+                if r["intensity_order"] == 0 and verdicts["ours"] == "none":
+                    none_lowest[mech] = none_lowest.get(mech, 0) + 1
                 if mech != "label_noise":
                     kk = f"an-{code}-{model}-{mech.replace('_', '')}"
                     pooled.setdefault(kk, {}).setdefault("ours", []).append(verdicts["ours"] == "label_noise")
@@ -1363,6 +1366,7 @@ def added_noise(R: Results) -> None:
         R.add(f"an-{mech.replace('_', '')}-drop", pp(float(np.mean(drops[mech])), 1, sign=False))
         for t in ("none", "covariate", "prior", "concept", "label_noise"):
             R.add(f"an-{mech.replace('_', '')}-as-{t.replace('_', '')}", as_type[mech].get(t, 0))
+        R.add(f"an-{mech.replace('_', '')}-as-none-lowest", none_lowest.get(mech, 0))
         rows.append(" & ".join(cells) + " \\\\")
     for kk, v in pooled.items():
         if kk.startswith("an-"):
@@ -1372,7 +1376,7 @@ def added_noise(R: Results) -> None:
         "\\footnotesize\\setlength{\\tabcolsep}{3pt}\n"
         "\\begin{tabular}{@{}lrrrrr@{}}\n\\toprule\n"
         " & & \\multicolumn{4}{c}{Named label noise (\\%)} \\\\\n\\cmidrule(l){3-6}\n"
-        "Noise mechanism & Drop & Ours & Meta & DetectShift & LF + CL \\\\\n\\midrule\n"
+        "Noise mechanism & Drop & Ours & Meta-classifier & DetectShift & Label-free + CL \\\\\n\\midrule\n"
         + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"))
 
 
@@ -1399,32 +1403,34 @@ def real_audits(R: Results) -> None:
         studies = {m: study(code, m) for m in MODELS}
         pubs = {m: {w["key"]: w for w in json.loads((OUT / "real_controls" / f"{REAL_CODES[code]}_{m}.json")
                                                   .read_text())["windows"]} for m in MODELS}
-        first = True
+        rows.append(f"\\multicolumn{{8}}{{l}}{{{STUDY_TITLE[code]}}} \\\\")
         for wname in studies["lr"]["windows"]:
-            cells = [STUDY_TITLE[code] if first else "", wlabel(code, wname)]
-            first = False
+            deltas, cols = [], {k: [] for k in ("audit", "ours", "roschewitz", "detectshift", "confident_learning")}
             for m in MODELS:
                 w = studies[m]["windows"][wname]
                 ref_acc = w["actual_accuracy"] - w["accuracy_change"]
                 verdict, acc = _audit_verdict(w, alpha)
-                final = w["diagnosis"]["final"]["drift_type"]
                 pv = pubs[m][wname]["published"]["verdicts"]
-                cells += [pp(acc - ref_acc, 1), TYPE_SHORT[verdict], TYPE_SHORT[final],
-                          TYPE_SHORT[pv["roschewitz"]], TYPE_SHORT[pv["detectshift"]],
-                          TYPE_SHORT[pv["confident_learning"]]]
-                counts[f"audit-{verdict}"] = counts.get(f"audit-{verdict}", 0) + 1
+                deltas.append(pp(acc - ref_acc, 1))
+                cols["audit"].append(verdict)
+                cols["ours"].append(w["diagnosis"]["final"]["drift_type"])
                 for name, v in pv.items():
+                    cols[name].append(v)
                     counts[f"{name}-{v}"] = counts.get(f"{name}-{v}", 0) + 1
+                counts[f"audit-{verdict}"] = counts.get(f"audit-{verdict}", 0) + 1
                 counts["n"] = counts.get("n", 0) + 1
+            cells = [wlabel(code, wname)] + deltas
+            for k, (lr, gb) in cols.items():
+                cells.append(TYPE_SHORT[lr] if lr == gb else f"{TYPE_SHORT[lr]}/{TYPE_SHORT[gb]}")
             rows.append(" & ".join(cells) + " \\\\")
         rows.append("\\midrule")
     rows = rows[:-1]
     write_table("tab_real_audits", (
-        "\\scriptsize\\setlength{\\tabcolsep}{2.2pt}\n"
-        "\\begin{tabular}{@{}llrlllllrlllll@{}}\n\\toprule\n"
-        " & & \\multicolumn{6}{c}{LR} & \\multicolumn{6}{c}{GB} \\\\\n"
-        "\\cmidrule(lr){3-8}\\cmidrule(l){9-14}\n"
-        "Data & Window & $\\Delta$ & Audit & Ours & Ros. & DS & CL & $\\Delta$ & Audit & Ours & Ros. & DS & CL \\\\\n"
+        "\\scriptsize\\setlength{\\tabcolsep}{3pt}\n"
+        "\\begin{tabular}{@{}lrrlllll@{}}\n\\toprule\n"
+        " & \\multicolumn{2}{c}{$\\Delta$} & & & & & \\\\\n"
+        "\\cmidrule(lr){2-3}\n"
+        "Window & LR & GB & Audit & Ours & Ros. & DS & CL \\\\\n"
         "\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"))
     R.add("realaud-n", counts["n"])
     for t in ("none", "concept", "label_noise"):
@@ -1468,6 +1474,20 @@ def real_controls(R: Results) -> None:
         R.add(f"ctrl-{ck}-pct", pct(totals[c] / n_total, 1))
         R.add(f"ctrl-{ck}-ci", f"[{pct(lo, 1)}, {pct(hi, 1)}]")
     rows.append("\\midrule\n" + " & ".join(total) + " \\\\")
+    # which stage raised our false alarms: the label-free stage names covariate or prior shift
+    stage = {"labelfree": 0, "audit": 0}
+    for code in ("inc", "emp", "gas", "clr"):
+        for m in MODELS:
+            for x in json.loads((OUT / "real_controls" / f"{REAL_CODES[code]}_{m}.json").read_text())["controls"]:
+                if x["diagnosis"] in ("covariate", "prior"):
+                    stage["labelfree"] += 1
+                elif x["diagnosis"] != "none":
+                    stage["audit"] += 1
+    for name, k in stage.items():
+        lo, hi = wilson_interval(k, n_total)
+        R.add(f"ctrl-ours-{name}-k", k)
+        R.add(f"ctrl-ours-{name}-pct", pct(k / n_total, 1))
+        R.add(f"ctrl-ours-{name}-ci", f"[{pct(lo, 1)}, {pct(hi, 1)}]")
     R.add("ctrl-n", n_total)
     R.add("ctrl-per", n_total // 8)
     write_table("tab_controls", (

@@ -260,7 +260,8 @@ def stack_models(t: Table) -> Table:
     names = {"Ours (hierarchical tests)": "Ours", "Learned meta-classifier": "Meta-classifier",
              "Error-rate monitoring": "Error-rate monitoring", "Ours without MMD block": "Ours, no MMD",
              "Ours, audit null without confidence": "Ours, no confidence",
-             "Ours, audit null with class cells": "Ours, class cells"}
+             "Ours, audit null with class cells": "Ours, class cells",
+             "Label-free stage + confident learning": "Label-free + CL"}
     rows = [Row([Cell("")] + [Cell(c.text) for c in head.cells[1:1 + n]], "heavy")]
     for g, group in enumerate(groups):
         rows.append(Row([Cell(group, 1 + n)], "light"))

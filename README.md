@@ -137,6 +137,10 @@ written to `outputs/bnrc/` so that `outputs/` stays as it was:
 ```bash
 export DDA_OUTPUTS=outputs/bnrc DDA_PERMUTATIONS=1000
 # run the studies, remediation, the eight benchmark configurations and the summary as above
+# revision: added noise mechanisms (design AN), published methods, more real control windows
+python examples/quickstart/drift_injection_benchmark.py --dataset acs_income --design AN --model lr --published
+python examples/quickstart/published_baselines.py --dataset acs_income --design A --model lr   # each A/B config
+python examples/quickstart/real_controls.py --dataset income --model lr      # income, employment, gas, clear10
 DDA_GEN=paper/generated/bnrc DDA_FIG=paper/figures/bnrc python examples/paper/build_artifacts.py
 python examples/paper/build_bnrc.py --figures                                # manuscript and Additional file 1
 ```
