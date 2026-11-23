@@ -1237,6 +1237,23 @@ def _pub_predictions(recs: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], 
     return runs, preds
 
 
+def _seed_cell(items: List[Tuple[Any, Any, bool]]) -> Tuple[str, str]:
+    """Mean and SD over seeds of the share of correct windows, and a 95% t interval over the
+    state shares (the state as the cluster), from (seed, state, correct) triples."""
+    from scipy import stats as st
+
+    def share(i):
+        ok: Dict[Any, List[bool]] = {}
+        for it in items:
+            ok.setdefault(it[i], []).append(it[2])
+        return np.array([np.mean(v) for v in ok.values()])
+    seeds, states = share(0), share(1)
+    half = st.t.ppf(0.975, len(states) - 1) * states.std(ddof=1) / np.sqrt(len(states))
+    m = states.mean()
+    return (f"{100 * seeds.mean():.1f} $\\pm$ {100 * seeds.std(ddof=1):.1f}",
+            f"[{100 * max(m - half, 0):.0f}, {100 * min(m + half, 1):.0f}]")
+
+
 def published_methods(R: Results) -> None:
     """Table of the published methods on the benchmark windows, next to ours, with per-type rates."""
     from drift_autopsy.benchmark.metrics import method_scores, paired_method_tests
@@ -1316,6 +1333,29 @@ def published_methods(R: Results) -> None:
     secs = [r["seconds"] for code, design, model in CONFIGS for r in published_records(code, design, model)]
     R.add("pub-nwindows", len(secs))
 
+    rows = []
+    for model in MODELS:
+        first = True
+        for mkey, mname in PUB_ROWS:
+            pairs = []
+            for code in BENCH_DATASETS:
+                for design in ("A", "B"):
+                    recs = published_records(code, design, model)
+                    _, preds = _pub_predictions(recs)
+                    pairs.append(_seed_cell([(r["seed"], r["state"], p == r["drift_type"])
+                                             for r, p in zip(recs, preds[mkey])]))
+            name = "Label-free + CL" if mkey == "confident_learning" else ("Ours" if mkey == "ours" else mname)
+            rows.append(" & ".join([MODEL_TITLE[model] if first else "", name] + [a for a, _ in pairs]) + " \\\\")
+            rows.append(" & ".join(["", ""] + [b for _, b in pairs]) + " \\\\")
+            first = False
+        if model == "lr":
+            rows.append("\\midrule")
+    write_table("tab_seeds_published", (
+        "\\scriptsize\\setlength{\\tabcolsep}{3pt}\n"
+        "\\begin{tabular}{@{}llrrrr@{}}\n\\toprule\n"
+        "Model & Method & Inc.\\ A & Inc.\\ B & Emp.\\ A & Emp.\\ B \\\\\n\\midrule\n"
+        + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"))
+
 
 def added_noise(R: Results) -> None:
     """Class-conditional and instance-dependent noise added to design A (design AN)."""
@@ -1327,6 +1367,7 @@ def added_noise(R: Results) -> None:
     drops: Dict[str, List[float]] = {}
     as_type: Dict[str, Dict[str, int]] = {}
     none_lowest: Dict[str, int] = {}
+    by_seed: Dict[str, Dict[str, List[Tuple[Any, Any, bool]]]] = {}
     n_an = 0
     for code in BENCH_DATASETS:
         for model in MODELS:
@@ -1347,6 +1388,8 @@ def added_noise(R: Results) -> None:
                             "confident_learning": pub["verdicts"]["confident_learning"]}
                 for mkey, _ in methods:
                     pooled.setdefault(mech, {}).setdefault(mkey, []).append(verdicts[mkey] == "label_noise")
+                    by_seed.setdefault(mech, {}).setdefault(mkey, []).append(
+                        (r["seed"], r["state"], verdicts[mkey] == "label_noise"))
                 drops.setdefault(mech, []).append(r["true_accuracy_drop"])
                 as_type.setdefault(mech, {}).setdefault(verdicts["ours"], 0)
                 as_type[mech][verdicts["ours"]] += 1
@@ -1372,12 +1415,24 @@ def added_noise(R: Results) -> None:
         if kk.startswith("an-"):
             R.add(f"{kk}-ours", pct(float(np.mean(v["ours"])), 0))
     R.add("an-nwindows", n_an)
+    R.add("bench-all-windows", n_an + sum(len(bench_runs(code, d, model)) for code in BENCH_DATASETS
+                                         for d in ("A", "B") for model in MODELS))
     write_table("tab_noise", (
         "\\footnotesize\\setlength{\\tabcolsep}{3pt}\n"
         "\\begin{tabular}{@{}lrrrrr@{}}\n\\toprule\n"
         " & & \\multicolumn{4}{c}{Named label noise (\\%)} \\\\\n\\cmidrule(l){3-6}\n"
         "Noise mechanism & Drop & Ours & Meta-classifier & DetectShift & Label-free + CL \\\\\n\\midrule\n"
         + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"))
+    srows = []
+    for mech, title in AN_MECHANISMS:
+        pairs = [_seed_cell(by_seed[mech][mkey]) for mkey, _ in methods]
+        srows.append(" & ".join([title] + [a for a, _ in pairs]) + " \\\\")
+        srows.append(" & ".join([""] + [b for _, b in pairs]) + " \\\\")
+    write_table("tab_seeds_noise", (
+        "\\scriptsize\\setlength{\\tabcolsep}{3pt}\n"
+        "\\begin{tabular}{@{}lrrrr@{}}\n\\toprule\n"
+        "Noise mechanism & Ours & Meta-classifier & DetectShift & Label-free + CL \\\\\n\\midrule\n"
+        + "\n".join(srows) + "\n\\bottomrule\n\\end{tabular}\n"))
 
 
 def _audit_verdict(w: Dict[str, Any], alpha: float) -> Tuple[str, float]:
