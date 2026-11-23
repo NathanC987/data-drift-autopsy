@@ -253,6 +253,8 @@ class TexDoc:
                 out.append(self.table(b))
             elif b.kind == "pagebreak":
                 out.append("\\clearpage")
+            elif b.kind == "floatbarrier":       # place every pending float before going on
+                out.append("\\FloatBarrier")
         return "\n\n".join(out)
 
     def write(self, out: Path, bib: str) -> None:

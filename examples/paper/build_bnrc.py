@@ -68,6 +68,8 @@ FLOATS = r"""\usepackage{array}%
 \usepackage{tabularx}%
 % floats are never set above the text that introduces them
 \usepackage{flafter}%
+% \FloatBarrier keeps a section's tables ahead of the next section (Additional file 1)
+\usepackage{placeins}%
 """
 
 

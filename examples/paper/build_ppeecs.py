@@ -537,6 +537,8 @@ def parse_source(path: Path) -> Tuple[Dict[str, List[str]], List[Block]]:
             continue
         if chunk == "\\newpage":
             blocks.append(Block("pagebreak"))
+        elif chunk == "\\floatbarrier":
+            blocks.append(Block("floatbarrier"))
         elif chunk.startswith("::: abstract"):
             blocks.append(Block("abstract", " ".join(chunk.splitlines()[1:-1])))
         elif chunk.startswith("#"):
