@@ -55,6 +55,9 @@ demo = [
 dashboard = [
     "streamlit>=1.28.0",
     "plotly>=5.17.0",
+    "pillow>=9.0.0",
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
 ]
 image = [
     "torch>=2.0.0",
