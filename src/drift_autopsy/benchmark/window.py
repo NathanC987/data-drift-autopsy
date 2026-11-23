@@ -24,8 +24,9 @@ from drift_autopsy.remediation import strategies as S
 from drift_autopsy.reliability import ReliabilityAnalyzer
 from drift_autopsy.benchmark.spec import DRIFT_TYPES
 
-# design B mechanism names (fixed order: it seeds the audit sample)
+# design B and design AN mechanism names (fixed order: it seeds the audit sample)
 MECHANISMS_B = ("selection", "prior_decrease", "concept_oblique", "concept_threshold", "class_noise")
+MECHANISMS_AN = ("class_conditional_noise", "instance_noise")
 
 
 @dataclass
@@ -111,6 +112,40 @@ def _compact_audit(au: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def audit_order(rc: ReplicateContext, design: str, mechanism: str, drift_type: str, intensity_order: int,
+                n_rows: int) -> np.ndarray:
+    """Order in which the window's rows receive audit labels: design A keeps the
+    original audit seeding; designs B and AN add the mechanism."""
+    seed_key = [rc.seed, DRIFT_TYPES.index(drift_type), intensity_order]
+    if design == "B":
+        seed_key.append(1 + MECHANISMS_B.index(mechanism))
+    elif design == "AN":
+        seed_key.append(200 + MECHANISMS_AN.index(mechanism))
+    return np.random.default_rng(seed_key).permutation(n_rows)
+
+
+def published_verdicts(rc: ReplicateContext, prod_X: pd.DataFrame, prod_y: np.ndarray, audit_idx: np.ndarray,
+                       label_free_verdict: str, mmd_p: float) -> Dict[str, Any]:
+    """The published methods of :mod:`drift_autopsy.published_methods` on one window,
+    with the same audit labels as ours."""
+    from drift_autopsy import published_methods as pm
+
+    prod = _dataset(rc, prod_X)
+    aX, ay = prod_X.iloc[audit_idx][rc.feature_names], np.asarray(prod_y)[audit_idx]
+    ros = pm.roschewitz_identification(rc.reference, prod, alpha=rc.alpha, n_permutations=rc.mmd_permutations,
+                                       max_samples=rc.mmd_max_samples, seed=rc.seed, mmd_p=mmd_p)
+    ref_X = rc.reference.to_pandas()[rc.feature_names]
+    ds = pm.detectshift_diagnosis(ref_X, np.asarray(rc.reference.target), aX, ay,
+                                  categorical=rc.categorical_features, alpha=rc.alpha,
+                                  n_permutations=rc.mmd_permutations, seed=rc.seed)
+    cl = pm.confident_learning_audit(rc.model, rc.reference, aX, ay, alpha=rc.alpha)
+    return {
+        "verdicts": {"roschewitz": ros["verdict"], "detectshift": ds["verdict"],
+                     "confident_learning": pm.label_free_then_cl(label_free_verdict, cl)},
+        "roschewitz": ros, "detectshift": ds, "confident_learning": cl,
+    }
+
+
 def evaluate_window(
     rc: ReplicateContext,
     design: str,
@@ -122,6 +157,7 @@ def evaluate_window(
     prod_X: pd.DataFrame, prod_y: np.ndarray,
     hold_X: pd.DataFrame, hold_y: np.ndarray,
     spec: Dict[str, Any],
+    published: bool = False,
 ) -> Dict[str, Any]:
     timings: Dict[str, float] = {}
     t0 = time.perf_counter()
@@ -135,12 +171,7 @@ def evaluate_window(
     mmd = {"statistic": detection["MMD"]["score"], "p_value": detection["MMD"]["p_value"]}
     lf = label_free_diagnosis(rc.reference, prod, alpha=rc.alpha, mmd_permutations=rc.mmd_permutations,
                               mmd_max_samples=rc.mmd_max_samples, random_state=rc.seed, precomputed_mmd=mmd)
-    # design A keeps the original audit seeding; design B adds the mechanism
-    seed_key = [rc.seed, DRIFT_TYPES.index(drift_type), intensity_order]
-    if design == "B":
-        seed_key.append(1 + MECHANISMS_B.index(mechanism))
-    rng = np.random.default_rng(seed_key)
-    order = rng.permutation(len(prod_X))
+    order = audit_order(rc, design, mechanism, drift_type, intensity_order, len(prod_X))
     audits = {}
     for n in rc.audit_sizes:
         idx = order[: min(n, len(order))]       # nested label samples: 200 subset of 600 subset of 1000
@@ -196,7 +227,14 @@ def evaluate_window(
         loc = {"precision": tp / len(localized) if localized else 0.0, "recall": tp / len(injected),
                "localized": sorted(localized), "injected": sorted(injected)}
 
+    extra = {}
+    if published:
+        t0 = time.perf_counter()
+        extra["published"] = published_verdicts(rc, prod_X, prod_y, idx, lf["verdict"], mmd["p_value"])
+        timings["published"] = time.perf_counter() - t0
+
     return {
+        **extra,
         "dataset": rc.dataset,
         "model": rc.model_kind,
         "design": design,

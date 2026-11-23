@@ -106,6 +106,11 @@ INTENSITY_LADDER_B: Dict[str, List[Dict[str, Any]]] = {
                     {"label": "strong", "rate": 0.35}],
 }
 
+# Design AN (BNRC revision): label noise mechanisms added to the matched design,
+# at the rates of its uniform noise ladder.
+MECHANISMS_AN = ("class_conditional_noise", "instance_noise")
+INTENSITY_LADDER_AN: Dict[str, List[Dict[str, Any]]] = {m: INTENSITY_LADDER["label_noise"] for m in MECHANISMS_AN}
+
 
 @dataclass
 class BenchmarkConfig:
@@ -125,12 +130,15 @@ class BenchmarkConfig:
     year: int = 2014
     n_jobs: int = -1
     drift_types: Sequence[str] = field(default_factory=lambda: list(DRIFT_TYPES))
+    published: bool = False          # also run the published methods (drift_autopsy.published_methods)
 
     def mechanisms(self) -> List[Tuple[str, str, List[Dict[str, Any]]]]:
         """(mechanism, drift type, ladder) for every window family of this design."""
         ds = DATASETS[self.dataset]
         if self.design == "A":
             return [(t, t, [{"label": "control"}] if t == "none" else INTENSITY_LADDER[t]) for t in self.drift_types]
+        if self.design == "AN":
+            return [(m, "label_noise", INTENSITY_LADDER_AN[m]) for m in MECHANISMS_AN]
         out = []
         for m in MECHANISMS_B:
             if m == "concept_threshold" and ds.income_column is None:
@@ -144,7 +152,7 @@ class BenchmarkConfig:
         ds = DATASETS[self.dataset]
         d["task"] = ds.task
         d["intensity_ladder"] = INTENSITY_LADDER if self.design == "A" else {
-            m: INTENSITY_LADDER_B[m] for m, _, _ in self.mechanisms()}
+            m: ladder for m, _, ladder in self.mechanisms()}
         d["mechanism_type"] = {m: t for m, t, _ in self.mechanisms()}
         d["covariate_features"] = list(ds.covariate_features)
         d["concept_region_feature"] = ds.concept_region_feature
@@ -152,8 +160,15 @@ class BenchmarkConfig:
 
 
 def _inject(design: str, mechanism: str, params: Dict[str, Any], X, y, base_rate: float, seed: int,
-            ds: BenchmarkDataset, directions: Dict[str, inj.RandomDirection], income=None) -> inj.InjectionResult:
+            ds: BenchmarkDataset, directions: Dict[str, inj.RandomDirection], income=None,
+            uncertainty=None) -> inj.InjectionResult:
     label = params["label"]
+    if design == "AN":
+        if mechanism == "class_conditional_noise":
+            return inj.inject_class_conditional_noise(X, y, params["rate"], label, seed=seed)
+        if mechanism == "instance_noise":
+            return inj.inject_instance_noise(X, y, uncertainty, params["rate"], label, seed=seed)
+        raise ValueError(f"{design}/{mechanism}")
     if design == "A":
         if mechanism == "none":
             return inj.inject_none(X, y)
@@ -184,77 +199,95 @@ def _seed(*key: int) -> int:
     return int(np.random.SeedSequence(list(key)).generate_state(1)[0])
 
 
-def run_replicate(state: str, seed: int, cfg: BenchmarkConfig) -> List[Dict[str, Any]]:
-    """All windows of one (state, seed) replicate."""
+def _family(design: str, mechanism: str) -> int:
+    """Seed family of a mechanism: design A keeps the original seeding (type
+    index), design B offsets by 100 and design AN by 200."""
+    if design == "A":
+        return DRIFT_TYPES.index(mechanism)
+    if design == "AN":
+        return 200 + MECHANISMS_AN.index(mechanism)
+    return 100 + MECHANISMS_B.index(mechanism)
+
+
+def replicate_windows(state: str, seed: int, cfg: BenchmarkConfig, with_reliability: bool = True):
+    """Build one (state, seed) replicate and yield every window of its design as
+    (context, mechanism, drift type, params, intensity order, production, holdout)."""
     ds = DATASETS[cfg.dataset]
     spec = ACS_TASKS[ds.task]
+    X, y, extra = load_acs_task(ds.task, cfg.year, state, with_extra=True)
+    income_col = ds.income_column
+    if income_col is not None:
+        X = X.assign(**{income_col: extra[income_col].to_numpy()})
+    split = split_reference(X, y, seed=seed)
+    income_test = split.test_X.pop(income_col).to_numpy() if income_col else None
+    if income_col:
+        split.train_X.pop(income_col)
+        split.calibration_X.pop(income_col)
+
+    def factory(keep_columns=None):
+        return make_acs_model(random_state=seed, keep_columns=keep_columns, kind=cfg.model, task=ds.task)
+
+    model = factory().fit(split.train_X.to_numpy(dtype=float), split.train_y)
+    reference = to_dataset(split.calibration_X, split.calibration_y, model=model, task=ds.task)
+    reference_accuracy = float(np.mean(reference.predictions == split.calibration_y))
+    categorical_idx = [list(spec.features).index(f) for f in spec.categorical]
+    reliability = ReliabilityAnalyzer(
+        model, split.train_X.to_numpy(dtype=float), split.calibration_X.to_numpy(dtype=float),
+        split.calibration_y, categorical_indices=categorical_idx, random_state=seed,
+    ) if with_reliability else None
+    rc = ReplicateContext(
+        state=state, seed=seed, dataset=cfg.dataset, model_kind=cfg.model, model=model, model_factory=factory,
+        feature_names=list(spec.features), categorical_features=spec.categorical,
+        train_X=split.train_X, train_y=split.train_y,
+        reference=reference, reference_accuracy=reference_accuracy, reliability=reliability,
+        alpha=cfg.alpha, psi_threshold=cfg.psi_threshold, mmd_permutations=cfg.mmd_permutations,
+        mmd_max_samples=cfg.mmd_max_samples, audit_sizes=list(cfg.audit_sizes),
+        primary_audit_size=cfg.primary_audit_size,
+    )
+
+    need = cfg.production_size + cfg.holdout_size
+    if len(split.test_X) < need:
+        raise ValueError(f"{state}: test split has {len(split.test_X)} rows, need {need}")
+    rng = np.random.default_rng([seed, 1])
+    order = rng.permutation(len(split.test_X))
+    p_idx, h_idx = order[: cfg.production_size], order[cfg.production_size: need]
+    pX, py = split.test_X.iloc[p_idx].reset_index(drop=True), split.test_y[p_idx]
+    hX, hy = split.test_X.iloc[h_idx].reset_index(drop=True), split.test_y[h_idx]
+    p_inc = income_test[p_idx] if income_test is not None else None
+    h_inc = income_test[h_idx] if income_test is not None else None
+    base_rate = float(np.mean(split.train_y))
+    directions = {}
+    if cfg.design == "B":
+        directions = {
+            "selection": inj.RandomDirection(split.train_X, spec.numeric, spec.categorical, _seed(seed, 7001)),
+            "concept": inj.RandomDirection(split.train_X, spec.numeric, spec.categorical, _seed(seed, 7002)),
+        }
+    p_unc = h_unc = None
+    if cfg.design == "AN":
+        # auxiliary clean-data model for instance-dependent noise (logistic, whatever the monitored model)
+        aux = make_acs_model(random_state=seed, kind="lr", task=ds.task).fit(
+            split.train_X.to_numpy(dtype=float), split.train_y)
+        p_unc, h_unc = (1.0 - np.abs(2.0 * aux.predict_proba(Z.to_numpy(dtype=float))[:, 1] - 1.0)
+                        for Z in (pX, hX))
+
+    for mechanism, drift_type, ladder in cfg.mechanisms():
+        family = _family(cfg.design, mechanism)
+        for order_i, params in enumerate(ladder):
+            prod = _inject(cfg.design, mechanism, params, pX, py, base_rate, _seed(seed, family, order_i, 0),
+                           ds, directions, income=p_inc, uncertainty=p_unc)
+            hold = _inject(cfg.design, mechanism, params, hX, hy, base_rate, _seed(seed, family, order_i, 1),
+                           ds, directions, income=h_inc, uncertainty=h_unc)
+            prod.spec.reference_accuracy = reference_accuracy
+            prod.spec.production_accuracy = float(np.mean(model.predict(prod.X.to_numpy(dtype=float)) == prod.y))
+            yield rc, mechanism, drift_type, params, order_i, prod, hold
+
+
+def run_replicate(state: str, seed: int, cfg: BenchmarkConfig) -> List[Dict[str, Any]]:
+    """All windows of one (state, seed) replicate."""
     with threadpool_limits(limits=1):
-        X, y, extra = load_acs_task(ds.task, cfg.year, state, with_extra=True)
-        income_col = ds.income_column
-        if income_col is not None:
-            X = X.assign(**{income_col: extra[income_col].to_numpy()})
-        split = split_reference(X, y, seed=seed)
-        income_test = split.test_X.pop(income_col).to_numpy() if income_col else None
-        if income_col:
-            split.train_X.pop(income_col)
-            split.calibration_X.pop(income_col)
-
-        def factory(keep_columns=None):
-            return make_acs_model(random_state=seed, keep_columns=keep_columns, kind=cfg.model, task=ds.task)
-
-        model = factory().fit(split.train_X.to_numpy(dtype=float), split.train_y)
-        reference = to_dataset(split.calibration_X, split.calibration_y, model=model, task=ds.task)
-        reference_accuracy = float(np.mean(reference.predictions == split.calibration_y))
-        categorical_idx = [list(spec.features).index(f) for f in spec.categorical]
-        reliability = ReliabilityAnalyzer(
-            model, split.train_X.to_numpy(dtype=float), split.calibration_X.to_numpy(dtype=float),
-            split.calibration_y, categorical_indices=categorical_idx, random_state=seed,
-        )
-        rc = ReplicateContext(
-            state=state, seed=seed, dataset=cfg.dataset, model_kind=cfg.model, model=model, model_factory=factory,
-            feature_names=list(spec.features), categorical_features=spec.categorical,
-            train_X=split.train_X, train_y=split.train_y,
-            reference=reference, reference_accuracy=reference_accuracy, reliability=reliability,
-            alpha=cfg.alpha, psi_threshold=cfg.psi_threshold, mmd_permutations=cfg.mmd_permutations,
-            mmd_max_samples=cfg.mmd_max_samples, audit_sizes=list(cfg.audit_sizes),
-            primary_audit_size=cfg.primary_audit_size,
-        )
-
-        need = cfg.production_size + cfg.holdout_size
-        if len(split.test_X) < need:
-            raise ValueError(f"{state}: test split has {len(split.test_X)} rows, need {need}")
-        rng = np.random.default_rng([seed, 1])
-        order = rng.permutation(len(split.test_X))
-        p_idx, h_idx = order[: cfg.production_size], order[cfg.production_size: need]
-        pX, py = split.test_X.iloc[p_idx].reset_index(drop=True), split.test_y[p_idx]
-        hX, hy = split.test_X.iloc[h_idx].reset_index(drop=True), split.test_y[h_idx]
-        p_inc = income_test[p_idx] if income_test is not None else None
-        h_inc = income_test[h_idx] if income_test is not None else None
-        base_rate = float(np.mean(split.train_y))
-        directions = {}
-        if cfg.design == "B":
-            directions = {
-                "selection": inj.RandomDirection(split.train_X, spec.numeric, spec.categorical, _seed(seed, 7001)),
-                "concept": inj.RandomDirection(split.train_X, spec.numeric, spec.categorical, _seed(seed, 7002)),
-            }
-
-        records = []
-        for m_idx, (mechanism, drift_type, ladder) in enumerate(cfg.mechanisms()):
-            # design A keeps the original seeding (type index); design B offsets by 100
-            family = DRIFT_TYPES.index(mechanism) if cfg.design == "A" else 100 + MECHANISMS_B.index(mechanism)
-            for order_i, params in enumerate(ladder):
-                prod = _inject(cfg.design, mechanism, params, pX, py, base_rate, _seed(seed, family, order_i, 0),
-                               ds, directions, income=p_inc)
-                hold = _inject(cfg.design, mechanism, params, hX, hy, base_rate, _seed(seed, family, order_i, 1),
-                               ds, directions, income=h_inc)
-                gt = prod.spec
-                gt.reference_accuracy = reference_accuracy
-                gt.production_accuracy = float(np.mean(model.predict(prod.X.to_numpy(dtype=float)) == prod.y))
-                records.append(evaluate_window(
-                    rc, cfg.design, mechanism, drift_type, params["label"], order_i, dict(params),
-                    prod.X, prod.y, hold.X, hold.y, gt.to_dict(),
-                ))
-        return records
+        return [evaluate_window(rc, cfg.design, mechanism, drift_type, params["label"], order_i, dict(params),
+                                prod.X, prod.y, hold.X, hold.y, prod.spec.to_dict(), published=cfg.published)
+                for rc, mechanism, drift_type, params, order_i, prod, hold in replicate_windows(state, seed, cfg)]
 
 
 def run_benchmark(cfg: Optional[BenchmarkConfig] = None,

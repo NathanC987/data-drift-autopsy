@@ -386,3 +386,49 @@ def inject_class_noise(X: pd.DataFrame, y: np.ndarray, rate: float, intensity_la
         p_y_reference=_positive_rate(y_ref), p_y_production=_positive_rate(y_new),
     )
     return InjectionResult(X=X, y=y_new, spec=spec)
+
+
+# --------------------------------------------------------------------------- #
+# design A, added noise mechanisms (BNRC revision)
+
+def inject_class_conditional_noise(X: pd.DataFrame, y: np.ndarray, rate: float, intensity_label: str,
+                                   seed: int = 42) -> InjectionResult:
+    """Class-conditional noise (Natarajan et al., 2013): flip positives with
+    probability ``rate`` and negatives with probability ``rate / 2``; X untouched."""
+    X = X.reset_index(drop=True).copy()
+    y_ref = np.asarray(y).astype(int)
+    rng = np.random.default_rng(seed)
+    flip_prob = np.where(y_ref == 1, rate, rate / 2.0)
+    flip = rng.random(len(y_ref)) < flip_prob
+    y_new = y_ref.copy()
+    y_new[flip] = 1 - y_new[flip]
+    spec = InjectedDriftSpec(
+        drift_type="label_noise", intensity_label=intensity_label,
+        params={"rate_positive": rate, "rate_negative": rate / 2.0, "observed_flip_fraction": float(np.mean(flip))},
+        affected_features=[], px_changed=False, pxgiveny_changed=True, pygivenx_changed=True,
+        p_y_reference=_positive_rate(y_ref), p_y_production=_positive_rate(y_new),
+    )
+    return InjectionResult(X=X, y=y_new, spec=spec)
+
+
+def inject_instance_noise(X: pd.DataFrame, y: np.ndarray, uncertainty: np.ndarray, rate: float,
+                          intensity_label: str, seed: int = 42) -> InjectionResult:
+    """Instance-dependent noise concentrated near the decision boundary (Chen et
+    al., 2021): row i is flipped with probability min(1, rate * u_i / mean(u)),
+    where u_i = 1 - |2 p_i - 1| is the uncertainty of an auxiliary logistic
+    model fitted on the clean training split; X untouched."""
+    X = X.reset_index(drop=True).copy()
+    y_ref = np.asarray(y).astype(int)
+    rng = np.random.default_rng(seed)
+    u = np.asarray(uncertainty, dtype=float)
+    flip_prob = np.minimum(1.0, rate * u / max(float(u.mean()), 1e-12))
+    flip = rng.random(len(y_ref)) < flip_prob
+    y_new = y_ref.copy()
+    y_new[flip] = 1 - y_new[flip]
+    spec = InjectedDriftSpec(
+        drift_type="label_noise", intensity_label=intensity_label,
+        params={"rate": rate, "observed_flip_fraction": float(np.mean(flip))},
+        affected_features=[], px_changed=False, pxgiveny_changed=True, pygivenx_changed=True,
+        p_y_reference=_positive_rate(y_ref), p_y_production=_positive_rate(y_new),
+    )
+    return InjectionResult(X=X, y=y_new, spec=spec)

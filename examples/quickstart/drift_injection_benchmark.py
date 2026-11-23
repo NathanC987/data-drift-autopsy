@@ -7,7 +7,10 @@ seeds), runs the monitor on every window and grades it against the answer key.
 * ``--design``   A (the original mechanisms: covariate, prior, concept and label
   noise at three intensities plus a no-drift control) or B (held-out
   mechanisms that do not match the tests; see drift_autopsy.benchmark.injectors)
+  or AN (label noise mechanisms added to design A for the BNRC revision:
+  class-conditional and instance-dependent noise)
 * ``--model``    lr or hgb (drift_autopsy.experiments.models)
+* ``--published`` also run the published methods (drift_autopsy.published_methods)
 
 Writes outputs/benchmark/{dataset}_{design}_{model}.json (config, summary) and
 the raw window records next to it (``*_runs.json``). The paper's tables and
@@ -46,13 +49,14 @@ def main() -> None:
     ap.add_argument("--smoke", action="store_true", help="one state, one seed (pipeline check only)")
     ap.add_argument("--n-jobs", type=int, default=-1)
     ap.add_argument("--dataset", choices=["acs_income", "acs_employment"], default="acs_income")
-    ap.add_argument("--design", choices=["A", "B"], default="A")
+    ap.add_argument("--design", choices=["A", "B", "AN"], default="A")
     ap.add_argument("--model", choices=["lr", "hgb"], default="lr")
+    ap.add_argument("--published", action="store_true", help="also run the published methods")
     args = ap.parse_args()
     setup_logging(level="WARNING")
 
     cfg = BenchmarkConfig(dataset=args.dataset, design=args.design, model=args.model, n_jobs=args.n_jobs,
-                          mmd_permutations=int(os.environ.get("DDA_PERMUTATIONS", 200)))
+                          published=args.published, mmd_permutations=int(os.environ.get("DDA_PERMUTATIONS", 200)))
     if args.smoke:
         cfg.states, cfg.seeds = ("CA",), (0,)
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

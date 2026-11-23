@@ -52,6 +52,7 @@ From `outputs/` (the numbers in the paper are generated from these files):
 
 ```bash
 pip install -e ".[all,dev]"     # Python >= 3.10
+pip install --no-deps detectshift   # only for the published-method comparison
 ```
 
 The permutation tests (MMD, Frechet distance, PCA reconstruction) run on a

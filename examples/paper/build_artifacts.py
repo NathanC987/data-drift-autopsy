@@ -1214,6 +1214,289 @@ def correction(R: Results) -> None:
         R.add(f"fix-old-{design.lower()}-max", pct(max(rates), 1))
 
 
+# --------------------------------------------------------------------------- #
+# BNRC revision: published methods, label noise added to design A, more real controls
+
+PUB_ROWS = [("ours", "Ours (hierarchical tests)"), ("roschewitz", "Roschewitz et al."),
+            ("detectshift", "DetectShift"), ("confident_learning", "Label-free stage + confident learning")]
+AN_MECHANISMS = [("label_noise", "Uniform (design A)"), ("class_conditional_noise", "Class-conditional"),
+                 ("instance_noise", "Instance-dependent")]
+REAL_CODES = {"inc": "income", "emp": "employment", "gas": "gas", "clr": "clear10"}
+
+
+def published_records(code: str, design: str, model: str) -> List[Dict[str, Any]]:
+    path = OUT / "benchmark" / "published" / f"{BENCH_DATASETS[code]}_{design}_{model}.json"
+    return json.loads(path.read_text())["records"]
+
+
+def _pub_predictions(recs: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], Dict[str, List[str]]]:
+    runs = [{"drift_type": r["drift_type"], "state": r["state"], "seed": r["seed"]} for r in recs]
+    preds = {"ours": [r["ours"] for r in recs]}
+    for name, _ in PUB_ROWS[1:]:
+        preds[name] = [r["published"]["verdicts"][name] for r in recs]
+    return runs, preds
+
+
+def published_methods(R: Results) -> None:
+    """Table of the published methods on the benchmark windows, next to ours, with per-type rates."""
+    from drift_autopsy.benchmark.metrics import method_scores, paired_method_tests
+
+    rows = []
+    cells_by = {k: [n] for k, n in PUB_ROWS}
+    pooled: Dict[str, Dict[str, Dict[str, List[bool]]]] = {"A": {}, "B": {}}
+    rates: Dict[Tuple[str, str], List[float]] = {}
+    for code, design, model in CONFIGS:
+        recs = published_records(code, design, model)
+        runs, preds = _pub_predictions(recs)
+        scores = method_scores(runs, preds)
+        tests = paired_method_tests(runs, preds)
+        for mkey, _ in PUB_ROWS:
+            sc = scores[mkey]
+            v = pct(sc["accuracy"]["rate"], 1)
+            if mkey != "ours" and tests[mkey]["holm_significant"]:
+                v += "$^{\\downarrow}$" if tests[mkey]["mean_difference"] > 0 else "$^{\\uparrow}$"
+            cells_by[mkey].append(v)
+            k = f"pub-{code}-{design.lower()}-{model}-{mkey.replace('_', '')}"
+            R.add(f"{k}-acc", pct(sc["accuracy"]["rate"], 1))
+            rates.setdefault((design, mkey), []).append(sc["accuracy"]["rate"])
+            for r, p in zip(recs, preds[mkey]):
+                pooled[design].setdefault(mkey, {}).setdefault(r["drift_type"], []).append(p == r["drift_type"])
+    for mkey, _ in PUB_ROWS:
+        rows.append(" & ".join(cells_by[mkey]) + " \\\\")
+    write_table("tab_published", (
+        "\\scriptsize\\setlength{\\tabcolsep}{2.6pt}\n"
+        "\\begin{tabular}{@{}lrrrrrrrr@{}}\n\\toprule\n"
+        " & \\multicolumn{4}{c}{Logistic regression} & \\multicolumn{4}{c}{Gradient boosting} \\\\\n"
+        "\\cmidrule(lr){2-5}\\cmidrule(l){6-9}\n"
+        "Method & Inc.\\ A & Inc.\\ B & Emp.\\ A & Emp.\\ B & Inc.\\ A & Inc.\\ B & Emp.\\ A & Emp.\\ B \\\\\n\\midrule\n"
+        + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"))
+    for (design, mkey), v in rates.items():
+        R.add(f"pub-{design.lower()}-{mkey.replace('_', '')}-min", pct(min(v), 1))
+        R.add(f"pub-{design.lower()}-{mkey.replace('_', '')}-max", pct(max(v), 1))
+    n_better = n_tests = 0
+    for code, design, model in CONFIGS:
+        runs, preds = _pub_predictions(published_records(code, design, model))
+        for name, t in paired_method_tests(runs, preds).items():
+            n_tests += 1
+            n_better += bool(t["holm_significant"] and t["mean_difference"] > 0)
+    R.add("pub-ntests", n_tests)
+    R.add("pub-nbetter", n_better)
+
+    # per drift type, pooled over the four configurations of each design
+    type_cols = {"A": ["none", "covariate", "prior", "concept", "label_noise"],
+                 "B": ["covariate", "prior", "concept", "label_noise"]}
+    trows = []
+    for mkey, mname in PUB_ROWS:
+        cells = [mname]
+        for design, cols in type_cols.items():
+            for t in cols:
+                vals = pooled[design][mkey][t]
+                cells.append(pct(float(np.mean(vals)), 0))
+                R.add(f"pub-{design.lower()}-{mkey.replace('_', '')}-type-{t.replace('_', '')}",
+                      pct(float(np.mean(vals)), 0))
+        trows.append(" & ".join(cells) + " \\\\")
+    write_table("tab_published_types", (
+        "\\scriptsize\\setlength{\\tabcolsep}{2.6pt}\n"
+        "\\begin{tabular}{@{}lrrrrrrrrr@{}}\n\\toprule\n"
+        " & \\multicolumn{5}{c}{Design A} & \\multicolumn{4}{c}{Design B} \\\\\n"
+        "\\cmidrule(lr){2-6}\\cmidrule(l){7-10}\n"
+        "Method & None & Cov. & Prior & Conc. & Noise & Cov. & Prior & Conc. & Noise \\\\\n\\midrule\n"
+        + "\n".join(trows) + "\n\\bottomrule\n\\end{tabular}\n"))
+
+    # what DetectShift calls the design A covariate windows, whose labels stay with moved inputs
+    ds_cov = [r["published"]["verdicts"]["detectshift"] for code, design, model in CONFIGS if design == "A"
+              for r in published_records(code, design, model) if r["drift_type"] == "covariate"]
+    R.add("pub-a-detectshift-cov-asconcept", pct(ds_cov.count("concept") / len(ds_cov), 0))
+    ds_noise = [r["published"]["verdicts"]["detectshift"] for code, design, model in CONFIGS
+                for r in published_records(code, design, model) if r["drift_type"] == "label_noise"]
+    R.add("pub-detectshift-noise-asconcept", pct(ds_noise.count("concept") / len(ds_noise), 0))
+    cl_conc = [r["published"]["verdicts"]["confident_learning"] for code, design, model in CONFIGS
+               for r in published_records(code, design, model) if r["drift_type"] == "concept"]
+    R.add("pub-cl-concept-asnoise", pct(cl_conc.count("label_noise") / len(cl_conc), 0))
+    secs = [r["seconds"] for code, design, model in CONFIGS for r in published_records(code, design, model)]
+    R.add("pub-nwindows", len(secs))
+
+
+def added_noise(R: Results) -> None:
+    """Class-conditional and instance-dependent noise added to design A (design AN)."""
+    from drift_autopsy.benchmark.metrics import meta_classifier_predictions
+
+    methods = [("ours", "Ours"), ("meta_classifier", "Meta-classifier"), ("detectshift", "DetectShift"),
+               ("confident_learning", "Label-free + CL")]
+    pooled: Dict[str, Dict[str, List[bool]]] = {}
+    drops: Dict[str, List[float]] = {}
+    as_type: Dict[str, Dict[str, int]] = {}
+    n_an = 0
+    for code in BENCH_DATASETS:
+        for model in MODELS:
+            runs_a = bench_runs(code, "A", model)
+            runs_an = bench_runs(code, "AN", model)
+            n_an += len(runs_an)
+            meta = meta_classifier_predictions(runs_a + runs_an)
+            pub_a = {(r["state"], r["seed"], r["mechanism"], r["intensity_order"]): r
+                     for r in published_records(code, "A", model)}
+            for i, r in enumerate(runs_a + runs_an):
+                if r["drift_type"] != "label_noise":
+                    continue
+                mech = r["mechanism"]
+                pub = r["published"] if "published" in r else \
+                    pub_a[(r["state"], r["seed"], r["mechanism"], r["intensity_order"])]["published"]
+                verdicts = {"ours": r["verdicts"]["ours"], "meta_classifier": meta[i],
+                            "detectshift": pub["verdicts"]["detectshift"],
+                            "confident_learning": pub["verdicts"]["confident_learning"]}
+                for mkey, _ in methods:
+                    pooled.setdefault(mech, {}).setdefault(mkey, []).append(verdicts[mkey] == "label_noise")
+                drops.setdefault(mech, []).append(r["true_accuracy_drop"])
+                as_type.setdefault(mech, {}).setdefault(verdicts["ours"], 0)
+                as_type[mech][verdicts["ours"]] += 1
+                if mech != "label_noise":
+                    kk = f"an-{code}-{model}-{mech.replace('_', '')}"
+                    pooled.setdefault(kk, {}).setdefault("ours", []).append(verdicts["ours"] == "label_noise")
+    rows = []
+    for mech, title in AN_MECHANISMS:
+        cells = [title, pp(float(np.mean(drops[mech])), 1, sign=False)]
+        for mkey, _ in methods:
+            v = float(np.mean(pooled[mech][mkey]))
+            cells.append(pct(v, 0))
+            R.add(f"an-{mech.replace('_', '')}-{mkey.replace('_', '')}", pct(v, 0))
+        R.add(f"an-{mech.replace('_', '')}-n", len(pooled[mech]["ours"]))
+        R.add(f"an-{mech.replace('_', '')}-drop", pp(float(np.mean(drops[mech])), 1, sign=False))
+        for t in ("none", "covariate", "prior", "concept", "label_noise"):
+            R.add(f"an-{mech.replace('_', '')}-as-{t.replace('_', '')}", as_type[mech].get(t, 0))
+        rows.append(" & ".join(cells) + " \\\\")
+    for kk, v in pooled.items():
+        if kk.startswith("an-"):
+            R.add(f"{kk}-ours", pct(float(np.mean(v["ours"])), 0))
+    R.add("an-nwindows", n_an)
+    write_table("tab_noise", (
+        "\\footnotesize\\setlength{\\tabcolsep}{3pt}\n"
+        "\\begin{tabular}{@{}lrrrrr@{}}\n\\toprule\n"
+        " & & \\multicolumn{4}{c}{Named label noise (\\%)} \\\\\n\\cmidrule(l){3-6}\n"
+        "Noise mechanism & Drop & Ours & Meta & DetectShift & LF + CL \\\\\n\\midrule\n"
+        + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"))
+
+
+def _audit_verdict(w: Dict[str, Any], alpha: float) -> Tuple[str, float]:
+    """Audit-stage verdict of a real window, whatever the label-free stage found, and the audit
+    accuracy minus the reference accuracy (points)."""
+    d = w["diagnosis"]
+    if "audit" in d:
+        sig, structured, acc = d["audit"]["accuracy_drop_significant"], d["audit"]["structured_features"], \
+            d["audit"]["audit_accuracy"]
+    else:
+        sig, structured, acc = d["audit_accuracy_drop_p_value"] < alpha, d["audit_structured_dimensions"], \
+            d["audit_accuracy"]
+    verdict = "none" if not sig else ("concept" if structured else "label_noise")
+    return verdict, acc
+
+
+def real_audits(R: Results) -> None:
+    """The audit of every real window (supplement table) and the published methods on them."""
+    alpha = 0.05
+    rows = []
+    counts: Dict[str, int] = {}
+    for code in ("inc", "emp", "gas", "clr"):
+        studies = {m: study(code, m) for m in MODELS}
+        pubs = {m: {w["key"]: w for w in json.loads((OUT / "real_controls" / f"{REAL_CODES[code]}_{m}.json")
+                                                  .read_text())["windows"]} for m in MODELS}
+        first = True
+        for wname in studies["lr"]["windows"]:
+            cells = [STUDY_TITLE[code] if first else "", wlabel(code, wname)]
+            first = False
+            for m in MODELS:
+                w = studies[m]["windows"][wname]
+                ref_acc = w["actual_accuracy"] - w["accuracy_change"]
+                verdict, acc = _audit_verdict(w, alpha)
+                final = w["diagnosis"]["final"]["drift_type"]
+                pv = pubs[m][wname]["published"]["verdicts"]
+                cells += [pp(acc - ref_acc, 1), TYPE_SHORT[verdict], TYPE_SHORT[final],
+                          TYPE_SHORT[pv["roschewitz"]], TYPE_SHORT[pv["detectshift"]],
+                          TYPE_SHORT[pv["confident_learning"]]]
+                counts[f"audit-{verdict}"] = counts.get(f"audit-{verdict}", 0) + 1
+                for name, v in pv.items():
+                    counts[f"{name}-{v}"] = counts.get(f"{name}-{v}", 0) + 1
+                counts["n"] = counts.get("n", 0) + 1
+            rows.append(" & ".join(cells) + " \\\\")
+        rows.append("\\midrule")
+    rows = rows[:-1]
+    write_table("tab_real_audits", (
+        "\\scriptsize\\setlength{\\tabcolsep}{2.2pt}\n"
+        "\\begin{tabular}{@{}llrlllllrlllll@{}}\n\\toprule\n"
+        " & & \\multicolumn{6}{c}{LR} & \\multicolumn{6}{c}{GB} \\\\\n"
+        "\\cmidrule(lr){3-8}\\cmidrule(l){9-14}\n"
+        "Data & Window & $\\Delta$ & Audit & Ours & Ros. & DS & CL & $\\Delta$ & Audit & Ours & Ros. & DS & CL \\\\\n"
+        "\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"))
+    R.add("realaud-n", counts["n"])
+    for t in ("none", "concept", "label_noise"):
+        R.add(f"realaud-audit-{t.replace('_', '')}", counts.get(f"audit-{t}", 0))
+    for name in ("roschewitz", "detectshift", "confident_learning"):
+        for t in ("none", "covariate", "prior", "concept", "label_noise"):
+            R.add(f"realpub-{name.replace('_', '')}-{t.replace('_', '')}", counts.get(f"{name}-{t}", 0))
+
+
+def real_controls(R: Results) -> None:
+    """Twenty more control windows per real dataset and model: how many raise an alarm."""
+    dets = ["KS Test", "PSI", "MMD", "CBPE", "BBSD", "Domain classifier"]
+    cols = dets + ["ours", "roschewitz", "detectshift", "confident_learning"]
+    totals = {c: 0 for c in cols}
+    n_total = 0
+    rows = []
+    for code in ("inc", "emp", "gas", "clr"):
+        for m in MODELS:
+            ctrl = json.loads((OUT / "real_controls" / f"{REAL_CODES[code]}_{m}.json").read_text())["controls"]
+            n = len(ctrl)
+            n_total += n
+            cells = [f"{STUDY_TITLE[code]}, {MODEL_TITLE[m]}"]
+            for c in cols:
+                if c in dets:
+                    k = sum(x["detection"][c]["drift_detected"] for x in ctrl)
+                elif c == "ours":
+                    k = sum(x["diagnosis"] != "none" for x in ctrl)
+                else:
+                    k = sum(x["published"]["verdicts"][c] != "none" for x in ctrl)
+                totals[c] += k
+                cells.append(str(k))
+            rows.append(" & ".join(cells) + " \\\\")
+            R.add(f"ctrl-{code}-{m}-ours", sum(x["diagnosis"] != "none" for x in ctrl))
+            R.add(f"ctrl-{code}-{m}-n", n)
+    total = ["All windows"]
+    for c in cols:
+        lo, hi = wilson_interval(totals[c], n_total)
+        total.append(f"{totals[c]}")
+        ck = DETECTOR_KEY.get(c, c.replace("_", ""))
+        R.add(f"ctrl-{ck}-k", totals[c])
+        R.add(f"ctrl-{ck}-pct", pct(totals[c] / n_total, 1))
+        R.add(f"ctrl-{ck}-ci", f"[{pct(lo, 1)}, {pct(hi, 1)}]")
+    rows.append("\\midrule\n" + " & ".join(total) + " \\\\")
+    R.add("ctrl-n", n_total)
+    R.add("ctrl-per", n_total // 8)
+    write_table("tab_controls", (
+        "\\scriptsize\\setlength{\\tabcolsep}{2.6pt}\n"
+        "\\begin{tabular}{@{}lrrrrrrrrrr@{}}\n\\toprule\n"
+        " & \\multicolumn{6}{c}{Detectors} & \\multicolumn{4}{c}{Diagnosis} \\\\\n"
+        "\\cmidrule(lr){2-7}\\cmidrule(l){8-11}\n"
+        "Data, model & KS & PSI & MMD & Conf. & BBSD & DC & Ours & Ros. & DS & CL \\\\\n\\midrule\n"
+        + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"))
+
+
+def estimator_choice(R: Results) -> None:
+    """CBPE against ATC over all benchmark windows of each design A configuration (paired by replicate)."""
+    lower = sig_cbpe = sig_atc = 0
+    diffs = []
+    for code in BENCH_DATASETS:
+        for model in MODELS:
+            e = bench(code, "A", model)["summary"]["estimators"]
+            t = e["paired_vs_cbpe"]["atc"]
+            lower += t["mean_difference"] < 0
+            sig_cbpe += t["holm_significant"] and t["mean_difference"] < 0
+            sig_atc += t["holm_significant"] and t["mean_difference"] > 0
+            diffs.append(abs(t["mean_difference"]))
+    R.add("estchoice-cbpe-lower", lower)
+    R.add("estchoice-cbpe-sig", sig_cbpe)
+    R.add("estchoice-atc-sig", sig_atc)
+    R.add("estchoice-maxdiff", pp(max(diffs), 1, sign=False))
+
+
 ABSTRACT_MAX_WORDS = 150        # journal rule
 
 
@@ -1297,6 +1580,13 @@ def main() -> None:
     if "windows" in next(iter(json.loads((OUT / "benchmark" / "summary.json").read_text())["methods"].values())):
         seed_tables(R)
     correction(R)
+    if (OUT / "benchmark" / "published").exists():
+        published_methods(R)
+        added_noise(R)
+        estimator_choice(R)
+    if (OUT / "real_controls").exists():
+        real_audits(R)
+        real_controls(R)
     R.write(GEN / "results.tex")
     print(f"wrote {len(R.values)} result values, tables to {GEN}, figures to {FIG}")
 

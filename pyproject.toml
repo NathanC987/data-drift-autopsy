@@ -64,7 +64,13 @@ image = [
 concept = [
     "open_clip_torch>=2.24.0",
 ]
-all = ["drift-autopsy[analysis,demo,dashboard,image,concept]"]
+# published diagnosis methods for the comparison (detectshift is installed with --no-deps:
+# it declares the retired "sklearn" package as a dependency)
+baselines = [
+    "catboost>=1.2",
+    "cleanlab>=2.6",
+]
+all = ["drift-autopsy[analysis,demo,dashboard,image,concept,baselines]"]
 dev = [
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
